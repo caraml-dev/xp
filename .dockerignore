@@ -1,0 +1,5 @@
+# Management Service API
+./management-service/bin
+
+# XP UI
+./ui/build

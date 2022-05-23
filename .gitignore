@@ -1,0 +1,16 @@
+.idea
+.vscode
+
+cover.out.tmp
+cover.out
+
+tags
+
+.protoc/
+protoc-*
+
+vendor/
+bin/
+*.pyc
+
+.DS_Store
