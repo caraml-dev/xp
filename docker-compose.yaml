@@ -1,16 +1,14 @@
 version: '3'
 services:
   postgres:
-    image: bitnami/postgresql:11.6.0-debian-9-r0
+    image: postgres:13-alpine
     container_name: xp_postgres
     ports:
       - 5432:5432
     environment:
-      - POSTGRESQL_USERNAME=xp
-      - POSTGRESQL_PASSWORD=xp
-      - POSTGRESQL_DATABASE=xp
-    volumes:
-      - ./infra/local/postgres:/docker-entrypoint-initdb.d
+      - POSTGRES_USER=xp
+      - POSTGRES_PASSWORD=xp
+      - POSTGRES_DB=xp
 
   pubsub:
     image: google/cloud-sdk:349.0.0
