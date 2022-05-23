@@ -1,0 +1,13 @@
+.euiPanel--settingsSegmenterCard {
+  min-width: 200px;
+
+  .euiFlex--settingsSegmenterCardHandle {
+    align-self: stretch;
+
+    .euiPanel--settingsSegmenterCardHandle {
+      // Turn of the panel border only on the right
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+}
