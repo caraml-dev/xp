@@ -1,0 +1,19 @@
+# Port number XP Treatment API server listens to
+Port: 8080
+
+ManagementService:
+  URL: http://localhost:3000/v1
+
+DeploymentConfig:
+  EnvironmentType: local
+
+NewRelicConfig:
+  Enabled: false
+
+SentryConfig:
+  Enabled: false
+
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 10
+    MaxS2CellLevel: 14

@@ -1,0 +1,22 @@
+AuthorizationConfig:
+  Enabled: false
+  URL: http://localhost:4466/
+
+DbConfig:
+  Host: localhost
+  Port: 5432
+  Database: xp
+  User: xp
+  Password: xp
+  MigrationsPath: file://database/db-migrations
+
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 10
+    MaxS2CellLevel: 14
+
+PubSubConfig:
+  Project: dev
+  TopicName: xp-update
+
+OpenApiSpecsPath: "../api"
