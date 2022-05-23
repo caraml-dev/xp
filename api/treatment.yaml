@@ -56,12 +56,9 @@ components:
                 In this example, the randomization key is the `order-id`. The other variables are converted to
                 the respective segmenters configured in the project and match the corresponding experiment. 
               value:
-                country_code: "SG"
-                service_type: 66
                 latitude: 1.3324
                 longitude: 104.0391
                 tz: "Asia/Singapore"
-                priority_allocation: true
                 order-id: "abc123"
       required: true
 
