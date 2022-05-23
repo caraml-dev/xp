@@ -1,0 +1,1526 @@
+openapi: 3.0.1
+info:
+  title: Experimentation Management APIs
+  description: CRUD APIs for experiment management
+  version: v1
+servers:
+  - url: /v1
+tags: []
+paths:
+  /validate:
+    post:
+      operationId: ValidateEntity
+      tags:
+        - validate
+        - treatment
+      summary: validates an entity against a given treatment schema or validation url
+      requestBody:
+        $ref: '#/components/requestBodies/ValidateEntityRequestBody'
+      responses:
+        200:
+          description: Validation success
+          content: {}
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /segmenters:
+    get:
+      operationId: ListSegmenters
+      tags:
+        - segmenters
+      summary: List all segmenter configurations registered with XP
+      responses:
+        200:
+          $ref: '#/components/responses/ListSegmentersSuccess'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects:
+    get:
+      operationId: ListProjects
+      tags:
+        - project
+      summary: List info of all projects set up for Experimentation
+      responses:
+        200:
+          $ref: '#/components/responses/ListProjectsSuccess'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/experiment-variables:
+    get:
+      operationId: GetProjectExperimentVariables
+      tags:
+        - project
+      summary: Get all parameters required for generating treatments for the given project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetProjectExperimentVariablesSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/segmenters:
+    get:
+      operationId: GetSegmenters
+      tags:
+        - segmenters
+      summary: Get all segmenter configurations required for generating experiments for the given project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetSegmentersSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+
+  /projects/{project_id}/settings:
+    post:
+      operationId: CreateProjectSettings
+      tags:
+        - settings
+      summary: Set up new project for Experimentation
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/CreateProjectSettingsRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateProjectSettingsSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      operationId: GetProjectSettings
+      tags:
+        - settings
+      summary: Get the settings for the given project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetProjectSettingsSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: UpdateProjectSettings
+      tags:
+        - settings
+      summary: Update the settings for the given project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateProjectSettingsRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateProjectSettingsSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/experiments:
+    get:
+      operationId: ListExperiments
+      tags:
+        - experiment
+      summary: Get experiments for a project w.r.t. query params
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: status
+          in: query
+          schema:
+            $ref: 'schema.yaml#/components/schemas/ExperimentStatus'
+        - name: end_time
+          description: Used together with the start_time, to filter experiments that are at least partially running in the input range.
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: tier
+          in: query
+          schema:
+            $ref: 'schema.yaml#/components/schemas/ExperimentTier'
+        - name: type
+          in: query
+          schema:
+            $ref: 'schema.yaml#/components/schemas/ExperimentType'
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: updated_by
+          in: query
+          schema:
+            type: string
+        - name: search
+          description: Search experiment name and description for a partial match of the search text
+          in: query
+          schema:
+            type: string
+        - name: page
+          description: Result page number. It defaults to 1.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: page_size
+          description: Number of items on each page. It defaults to 10.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: start_time
+          description: Used together with the end_time, to filter experiments that are at least partially running in the input range.
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: segment
+          in: query
+          schema:
+            type: object
+        - name: include_weak_match
+          description: controls whether or not weak segmenter matches (experiments where the segmenter is optional) should be returned
+          in: query
+          schema:
+            type: boolean
+      responses:
+        200:
+          $ref: '#/components/responses/ListExperimentsSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      operationId: CreateExperiment
+      tags:
+        - experiment
+      summary: Create a new experiment for a project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/CreateExperimentRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateExperimentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: CreateExperimentRequest
+  /projects/{project_id}/experiments/{experiment_id}:
+    get:
+      operationId: GetExperiment
+      tags:
+        - experiment
+      summary: Get details of an experiment with the given experiment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetExperimentSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: UpdateExperiment
+      tags:
+        - experiment
+      summary: Update an experiment with the given experiment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateExperimentRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateExperimentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: UpdateExperimentRequest
+  /projects/{project_id}/experiments/{experiment_id}/enable:
+    put:
+      operationId: EnableExperiment
+      tags:
+        - experiment
+      summary: Enable an experiment with the given experiment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: Enabled experiment
+          content: {}
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/experiments/{experiment_id}/disable:
+    put:
+      operationId: DisableExperiment
+      tags:
+        - experiment
+      summary: Disable an experiment with the given experiment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: Disabled experiment
+          content: {}
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/experiments/{experiment_id}/history:
+    get:
+      operationId: ListExperimentHistory
+      tags:
+        - experiment
+      summary: List an experiment's historical versions
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          description: Result page number. It defaults to 1.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: page_size
+          description: Number of items on each page. It defaults to 10.
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          $ref: '#/components/responses/ListExperimentHistorySuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/experiments/{experiment_id}/history/{version}:
+    get:
+      operationId: GetExperimentHistory
+      tags:
+        - experiment
+      summary: List an experiment's historical versions
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: experiment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetExperimentHistorySuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/treatments:
+    get:
+      operationId: ListTreatments
+      tags:
+        - treatment
+      summary: Get treatments for a project w.r.t query params
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: updated_by
+          in: query
+          schema:
+            type: string
+        - name: search
+          description: Search treatment name for a partial match of the search text
+          in: query
+          schema:
+            type: string
+        - name: page
+          description: Result page number. If empty and neither `fields` nor `page` is set, it defaults to 1.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: page_size
+          description: Number of items on each page. If empty and neither `fields` nor `page_size` is set, it defaults to 10.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: fields
+          description: |
+            A selector to restrict the list of returned objects by their fields. If unset, all the fields will be returned.
+            Paginated responses will be returned if both or either of `page` and `page_size` parameters are provided.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: 'schema.yaml#/components/schemas/TreatmentField'
+      responses:
+        200:
+          $ref: '#/components/responses/ListTreatmentsSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      operationId: CreateTreatment
+      tags:
+        - treatment
+      summary: Create a new treatment for a project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/CreateTreatmentRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateTreatmentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: CreateTreatmentRequest
+  /projects/{project_id}/treatments/{treatment_id}:
+    get:
+      operationId: GetTreatment
+      tags:
+        - treatment
+      summary: Get details of a treatment with the given treatment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: treatment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetTreatmentSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: UpdateTreatment
+      tags:
+        - treatment
+      summary: Update a treatment with the given treatment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: treatment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateTreatmentRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateTreatmentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: UpdateTreatmentRequest
+    delete:
+      operationId: DeleteTreatment
+      tags:
+        - treatment
+      summary: Delete a treatment with the given treatment_id and project_id
+      description: Deleting a treatment will remove it from the database permanently, along with its historical versions.
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: treatment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/DeleteTreatmentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: DeleteTreatmentRequest
+  /projects/{project_id}/treatments/{treatment_id}/history:
+    get:
+      operationId: ListTreatmentHistory
+      tags:
+        - treatment
+      summary: List a treatment's historical versions
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: treatment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          description: Result page number. If empty, it defaults to 1.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: page_size
+          description: Number of items on each page. If empty, it defaults to 10.
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          $ref: '#/components/responses/ListTreatmentHistorySuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/treatments/{treatment_id}/history/{version}:
+    get:
+      operationId: GetTreatmentHistory
+      tags:
+        - treatment
+      summary: List a treatment's historical versions
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: treatment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetTreatmentHistorySuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/segments:
+    get:
+      operationId: ListSegments
+      tags:
+        - segment
+      summary: Get segments for a project w.r.t query params
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: updated_by
+          in: query
+          schema:
+            type: string
+        - name: search
+          description: Search segment name for a partial match of the search text
+          in: query
+          schema:
+            type: string
+        - name: page
+          description: Result page number. If empty and neither `fields` nor `page` is set, it defaults to 1.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: page_size
+          description: Number of items on each page. If empty and neither `fields` nor `page_size` is set, it defaults to 10.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: fields
+          description: |
+            A selector to restrict the list of returned objects by their fields. If unset, all the fields will be returned.
+            Paginated responses will be returned if both or either of `page` and `page_size` parameters are provided.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: 'schema.yaml#/components/schemas/SegmentField'
+      responses:
+        200:
+          $ref: '#/components/responses/ListSegmentsSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      operationId: CreateSegment
+      tags:
+        - segment
+      summary: Create a new segment for a project
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSegmentRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateSegmentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: CreateSegmentRequest    
+  /projects/{project_id}/segments/{segment_id}:
+    get:
+      operationId: GetSegment
+      tags:
+        - segment
+      summary: Get details of a segment with the given segment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: segment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetSegmentSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: UpdateSegment
+      tags:
+        - segment
+      summary: Update a segment with the given segment_id and project_id
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: segment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSegmentRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateSegmentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: UpdateSegmentRequest
+    delete:
+      operationId: DeleteSegment
+      tags:
+        - segment
+      summary: Delete a segment with the given segment_id and project_id
+      description: Deleting a segment will remove it from the database permanently, along with its historical versions.
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: segment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/DeleteSegmentSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      x-codegen-request-body-name: DeleteSegmentRequest
+  /projects/{project_id}/segments/{segment_id}/history:
+    get:
+      operationId: ListSegmentHistory
+      tags:
+        - segment
+      summary: List a segment's historical versions
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: segment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          description: Result page number. It defaults to 1.
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: page_size
+          description: Number of items on each page. It defaults to 10.
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          $ref: '#/components/responses/ListSegmentHistorySuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/segments/{segment_id}/history/{version}:
+    get:
+      operationId: GetSegmentHistory
+      tags:
+        - segment
+      summary: Get a segment's historical version
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: segment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          $ref: '#/components/responses/GetSegmentHistorySuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  requestBodies:
+    ValidateEntityRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              validation_url:
+                type: string
+              treatment_schema:
+                $ref: 'schema.yaml#/components/schemas/TreatmentSchema'
+              data:
+                type: object
+      required: true
+    CreateProjectSettingsRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - randomization_key
+              - segmenters
+            type: object
+            properties:
+              randomization_key:
+                type: string
+              segmenters:
+                $ref: 'schema.yaml#/components/schemas/ProjectSegmenters'
+              enable_s2id_clustering:
+                type: boolean
+              treatment_schema:
+                $ref: 'schema.yaml#/components/schemas/TreatmentSchema'
+              validation_url:
+                type: string
+      required: true
+    UpdateProjectSettingsRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - randomization_key
+              - segmenters
+            type: object
+            properties:
+              randomization_key:
+                type: string
+              segmenters:
+                $ref: 'schema.yaml#/components/schemas/ProjectSegmenters'
+              enable_s2id_clustering:
+                type: boolean
+              treatment_schema:
+                $ref: 'schema.yaml#/components/schemas/TreatmentSchema'
+              validation_url:
+                type: string
+    CreateSegmenterRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+              - type
+              - options
+              - multi_valued
+              - constraints
+              - required
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                $ref: 'schema.yaml#/components/schemas/SegmenterType'
+              options:
+                $ref: 'schema.yaml#/components/schemas/SegmenterOptions'
+              multi_valued:
+                type: boolean
+              constraints:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Constraint'
+              required:
+                type: boolean
+              description:
+                type: string
+      required: true
+    UpdateSegmenterRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - type
+              - options
+              - multi_valued
+              - constraints
+              - required
+            type: object
+            properties:
+              type:
+                $ref: 'schema.yaml#/components/schemas/SegmenterType'
+              options:
+                $ref: 'schema.yaml#/components/schemas/SegmenterOptions'
+              multi_valued:
+                type: boolean
+              constraints:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Constraint'
+              required:
+                type: boolean
+              description:
+                type: string
+      required: true
+    CreateExperimentRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - end_time
+              - name
+              - segment
+              - start_time
+              - status
+              - treatments
+              - type
+            type: object
+            properties:
+              description:
+                type: string
+                nullable: true
+              treatments:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/ExperimentTreatment'
+              name:
+                type: string
+              start_time:
+                type: string
+                format: date-time
+              tier:
+                $ref: 'schema.yaml#/components/schemas/ExperimentTier'
+              type:
+                $ref: 'schema.yaml#/components/schemas/ExperimentType'
+              end_time:
+                type: string
+                format: date-time
+              updated_by:
+                type: string
+              status:
+                $ref: 'schema.yaml#/components/schemas/ExperimentStatus'
+              segment:
+                $ref: 'schema.yaml#/components/schemas/ExperimentSegment'
+              interval:
+                type: integer
+                format: int32
+                nullable: true
+      required: true
+    UpdateExperimentRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - description
+              - end_time
+              - interval
+              - segment
+              - start_time
+              - status
+              - treatments
+              - type
+            type: object
+            properties:
+              description:
+                type: string
+                nullable: true
+              treatments:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/ExperimentTreatment'
+              start_time:
+                type: string
+                format: date-time
+              tier:
+                $ref: 'schema.yaml#/components/schemas/ExperimentTier'
+              type:
+                $ref: 'schema.yaml#/components/schemas/ExperimentType'
+              end_time:
+                type: string
+                format: date-time
+              updated_by:
+                type: string
+              status:
+                $ref: 'schema.yaml#/components/schemas/ExperimentStatus'
+              segment:
+                $ref: 'schema.yaml#/components/schemas/ExperimentSegment'
+              interval:
+                type: integer
+                format: int32
+                nullable: true
+      required: true
+    CreateTreatmentRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+              - configuration
+            type: object
+            properties:
+              name:
+                type: string
+              configuration:
+                type: object
+              updated_by:
+                type: string
+      required: true
+    UpdateTreatmentRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - configuration
+            type: object
+            properties:
+              configuration:
+                type: object
+              updated_by:
+                type: string
+      required: true
+    CreateSegmentRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+              - segment
+            type: object
+            properties:
+              name:
+                type: string
+              segment:
+                $ref: 'schema.yaml#/components/schemas/ExperimentSegment'
+              updated_by:
+                type: string
+      required: true
+    UpdateSegmentRequestBody:
+      content:
+        application/json:
+          schema:
+            required:
+              - segment
+            type: object
+            properties:
+              segment:
+                $ref: 'schema.yaml#/components/schemas/ExperimentSegment'
+              updated_by:
+                type: string
+      required: true
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: 'schema.yaml#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: 'schema.yaml#/components/schemas/Error'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: 'schema.yaml#/components/schemas/Error'
+    ListSegmentersSuccess:
+      description: Returns all segmenter configurations registered with XP
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Segmenter'
+    ListProjectsSuccess:
+      description: Returns details of all projects set up for experimentation
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Project'
+    CreateProjectSettingsSuccess:
+      description: Creates experimentation settings for the project with the given project_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/ProjectSettings'
+    GetSegmentersSuccess:
+      description: Get segmenters of the project with the given project_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Segmenter'
+    CreateSegmenterSuccess:
+      description: Creates a segmenter for the given project
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Segmenter'
+    GetSegmenterSuccess:
+      description: Get segmenter of the project with the given project_id and name
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Segmenter'
+    UpdateSegmenterSuccess:
+      description: Updated segmenter
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Segmenter'
+    DeleteSegmenterSuccess:
+      description: Deleted segmenter
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+    GetProjectSettingsSuccess:
+      description: Get experimentation settings of the project with the given project_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/ProjectSettings'
+    UpdateProjectSettingsSuccess:
+      description: Updates experimentation settings of the project with the given project_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/ProjectSettings'
+    GetProjectExperimentVariablesSuccess:
+      description: Returns request parameters for a project
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: string
+    ListExperimentsSuccess:
+      description: Returns experiments with the given project_id. If pagination options were used, the results are scoped accordingly and the paging info in the response body is set.
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Experiment'
+              paging:
+                $ref: "schema.yaml#/components/schemas/Paging"
+    CreateExperimentSuccess:
+      description: Creates an experiment for the given project
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Experiment'
+    GetExperimentSuccess:
+      description: Returns experiment details with given project_id and experiment_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Experiment'
+    UpdateExperimentSuccess:
+      description: Updated experiment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Experiment'
+    ListExperimentHistorySuccess:
+      description: List of all historical versions of an experiment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "schema.yaml#/components/schemas/ExperimentHistory"
+              paging:
+                $ref: "schema.yaml#/components/schemas/Paging"
+    GetExperimentHistorySuccess:
+      description: Get the specified historical version of an experiment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: "schema.yaml#/components/schemas/ExperimentHistory"
+    ListTreatmentsSuccess:
+      description: Returns treatments with the given project_id. If pagination options were used, the results are scoped accordingly and the paging info in the response body is set.
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Treatment'
+              paging:
+                $ref: "schema.yaml#/components/schemas/Paging"
+    CreateTreatmentSuccess:
+      description: Creates a treatment for the given project
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Treatment'
+    GetTreatmentSuccess:
+      description: Returns treatment details with given project_id and experiment_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Treatment'
+    UpdateTreatmentSuccess:
+      description: Updated treatment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Treatment'
+    DeleteTreatmentSuccess:
+      description: Deleted treatment
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+    ListTreatmentHistorySuccess:
+      description: List of all historical versions of a treatment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "schema.yaml#/components/schemas/TreatmentHistory"
+              paging:
+                $ref: "schema.yaml#/components/schemas/Paging"
+    GetTreatmentHistorySuccess:
+      description: Get the specified historical version of a treatment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: "schema.yaml#/components/schemas/TreatmentHistory"
+    ListSegmentsSuccess:
+      description: Returns segments with the given project_id. The results are paginated and the paging info in the response body is set.
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: 'schema.yaml#/components/schemas/Segment'
+              paging:
+                $ref: "schema.yaml#/components/schemas/Paging"
+    CreateSegmentSuccess:
+      description: Creates a segment for the given project
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Segment'
+    GetSegmentSuccess:
+      description: Returns segment details with given project_id and experiment_id
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Segment'
+    UpdateSegmentSuccess:
+      description: Updated segment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/Segment'
+    DeleteSegmentSuccess:
+      description: Deleted segment
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+    ListSegmentHistorySuccess:
+      description: List of all historical versions of a segment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: "schema.yaml#/components/schemas/SegmentHistory"
+              paging:
+                $ref: "schema.yaml#/components/schemas/Paging"
+    GetSegmentHistorySuccess:
+      description: Get the specified historical version of a segment
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: "schema.yaml#/components/schemas/SegmentHistory"
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []

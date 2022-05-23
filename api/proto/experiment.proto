@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+import "api/proto/segmenters.proto";
+
+package pubsub;
+option go_package = "/pubsub";
+
+message ExperimentCreated { Experiment experiment = 1; }
+
+message ExperimentUpdated { Experiment experiment = 1; }
+
+message Experiment {
+  enum Type {
+    A_B = 0;
+    Switchback = 1;
+  }
+
+  enum Status {
+    Active = 0;
+    Inactive = 1;
+  }
+
+  enum Tier {
+    Default = 0;
+    Override = 1;
+  }
+
+  int64 id = 1;
+  int64 project_id = 2;
+  Status status = 3;
+  string name = 4;
+  map<string, segmenters.ListSegmenterValue> segments = 5;
+  Type type = 6;
+  int32 interval = 7;
+  Tier tier = 8;
+
+  google.protobuf.Timestamp start_time = 9;
+  google.protobuf.Timestamp end_time = 10;
+  repeated ExperimentTreatment treatments = 11;
+
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message ExperimentTreatment {
+  string name = 1;
+  uint32 traffic = 2;
+  google.protobuf.Struct config = 3;
+}
