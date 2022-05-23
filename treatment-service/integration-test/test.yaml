@@ -1,0 +1,11 @@
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 10
+    MaxS2CellLevel: 14
+
+AssignedTreatmentLogger:
+  Kind: kafka
+  KafkaConfig:
+    Brokers: localhost:9093
+    Topic: local-testing
+    ConnectTimeoutMS: 20000

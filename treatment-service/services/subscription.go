@@ -1,0 +1,97 @@
+package services
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"cloud.google.com/go/pubsub"
+	"github.com/google/uuid"
+	"google.golang.org/protobuf/proto"
+
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/xp/treatment-service/models"
+)
+
+type ExperimentSubscriber interface {
+	SubscribeToManagementService(ctx context.Context) error
+	DeleteSubscriptions(ctx context.Context) error
+}
+
+type PubsubSubscriber struct {
+	localStorage *models.LocalStorage
+	subscription *pubsub.Subscription
+	projectIds   []models.ProjectId
+}
+
+type PubsubSubscriberConfig struct {
+	Project         string
+	UpdateTopicName string
+	ProjectIds      []models.ProjectId
+}
+
+func newSubscriptionId(topic string) string {
+	return fmt.Sprintf("%s_sub_%s", topic, uuid.NewString())
+}
+
+func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic string) (*pubsub.Subscription, error) {
+	return client.CreateSubscription(
+		ctx, newSubscriptionId(topic), pubsub.SubscriptionConfig{Topic: client.Topic(topic)},
+	)
+}
+
+func NewPubsubSubscriber(ctx context.Context, storage *models.LocalStorage, config PubsubSubscriberConfig) (*PubsubSubscriber, error) {
+	client, err := pubsub.NewClient(ctx, config.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	subscription, err := newPubsubSubscription(ctx, client, config.UpdateTopicName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PubsubSubscriber{
+		localStorage: storage,
+		subscription: subscription,
+		projectIds:   config.ProjectIds,
+	}, nil
+}
+
+func (u *PubsubSubscriber) SubscribeToManagementService(ctx context.Context) error {
+	return u.subscription.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
+		defer msg.Ack()
+		update := _pubsub.MessagePublishState{}
+		err := proto.Unmarshal(msg.Data, &update)
+		if err != nil {
+			log.Println("Warning: unable to unmarshal message for new experiment:", err)
+			msg.Ack()
+			return
+		}
+
+		updateType := update.Update
+		switch updateType.(type) {
+		case *_pubsub.MessagePublishState_ExperimentCreated:
+			experiment := update.GetExperimentCreated().Experiment
+			if models.ContainsProjectId(u.projectIds, models.ProjectId(experiment.ProjectId)) {
+				u.localStorage.InsertExperiment(experiment)
+			}
+		case *_pubsub.MessagePublishState_ExperimentUpdated:
+			experiment := update.GetExperimentUpdated().Experiment
+			if models.ContainsProjectId(u.projectIds, models.ProjectId(experiment.ProjectId)) {
+				u.localStorage.UpdateExperiment(experiment)
+			}
+		case *_pubsub.MessagePublishState_ProjectSettingsCreated:
+			u.localStorage.InsertProjectSettings(update.GetProjectSettingsCreated().ProjectSettings)
+		case *_pubsub.MessagePublishState_ProjectSettingsUpdated:
+			u.localStorage.UpdateProjectSettings(update.GetProjectSettingsUpdated().ProjectSettings)
+		}
+	})
+}
+
+func (u *PubsubSubscriber) DeleteSubscriptions(ctx context.Context) error {
+	if err := u.subscription.Delete(ctx); err != nil {
+		return err
+	}
+	return nil
+}

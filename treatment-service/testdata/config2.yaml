@@ -1,0 +1,8 @@
+DeploymentConfig:
+  EnvironmentType: dev
+
+SentryConfig:
+  Enabled: true
+  DSN: my.amazing.sentry.dsn
+  Labels:
+    App: xp-treatment-service
