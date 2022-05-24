@@ -352,7 +352,9 @@ def test_all_segmenters(xp_client: XPClient, xp_project):
     }
     s2id = s2cell.lat_lon_to_cell_id(SG_S2_POINT[0], SG_S2_POINT[1], 14)
     project = xp_client.create_or_update_project(
-        user_name="test-project", randomization_key="order_id", segmenters=segmenters,
+        user_name="test-project",
+        randomization_key="order_id",
+        segmenters=segmenters,
     )
 
     exp_spec = copy.deepcopy(BASE_EXPERIMENT)
