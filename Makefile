@@ -142,15 +142,27 @@ build: build-management-service build-treatment-service
 version: ## Get git-tags based version
 	@echo ${VERSION_NUMBER}
 
+# ==================================
+# Python E2E tests
+# ==================================
+
+install-python-ci-dependencies:
+	pip install -r tests/requirements.txt
+
 e2e: build
 	docker-compose down
 	docker-compose up -d postgres pubsub
 	cd tests/e2e; python -m pytest -s -v
 
 e2e-ci:
-	cd tests/e2e; python -m pytest -s -v --env ci
+	cd tests/e2e; python -m pytest -s -v
 
-e2e-fmt:
+format-python:
 	cd tests ; isort e2e/
 	cd tests ; flake8 e2e/
 	cd tests ; black e2e/
+
+lint-python:
+	cd tests ; isort e2e/ --check-only
+	cd tests ; flake8 e2e/
+	cd tests ; black e2e/ --check
