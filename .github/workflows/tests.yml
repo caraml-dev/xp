@@ -73,3 +73,56 @@ jobs:
           DATABASE_PASSWORD: xp
         run: make test-treatment-service
 
+  e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      GOPATH: ${{ github.workspace }}/api/.go
+    services:
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_DB: xp
+          POSTGRES_USER: xp
+          POSTGRES_PASSWORD: xp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go 1.16
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.16"
+      
+      - name: Setup Python
+        id: setup-python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
+          architecture: x64
+
+      - name: Install dependencies
+        run: make install-python-ci-dependencies
+      
+      - name: Build binaries
+        run: make build
+
+      # Since Github actions' services don't expose command like how docker-compose does, we'll need to
+      # start Google Pubsub Emulator separately since it requires running the command
+      # Related schema: https://json.schemastore.org/github-workflow.json
+      - name: Setup PubSub emulator
+        run: ./.github/emulator/start-emulator.sh pubsub
+
+      - name: Run E2E tests
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_NAME: xp
+          DATABASE_USER: xp
+          DATABASE_PASSWORD: xp
+        run: make e2e-ci
