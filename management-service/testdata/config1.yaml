@@ -1,0 +1,48 @@
+OpenApiSpecsPath: "test-path"
+
+AllowedOrigins:
+  - host-1
+  - host-2
+
+AuthorizationConfig:
+  Enabled: true
+  URL: test-authz-server
+
+DbConfig:
+  User: user
+  Password: password
+  MigrationsPath: file://test-db-migrations
+
+MLPConfig:
+  URL: test-mlp-url
+
+PubSubConfig:
+  Project: test-pubsub-project
+  TopicName: test-pubsub-topic
+
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 9
+    MaxS2CellLevel: 12
+
+NewRelicConfig:
+  Enabled: true
+  AppName: xp
+  License: amazing-license
+  IgnoreStatusCodes:
+    - 403
+    - 404
+    - 405
+  Labels:
+    env: dev
+
+SentryConfig:
+  Labels:
+    app: xp-management-service
+
+DeploymentConfig:
+  EnvironmentType: dev
+
+XpUiConfig:
+  AppDirectory: ui
+  Homepage: /testxp

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "api/proto/experiment.proto";
+import "api/proto/settings.proto";
+
+package pubsub;
+option go_package = "/pubsub";
+
+message MessagePublishState {
+  oneof update {
+    ExperimentCreated experiment_created = 1;
+    ExperimentUpdated experiment_updated = 2;
+
+    ProjectSettingsCreated project_settings_created = 3;
+    ProjectSettingsUpdated project_settings_updated = 4;
+  }
+}

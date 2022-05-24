@@ -1,0 +1,26 @@
+{
+ "1": [
+  {
+   "StringSets": {
+    "string_segmenter": [
+     "seg-1"
+    ]
+   },
+   "IntSets": {
+    "integer_segmenter": [
+     1,
+     2
+    ],
+    "s2_ids": [
+     3592210796974702592
+    ]
+   },
+   "RealSets": {},
+   "StartTime": "2021-01-02T03:05:07Z",
+   "EndTime": "2022-01-02T03:05:07Z",
+   "ExperimentId": 81,
+   "Status": "Active",
+   "Tier": "Default"
+  }
+ ]
+}

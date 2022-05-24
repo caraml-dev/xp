@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package pubsub;
+option go_package = "/pubsub";
+
+message ProjectSettingsCreated { ProjectSettings project_settings = 1; }
+message ProjectSettingsUpdated { ProjectSettings project_settings = 1; }
+
+// ExperimentVariables represents a combination of experiment variables name that a segmenter can derrive from
+message ExperimentVariables { repeated string value = 1; }
+
+// Project Segmenters which holds the list of segmenters, in priority order
+// and the configured ExperimentVariables to derive the segmenter from
+message Segmenters {
+  repeated string names = 1;
+  map<string, ExperimentVariables> variables = 2;
+}
+
+message ProjectSettings {
+  int64 project_id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  string username = 4;
+  string passkey = 5;
+  bool enable_s2id_clustering = 6;
+  Segmenters segmenters = 7;
+  string randomization_key = 8;
+}

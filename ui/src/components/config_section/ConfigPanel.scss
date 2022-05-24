@@ -1,0 +1,32 @@
+@import "node_modules/@elastic/eui/src/global_styling/mixins/typography";
+
+.euiPanel--detailedConfigSection {
+  .euiDescriptionList.euiDescriptionList--responsiveColumn {
+    > * {
+      @include euiTextBreakWord;
+
+      line-height: 2.1 !important;
+      margin-top: 2px !important;
+    }
+
+    *:nth-child(4n-1) {
+      background: #f5f7fa;
+    }
+
+    *:nth-child(4n) {
+      background: #f5f7fa;
+    }
+  }
+
+  .euiTable.euiTable--responsive {
+    tr:nth-child(even) {
+      background: #f5f7fa;
+    }
+    .euiTableCellContent--alignRight {
+      justify-content: center;
+    }
+    .euiTableCellContent svg {
+      margin-right: 0;
+    }
+  }
+}

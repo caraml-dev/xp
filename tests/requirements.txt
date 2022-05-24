@@ -1,0 +1,10 @@
+pytest==6.2.4
+PyYAML==5.4.1
+google-cloud-pubsub==2.7.0
+requests==2.26.0
+python-dotenv==0.19.0
+s2cell==1.4.0
+pytz==2021.1
+flake8
+black==19.10b0
+isort>=5

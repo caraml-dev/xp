@@ -1,0 +1,537 @@
+components:
+  schemas:
+    SelectedTreatmentData:
+      required:
+        - configuration
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          description: Name of the treatment
+        traffic:
+          type: integer
+          format: int32
+          description: |
+            When the experiment is matched, the % traffic to be directed to the treatment.
+            Optional for Switchback Experiments.
+        configuration:
+          type: object
+          description: Custom configuration associated with the given treatment
+    ExperimentTreatment:
+      required:
+        - configuration
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the treatment
+        traffic:
+          type: integer
+          format: int32
+          description: |
+            When the experiment is matched, the % traffic to be directed to the treatment.
+            Optional for Switchback Experiments.
+        configuration:
+          type: object
+          description: Configuration associated with the given treatment
+    TreatmentField:
+      type: string
+      enum:
+        - id
+        - name
+    Treatment:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        configuration:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+    TreatmentHistory:
+      required:
+        - treatment_id
+        - version
+        - id
+        - name
+        - configuration
+        - created_at
+        - updated_at
+        - updated_by
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        treatment_id:
+          type: integer
+          format: int64
+        version:
+          type: integer
+          format: int64
+        configuration:
+          type: object
+        name:
+          type: string
+        updated_by:
+          type: string
+        id:
+          type: integer
+          format: int64
+    Error:
+      required:
+        - code
+        - message
+        - error
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        error:
+          type: string
+    SelectedTreatment:
+      required:
+        - experiment_id
+        - experiment_name
+        - treatment
+      type: object
+      properties:
+        experiment_id:
+          type: integer
+          format: int64
+        experiment_name:
+          type: string
+        treatment:
+          $ref: '#/components/schemas/SelectedTreatmentData'
+    Experiment:
+      required:
+        - project_id
+        - description
+        - end_time
+        - id
+        - interval
+        - name
+        - segment
+        - start_time
+        - status
+        - treatments
+        - tier
+        - type
+        - created_at
+        - updated_at
+        - updated_by
+      type: object
+      properties:
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        project_id:
+          type: integer
+          format: int64
+        treatments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExperimentTreatment'
+        name:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        type:
+          $ref: '#/components/schemas/ExperimentType'
+        end_time:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        status:
+          $ref: '#/components/schemas/ExperimentStatus'
+        segment:
+          $ref: '#/components/schemas/ExperimentSegment'
+        id:
+          type: integer
+          format: int64
+        interval:
+          type: integer
+          format: int32
+          nullable: true
+        tier:
+          $ref: '#/components/schemas/ExperimentTier'
+    ExperimentHistory:
+      required:
+        - experiment_id
+        - version
+        - description
+        - end_time
+        - id
+        - interval
+        - name
+        - segment
+        - start_time
+        - status
+        - tier
+        - treatments
+        - type
+        - created_at
+        - updated_at
+        - updated_by
+      type: object
+      properties:
+        description:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        experiment_id:
+          type: integer
+          format: int64
+        version:
+          type: integer
+          format: int64
+        tier:
+          $ref: '#/components/schemas/ExperimentTier'
+        treatments:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExperimentTreatment'
+        name:
+          type: string
+        start_time:
+          type: string
+          format: date-time
+        type:
+          $ref: '#/components/schemas/ExperimentType'
+        end_time:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        status:
+          $ref: '#/components/schemas/ExperimentStatus'
+        segment:
+          $ref: '#/components/schemas/ExperimentSegment'
+        id:
+          type: integer
+          format: int64
+        interval:
+          type: integer
+          format: int32
+          nullable: true
+    ExperimentSegment:
+      type: object
+    Project:
+      required:
+        - id
+        - created_at
+        - updated_at
+        - username
+        - randomization_key
+        - segmenters
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        username:
+          type: string
+        segmenters:
+          type: array
+          items:
+            type: string
+        randomization_key:
+          type: string
+    ProjectSettings:
+      required:
+        - project_id
+        - created_at
+        - updated_at
+        - username
+        - passkey
+        - randomization_key
+        - segmenters
+        - enable_s2id_clustering
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        username:
+          type: string
+        passkey:
+          type: string
+        enable_s2id_clustering:
+          type: boolean
+        segmenters:
+          $ref: '#/components/schemas/ProjectSegmenters'
+        randomization_key:
+          type: string
+        treatment_schema:
+          $ref: '#/components/schemas/TreatmentSchema'
+        validation_url:
+          type: string
+
+    ProjectSegmenters:
+      required:
+        - names
+        - variables
+      type: object
+      properties:
+        names:
+          description: List of segmenters name within Project, in priority order.
+          type: array
+          items: 
+            type: string
+        variables:
+          description: Mapping of segmenter to the configured experiment variables
+          type: object
+          additionalProperties:
+            description: List of variables in which the selected segmenter is expected to be derived from
+            type: array
+            items:
+              type: string
+
+    TreatmentSchema:
+      description: Object containing information to define a valid treatment schema
+      required:
+        - rules
+      type: object
+      properties:
+        rules:
+          $ref: '#/components/schemas/Rules'
+
+    Rules:
+      description: List of rules that define a valid treatment schema
+      type: array
+      items:
+        $ref: '#/components/schemas/Rule'
+
+    Rule:
+      description: A rule that forms part of a definition of a valid treatment schema
+      type: object
+      required:
+        - name
+        - predicate
+      properties:
+        name:
+          type: string
+        predicate:
+          description: A Go template expression that must return a boolean value
+          type: string
+
+    ExperimentType:
+      type: string
+      enum:
+        - A/B
+        - Switchback
+    ExperimentStatus:
+      type: string
+      enum:
+        - inactive
+        - active
+    ExperimentTier:
+      type: string
+      enum:
+        - default
+        - override
+      default: default
+    Paging:
+      required:
+        - total
+        - page
+        - pages
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int32
+          description: Total number of results matching the query criteria
+        page:
+          type: integer
+          format: int32
+          description: Number of the current page
+        pages:
+          type: integer
+          format: int32
+          description: Total number of pages
+    PreRequisite:
+      required:
+        - segmenter_name
+        - segmenter_values
+      type: object
+      properties:
+        segmenter_name:
+          type: string
+        segmenter_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/SegmenterValues'
+    Constraint:
+      required:
+        - pre_requisites
+        - allowed_values
+      type: object
+      properties:
+        pre_requisites:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreRequisite'
+        allowed_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/SegmenterValues'
+        options:
+          $ref: '#/components/schemas/SegmenterOptions'
+    SegmenterOptions:
+      type: object
+      additionalProperties: true
+    SegmenterValues:
+      oneOf:
+        - type: string
+        - type: boolean
+        - type: integer
+        - type: number
+    SegmenterType:
+      type: string
+      enum:
+        - string
+        - bool
+        - integer
+        - real
+    Segmenter:
+      required:
+        - name
+        - type
+        - options
+        - multi_valued
+        - treatment_request_fields
+        - constraints
+        - required
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/SegmenterType'
+        options:
+          $ref: '#/components/schemas/SegmenterOptions'
+        multi_valued:
+          type: boolean
+        treatment_request_fields:
+          description: List of varying combination of variables in which this segmenter is can be derived from
+          type: array
+          items:
+            description: List of experiment variables, when used in conjunction, can be derived this segmenter
+            type: array
+            items: 
+              type: string
+        constraints:
+          type: array
+          items:
+            $ref: '#/components/schemas/Constraint'
+        required:
+          type: boolean
+        description:
+          type: string
+    SegmentField:
+      type: string
+      enum:
+        - id
+        - name
+    Segment:
+      type: object
+      properties:
+        project_id:
+          type: integer
+          format: int64
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        segment:
+          $ref: '#/components/schemas/ExperimentSegment'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+    SegmentHistory:
+      required:
+        - segment_id
+        - id
+        - version
+        - name
+        - segment
+        - created_at
+        - updated_at
+        - updated_by
+      type: object
+      properties:
+        segment_id:
+          type: integer
+          format: int64
+        id:
+          type: integer
+          format: int64
+        version:
+          type: integer
+          format: int64
+        name:
+          type: string
+        segment:
+          $ref: '#/components/schemas/ExperimentSegment'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string

@@ -1,0 +1,11 @@
+.activityConfigPanel {
+  .euiDescriptionList {
+    .euiDescriptionList__title {
+      width: 110px;
+    }
+
+    .euiDescriptionList__description {
+      width: calc(100% - 110px);
+    }
+  }
+}

@@ -1,0 +1,38 @@
+SwaggerConfig:
+  OpenApiSpecsPath: "test-path"
+  AllowedOrigins:
+    - host-1
+    - host-2
+
+Host: localhost
+
+ProjectIds: 1,2
+ManagementService:
+  URL: localhost:3000/v1
+  AuthorizationEnabled: true
+
+AssignedTreatmentLogger:
+  Kind: bq
+  BQConfig:
+    Project: dev
+    Dataset: xp-test-dataset
+    Table: xp-test-table
+
+DebugConfig:
+  OutputPath: /tmp1
+
+NewRelicConfig:
+  Enabled: true
+  AppName: xp-treatment-service-test
+  License: amazing-license
+  IgnoreStatusCodes:
+    - 403
+    - 404
+    - 405
+  Labels:
+    env: dev
+
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 9
+    MaxS2CellLevel: 15

@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package segmenters;
+option go_package = "github.com/gojek/xp/common/segmenters";
+
+// SegmenterValue represents a single value of a segmenter
+message SegmenterValue {
+  oneof value {
+    string string = 1;
+    bool bool = 2;
+    sint64 integer = 3;
+    double real = 4;
+  }
+}
+
+// SegmenterValueType represents the possible types that segmenter values can
+// take.
+enum SegmenterValueType {
+  STRING = 0;
+  BOOL = 1;
+  INTEGER = 2;
+  REAL = 3;
+}
+
+// ListSegmenterValue is a list of SegmenterValue
+message ListSegmenterValue { repeated SegmenterValue values = 1; }
+
+// PreRequisite represents a single requirement related to a free segmenter
+message PreRequisite {
+  // segmenter_name is the name of the free segmenter. This must be
+  // single-valued.
+  string segmenter_name = 1;
+  // segmenter_values is the set of values of the pre-requisite segmenter, one
+  // of which must be matched.
+  ListSegmenterValue segmenter_values = 2;
+}
+
+// Constraint captures a set of requirements that must be met for the use of
+// certain segmenter values.
+message Constraint {
+  // pre_requisites is the list of conditions, all of which must be matched for
+  // the use of the allowed_values of the current segmenter.
+  repeated PreRequisite pre_requisites = 1;
+  // allowed_values is the list of values of the current segmenter that are
+  // available when all the pre-requisites are satisfied.
+  ListSegmenterValue allowed_values = 2;
+  // options is an optional map of the segmenter values (human-readable name ->
+  // internal value) applicable under the current constraint that, if set,
+  // overrides the global options map
+  map<string, SegmenterValue> options = 3;
+}
+
+// ExperimentVariables represents a combination of experiment variables name that a segmenter can derrive from
+message ExperimentVariables { repeated string value = 1;}
+
+// ListExperimentVariables is a list of ExperimentVariables, each of which can be used to derive a segmenter
+message ListExperimentVariables { repeated ExperimentVariables values = 1; }
+
+// SegmenterConfiguration holds the configuration for a segmenter
+message SegmenterConfiguration {
+  // name is the human-readable name of the segmenter. This must be unique
+  // across various segmenters.
+  string name = 1;
+  // type is the type of the segmenter's values. All values of a segmenter
+  // should be of the same type.
+  SegmenterValueType type = 2;
+  // options is an optional map of the segmenter values (human-readable name ->
+  // internal value)
+  map<string, SegmenterValue> options = 3;
+  // multi_valued represents whether multiple values of the segmenter can be
+  // chosen in an experiment. Only single-valued segmenters can act as
+  // pre-requisites.
+  bool multi_valued = 4;
+  // treatment_request_fields is the name of the field(s) in the fetch treatment
+  // request that can be used to determine the value of the segmenter. This can
+  // be the segmenter value as is (in which case, this field can be left empty
+  // and the segmenter's name will be used to match the data in the incoming
+  // request), or one or more other attributes that can be used to compute the
+  // segmenter's value. Eg: A segmenter that checks whether the current month
+  // has 31 days only needs the timezone of the request to be supplied.
+  ListExperimentVariables treatment_request_fields = 5;
+  // constraints captures an optional list of rules. Each constraint has one or
+  // more pre-requisite conditions, which when satisfied, narrows the list of
+  // available values for the current segmenter. If none of the constraints are
+  // satisfied, all values of the segmenter described by the options field may
+  // be applicable.
+  repeated Constraint constraints = 6;
+  // required represents whether the segmenter must be chosen in an experiment
+  bool required = 7;
+  // additional information about segmenter
+  string description = 8;
+}

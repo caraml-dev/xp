@@ -1,0 +1,52 @@
+OpenApiSpecsPath: "../api"
+
+# Port number XP Management API server listens to
+Port: 3000
+
+# For CORS
+AllowedOrigins: "*"
+
+AuthorizationConfig:
+  Enabled: false
+  URL: http://localhost:4466/
+
+DeploymentConfig:
+  EnvironmentType: local
+
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 10
+    MaxS2CellLevel: 14
+
+DbConfig:
+  Host: localhost
+  Port: 5432
+  Database: xp
+  User: xp
+  Password: xp
+  MigrationsPath: file://database/db-migrations
+
+MLPConfig:
+  URL: http://localhost:8080/api/v1
+
+PubSubConfig:
+  Project: dev
+  TopicName: xp-update
+
+NewRelicConfig:
+  Enabled: false
+  AppName: xp-management-service
+  License: newrelic-license-secret
+  IgnoreStatusCodes:
+    - 400
+    - 401
+    - 403
+    - 404
+    - 405
+    - 412
+
+SentryConfig:
+  Enabled: false
+  DSN: xxx.xxx.xxx
+  Labels:
+    App: xp-management-service

@@ -1,0 +1,11 @@
+Host: localhost
+Port: 3030
+
+PubSub:
+  Project: test-project
+  TopicName: test-topic
+
+Sentry:
+  Url: https://yy.yy.yy
+  Labels:
+    env: local
