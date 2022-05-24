@@ -9,13 +9,13 @@ ALTER TABLE treatments DROP CONSTRAINT treatment_unique_name;
 ALTER TABLE segments DROP CONSTRAINT segment_unique_name;
 
 -- Drop tables
+DROP TABLE IF EXISTS segment_history;
+DROP TABLE IF EXISTS segments;
+DROP TABLE IF EXISTS treatment_history;
+DROP TABLE IF EXISTS treatments;
+DROP TABLE IF EXISTS experiment_history;
 DROP TABLE IF EXISTS experiments;
 DROP TABLE IF EXISTS settings;
-DROP TABLE IF EXISTS experiment_history;
-DROP TABLE IF EXISTS treatments;
-DROP TABLE IF EXISTS treatment_history;
-DROP TABLE IF EXISTS segments;
-DROP TABLE IF EXISTS segment_history;
 
 -- Drop types
 DROP TYPE IF EXISTS experiment_status;
