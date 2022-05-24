@@ -21,6 +21,14 @@ protoc_dir=${PWD}/.protoc
 
 OPENAPI_VERSION=1.8.1
 
+# ==================================
+# General
+# ==================================
+
+format: format-python format-go
+
+lint: lint-python lint-go
+
 generate-api:
 	test -x ${GOPATH}/bin/oapi-codegen || go get github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v${OPENAPI_VERSION}
 	oapi-codegen -config api/common/schema.conf api/schema.yaml
@@ -29,6 +37,10 @@ generate-api:
 	oapi-codegen -templates api/templates/chi -config api/management/server.conf api/experiments.yaml
 	oapi-codegen -config api/mockmanagement/server.conf api/experiments.yaml
 	oapi-codegen -config api/treatment/server.conf api/treatment.yaml
+
+# ==================================
+# Setup Management & Treatment Services
+# ==================================
 
 local-authz-server:
 	@docker-compose up -d postgres-auth && docker-compose run keto-server migrate sql -e
@@ -82,7 +94,7 @@ tidy-treatment-service:
 
 tidy: tidy-management-service tidy-treatment-service
 
-fmt:
+format-go:
 	@echo "> Formatting code"
 	gofmt -s -w ${MANAGEMENT_SVC_PATH}
 	gofmt -s -w ${TREATMENT_SVC_PATH}
@@ -98,7 +110,7 @@ lint-treatment-service:
 	@echo "> Linting Treatment Service code..."
 	cd ${TREATMENT_SVC_PATH} && golangci-lint run --timeout 5m
 
-lint: lint-management-service lint-treatment-service
+lint-go: lint-management-service lint-treatment-service
 
 # ==================================
 # Test recipes
