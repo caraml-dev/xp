@@ -1,0 +1,26 @@
+name: Test Dependencies
+description: Configure necessary steps for running CI tests
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Go 1.16
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.16"
+
+    - name: Cache Dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    # Since Github actions' services don't expose command like how docker-compose does, we'll need to
+    # start Google Pubsub Emulator separately since it requires running the command
+    # Related schema: https://json.schemastore.org/github-workflow.json
+    - name: Setup PubSub emulator
+      shell: bash
+      run: ./.github/emulator/start-emulator.sh pubsub

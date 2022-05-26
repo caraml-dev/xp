@@ -63,12 +63,10 @@ jobs:
           skip-go-installation: true
           args: --timeout 3m --verbose
 
-  unit-tests:
+  unit-tests-management:
     runs-on: ubuntu-latest
     env:
       GOPATH: ${{ github.workspace }}/api/.go
-    needs:
-      - lint-go
     services:
       postgres:
         image: postgres:13-alpine
@@ -83,30 +81,15 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go 1.16
-        uses: actions/setup-go@v2
+      - name: Check out code
+        uses: actions/checkout@v3
         with:
-          go-version: "1.16"
+          fetch-depth: 0
 
-      - name: Cache Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
-      # Since Github actions' services don't expose command like how docker-compose does, we'll need to
-      # start Google Pubsub Emulator separately since it requires running the command
-      # Related schema: https://json.schemastore.org/github-workflow.json
-      - name: Setup PubSub emulator
-        run: ./.github/emulator/start-emulator.sh pubsub
-
+      - name: Setup Test Dependencies
+        uses: ./.github/actions/setup-tests
+      
       - name: Run Management Service test
         env:
           DATABASE_HOST: localhost
@@ -115,6 +98,33 @@ jobs:
           DATABASE_PASSWORD: xp
         run: make test-management-service
 
+  unit-tests-treatment:
+    runs-on: ubuntu-latest
+    env:
+      GOPATH: ${{ github.workspace }}/api/.go
+    services:
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_DB: xp
+          POSTGRES_USER: xp
+          POSTGRES_PASSWORD: xp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Test Dependencies
+        uses: ./.github/actions/setup-tests
+      
       - name: Run Treatment Service test
         env:
           DATABASE_HOST: localhost
@@ -127,8 +137,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOPATH: ${{ github.workspace }}/api/.go
-    needs:
-      - lint-python
     services:
       postgres:
         image: postgres:13-alpine
@@ -143,14 +151,14 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go 1.16
-        uses: actions/setup-go@v2
+      - name: Check out code
+        uses: actions/checkout@v3
         with:
-          go-version: "1.16"
+          fetch-depth: 0
+
+      - name: Setup Test Dependencies
+        uses: ./.github/actions/setup-tests
       
       - name: Setup Python
         id: setup-python
@@ -164,12 +172,6 @@ jobs:
       
       - name: Build binaries
         run: make build
-
-      # Since Github actions' services don't expose command like how docker-compose does, we'll need to
-      # start Google Pubsub Emulator separately since it requires running the command
-      # Related schema: https://json.schemastore.org/github-workflow.json
-      - name: Setup PubSub emulator
-        run: ./.github/emulator/start-emulator.sh pubsub
 
       - name: Run E2E tests
         env:
