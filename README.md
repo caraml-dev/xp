@@ -1,6 +1,6 @@
 # xp
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/feast-dev/feast/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/gojek/xp/blob/master/LICENSE)
 
 ## Overview
 
@@ -54,26 +54,8 @@ To test authorization for Management Service locally, make the following changes
 - Set AuthorizationConfig.Enabled=true in the config file that's being used
 - Issue requests to the app with the header User-Email: test-user@gojek.com
 
-### API Specifications
+## Contributing
 
-The OpenAPI specs for both services are captured in the `api/` folder. If these specs are updated, the developer is required to regenerate the API types and interfaces using the command `make generate-api`.
+XP is still under active development. Please have a look at our contributing and development guides if you want to contribute to the project:
 
-### Tests
-
-For **Unit** tests, we follow the convention of keeping it beside the main source file.
-
-For **Integration** tests, they are available for Treatment Service currently where we mock certain functionality of Management Service under `treatment-service/testhelper/mockmanagement` and utilize them in `treatment-service/integration-test`.
-
-**End-to-End** tests can be found in tests/e2e, where we build Management Service and Treatment Service binaries to be used in Pytest.
-
-### Code style guidelines
-
-We are using [golangci-lint](https://github.com/golangci/golangci-lint), and we can run the following commands for formatting.
-
-```bash
-# Formatting code
-make fmt
-
-# Checking for linting issues
-make lint
-```
+- [Contribution Process for XP](https://github.com/gojek/xp/blob/main/CONTRIBUTING.md)
