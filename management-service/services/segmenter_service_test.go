@@ -1,6 +1,8 @@
 package services_test
 
 import (
+	"encoding/json"
+	"log"
 	"reflect"
 	"testing"
 
@@ -8,6 +10,7 @@ import (
 
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	"github.com/gojek/xp/management-service/models"
+	"github.com/gojek/xp/management-service/segmenters"
 	"github.com/gojek/xp/management-service/services"
 )
 
@@ -147,8 +150,10 @@ func (s *SegmenterServiceTestSuite) TestGetFormattedSegmenters() {
 }
 
 func (s *SegmenterServiceTestSuite) TestValidateExperimentSegment() {
-	s2IdFloat := []interface{}{float64(3592210809859604480)}
-	daysOfWeekFloat := []interface{}{float64(1), float64(2)}
+	countryId := []interface{}{"ID"}
+	countries := []interface{}{"ID", "SG"}
+	areasId := []interface{}{float64(1), float64(2)}
+	areasSg := []interface{}{float64(3)}
 
 	tests := map[string]struct {
 		userSegmenters []string
@@ -156,16 +161,32 @@ func (s *SegmenterServiceTestSuite) TestValidateExperimentSegment() {
 		errString      string
 	}{
 		"success | absent segmenters": {
-			userSegmenters: []string{"s2_ids", "days_of_week"},
+			userSegmenters: []string{"country", "area"},
 			expSegment: models.ExperimentSegmentRaw{
-				"s2_ids": s2IdFloat,
+				"country": countryId,
 			},
 		},
-		"success": {
-			userSegmenters: []string{"s2_ids", "days_of_week"},
+		"failure | single value check failed": {
+			userSegmenters: []string{"area", "country"},
 			expSegment: models.ExperimentSegmentRaw{
-				"s2_ids":       s2IdFloat,
-				"days_of_week": daysOfWeekFloat,
+				"area":    areasId,
+				"country": countries,
+			},
+			errString: "Segmenter country is configured as single-valued but has multiple input values",
+		},
+		"failure | constraint failed": {
+			userSegmenters: []string{"country", "area"},
+			expSegment: models.ExperimentSegmentRaw{
+				"country": countryId,
+				"area":    areasSg,
+			},
+			errString: "Values for segmenter area do not satisfy the constraint",
+		},
+		"success": {
+			userSegmenters: []string{"country", "area"},
+			expSegment: models.ExperimentSegmentRaw{
+				"country": countryId,
+				"area":    areasId,
 			},
 		},
 	}
@@ -325,6 +346,32 @@ func (s *SegmenterServiceTestSuite) TestValidateRequiredSegmenters() {
 	}
 }
 
+func (s *SegmenterServiceTestSuite) TestValidateDependentSegmenters() {
+	tests := map[string]struct {
+		providedSegmenters []string
+		errString          string
+	}{
+		"failure | missing dependent segmenter": {
+			providedSegmenters: []string{"area"},
+			errString:          "segmenter area requires country to also be chosen",
+		},
+		"success": {
+			providedSegmenters: []string{"country", "area"},
+		},
+	}
+
+	for name, data := range tests {
+		s.Suite.T().Run(name, func(t *testing.T) {
+			err := s.SegmenterService.ValidatePrereqSegmenters(data.providedSegmenters)
+			if data.errString == "" {
+				s.Suite.Require().NoError(err)
+			} else {
+				s.Suite.Assert().EqualError(err, data.errString)
+			}
+		})
+	}
+}
+
 func (s *SegmenterServiceTestSuite) TestValidateExperimentVariables() {
 	tests := map[string]struct {
 		projectSegmenters models.ProjectSegmenters
@@ -394,5 +441,105 @@ func (s *SegmenterServiceTestSuite) TestValidateExperimentVariables() {
 				s.Suite.Assert().EqualError(err, data.errString)
 			}
 		})
+	}
+}
+
+func NewCountrySegmenter(_ json.RawMessage) (segmenters.Segmenter, error) {
+	segmenterName := "country"
+	countryConfig := &_segmenters.SegmenterConfiguration{
+		Name: segmenterName,
+		Type: _segmenters.SegmenterValueType_STRING,
+		Options: map[string]*_segmenters.SegmenterValue{
+			"indonesia": {Value: &_segmenters.SegmenterValue_String_{String_: "ID"}},
+			"singapore": {Value: &_segmenters.SegmenterValue_String_{String_: "SG"}},
+		},
+		TreatmentRequestFields: &_segmenters.ListExperimentVariables{
+			Values: []*_segmenters.ExperimentVariables{
+				{
+					Value: []string{segmenterName},
+				},
+				{
+					Value: []string{"area"},
+				},
+			},
+		},
+		MultiValued: false,
+		Required:    false,
+	}
+
+	return segmenters.NewBaseSegmenter(countryConfig), nil
+}
+
+func NewAreaSegmenter(configData json.RawMessage) (segmenters.Segmenter, error) {
+	segmenterName := "area"
+	areaConfig := _segmenters.SegmenterConfiguration{
+		Name:        segmenterName,
+		Type:        _segmenters.SegmenterValueType_INTEGER,
+		MultiValued: true,
+		TreatmentRequestFields: &_segmenters.ListExperimentVariables{
+			Values: []*_segmenters.ExperimentVariables{
+				{
+					Value: []string{segmenterName},
+				},
+			},
+		},
+		Required: false,
+		Constraints: []*_segmenters.Constraint{
+			{
+				AllowedValues: &_segmenters.ListSegmenterValue{
+					Values: []*_segmenters.SegmenterValue{
+						{Value: &_segmenters.SegmenterValue_Integer{Integer: 3}},
+					},
+				},
+				Options: map[string]*_segmenters.SegmenterValue{
+					"area3": {Value: &_segmenters.SegmenterValue_Integer{Integer: 3}},
+				},
+				PreRequisites: []*_segmenters.PreRequisite{
+					{
+						SegmenterName: "country",
+						SegmenterValues: &_segmenters.ListSegmenterValue{
+							Values: []*_segmenters.SegmenterValue{
+								{Value: &_segmenters.SegmenterValue_String_{String_: "SG"}},
+							},
+						},
+					},
+				},
+			},
+			{
+				AllowedValues: &_segmenters.ListSegmenterValue{
+					Values: []*_segmenters.SegmenterValue{
+						{Value: &_segmenters.SegmenterValue_Integer{Integer: 1}},
+						{Value: &_segmenters.SegmenterValue_Integer{Integer: 2}},
+					},
+				},
+				Options: map[string]*_segmenters.SegmenterValue{
+					"area1": {Value: &_segmenters.SegmenterValue_Integer{Integer: 1}},
+					"area2": {Value: &_segmenters.SegmenterValue_Integer{Integer: 2}},
+				},
+				PreRequisites: []*_segmenters.PreRequisite{
+					{
+						SegmenterName: "country",
+						SegmenterValues: &_segmenters.ListSegmenterValue{
+							Values: []*_segmenters.SegmenterValue{
+								{Value: &_segmenters.SegmenterValue_String_{String_: "ID"}},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	return segmenters.NewBaseSegmenter(&areaConfig), nil
+}
+
+func init() {
+	err := segmenters.Register("country", NewCountrySegmenter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = segmenters.Register("area", NewAreaSegmenter)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
