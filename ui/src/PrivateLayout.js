@@ -10,9 +10,10 @@ import {
 } from "@gojek/mlp-ui";
 import { navigate } from "@reach/router";
 
-import { appConfig } from "config";
+import { useConfig } from "config";
 
 export const PrivateLayout = (Component) => {
+  const { appConfig } = useConfig();
   return (props) => (
     <ApplicationsContextProvider>
       <ProjectsContextProvider>

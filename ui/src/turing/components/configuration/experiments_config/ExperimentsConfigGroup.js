@@ -14,15 +14,16 @@ import {
 import { OverlayMask } from "@gojek/mlp-ui";
 import moment from "moment";
 
-import { appConfig } from "config";
+import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
 
 import "./ExperimentsConfigGroup.scss";
 
 export const ExperimentsConfigGroup = ({ projectId }) => {
+  const { appConfig } = useConfig();
   const timestamp = useMemo(
     () => moment.utc().format(appConfig.datetime.format),
-    []
+    [appConfig]
   );
   // Get experiments that are currently active
   const [{ data, isLoading, error }] = useXpApi(

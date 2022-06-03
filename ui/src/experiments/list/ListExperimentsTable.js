@@ -10,7 +10,7 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 
-import { appConfig } from "config";
+import { useConfig } from "config";
 import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 import { formatDateCell } from "utils/helpers";
 
@@ -24,6 +24,7 @@ const ListExperimentsTable = ({
   onRowClick,
   props,
 }) => {
+  const { appConfig } = useConfig();
   const pagination = {
     pageIndex: page.index,
     pageSize: page.size,

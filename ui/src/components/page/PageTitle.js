@@ -2,9 +2,11 @@ import React from "react";
 
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiTitle } from "@elastic/eui";
 
-import { appConfig } from "../../config";
+import { useConfig } from "config";
 
 export const PageTitle = ({ icon, title, size, postpend }) => {
+  const { appConfig } = useConfig();
+
   return (
     <EuiFlexGroup direction="row" gutterSize="s" alignItems="center">
       <EuiFlexItem grow={false}>

@@ -3,9 +3,10 @@ import React from "react";
 import { EuiDatePicker, EuiDatePickerRange, EuiFormRow } from "@elastic/eui";
 import { FormLabelWithToolTip } from "@gojek/mlp-ui";
 
-import { appConfig } from "config";
+import { useConfig } from "config";
 
 const ExperimentDateFilter = ({ startTime, endTime, onChange, errors }) => {
+  const { appConfig } = useConfig();
   return (
     <EuiFormRow
       fullWidth
