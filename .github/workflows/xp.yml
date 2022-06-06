@@ -248,6 +248,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Download UI Dist
+        uses: actions/download-artifact@v2
+        with:
+          name: xp-ui-dist
+          path: ui/build
+
       - name: Construct vendor directory
         working-directory: management-service
         run: |
