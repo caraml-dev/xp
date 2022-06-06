@@ -31,6 +31,11 @@ format: format-python format-go
 .PHONY: lint
 lint: lint-python lint-go
 
+.PHONY: vendor
+vendor:
+	@echo "Fetching dependencies..."
+	go mod vendor
+
 .PHONY: version
 version:
 	$(eval VERSION=$(if $(OVERWRITE_VERSION),$(OVERWRITE_VERSION),v$(shell scripts/vertagen/vertagen.sh)))
