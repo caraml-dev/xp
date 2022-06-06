@@ -1,0 +1,32 @@
+{{- if .Values.xpTreatment.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "xp.fullname" . }}
+  labels:
+    {{- include "xp.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "xp.fullname" . }}
+  minReplicas: {{ .Values.xpTreatment.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.xpTreatment.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.xpTreatment.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.xpTreatment.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.xpTreatment.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.xpTreatment.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

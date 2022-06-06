@@ -1,0 +1,137 @@
+xpApi:
+  image:
+    # -- Docker registry for XP API image
+    registry: docker.io/
+    # -- Docker image repository for XP API
+    repository: xp-management
+    # -- Docker image tag for XP API
+    tag: latest
+    # -- Docker image pull policy
+    pullPolicy: IfNotPresent
+
+  labels: {}
+  replicaCount: 1
+
+  # -- Resources requests and limits for XP API. This should be set 
+  # according to your cluster capacity and service level objectives.
+  # Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  resources: {}
+
+  livenessProbe:
+    # -- HTTP path for liveness check
+    path: "/v1/internal/live"
+    # -- Liveness probe delay and thresholds
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  readinessProbe:
+    # -- HTTP path for readiness check
+    path: "/v1/internal/ready"
+    # -- Liveness probe delay and thresholds
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  service:
+    # -- XP API Kubernetes service port number
+    externalPort: 8080
+    # -- XP API container port number
+    internalPort: 8080
+
+  ingress:
+    # -- Enable ingress to provision Ingress resource for external access to XP API
+    enabled: false
+    # -- Set host value to enable name based virtual hosting. This allows routing
+    # HTTP traffic to multiple host names at the same IP address. If no host is
+    # specified, the ingress rule applies to all inbound HTTP traffic through 
+    # the IP address specified.
+    # https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting
+    host: ""
+    # -- Ingress class annotation to add to this Ingress rule, 
+    # useful when there are multiple ingress controllers installed
+    class: ""
+
+  # -- XP API server configuration. 
+  config: {}
+
+  # -- XP UI configuration.
+  uiConfig:
+    apiConfig:
+      xpApiUrl: /api/xp/v1
+      mlpApiUrl: /api/v1
+    appConfig:
+      docsUrl:
+        - label: XP User Guide
+          href: https://github.com/gojek/xp/tree/main/docs
+    authConfig:
+      oauthClientId: ""
+    sentryConfig: { }
+
+  # -- List of string containing additional XP API server arguments. For
+  # example, multiple "-config" can be specified to use multiple config files
+  extraArgs: []
+  # Example
+  # - --config=/etc/secrets/experiment.yaml
+  # - --config=/etc/secrets/database.yaml
+
+  # -- List of extra environment variables to add to XP API server container
+  extraEnvs: []
+  # # Example
+  # - name: DEMO_GREETING
+  #   value: "Hello from the environment"
+
+  # -- List of extra labels to add to XP API K8s resources
+  extraLabels: {}
+
+  # -- Extra volumes to attach to the Pod. For example, you can mount 
+  # additional secrets to these volumes
+  extraVolumes: []
+  # # Example
+  # - name: varlog
+  #   emptyDir: {}
+
+  # -- Extra volume mounts to attach to XP API server container. For example
+  # to mount the extra volume containing secrets
+  extraVolumeMounts: []
+  # # Example
+  # - name: varlog
+  #   mountPath: /var/log
+
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  sentry:
+    enabled: false
+    # -- Sentry DSN value used by both XP API and XP UI
+    dsn: ""
+
+global:
+  sentry:
+    # -- (string) Global Sentry DSN value
+    dsn:
+
+  mlp:
+    encryption:
+      # -- (string) Global MLP Encryption Key to be used by all MLP components
+      key:
+
+swaggerUi:
+  # -- Docker tag for Swagger UI https://hub.docker.com/r/swaggerapi/swagger-ui
+  image:
+    tag: v3.47.1
+  # -- URL of API server
+  apiServer: http://127.0.0.1/v1
+  service:
+    # -- Swagger UI container port number
+    internalPort: 8081
+    # -- Swagger UI Kubernetes service port number
+    externalPort: 8080
