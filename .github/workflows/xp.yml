@@ -250,7 +250,9 @@ jobs:
 
       - name: Construct vendor directory
         working-directory: management-service
-        run: make vendor
+        run: |
+          echo "Fetching dependencies..."
+          go mod vendor
 
       - name: Build Docker image
         id: build-image
