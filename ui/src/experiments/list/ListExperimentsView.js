@@ -18,7 +18,7 @@ import classNames from "classnames";
 
 import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
-import { appConfig } from "config";
+import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
 
 import ListExperimentsTable from "./ListExperimentsTable";
@@ -30,6 +30,7 @@ import SearchExperimentsPanel from "./search/SearchExperimentsPanel";
 import "./ListExperimentsView.scss";
 
 const ListExperimentsComponent = ({ projectId, props }) => {
+  const { appConfig } = useConfig();
   const [results, setResults] = useState({ items: [], totalItemCount: 0 });
   const [page, setPage] = useState({
     index: 0,

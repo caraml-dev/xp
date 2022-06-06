@@ -8,7 +8,7 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 
-import { appConfig } from "config";
+import { useConfig } from "config";
 import { formatDateCell } from "utils/helpers";
 
 const ListExperimentHistoryTable = ({
@@ -20,6 +20,7 @@ const ListExperimentHistoryTable = ({
   onPaginationChange,
   onRowClick,
 }) => {
+  const { appConfig } = useConfig();
   const pagination = {
     pageIndex: page.index,
     pageSize: page.size,

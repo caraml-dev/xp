@@ -2,9 +2,10 @@ import { useContext } from "react";
 
 import { AuthContext, useApi } from "@gojek/mlp-ui";
 
-import { apiConfig } from "config";
+import { useConfig } from "config";
 
 export const useXpApi = (endpoint, options, result, callImmediately = true) => {
+  const { apiConfig } = useConfig();
   const authCtx = useContext(AuthContext);
 
   return useApi(

@@ -1,3 +1,7 @@
+import React from "react";
+
+import objectAssignDeep from "object-assign-deep";
+
 /*
  * In development environment, we set xpApiUrl and mlpApiUrl to unreachable paths
  * so that the requests will be made to the given API servers through proxying
@@ -7,7 +11,7 @@
  * When the API's origin differs from that of the UI, appropriate CORS policies are expected
  * to be in place on the API server.
  */
-export const apiConfig = {
+const apiConfig = {
   apiTimeout: process.env.REACT_APP_API_TIMEOUT || 5000,
   xpApiUrl:
     process.env.NODE_ENV === "development"
@@ -19,7 +23,7 @@ export const apiConfig = {
       : process.env.REACT_APP_MLP_API,
 };
 
-export const authConfig = {
+const authConfig = {
   oauthClientId: process.env.REACT_APP_OAUTH_CLIENT_ID,
 };
 
@@ -45,7 +49,27 @@ export const appConfig = {
   },
 };
 
-export const sentryConfig = {
+const sentryConfig = {
   dsn: process.env.REACT_APP_SENTRY_DSN,
   environment: appConfig.environment,
 };
+
+const buildTimeConfig = {
+  apiConfig,
+  authConfig,
+  appConfig,
+  sentryConfig,
+};
+
+const ConfigContext = React.createContext({});
+
+export const ConfigProvider = ({ children }) => {
+  const runTimeConfig = window.xpConfig;
+  const config = objectAssignDeep({}, buildTimeConfig, runTimeConfig);
+
+  return (
+    <ConfigContext.Provider value={config}>{children}</ConfigContext.Provider>
+  );
+};
+
+export const useConfig = () => React.useContext(ConfigContext);

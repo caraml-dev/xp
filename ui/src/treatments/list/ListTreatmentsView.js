@@ -16,7 +16,7 @@ import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
-import { appConfig } from "config";
+import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
 
 import ListTreatmentsTable from "./ListTreatmentsTable";
@@ -25,6 +25,7 @@ import TreatmentSearchContext, {
 } from "./search/context";
 
 const ListTreatmentsComponent = ({ projectId, props }) => {
+  const { appConfig } = useConfig();
   const [results, setResults] = useState({ items: [], totalItemCount: 0 });
   const [page, setPage] = useState({
     index: 0,

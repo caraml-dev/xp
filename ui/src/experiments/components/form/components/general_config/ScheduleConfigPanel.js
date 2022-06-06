@@ -13,7 +13,7 @@ import moment from "moment";
 
 import SuperSelectWithDescription from "components/form/select/SuperSelectWithDescription";
 import { Panel } from "components/panel/Panel";
-import { appConfig } from "config";
+import { useConfig } from "config";
 
 export const ScheduleConfigPanel = ({
   status,
@@ -23,6 +23,7 @@ export const ScheduleConfigPanel = ({
   onChange,
   errors = {},
 }) => {
+  const { appConfig } = useConfig();
   const onChangeTime = (time_field) => (time) => {
     let utcTime = time;
     if (time.utcOffset !== 0) {

@@ -4,12 +4,13 @@ import { EuiPanel } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
-import { appConfig } from "config";
+import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
 
 import ListTreatmentHistoryTable from "./ListTreatmentHistoryTable";
 
 const ListTreatmentHistoryView = ({ treatment, ...props }) => {
+  const { appConfig } = useConfig();
   const [page, setPage] = useState({
     index: 0,
     size: appConfig.pagination.defaultPageSize,

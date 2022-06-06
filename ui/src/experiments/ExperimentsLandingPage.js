@@ -3,6 +3,7 @@ import React from "react";
 import { Redirect, Router, useLocation } from "@reach/router";
 
 import LandingView from "components/page/LandingView";
+import { ConfigProvider } from "config";
 import { ProjectContextProvider } from "providers/project/context";
 
 import CreateSegmentView from "../segments/create/CreateSegmentView";
@@ -24,58 +25,60 @@ const ExperimentsLandingPage = ({ projectId, ...props }) => {
   /* Application Routes should be defined here, as ExperimentsLandingPage component is
      being exposed for use via MFE architecture. */
   return (
-    <ProjectContextProvider>
-      <Router>
-        <CreateSettingsView path="/settings/create" />
-        <SettingsDetailsView path="/settings/*" />
+    <ConfigProvider>
+      <ProjectContextProvider>
+        <Router>
+          <CreateSettingsView path="/settings/create" />
+          <SettingsDetailsView path="/settings/*" />
 
-        <TreatmentHistoryDetailsView path="/treatments/:treatmentId/history/:version" />
-        <LandingView
-          Component={ListTreatmentsView}
-          name="Treatments"
-          projectId={projectId}
-          path="/treatments"
-        />
-        <CreateTreatmentView path="/treatments/create" />
-        <TreatmentDetailsView path="/treatments/:treatmentId/*" />
+          <TreatmentHistoryDetailsView path="/treatments/:treatmentId/history/:version" />
+          <LandingView
+            Component={ListTreatmentsView}
+            name="Treatments"
+            projectId={projectId}
+            path="/treatments"
+          />
+          <CreateTreatmentView path="/treatments/create" />
+          <TreatmentDetailsView path="/treatments/:treatmentId/*" />
 
-        <SegmentHistoryDetailsView path="/segments/:segmentId/history/:version" />
-        <LandingView
-          Component={ListSegmentsView}
-          name="Segments"
-          projectId={projectId}
-          path="/segments"
-        />
-        <CreateSegmentView path="/segments/create" />
-        <SegmentDetailsView path="/segments/:segmentId/*" />
+          <SegmentHistoryDetailsView path="/segments/:segmentId/history/:version" />
+          <LandingView
+            Component={ListSegmentsView}
+            name="Segments"
+            projectId={projectId}
+            path="/segments"
+          />
+          <CreateSegmentView path="/segments/create" />
+          <SegmentDetailsView path="/segments/:segmentId/*" />
 
-        <CreateExperimentView path="/create" />
-        <ExperimentDetailsView path="/:experimentId/*" />
+          <CreateExperimentView path="/create" />
+          <ExperimentDetailsView path="/:experimentId/*" />
 
-        <ExperimentHistoryDetailsView path="/:experimentId/history/:version" />
+          <ExperimentHistoryDetailsView path="/:experimentId/history/:version" />
 
-        <LandingView
-          Component={ListExperimentsView}
-          name="Experiments"
-          projectId={projectId}
-          path="/"
-        />
+          <LandingView
+            Component={ListExperimentsView}
+            name="Experiments"
+            projectId={projectId}
+            path="/"
+          />
 
-        {/* /experiments is the list view as well as a prefix to the other views which are registered without it;
+          {/* /experiments is the list view as well as a prefix to the other views which are registered without it;
         This redirect ensures that navigation from other views with /experiments prefix will not cause concatenation 
         which results in incorrect /experiments/experiments prefix.
          */}
-        <Redirect
-          from="/experiments/*"
-          to={useLocation().pathname.replace(
-            "/experiments/experiments",
-            "/experiments"
-          )}
-          noThrow
-        />
-        <Redirect from="any" to="/error/404" default noThrow />
-      </Router>
-    </ProjectContextProvider>
+          <Redirect
+            from="/experiments/*"
+            to={useLocation().pathname.replace(
+              "/experiments/experiments",
+              "/experiments"
+            )}
+            noThrow
+          />
+          <Redirect from="any" to="/error/404" default noThrow />
+        </Router>
+      </ProjectContextProvider>
+    </ConfigProvider>
   );
 };
 

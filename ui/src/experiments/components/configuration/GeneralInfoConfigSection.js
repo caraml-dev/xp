@@ -3,9 +3,10 @@ import { formatDate } from "@elastic/eui";
 import moment from "moment";
 
 import { ConfigPanel } from "components/config_section/ConfigPanel";
-import { appConfig } from "config";
+import { useConfig } from "config";
 
 export const GeneralInfoConfigSection = ({ experiment }) => {
+  const { appConfig } = useConfig();
   const formatDateValue = (value) =>
     formatDate(
       moment(value, appConfig.datetime.format).utcOffset(
