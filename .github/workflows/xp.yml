@@ -236,6 +236,8 @@ jobs:
     env:
       APP_NAME: xp-management
     needs:
+      - lint-go
+      - unit-tests-management
       - build-ui
     outputs:
       api-version: ${{ steps.build-image.outputs.api-version }}
@@ -246,6 +248,7 @@ jobs:
           fetch-depth: 0
 
       - name: Construct vendor directory
+        working-directory: management-service
         run: make vendor
 
       - name: Build Docker image
@@ -272,6 +275,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_NAME: xp-treatment
+    needs:
+      - lint-go
+      - unit-tests-treatment
     outputs:
       api-version: ${{ steps.build-image.outputs.api-version }}
     steps:
