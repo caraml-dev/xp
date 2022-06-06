@@ -13,6 +13,12 @@ on:
   pull_request:
     branches:
       - main
+  
+  # To make it possible to trigger e2e CI workflow for any arbitrary git ref
+  workflow_dispatch:
+
+env:
+  ARTIFACT_RETENTION_DAYS: 7
 
 jobs:
   lint-python:
@@ -180,3 +186,144 @@ jobs:
           DATABASE_USER: xp
           DATABASE_PASSWORD: xp
         run: make e2e-ci
+
+  build-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout to the target branch
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ui/node_modules
+          key: ${{ runner.os }}-modules-${{ hashFiles('ui/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-modules-
+
+      - name: Install
+        run: yarn install --network-concurrency 1
+
+      - name: Lint code
+        run: yarn lint
+
+      - name: Build UI
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        run: yarn build
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: xp-ui-dist
+          path: ui/build/
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+
+  build-management-service:
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: xp-management
+    needs:
+      - build-ui
+    outputs:
+      api-version: ${{ steps.build-image.outputs.api-version }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Build Docker image
+        id: build-image
+        run: |
+          set -o pipefail
+          make BIN_NAME=$APP_NAME build-image | tee output.log
+          echo "::set-output name=api-version::$(sed -n 's%xp-api version: \(.*\)%\1%p' output.log)"
+
+      - name: Save Docker image
+        run: |
+          docker image save \
+            --output xp-management.${{ steps.build-image.outputs.api-version }}.tar \
+            xp-management:${{ steps.build-image.outputs.api-version }}
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: xp-management.${{ steps.build-image.outputs.api-version }}.tar
+          path: xp-management.${{ steps.build-image.outputs.api-version }}.tar
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+
+  build-treatment-service:
+    runs-on: ubuntu-latest
+    env:
+      APP_NAME: xp-treatment
+    outputs:
+      api-version: ${{ steps.build-image.outputs.api-version }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Build Docker image
+        id: build-image
+        working-directory: treatment-service
+        run: |
+          set -o pipefail
+          make BIN_NAME=$APP_NAME build-image | tee output.log
+          echo "::set-output name=api-version::$(sed -n 's%xp-api version: \(.*\)%\1%p' output.log)"
+
+      - name: Save Docker image
+        run: |
+          docker image save \
+            --output xp-treatment.${{ steps.build-image.outputs.api-version }}.tar \
+            xp-treatment:${{ steps.build-image.outputs.api-version }}
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: xp-treatment.${{ steps.build-image.outputs.api-version }}.tar
+          path: xp-treatment.${{ steps.build-image.outputs.api-version }}.tar
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+
+  release-rules:
+    runs-on: ubuntu-latest
+    outputs:
+      release-type: ${{ steps.release-rules.outputs.release-type }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: release-rules
+        uses: ./.github/actions/release-rules
+
+  release:
+    # Automatically publish release and pre-release artifacts.
+    #
+    # As for dev releases, make it possible to publish artifacts
+    # manually by approving 'deployment' in the 'manual' environment.
+    #
+    # Dev build can be released either from the 'main' branch or
+    # by running this workflow manually with `workflow_dispatch` event.
+    if: >-
+      contains('release,pre-release', needs.release-rules.outputs.release-type)
+        || ( github.event_name != 'pull_request' )
+        || ( github.event.pull_request.head.repo.full_name == github.repository )
+    needs:
+      - lint-python
+      - lint-go
+      - unit-tests-management
+      - unit-tests-treatment
+      - e2e-tests
+      - build-ui
+      - build-management-service
+      - build-treatment-service
+      - release-rules
+    uses: gojek/xp/.github/workflows/release.yml@main
+    with:
+      management_service_version: ${{ needs.build-management-service.outputs.api-version }}
+      treatment_service_version: ${{ needs.build-treatment-service.outputs.api-version }}
+      environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
+    secrets:
+      ghcr_token: ${{ secrets.GITHUB_TOKEN }}
