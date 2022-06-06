@@ -8,8 +8,8 @@ metadata:
     chart: {{ template "xp.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{ if .Values.xpApi.labels -}}
-{{ toYaml .Values.xpApi.labels | indent 4 -}}
+{{ if .Values.xpManagement.labels -}}
+{{ toYaml .Values.xpManagement.labels | indent 4 -}}
 {{- end }}
 spec:
   type: ClusterIP

@@ -31,7 +31,7 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{- define "xp.environment" -}}
-{{- .Values.global.environment | default .Values.xpApi.environment | default "dev" -}}
+{{- .Values.global.environment | default .Values.xpManagement.environment | default "dev" -}}
 {{- end -}}
 
 {{/*
@@ -39,7 +39,7 @@ Common labels
 */}}
 {{- define "xp.labels" -}}
 helm.sh/chart: {{ include "xp.chart" . }}
-{{- with .Values.xpApi.extraLabels }}
+{{- with .Values.xpManagement.extraLabels }}
 {{- toYaml . | nindent 0 }}
 {{- end }}
 {{ include "xp.selectorLabels" . }}
@@ -61,36 +61,36 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use
 */}}
 {{- define "xp.serviceAccountName" -}}
-{{- if .Values.xpApi.serviceAccount.create }}
-{{- default (include "xp.fullname" .) .Values.xpApi.serviceAccount.name }}
+{{- if .Values.xpManagement.serviceAccount.create }}
+{{- default (include "xp.fullname" .) .Values.xpManagement.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.xpApi.serviceAccount.name }}
+{{- default "default" .Values.xpManagement.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
 {{- define "xp.sentry.enabled" -}}
-{{ eq (.Values.xpApi.config.SentryConfig.Enabled | toString) "true" }}
+{{ eq (.Values.xpManagement.apiConfig.SentryConfig.Enabled | toString) "true" }}
 {{- end -}}
 
 {{- define "xp.sentry.dsn" -}}
-{{- .Values.global.sentry.dsn | default .Values.xpApi.sentry.dsn -}}
+{{- .Values.global.sentry.dsn | default .Values.xpManagement.sentry.dsn -}}
 {{- end -}}
 
 {{- define "xp.ui.defaultConfig" -}}
-{{- if .Values.xpApi.uiConfig -}}
+{{- if .Values.xpManagement.uiConfig -}}
 appConfig:
-  environment: {{ .Values.xpApi.uiConfig.appConfig.environment | default (include "xp.environment" .) }}
+  environment: {{ .Values.xpManagement.uiConfig.appConfig.environment | default (include "xp.environment" .) }}
 authConfig:
-  oauthClientId: {{ .Values.global.oauthClientId | default .Values.xpApi.uiConfig.authConfig.oauthClientId | quote }}
+  oauthClientId: {{ .Values.global.oauthClientId | default .Values.xpManagement.uiConfig.authConfig.oauthClientId | quote }}
 {{- if (include "xp.sentry.enabled" .) }}
 sentryConfig:
-  environment: {{ .Values.xpApi.uiConfig.sentryConfig.environment | default (include "xp.environment" .) }}
-  dsn: {{ .Values.xpApi.uiConfig.sentryConfig.dsn | default (include "xp.sentry.dsn" .) | quote }}
+  environment: {{ .Values.xpManagement.uiConfig.sentryConfig.environment | default (include "xp.environment" .) }}
+  dsn: {{ .Values.xpManagement.uiConfig.sentryConfig.dsn | default (include "xp.sentry.dsn" .) | quote }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "xp.ui.config" -}}
 {{- $defaultConfig := include "xp.ui.defaultConfig" . | fromYaml -}}
-{{ .Values.xpApi.uiConfig | merge $defaultConfig | toPrettyJson }}
+{{ .Values.xpManagement.uiConfig | merge $defaultConfig | toPrettyJson }}
 {{- end -}}

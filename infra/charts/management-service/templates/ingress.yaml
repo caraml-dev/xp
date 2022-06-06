@@ -1,11 +1,11 @@
-{{- if .Values.xpApi.ingress.enabled }}
+{{- if .Values.xpManagement.ingress.enabled }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ template "xp.fullname" .}}
   namespace: {{ .Release.Namespace }}
   annotations:
-    {{- with .Values.xpApi.ingress.class }}
+    {{- with .Values.xpManagement.ingress.class }}
     ingress.class: {{ . }}
     {{- end }}
   labels:
@@ -16,12 +16,12 @@ metadata:
     app.kubernetes.io/name: {{ include "xp.fullname" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.xpApi.labels }}
-{{ toYaml .Values.xpApi.labels | indent 4 }}
+{{- if .Values.xpManagement.labels }}
+{{ toYaml .Values.xpManagement.labels | indent 4 }}
 {{- end }}
 spec:
   rules:
-  - {{- with .Values.xpApi.ingress.host }}
+  - {{- with .Values.xpManagement.ingress.host }}
     host: {{ . }}
     {{- end }} 
     http:
@@ -29,5 +29,5 @@ spec:
         - path: /
           backend:
             serviceName: {{ template "xp.fullname" .}}
-            servicePort: {{ .Values.xpApi.service.externalPort }}
+            servicePort: {{ .Values.xpManagement.service.externalPort }}
 {{- end }}

@@ -63,37 +63,37 @@ The following table lists the configurable parameters of the XP Management Servi
 | swaggerUi.image | object | `{"tag":"v3.47.1"}` | Docker tag for Swagger UI https://hub.docker.com/r/swaggerapi/swagger-ui |
 | swaggerUi.service.externalPort | int | `8080` | Swagger UI Kubernetes service port number |
 | swaggerUi.service.internalPort | int | `8081` | Swagger UI container port number |
-| xpApi.config | object | `{}` | XP API server configuration.  |
-| xpApi.extraArgs | list | `[]` | List of string containing additional XP API server arguments. For example, multiple "-config" can be specified to use multiple config files |
-| xpApi.extraEnvs | list | `[]` | List of extra environment variables to add to XP API server container |
-| xpApi.extraLabels | object | `{}` | List of extra labels to add to XP API K8s resources |
-| xpApi.extraVolumeMounts | list | `[]` | Extra volume mounts to attach to XP API server container. For example to mount the extra volume containing secrets |
-| xpApi.extraVolumes | list | `[]` | Extra volumes to attach to the Pod. For example, you can mount  additional secrets to these volumes |
-| xpApi.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
-| xpApi.image.registry | string | `"docker.io/"` | Docker registry for XP API image |
-| xpApi.image.repository | string | `"xp-management"` | Docker image repository for XP API |
-| xpApi.image.tag | string | `"latest"` | Docker image tag for XP API |
-| xpApi.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule,  useful when there are multiple ingress controllers installed |
-| xpApi.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP API |
-| xpApi.ingress.host | string | `""` | Set host value to enable name based virtual hosting. This allows routing HTTP traffic to multiple host names at the same IP address. If no host is specified, the ingress rule applies to all inbound HTTP traffic through  the IP address specified. https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting |
-| xpApi.labels | object | `{}` |  |
-| xpApi.livenessProbe.initialDelaySeconds | int | `60` | Liveness probe delay and thresholds |
-| xpApi.livenessProbe.path | string | `"/v1/internal/live"` | HTTP path for liveness check |
-| xpApi.livenessProbe.periodSeconds | int | `10` |  |
-| xpApi.livenessProbe.successThreshold | int | `1` |  |
-| xpApi.livenessProbe.timeoutSeconds | int | `5` |  |
-| xpApi.readinessProbe.initialDelaySeconds | int | `60` | Liveness probe delay and thresholds |
-| xpApi.readinessProbe.path | string | `"/v1/internal/ready"` | HTTP path for readiness check |
-| xpApi.readinessProbe.periodSeconds | int | `10` |  |
-| xpApi.readinessProbe.successThreshold | int | `1` |  |
-| xpApi.readinessProbe.timeoutSeconds | int | `5` |  |
-| xpApi.replicaCount | int | `1` |  |
-| xpApi.resources | object | `{}` | Resources requests and limits for XP API. This should be set  according to your cluster capacity and service level objectives. Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ |
-| xpApi.sentry.dsn | string | `""` | Sentry DSN value used by both XP API and XP UI |
-| xpApi.sentry.enabled | bool | `false` |  |
-| xpApi.service.externalPort | int | `8080` | XP API Kubernetes service port number |
-| xpApi.service.internalPort | int | `8080` | XP API container port number |
-| xpApi.serviceAccount.annotations | object | `{}` |  |
-| xpApi.serviceAccount.create | bool | `true` |  |
-| xpApi.serviceAccount.name | string | `""` |  |
-| xpApi.uiConfig | object | `{"apiConfig":{"mlpApiUrl":"/api/v1","xpApiUrl":"/api/xp/v1"},"appConfig":{"docsUrl":[{"href":"https://github.com/gojek/xp/tree/main/docs","label":"XP User Guide"}]},"authConfig":{"oauthClientId":""},"sentryConfig":{}}` | XP UI configuration. |
+| xpManagement.apiConfig | object | `{}` | XP API server configuration.  |
+| xpManagement.extraArgs | list | `[]` | List of string containing additional XP API server arguments. For example, multiple "-config" can be specified to use multiple config files |
+| xpManagement.extraEnvs | list | `[]` | List of extra environment variables to add to XP API server container |
+| xpManagement.extraLabels | object | `{}` | List of extra labels to add to XP API K8s resources |
+| xpManagement.extraVolumeMounts | list | `[]` | Extra volume mounts to attach to XP API server container. For example to mount the extra volume containing secrets |
+| xpManagement.extraVolumes | list | `[]` | Extra volumes to attach to the Pod. For example, you can mount  additional secrets to these volumes |
+| xpManagement.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
+| xpManagement.image.registry | string | `"docker.io/"` | Docker registry for XP API image |
+| xpManagement.image.repository | string | `"xp-management"` | Docker image repository for XP API |
+| xpManagement.image.tag | string | `"latest"` | Docker image tag for XP API |
+| xpManagement.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule,  useful when there are multiple ingress controllers installed |
+| xpManagement.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP API |
+| xpManagement.ingress.host | string | `""` | Set host value to enable name based virtual hosting. This allows routing HTTP traffic to multiple host names at the same IP address. If no host is specified, the ingress rule applies to all inbound HTTP traffic through  the IP address specified. https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting |
+| xpManagement.labels | object | `{}` |  |
+| xpManagement.livenessProbe.initialDelaySeconds | int | `60` | Liveness probe delay and thresholds |
+| xpManagement.livenessProbe.path | string | `"/v1/internal/live"` | HTTP path for liveness check |
+| xpManagement.livenessProbe.periodSeconds | int | `10` |  |
+| xpManagement.livenessProbe.successThreshold | int | `1` |  |
+| xpManagement.livenessProbe.timeoutSeconds | int | `5` |  |
+| xpManagement.readinessProbe.initialDelaySeconds | int | `60` | Liveness probe delay and thresholds |
+| xpManagement.readinessProbe.path | string | `"/v1/internal/ready"` | HTTP path for readiness check |
+| xpManagement.readinessProbe.periodSeconds | int | `10` |  |
+| xpManagement.readinessProbe.successThreshold | int | `1` |  |
+| xpManagement.readinessProbe.timeoutSeconds | int | `5` |  |
+| xpManagement.replicaCount | int | `1` |  |
+| xpManagement.resources | object | `{}` | Resources requests and limits for XP API. This should be set  according to your cluster capacity and service level objectives. Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ |
+| xpManagement.sentry.dsn | string | `""` | Sentry DSN value used by both XP API and XP UI |
+| xpManagement.sentry.enabled | bool | `false` |  |
+| xpManagement.service.externalPort | int | `8080` | XP API Kubernetes service port number |
+| xpManagement.service.internalPort | int | `8080` | XP API container port number |
+| xpManagement.serviceAccount.annotations | object | `{}` |  |
+| xpManagement.serviceAccount.create | bool | `true` |  |
+| xpManagement.serviceAccount.name | string | `""` |  |
+| xpManagement.uiConfig | object | `{"apiConfig":{"mlpApiUrl":"/api/v1","xpApiUrl":"/api/xp/v1"},"appConfig":{"docsUrl":[{"href":"https://github.com/gojek/xp/tree/main/docs","label":"XP User Guide"}]},"authConfig":{"oauthClientId":""},"sentryConfig":{}}` | XP UI configuration. |

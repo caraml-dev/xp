@@ -1,4 +1,4 @@
-xpApi:
+xpManagement:
   image:
     # -- Docker registry for XP API image
     registry: docker.io/
@@ -55,7 +55,7 @@ xpApi:
     class: ""
 
   # -- XP API server configuration. 
-  config: {}
+  apiConfig: {}
 
   # -- XP UI configuration.
   uiConfig:

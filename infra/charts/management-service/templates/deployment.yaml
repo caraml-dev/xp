@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "xp.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.xpApi.replicaCount }}
+  replicas: {{ .Values.xpManagement.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "xp.name" .}}
@@ -21,17 +21,17 @@ spec:
         release: {{ .Release.Name }}
         {{- include "xp.labels" . | nindent 8 }}
     spec:
-      {{- with .Values.xpApi.imagePullSecrets }}
+      {{- with .Values.xpManagement.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "xp.serviceAccountName" . }}
       containers:
       - name: api
-        image: "{{ .Values.xpApi.image.registry }}{{ .Values.xpApi.image.repository }}:{{ .Values.xpApi.image.tag | default .Chart.AppVersion }}"
-        imagePullPolicy: {{ .Values.xpApi.image.pullPolicy }}
+        image: "{{ .Values.xpManagement.image.registry }}{{ .Values.xpManagement.image.repository }}:{{ .Values.xpManagement.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.xpManagement.image.pullPolicy }}
         env:
-          {{- with .Values.xpApi.extraEnvs }}
+          {{- with .Values.xpManagement.extraEnvs }}
           {{- toYaml . | nindent 12 }}
           {{- end }}
         ports:
@@ -40,24 +40,24 @@ spec:
             protocol: TCP
         livenessProbe:
           httpGet:
-            path: {{ .Values.xpApi.livenessProbe.path }}
-            port: {{ .Values.xpApi.service.internalPort }}
+            path: {{ .Values.xpManagement.livenessProbe.path }}
+            port: {{ .Values.xpManagement.service.internalPort }}
             scheme: HTTP
-          initialDelaySeconds: {{ .Values.xpApi.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.xpApi.livenessProbe.periodSeconds }}
-          successThreshold: {{ .Values.xpApi.livenessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.xpApi.livenessProbe.timeoutSeconds }}
+          initialDelaySeconds: {{ .Values.xpManagement.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.xpManagement.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.xpManagement.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.xpManagement.livenessProbe.timeoutSeconds }}
         readinessProbe:
           httpGet:
-            path: {{ .Values.xpApi.readinessProbe.path }}
-            port: {{ .Values.xpApi.service.internalPort }}
+            path: {{ .Values.xpManagement.readinessProbe.path }}
+            port: {{ .Values.xpManagement.service.internalPort }}
             scheme: HTTP
-          initialDelaySeconds: {{ .Values.xpApi.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.xpApi.readinessProbe.periodSeconds }}
-          successThreshold: {{ .Values.xpApi.readinessProbe.successThreshold }}
-          timeoutSeconds: {{ .Values.xpApi.readinessProbe.timeoutSeconds }}
+          initialDelaySeconds: {{ .Values.xpManagement.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.xpManagement.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.xpManagement.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.xpManagement.readinessProbe.timeoutSeconds }}
         resources:
-          {{- toYaml .Values.xpApi.resources | nindent 12 }}
+          {{- toYaml .Values.xpManagement.resources | nindent 12 }}
         # Give time for running pods to terminate existing connection before letting
         # Kubernetes terminate the pods.
         # https://blog.sebastian-daschner.com/entries/zero-downtime-updates-kubernetes
@@ -68,17 +68,17 @@ spec:
         args:
         - serve
         - --config=/etc/xp/config.yaml
-        {{- if .Values.xpApi.uiConfig }}
+        {{- if .Values.xpManagement.uiConfig }}
         - -ui-config
         - /etc/xp/ui.config.json
         {{- end }}
-        {{- with .Values.xpApi.extraArgs }}
+        {{- with .Values.xpManagement.extraArgs }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
         volumeMounts:
         - name: config
           mountPath: /etc/xp
-        {{- with .Values.xpApi.extraVolumeMounts }}
+        {{- with .Values.xpManagement.extraVolumeMounts }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       - name: swagger-ui
@@ -106,7 +106,7 @@ spec:
         args:
         - |
           mkdir /app
-          export LOCAL_API_SERVER="http://127.0.0.1:{{ .Values.xpApi.service.internalPort }}"
+          export LOCAL_API_SERVER="http://127.0.0.1:{{ .Values.xpManagement.service.internalPort }}"
           echo "Fetching swagger configuration from ${LOCAL_API_SERVER}/experiments.yaml..."
           until $$(wget -O $${SWAGGER_JSON} --tries 1 --timeout 1 ${LOCAL_API_SERVER}/experiments.yaml); do
             printf '.'
@@ -125,6 +125,6 @@ spec:
       - name: config 
         secret:
           secretName: {{ template "xp.fullname" .}}-api-config
-      {{- with .Values.xpApi.extraVolumes }}
+      {{- with .Values.xpManagement.extraVolumes }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
