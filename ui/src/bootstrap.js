@@ -12,11 +12,11 @@ import { ConfigProvider, useConfig } from "./config";
 
 const SentryApp = ({ children }) => {
   const {
-    sentryConfig: { dsn, environment },
+    sentryConfig: { dsn, environment, tags },
   } = useConfig();
 
   Sentry.init({ dsn, environment });
-  Sentry.setTag("app", "xp-ui");
+  Sentry.setTags(tags);
 
   return children;
 };
