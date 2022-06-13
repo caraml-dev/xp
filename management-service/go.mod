@@ -1,4 +1,4 @@
-module github.com/gojek/xp/management-service
+module github.com/gojek/turing-experiments/management-service
 
 go 1.16
 
@@ -11,7 +11,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.3
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/gojek/mlp v1.4.9
-	github.com/gojek/xp/common v0.0.0
+	github.com/gojek/turing-experiments/common v0.0.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
@@ -31,7 +31,7 @@ require (
 )
 
 replace (
-	github.com/gojek/xp/clients => ../clients
-	github.com/gojek/xp/common => ../common
-	github.com/gojek/xp/management-service => ./
+	github.com/gojek/turing-experiments/clients => ../clients
+	github.com/gojek/turing-experiments/common => ../common
+	github.com/gojek/turing-experiments/management-service => ./
 )

@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/gojek/xp/treatment-service/server"
+	"github.com/gojek/turing-experiments/treatment-service/server"
 )
 
 var cfgFile []string

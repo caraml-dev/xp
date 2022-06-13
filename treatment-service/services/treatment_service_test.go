@@ -9,10 +9,10 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/models"
+	"github.com/gojek/turing-experiments/common/api/schema"
+	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	"github.com/gojek/turing-experiments/treatment-service/models"
 )
 
 type TreatmentSelectionSuite struct {

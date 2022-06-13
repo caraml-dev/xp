@@ -5,8 +5,8 @@ import (
 
 	"github.com/heptiolabs/healthcheck"
 
-	"github.com/gojek/xp/treatment-service/appcontext"
-	"github.com/gojek/xp/treatment-service/config"
+	"github.com/gojek/turing-experiments/treatment-service/appcontext"
+	"github.com/gojek/turing-experiments/treatment-service/config"
 )
 
 type InternalController struct {

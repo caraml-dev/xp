@@ -3,9 +3,9 @@ package services
 import (
 	"github.com/jinzhu/gorm"
 
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/pagination"
+	"github.com/gojek/turing-experiments/management-service/errors"
+	"github.com/gojek/turing-experiments/management-service/models"
+	"github.com/gojek/turing-experiments/management-service/pagination"
 )
 
 type ListExperimentHistoryParams struct {

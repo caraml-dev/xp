@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/xp/management-service/middleware/mocks"
+	"github.com/gojek/turing-experiments/management-service/middleware/mocks"
 )
 
 func TestAuthorizationMiddleware(t *testing.T) {

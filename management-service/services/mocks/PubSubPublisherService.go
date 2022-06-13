@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	pubsub "github.com/gojek/xp/common/pubsub"
+	pubsub "github.com/gojek/turing-experiments/common/pubsub"
 	mock "github.com/stretchr/testify/mock"
 )
 

@@ -11,12 +11,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/gojek/xp/common/api/schema"
-	tu "github.com/gojek/xp/management-service/internal/testutils"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/pagination"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	"github.com/gojek/turing-experiments/common/api/schema"
+	tu "github.com/gojek/turing-experiments/management-service/internal/testutils"
+	"github.com/gojek/turing-experiments/management-service/models"
+	"github.com/gojek/turing-experiments/management-service/pagination"
+	"github.com/gojek/turing-experiments/management-service/services"
+	"github.com/gojek/turing-experiments/management-service/services/mocks"
 )
 
 type SegmentServiceTestSuite struct {

@@ -1,4 +1,4 @@
-module github.com/gojek/xp/common
+module github.com/gojek/turing-experiments/common
 
 go 1.16
 

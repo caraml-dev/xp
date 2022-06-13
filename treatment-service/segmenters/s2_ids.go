@@ -9,9 +9,9 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/common/utils"
-	"github.com/gojek/xp/treatment-service/util"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	"github.com/gojek/turing-experiments/common/utils"
+	"github.com/gojek/turing-experiments/treatment-service/util"
 )
 
 const (

@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/util"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	"github.com/gojek/turing-experiments/treatment-service/util"
 )
 
 type TimeRunnerTestSuite struct {

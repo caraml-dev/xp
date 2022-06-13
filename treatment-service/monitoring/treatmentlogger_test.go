@@ -17,10 +17,10 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/models"
+	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	"github.com/gojek/turing-experiments/treatment-service/config"
+	"github.com/gojek/turing-experiments/treatment-service/models"
 )
 
 func TestNoopAssignedTreatmentLogger(t *testing.T) {

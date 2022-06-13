@@ -12,7 +12,7 @@ import (
 	// Gorm requires this for interfacing with the postgres DB
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 
-	"github.com/gojek/xp/management-service/config"
+	"github.com/gojek/turing-experiments/management-service/config"
 )
 
 func ConnectionString(cfg *config.DatabaseConfig) string {

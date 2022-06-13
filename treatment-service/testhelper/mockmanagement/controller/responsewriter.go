@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/turing-experiments/common/api/schema"
 )
 
 func NotFound(w http.ResponseWriter, err error) {

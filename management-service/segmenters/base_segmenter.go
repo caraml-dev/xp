@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang-collections/collections/set"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
 )
 
 type BaseSegmenter struct {

@@ -6,10 +6,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/monitoring"
-	"github.com/gojek/xp/treatment-service/services"
+	"github.com/gojek/turing-experiments/treatment-service/config"
+	"github.com/gojek/turing-experiments/treatment-service/models"
+	"github.com/gojek/turing-experiments/treatment-service/monitoring"
+	"github.com/gojek/turing-experiments/treatment-service/services"
 )
 
 type AppContext struct {

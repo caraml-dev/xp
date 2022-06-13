@@ -6,7 +6,7 @@ import (
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 
-	common_config "github.com/gojek/xp/common/config"
+	common_config "github.com/gojek/turing-experiments/common/config"
 )
 
 type Config struct {

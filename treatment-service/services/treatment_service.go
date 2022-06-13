@@ -8,9 +8,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/util"
+	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
+	"github.com/gojek/turing-experiments/treatment-service/models"
+	"github.com/gojek/turing-experiments/treatment-service/util"
 )
 
 type TreatmentService interface {

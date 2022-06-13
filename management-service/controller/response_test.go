@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/management-service/errors"
+	"github.com/gojek/turing-experiments/common/api/schema"
+	"github.com/gojek/turing-experiments/management-service/errors"
 )
 
 func TestWriteErrorResponse(t *testing.T) {

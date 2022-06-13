@@ -5,8 +5,8 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/turing-experiments/common/api/schema"
+	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
 )
 
 type ExperimentStatus string

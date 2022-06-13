@@ -21,16 +21,16 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/xp/clients/management"
-	"github.com/gojek/xp/clients/treatment"
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/common/testutils"
-	tu "github.com/gojek/xp/treatment-service/internal/testutils"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/monitoring"
-	"github.com/gojek/xp/treatment-service/server"
-	mgmtSvcServer "github.com/gojek/xp/treatment-service/testhelper/mockmanagement/server"
-	mgmtSvc "github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
+	"github.com/gojek/turing-experiments/clients/management"
+	"github.com/gojek/turing-experiments/clients/treatment"
+	"github.com/gojek/turing-experiments/common/api/schema"
+	"github.com/gojek/turing-experiments/common/testutils"
+	tu "github.com/gojek/turing-experiments/treatment-service/internal/testutils"
+	"github.com/gojek/turing-experiments/treatment-service/models"
+	"github.com/gojek/turing-experiments/treatment-service/monitoring"
+	"github.com/gojek/turing-experiments/treatment-service/server"
+	mgmtSvcServer "github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement/server"
+	mgmtSvc "github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement/service"
 )
 
 const (

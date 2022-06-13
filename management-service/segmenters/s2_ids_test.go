@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
 )
 
 func TestS2IdsValidateSegmenterAndConstraints(t *testing.T) {

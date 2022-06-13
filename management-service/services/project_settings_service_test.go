@@ -12,11 +12,11 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	tu "github.com/gojek/xp/management-service/internal/testutils"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	tu "github.com/gojek/turing-experiments/management-service/internal/testutils"
+	"github.com/gojek/turing-experiments/management-service/models"
+	"github.com/gojek/turing-experiments/management-service/services"
+	"github.com/gojek/turing-experiments/management-service/services/mocks"
 )
 
 type ProjectSettingsServiceTestSuite struct {

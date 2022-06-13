@@ -1,6 +1,6 @@
 package models
 
-import "github.com/gojek/xp/common/api/schema"
+import "github.com/gojek/turing-experiments/common/api/schema"
 
 type SegmentHistory struct {
 	// CreatedAt - the current value of the UpdatedAt timestamp of the segment.

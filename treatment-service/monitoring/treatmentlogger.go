@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/models"
+	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
+	"github.com/gojek/turing-experiments/treatment-service/config"
+	"github.com/gojek/turing-experiments/treatment-service/models"
 )
 
 // ErrorResponseLog contains the status code and error string to be included in outcome logging

@@ -17,14 +17,14 @@ import (
 	"github.com/heptiolabs/healthcheck"
 	"github.com/rs/cors"
 
-	"github.com/gojek/xp/common/web"
-	"github.com/gojek/xp/management-service/api"
-	"github.com/gojek/xp/management-service/appcontext"
-	"github.com/gojek/xp/management-service/config"
-	"github.com/gojek/xp/management-service/controller"
-	"github.com/gojek/xp/management-service/database"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/middleware"
+	"github.com/gojek/turing-experiments/common/web"
+	"github.com/gojek/turing-experiments/management-service/api"
+	"github.com/gojek/turing-experiments/management-service/appcontext"
+	"github.com/gojek/turing-experiments/management-service/config"
+	"github.com/gojek/turing-experiments/management-service/controller"
+	"github.com/gojek/turing-experiments/management-service/database"
+	"github.com/gojek/turing-experiments/management-service/errors"
+	"github.com/gojek/turing-experiments/management-service/middleware"
 )
 
 type Server struct {

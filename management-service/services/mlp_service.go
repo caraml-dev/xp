@@ -11,7 +11,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"golang.org/x/oauth2/google"
 
-	"github.com/gojek/xp/management-service/errors"
+	"github.com/gojek/turing-experiments/management-service/errors"
 )
 
 const (

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/turing-experiments/common/api/schema"
 )
 
 type TreatmentField string

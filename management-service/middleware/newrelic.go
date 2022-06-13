@@ -5,7 +5,7 @@ import (
 
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 
-	"github.com/gojek/xp/common/utils"
+	"github.com/gojek/turing-experiments/common/utils"
 )
 
 func NewRelicMiddleware() func(next http.Handler) http.Handler {

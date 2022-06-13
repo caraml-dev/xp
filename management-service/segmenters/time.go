@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
 )
 
 func NewHoursOfDaySegmenter(_ json.RawMessage) (Segmenter, error) {

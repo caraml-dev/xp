@@ -10,9 +10,9 @@ import (
 	"go.einride.tech/protobuf-bigquery/encoding/protobq"
 	"google.golang.org/api/googleapi"
 
-	_utils "github.com/gojek/xp/common/utils"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/util"
+	_utils "github.com/gojek/turing-experiments/common/utils"
+	"github.com/gojek/turing-experiments/treatment-service/models"
+	"github.com/gojek/turing-experiments/treatment-service/util"
 )
 
 type BQLogPublisher struct {

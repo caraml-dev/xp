@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/segmenters"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	"github.com/gojek/turing-experiments/treatment-service/segmenters"
 )
 
 type SegmenterService interface {

@@ -9,11 +9,11 @@ import (
 
 	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/instrumentation"
-	"github.com/gojek/xp/treatment-service/models"
+	"github.com/gojek/turing-experiments/common/api/schema"
+	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	"github.com/gojek/turing-experiments/treatment-service/config"
+	"github.com/gojek/turing-experiments/treatment-service/instrumentation"
+	"github.com/gojek/turing-experiments/treatment-service/models"
 )
 
 type MetricService interface {
