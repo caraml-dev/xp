@@ -30,7 +30,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-      - name: xp-treatment
+      - name: api
         image: "{{ .Values.xpTreatment.image.registry }}{{ .Values.xpTreatment.image.repository }}:{{ .Values.xpTreatment.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.xpTreatment.image.pullPolicy }}
         env:
