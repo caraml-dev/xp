@@ -4,6 +4,7 @@ import { EuiCallOut, EuiFlexItem, EuiLoadingChart } from "@elastic/eui";
 import { OverlayMask, get, useOnChangeHandler } from "@gojek/mlp-ui";
 
 import { Panel } from "components/panel/Panel";
+import { ConfigProvider } from "config";
 import ProjectContext, {
   ProjectContextProvider,
 } from "providers/project/context";
@@ -70,9 +71,11 @@ const EditExperimentEngineConfigComponent = ({
 };
 
 const EditExperimentEngineConfig = (props) => (
-  <ProjectContextProvider>
-    <EditExperimentEngineConfigComponent {...props} />
-  </ProjectContextProvider>
+  <ConfigProvider>
+    <ProjectContextProvider>
+      <EditExperimentEngineConfigComponent {...props} />
+    </ProjectContextProvider>
+  </ConfigProvider>
 );
 
 export default EditExperimentEngineConfig;

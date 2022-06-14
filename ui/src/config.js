@@ -52,6 +52,9 @@ export const appConfig = {
 const sentryConfig = {
   dsn: process.env.REACT_APP_SENTRY_DSN,
   environment: appConfig.environment,
+  tags: {
+    app: "xp-ui",
+  },
 };
 
 const buildTimeConfig = {
