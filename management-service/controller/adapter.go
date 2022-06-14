@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/gojek/turing-experiments/common/api/schema"
-	"github.com/gojek/turing-experiments/management-service/pagination"
+	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/xp/management-service/pagination"
 )
 
 func ToPagingSchema(p *pagination.Paging) *schema.Paging {

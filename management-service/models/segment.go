@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/gojek/turing-experiments/common/api/schema"
+	"github.com/gojek/xp/common/api/schema"
 )
 
 type SegmentField string

@@ -4,9 +4,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 
-	"github.com/gojek/turing-experiments/management-service/config"
-	mw "github.com/gojek/turing-experiments/management-service/middleware"
-	"github.com/gojek/turing-experiments/management-service/services"
+	"github.com/gojek/xp/management-service/config"
+	mw "github.com/gojek/xp/management-service/middleware"
+	"github.com/gojek/xp/management-service/services"
 )
 
 type AppContext struct {

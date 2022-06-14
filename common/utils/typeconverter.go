@@ -3,7 +3,7 @@ package utils
 import (
 	"reflect"
 
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	_segmenters "github.com/gojek/xp/common/segmenters"
 )
 
 func StringSliceToListSegmenterValue(values *[]string) *_segmenters.ListSegmenterValue {

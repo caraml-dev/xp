@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	_utils "github.com/gojek/turing-experiments/common/utils"
+	_utils "github.com/gojek/xp/common/utils"
 )
 
 // kafkaProducer contains GetMetadata and Produce methods for mocking in unit tests

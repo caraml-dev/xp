@@ -6,9 +6,9 @@ import (
 	"cloud.google.com/go/pubsub"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	"github.com/gojek/turing-experiments/treatment-service/models"
+	"github.com/gojek/xp/common/api/schema"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/xp/treatment-service/models"
 )
 
 type MessageQueue interface {

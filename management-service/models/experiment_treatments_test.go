@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
+	"github.com/gojek/xp/common/api/schema"
 )
 
 var testTreatmentsTraffic30 int32 = 30

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	_utils "github.com/gojek/turing-experiments/common/utils"
+	"github.com/gojek/xp/common/api/schema"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	_utils "github.com/gojek/xp/common/utils"
 )
 
 type ExperimentSegmentRaw map[string]interface{}

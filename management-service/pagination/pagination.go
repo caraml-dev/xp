@@ -3,7 +3,7 @@ package pagination
 import (
 	"math"
 
-	"github.com/gojek/turing-experiments/management-service/errors"
+	"github.com/gojek/xp/management-service/errors"
 )
 
 var (

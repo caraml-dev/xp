@@ -15,11 +15,11 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/turing-experiments/clients/management"
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	"github.com/gojek/turing-experiments/common/testutils"
-	"github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement/service"
+	"github.com/gojek/xp/clients/management"
+	"github.com/gojek/xp/common/api/schema"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/xp/common/testutils"
+	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
 )
 
 const (

@@ -13,11 +13,11 @@ import (
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	tu "github.com/gojek/turing-experiments/common/testutils"
-	"github.com/gojek/turing-experiments/treatment-service/models"
+	"github.com/gojek/xp/common/api/schema"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	tu "github.com/gojek/xp/common/testutils"
+	"github.com/gojek/xp/treatment-service/models"
 )
 
 type ExperimentServiceTestSuite struct {

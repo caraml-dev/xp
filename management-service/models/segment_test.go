@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	"github.com/gojek/turing-experiments/management-service/models"
+	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/xp/management-service/models"
 )
 
 func TestSegmentToApiSchema(t *testing.T) {

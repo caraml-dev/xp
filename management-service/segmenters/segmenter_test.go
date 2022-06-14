@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	_segmenters "github.com/gojek/xp/common/segmenters"
 )
 
 type SegmenterTestSuite struct {

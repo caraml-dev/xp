@@ -14,10 +14,10 @@ import (
 	"github.com/golang-collections/collections/set"
 	"golang.org/x/oauth2/google"
 
-	managementClient "github.com/gojek/turing-experiments/clients/management"
-	"github.com/gojek/turing-experiments/common/api/schema"
-	"github.com/gojek/turing-experiments/common/pubsub"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	managementClient "github.com/gojek/xp/clients/management"
+	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/xp/common/pubsub"
+	_segmenters "github.com/gojek/xp/common/segmenters"
 )
 
 var GoogleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"

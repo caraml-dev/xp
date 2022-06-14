@@ -8,10 +8,10 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	"github.com/gojek/turing-experiments/management-service/models"
-	"github.com/gojek/turing-experiments/management-service/segmenters"
-	"github.com/gojek/turing-experiments/management-service/services"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/management-service/models"
+	"github.com/gojek/xp/management-service/segmenters"
+	"github.com/gojek/xp/management-service/services"
 )
 
 type SegmenterServiceTestSuite struct {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
+	"github.com/gojek/xp/common/api/schema"
 )
 
 func TestTreatmentHistoryToApiSchema(t *testing.T) {

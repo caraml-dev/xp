@@ -9,8 +9,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jinzhu/gorm"
 
-	"github.com/gojek/turing-experiments/management-service/config"
-	db "github.com/gojek/turing-experiments/management-service/database"
+	"github.com/gojek/xp/management-service/config"
+	db "github.com/gojek/xp/management-service/database"
 )
 
 var dbConfig config.DatabaseConfig = config.DatabaseConfig{

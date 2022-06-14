@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gojek/turing-experiments/management-service/api"
-	"github.com/gojek/turing-experiments/management-service/appcontext"
-	"github.com/gojek/turing-experiments/management-service/errors"
-	"github.com/gojek/turing-experiments/management-service/services"
+	"github.com/gojek/xp/management-service/api"
+	"github.com/gojek/xp/management-service/appcontext"
+	"github.com/gojek/xp/management-service/errors"
+	"github.com/gojek/xp/management-service/services"
 )
 
 type ValidationController struct {

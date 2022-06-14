@@ -16,7 +16,7 @@ import (
 	"time"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
-	externalRef0 "github.com/gojek/turing-experiments/common/api/schema"
+	externalRef0 "github.com/gojek/xp/common/api/schema"
 )
 
 const (

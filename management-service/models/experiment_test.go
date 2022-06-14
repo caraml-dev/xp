@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	_utils "github.com/gojek/turing-experiments/common/utils"
+	"github.com/gojek/xp/common/api/schema"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	_utils "github.com/gojek/xp/common/utils"
 )
 
 var testExperimentInterval int32 = 100

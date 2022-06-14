@@ -7,8 +7,8 @@ import (
 
 	"github.com/golang-collections/collections/set"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	api "github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement"
+	"github.com/gojek/xp/common/api/schema"
+	api "github.com/gojek/xp/treatment-service/testhelper/mockmanagement"
 )
 
 type InMemoryStore struct {

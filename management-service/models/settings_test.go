@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	tu "github.com/gojek/turing-experiments/management-service/internal/testutils"
+	"github.com/gojek/xp/common/api/schema"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	tu "github.com/gojek/xp/management-service/internal/testutils"
 )
 
 var testExperimentationConfig = ExperimentationConfig{

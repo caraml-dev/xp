@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	tu "github.com/gojek/turing-experiments/common/testutils"
+	tu "github.com/gojek/xp/common/testutils"
 )
 
 func startTestHTTPServer(mux *http.ServeMux, address string) *http.Server {

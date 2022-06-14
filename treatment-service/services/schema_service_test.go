@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	"github.com/gojek/turing-experiments/treatment-service/models"
-	"github.com/gojek/turing-experiments/treatment-service/util"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/treatment-service/models"
+	"github.com/gojek/xp/treatment-service/util"
 )
 
 type SchemaServiceTestSuite struct {

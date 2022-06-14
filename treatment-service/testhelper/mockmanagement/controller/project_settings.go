@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	api "github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement"
-	"github.com/gojek/turing-experiments/treatment-service/util"
+	"github.com/gojek/xp/common/api/schema"
+	api "github.com/gojek/xp/treatment-service/testhelper/mockmanagement"
+	"github.com/gojek/xp/treatment-service/util"
 )
 
 type ProjectSettings struct {

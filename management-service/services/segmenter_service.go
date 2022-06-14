@@ -8,10 +8,10 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	"github.com/gojek/turing-experiments/management-service/models"
-	"github.com/gojek/turing-experiments/management-service/segmenters"
+	"github.com/gojek/xp/common/api/schema"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/management-service/models"
+	"github.com/gojek/xp/management-service/segmenters"
 )
 
 type SegmenterService interface {

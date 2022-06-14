@@ -3,11 +3,11 @@ package controller
 import (
 	"net/http"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	"github.com/gojek/turing-experiments/management-service/appcontext"
-	"github.com/gojek/turing-experiments/management-service/errors"
-	"github.com/gojek/turing-experiments/management-service/models"
-	"github.com/gojek/turing-experiments/management-service/segmenters"
+	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/xp/management-service/appcontext"
+	"github.com/gojek/xp/management-service/errors"
+	"github.com/gojek/xp/management-service/models"
+	"github.com/gojek/xp/management-service/segmenters"
 )
 
 type SegmenterController struct {

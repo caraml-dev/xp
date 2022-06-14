@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
+	"github.com/gojek/xp/common/api/schema"
 )
 
 type ExperimentHistory struct {

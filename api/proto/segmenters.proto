@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package segmenters;
-option go_package = "github.com/gojek/turing-experiments/common/segmenters";
+option go_package = "github.com/gojek/xp/common/segmenters";
 
 // SegmenterValue represents a single value of a segmenter
 message SegmenterValue {

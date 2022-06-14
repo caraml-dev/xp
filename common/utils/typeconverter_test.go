@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
+	_segmenters "github.com/gojek/xp/common/segmenters"
 )
 
 func TestStringSliceToListSegmenterValue(t *testing.T) {

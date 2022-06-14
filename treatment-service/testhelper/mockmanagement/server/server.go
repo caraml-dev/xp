@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	api "github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement"
-	"github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement/controller"
-	"github.com/gojek/turing-experiments/treatment-service/testhelper/mockmanagement/service"
+	api "github.com/gojek/xp/treatment-service/testhelper/mockmanagement"
+	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/controller"
+	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
 )
 
 func newHandler(store *service.InMemoryStore) http.Handler {

@@ -10,10 +10,10 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/suite"
 
-	tu "github.com/gojek/turing-experiments/management-service/internal/testutils"
-	"github.com/gojek/turing-experiments/management-service/models"
-	"github.com/gojek/turing-experiments/management-service/pagination"
-	"github.com/gojek/turing-experiments/management-service/services"
+	tu "github.com/gojek/xp/management-service/internal/testutils"
+	"github.com/gojek/xp/management-service/models"
+	"github.com/gojek/xp/management-service/pagination"
+	"github.com/gojek/xp/management-service/services"
 )
 
 type SegmentHistoryServiceTestSuite struct {

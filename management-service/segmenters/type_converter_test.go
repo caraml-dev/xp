@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/turing-experiments/common/api/schema"
-	_segmenters "github.com/gojek/turing-experiments/common/segmenters"
-	"github.com/gojek/turing-experiments/management-service/models"
+	"github.com/gojek/xp/common/api/schema"
+	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/management-service/models"
 )
 
 func TestProtobufSegmenterConfigToOpenAPISegmenterConfig(t *testing.T) {

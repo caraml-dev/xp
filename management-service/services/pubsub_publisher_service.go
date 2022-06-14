@@ -7,8 +7,8 @@ import (
 	"google.golang.org/api/iterator"
 	"google.golang.org/protobuf/proto"
 
-	_pubsub "github.com/gojek/turing-experiments/common/pubsub"
-	"github.com/gojek/turing-experiments/management-service/config"
+	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/xp/management-service/config"
 )
 
 type PubSubPublisherService interface {

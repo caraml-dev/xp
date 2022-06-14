@@ -18,7 +18,7 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-chi/chi/v5"
-	externalRef0 "github.com/gojek/turing-experiments/common/api/schema"
+	externalRef0 "github.com/gojek/xp/common/api/schema"
 )
 
 const (
@@ -477,8 +477,6 @@ type ServerInterface interface {
 }
 
 // Copied from https://github.com/deepmap/oapi-codegen/blob/v1.8.1/pkg/codegen/templates/chi-middleware.tmpl
-// Motivation behind customizing the template is for capturing segmenter values via query parameters for
-// ListExperiments (GET method)
 
 // ServerInterfaceWrapper converts contexts to parameters.
 type ServerInterfaceWrapper struct {
