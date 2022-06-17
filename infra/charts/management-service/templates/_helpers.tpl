@@ -69,7 +69,7 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "xp.sentry.enabled" -}}
-{{ eq (.Values.xpManagement.apiConfig.SentryConfig.Enabled | toString) "true" }}
+{{ eq (.Values.xpManagement.apiConfig.sentryConfig.enabled | toString) "true" }}
 {{- end -}}
 
 {{- define "xp.sentry.dsn" -}}
