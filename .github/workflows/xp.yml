@@ -230,7 +230,7 @@ jobs:
       - unit-tests-treatment
       - e2e-tests
       - release-rules
-    uses: gojek/xp/.github/workflows/release.yml@main
+    uses: gojek/turing-experiments/.github/workflows/release.yml@main
     with:
       environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
     secrets:
