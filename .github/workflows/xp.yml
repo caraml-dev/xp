@@ -211,27 +211,27 @@ jobs:
       - id: release-rules
         uses: ./.github/actions/release-rules
 
-  # release:
-  #   # Automatically publish release and pre-release artifacts.
-  #   #
-  #   # As for dev releases, make it possible to publish artifacts
-  #   # manually by approving 'deployment' in the 'manual' environment.
-  #   #
-  #   # Dev build can be released either from the 'main' branch or
-  #   # by running this workflow manually with `workflow_dispatch` event.
-  #   if: >-
-  #     contains('release,pre-release', needs.release-rules.outputs.release-type)
-  #       || ( github.event_name != 'pull_request' )
-  #       || ( github.event.pull_request.head.repo.full_name == github.repository )
-  #   needs:
-  #     - lint-python
-  #     - lint-go
-  #     - unit-tests-management
-  #     - unit-tests-treatment
-  #     - e2e-tests
-  #     - release-rules
-  #   uses: gojek/xp/.github/workflows/release.yml@main
-  #   with:
-  #     environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
-  #   secrets:
-  #     ghcr_token: ${{ secrets.GITHUB_TOKEN }}
+  release:
+   # Automatically publish release and pre-release artifacts.
+   #
+   # As for dev releases, make it possible to publish artifacts
+   # manually by approving 'deployment' in the 'manual' environment.
+   #
+   # Dev build can be released either from the 'main' branch or
+   # by running this workflow manually with `workflow_dispatch` event.
+    if: >-
+      contains('release,pre-release', needs.release-rules.outputs.release-type)
+        || ( github.event_name != 'pull_request' )
+        || ( github.event.pull_request.head.repo.full_name == github.repository )
+    needs:
+      - lint-python
+      - lint-go
+      - unit-tests-management
+      - unit-tests-treatment
+      - e2e-tests
+      - release-rules
+    uses: ./.github/workflows/release.yml
+    with:
+      environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
+    secrets:
+      ghcr_token: ${{ secrets.GITHUB_TOKEN }}
