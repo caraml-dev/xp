@@ -1,7 +1,7 @@
 # xp-management
 
 ---
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square)
+![Version: 0.0.1-dev0.1](https://img.shields.io/badge/Version-0.0.1--dev0.1-informational?style=flat-square)
 ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes Deployment of the XP Managment Service
@@ -63,7 +63,7 @@ The following table lists the configurable parameters of the XP Management Servi
 | swaggerUi.image | object | `{"tag":"v3.47.1"}` | Docker tag for Swagger UI https://hub.docker.com/r/swaggerapi/swagger-ui |
 | swaggerUi.service.externalPort | int | `8080` | Swagger UI Kubernetes service port number |
 | swaggerUi.service.internalPort | int | `8081` | Swagger UI container port number |
-| xpManagement.apiConfig | object | `{"sentryConfig":{"enabled":false}}` | XP Management Service server configuration. |
+| xpManagement.apiConfig | object | `{}` | XP Management Service server configuration. |
 | xpManagement.extraArgs | list | `[]` | List of string containing additional XP Management Service server arguments. For example, multiple "-config" can be specified to use multiple config files |
 | xpManagement.extraEnvs | list | `[]` | List of extra environment variables to add to XP Management Service server container |
 | xpManagement.extraLabels | object | `{}` | List of extra labels to add to XP Management Service K8s resources |
