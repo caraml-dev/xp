@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "0.0.1"
 name: xp-treatment
 description: A Helm chart for Kubernetes Deployment of the XP Treatment Service
-version: 0.0.1
+version: 0.0.1-dev0.1

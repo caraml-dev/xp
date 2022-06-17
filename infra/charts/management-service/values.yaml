@@ -55,7 +55,9 @@ xpManagement:
     class: ""
 
   # -- XP Management Service server configuration.
-  apiConfig: {}
+  apiConfig:
+    sentryConfig:
+      enabled: false
 
   # -- XP UI configuration.
   uiConfig:
