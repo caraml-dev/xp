@@ -180,6 +180,20 @@ jobs:
       - name: Build binaries
         run: make build
 
+      - name: Publish Management Service Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: management-service-binary
+          path: management-service/bin/
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+
+      - name: Publish Treatment Service Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: treatment-service-binary
+          path: treatment-service/bin/
+          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
+
       - name: Run E2E tests
         env:
           DATABASE_HOST: localhost
@@ -254,7 +268,13 @@ jobs:
           name: xp-ui-dist
           path: ui/build
 
-      - name: Construct vendor directory
+      - name: Download Management Service binary
+        uses: actions/download-artifact@v2
+        with:
+          name: management-service-binary
+          path: management-service/bin/
+
+      - name: Sync vendor directory
         working-directory: management-service
         run: |
           echo "Fetching dependencies..."
@@ -295,8 +315,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build Treatment Service binary
-        run: make build-treatment-service
+      - name: Download Treatment Service binary
+        uses: actions/download-artifact@v2
+        with:
+          name: treatment-service-binary
+          path: treatment-service/bin/
 
       - name: Build Docker image
         id: build-image
