@@ -1,0 +1,24 @@
+{{- if .Values.swaggerUi.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "xp.fullname" . }}-swagger
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "xp.fullname" .}}
+    chart: {{ template "xp.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{ if .Values.xpTreatment.labels -}}
+{{ toYaml .Values.xpTreatment.labels | indent 4 -}}
+{{- end }}
+spec:
+  type: {{ .Values.swaggerUi.service.type }}
+  ports:
+    - port: {{ .Values.swaggerUi.service.externalPort }}
+      targetPort: {{ .Values.swaggerUi.service.internalPort }}
+      protocol: TCP
+  selector:
+    app: {{ template "xp.fullname" .}}
+    release: {{ .Release.Name }}
+{{- end }}

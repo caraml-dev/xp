@@ -1,0 +1,98 @@
+xpTreatment:
+  image:
+    # -- Docker registry for XP Treatment Service image
+    registry: docker.io/
+    # -- Docker image repository for XP Treatment Service
+    repository: xp-treatment
+    # -- Docker image tag for XP Treatment Service
+    tag: latest
+    # -- Docker image pull policy
+    pullPolicy: IfNotPresent
+  
+  labels: {}
+  replicaCount: 1
+
+  # -- Resources requests and limits for XP Treatment Service. This should be set 
+  # according to your cluster capacity and service level objectives.
+  # Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  resources: {}
+
+  livenessProbe:
+    # -- HTTP path for liveness check
+    path: "/v1/internal/health/live"
+    # -- Liveness probe delay and thresholds
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  readinessProbe:
+    # -- HTTP path for readiness check
+    path: "/v1/internal/health/ready"
+    # -- Liveness probe delay and thresholds
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  service:
+    type: ClusterIP
+    # -- XP Treatment Service Kubernetes service port number
+    externalPort: 8080
+    # -- XP Treatment Service container port number
+    internalPort: 8080
+
+  ingress:
+    # -- Enable ingress to provision Ingress resource for external access to XP Treatment Service
+    enabled: false
+    # -- Set host value to enable name based virtual hosting. This allows routing
+    # HTTP traffic to multiple host names at the same IP address. If no host is
+    # specified, the ingress rule applies to all inbound HTTP traffic through 
+    # the IP address specified.
+    # https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting
+    host: ""
+    # -- Ingress class annotation to add to this Ingress rule, 
+    # useful when there are multiple ingress controllers installed
+    class: ""
+
+  # -- List of extra environment variables to add to XP Treatment Service server container
+  extraEnvs: []
+
+  # -- List of extra labels to add to XP Treatment Service K8s resources
+  extraLabels: {}
+
+  # -- Extra volumes to attach to the Pod. For example, you can mount 
+  # additional secrets to these volumes
+  extraVolumes: []
+  # # Example
+  # - name: varlog
+  #   emptyDir: {}
+
+  # -- Extra volume mounts to attach to XP Treatment Service server container. For example
+  # to mount the extra volume containing secrets
+  extraVolumeMounts: []
+  # # Example
+  # - name: varlog
+  #   mountPath: /var/log
+
+  nodeSelector: {}
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+swaggerUi:
+  enabled: false
+  # -- Docker tag for Swagger UI https://hub.docker.com/r/swaggerapi/swagger-ui
+  image:
+    tag: v3.47.1
+  # -- URL of API server
+  apiServer: http://127.0.0.1/v1
+  service:
+    # -- Swagger UI container port number
+    internalPort: 8081
+    # -- Swagger UI Kubernetes service port number
+    externalPort: 8080

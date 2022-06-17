@@ -1,0 +1,33 @@
+{{- if .Values.xpTreatment.ingress.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "xp.fullname" .}}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- with .Values.xpTreatment.ingress.class }}
+    ingress.class: {{ . }}
+    {{- end }}
+  labels:
+    app: {{ include "xp.fullname" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    helm.sh/chart: {{ include "xp.chart" . }}
+    app.kubernetes.io/name: {{ include "xp.fullname" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Values.xpTreatment.labels }}
+{{ toYaml .Values.xpTreatment.labels | indent 4 }}
+{{- end }}
+spec:
+  rules:
+  - {{- with .Values.xpTreatment.ingress.host }}
+    host: {{ . }}
+    {{- end }} 
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: {{ template "xp.fullname" .}}
+            servicePort: {{ .Values.xpTreatment.service.externalPort }}
+{{- end }}

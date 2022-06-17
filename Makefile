@@ -25,9 +25,21 @@ OPENAPI_VERSION=1.8.1
 # General
 # ==================================
 
+.PHONY: format
 format: format-python format-go
 
+.PHONY: lint
 lint: lint-python lint-go
+
+.PHONY: vendor
+vendor:
+	@echo "Fetching dependencies..."
+	go mod vendor
+
+.PHONY: version
+version:
+	$(eval VERSION=$(if $(OVERWRITE_VERSION),$(OVERWRITE_VERSION),v$(shell scripts/vertagen/vertagen.sh)))
+	@echo "xp-api version:" $(VERSION)
 
 generate-api:
 	test -x ${GOPATH}/bin/oapi-codegen || go get github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v${OPENAPI_VERSION}
@@ -136,14 +148,14 @@ test: test-management-service test-treatment-service
 # Build recipes
 # ==================================
 
-build-management-service:
+build-management-service: version
 	@echo "Building binary..."
 	@cd ${MANAGEMENT_SVC_PATH} && go build -o ./bin/${MANAGEMENT_SVC_BIN_NAME}
 	@echo "Copying OpenAPI specs..."
 	@cp api/experiments.yaml ${MANAGEMENT_SVC_PATH}/bin
 	@cp api/schema.yaml ${MANAGEMENT_SVC_PATH}/bin
 
-build-treatment-service:
+build-treatment-service: version
 	@echo "Building binary..."
 	@cd ${TREATMENT_SVC_PATH} && go build -o ./bin/${TREATMENT_SVC_BIN_NAME}
 	@cp api/treatment.yaml ${TREATMENT_SVC_PATH}/bin
@@ -151,8 +163,11 @@ build-treatment-service:
 
 build: build-management-service build-treatment-service
 
-version: ## Get git-tags based version
-	@echo ${VERSION_NUMBER}
+.PHONY: build-image
+build-image: version
+	@$(eval IMAGE_TAG = $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/,)${BIN_NAME}:${VERSION})
+	@echo "Building docker image: ${IMAGE_TAG}"
+	docker build --tag ${IMAGE_TAG} .
 
 # ==================================
 # Python E2E tests

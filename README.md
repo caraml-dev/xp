@@ -54,6 +54,17 @@ To test authorization for Management Service locally, make the following changes
 - Set AuthorizationConfig.Enabled=true in the config file that's being used
 - Issue requests to the app with the header User-Email: test-user@gojek.com
 
+#### c. Using XP
+
+To use the XP Go modules as API dependencies, `replace` directives need to be used when consuming both the Management and Treatment API modules since the API modules uses local relative path.
+
+```go
+replace github.com/gojek/xp/clients => github.com/gojek/turing-experiments/clients v0.0.0
+replace github.com/gojek/xp/common => github.com/gojek/turing-experiments/common v0.0.0
+replace github.com/gojek/xp/management-service => github.com/gojek/turing-experiments/management-service v0.0.0
+replace github.com/gojek/xp/treatment-service => github.com/gojek/turing-experiments/treatment-service v0.0.0
+```
+
 ## Contributing
 
 XP is still under active development. Please have a look at our contributing and development guides if you want to contribute to the project:

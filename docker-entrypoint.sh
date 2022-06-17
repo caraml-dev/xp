@@ -65,5 +65,5 @@ parse_command_line(){
 
 main "$@"
 
-echo "Launching xp-api server: " "$XP_API_BIN" "${CMD[@]}"
+echo "Launching xp-management server: " "$XP_API_BIN" "${CMD[@]}"
 exec "$XP_API_BIN" "${CMD[@]}"

@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "xp.fullname" . }}
+  labels:
+    {{- include "xp.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.xpManagement.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "xp.name" .}}
+      release: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{ template "xp.name" .}}
+        release: {{ .Release.Name }}
+        {{- include "xp.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.xpManagement.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "xp.serviceAccountName" . }}
+      containers:
+      - name: api
+        image: "{{ .Values.xpManagement.image.registry }}{{ .Values.xpManagement.image.repository }}:{{ .Values.xpManagement.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.xpManagement.image.pullPolicy }}
+        env:
+          {{- with .Values.xpManagement.extraEnvs }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.xpManagement.livenessProbe.path }}
+            port: {{ .Values.xpManagement.service.internalPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.xpManagement.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.xpManagement.livenessProbe.periodSeconds }}
+          successThreshold: {{ .Values.xpManagement.livenessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.xpManagement.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.xpManagement.readinessProbe.path }}
+            port: {{ .Values.xpManagement.service.internalPort }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.xpManagement.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.xpManagement.readinessProbe.periodSeconds }}
+          successThreshold: {{ .Values.xpManagement.readinessProbe.successThreshold }}
+          timeoutSeconds: {{ .Values.xpManagement.readinessProbe.timeoutSeconds }}
+        resources:
+          {{- toYaml .Values.xpManagement.resources | nindent 12 }}
+        # Give time for running pods to terminate existing connection before letting
+        # Kubernetes terminate the pods.
+        # https://blog.sebastian-daschner.com/entries/zero-downtime-updates-kubernetes
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/bash", "-c", "sleep 15"]
+        args:
+        - serve
+        - --config=/etc/xp/config.yaml
+        {{- if .Values.xpManagement.uiConfig }}
+        - -ui-config
+        - /etc/xp/ui.config.json
+        {{- end }}
+        {{- with .Values.xpManagement.extraArgs }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        volumeMounts:
+        - name: config
+          mountPath: /etc/xp
+        {{- with .Values.xpManagement.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      - name: swagger-ui
+        image: "swaggerapi/swagger-ui:{{ .Values.swaggerUi.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: {{ .Values.swaggerUi.service.internalPort }}
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 128Mi
+        env:
+        - name: LAYOUT
+          value: "BaseLayout"
+        - name: SWAGGER_JSON
+          value: "/app/experiments.yaml"
+        - name: PORT
+          value: "{{ .Values.swaggerUi.service.internalPort }}"
+        - name: API_SERVER
+          value: "{{ .Values.swaggerUi.apiServer }}"
+        command: ["sh", "-c"]
+        args:
+        - |
+          mkdir /app
+          export LOCAL_API_SERVER="http://127.0.0.1:{{ .Values.xpManagement.service.internalPort }}"
+          echo "Fetching swagger configuration from ${LOCAL_API_SERVER}/experiments.yaml..."
+          until $$(wget -O $${SWAGGER_JSON} --tries 1 --timeout 1 ${LOCAL_API_SERVER}/experiments.yaml); do
+            printf '.'
+            sleep 10
+          done
+          echo "Fetching swagger configuration from ${LOCAL_API_SERVER}/schema.yaml..."
+          until $$(wget -O /app/schema.yaml --tries 1 --timeout 1 ${LOCAL_API_SERVER}/schema.yaml); do
+            printf '.'
+            sleep 10
+          done
+          echo "Update Swagger config..."
+          sed -r -i 's%^((\s*)-(\s*)url\s*:).*$$%\1 "'$${API_SERVER}'"%' $${SWAGGER_JSON}
+          echo "Running Swagger UI..."
+          /usr/share/nginx/run.sh
+      volumes:
+      - name: config 
+        secret:
+          secretName: {{ template "xp.fullname" .}}-api-config
+      {{- with .Values.xpManagement.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}

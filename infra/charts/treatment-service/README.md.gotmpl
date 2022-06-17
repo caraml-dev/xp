@@ -1,0 +1,57 @@
+{{ template "chart.header" . }}
+---
+{{ template "chart.versionBadge" . }}
+{{ template "chart.appVersionBadge" . }}
+
+{{ template "chart.description" . }}
+
+## Introduction
+
+This Helm chart installs [Treatment Service](https://github.com/gojek/xp/treatment-service) and all its dependencies in a Kubernetes cluster.
+
+## Prerequisites
+
+To use the charts here, [Helm](https://helm.sh/) must be configured for your
+Kubernetes cluster. Setting up Kubernetes and Helm is outside the scope of
+this README. Please refer to the Kubernetes and Helm documentation.
+
+- **Helm 3.0+** – This chart was tested with Helm v3.7.1, but it is also expected to work with earlier Helm versions
+- **Kubernetes 1.18+** – This chart was tested with GKE v1.20.x, but it's possible it works with earlier k8s versions too.
+
+## Installation
+
+### Add Helm repository
+
+```sh
+$ helm repo add xp https://turing-ml.github.io/charts
+```
+
+### Installing the chart
+
+This command will install XP Treatment Service release named `treatment-service` in the `default` namespace.
+Default chart values will be used for the installation:
+```shell
+$ helm install xp xp/treatment-service
+```
+
+You can (and most likely, should) override the default configuration with values suitable for your installation.
+Refer to [Configuration](#configuration) section for the detailed description of available configuration keys.
+
+You can also refer to [values.minimal.yaml](./values.minimal.yaml) to check a minimal configuration that needs
+to be provided for XP Treatment Service installation.
+
+### Uninstalling the chart
+
+To uninstall `treatment-service` release:
+```shell
+$ helm uninstall treatment-service
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release,
+except for postgresql PVC, those will have to be removed manually.
+
+## Configuration
+
+The following table lists the configurable parameters of the XP Treatment Service chart and their default values.
+
+{{ template "chart.valuesTable" . }}
