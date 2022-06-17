@@ -1,4 +1,4 @@
-name: XP Release CI
+name: XP Release
 
 on:
   workflow_call:
