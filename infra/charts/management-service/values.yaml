@@ -1,10 +1,10 @@
 xpManagement:
   image:
-    # -- Docker registry for XP API image
+    # -- Docker registry for XP Management Service image
     registry: docker.io/
-    # -- Docker image repository for XP API
+    # -- Docker image repository for XP Management Service
     repository: xp-management
-    # -- Docker image tag for XP API
+    # -- Docker image tag for XP Management Service
     tag: latest
     # -- Docker image pull policy
     pullPolicy: IfNotPresent
@@ -12,7 +12,7 @@ xpManagement:
   labels: {}
   replicaCount: 1
 
-  # -- Resources requests and limits for XP API. This should be set 
+  # -- Resources requests and limits for XP Management Service. This should be set
   # according to your cluster capacity and service level objectives.
   # Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: {}
@@ -36,13 +36,13 @@ xpManagement:
     timeoutSeconds: 5
 
   service:
-    # -- XP API Kubernetes service port number
+    # -- XP Management Service Kubernetes service port number
     externalPort: 8080
-    # -- XP API container port number
+    # -- XP Management Service container port number
     internalPort: 8080
 
   ingress:
-    # -- Enable ingress to provision Ingress resource for external access to XP API
+    # -- Enable ingress to provision Ingress resource for external access to XP Management Service
     enabled: false
     # -- Set host value to enable name based virtual hosting. This allows routing
     # HTTP traffic to multiple host names at the same IP address. If no host is
@@ -50,11 +50,11 @@ xpManagement:
     # the IP address specified.
     # https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting
     host: ""
-    # -- Ingress class annotation to add to this Ingress rule, 
+    # -- Ingress class annotation to add to this Ingress rule,
     # useful when there are multiple ingress controllers installed
     class: ""
 
-  # -- XP API server configuration. 
+  # -- XP Management Service server configuration.
   apiConfig: {}
 
   # -- XP UI configuration.
@@ -70,20 +70,20 @@ xpManagement:
       oauthClientId: ""
     sentryConfig: { }
 
-  # -- List of string containing additional XP API server arguments. For
+  # -- List of string containing additional XP Management Service server arguments. For
   # example, multiple "-config" can be specified to use multiple config files
   extraArgs: []
   # Example
   # - --config=/etc/secrets/experiment.yaml
   # - --config=/etc/secrets/database.yaml
 
-  # -- List of extra environment variables to add to XP API server container
+  # -- List of extra environment variables to add to XP Management Service server container
   extraEnvs: []
   # # Example
   # - name: DEMO_GREETING
   #   value: "Hello from the environment"
 
-  # -- List of extra labels to add to XP API K8s resources
+  # -- List of extra labels to add to XP Management Service K8s resources
   extraLabels: {}
 
   # -- Extra volumes to attach to the Pod. For example, you can mount 
@@ -93,7 +93,7 @@ xpManagement:
   # - name: varlog
   #   emptyDir: {}
 
-  # -- Extra volume mounts to attach to XP API server container. For example
+  # -- Extra volume mounts to attach to XP Management Service server container. For example
   # to mount the extra volume containing secrets
   extraVolumeMounts: []
   # # Example
@@ -111,7 +111,7 @@ xpManagement:
 
   sentry:
     enabled: false
-    # -- Sentry DSN value used by both XP API and XP UI
+    # -- Sentry DSN value used by both XP Management Service and XP UI
     dsn: ""
 
 global:

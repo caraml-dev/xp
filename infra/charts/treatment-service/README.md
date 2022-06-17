@@ -92,6 +92,6 @@ The following table lists the configurable parameters of the XP Treatment Servic
 | xpTreatment.readinessProbe.timeoutSeconds | int | `5` |  |
 | xpTreatment.replicaCount | int | `1` |  |
 | xpTreatment.resources | object | `{}` | Resources requests and limits for XP Treatment Service. This should be set  according to your cluster capacity and service level objectives. Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ |
-| xpTreatment.service.externalPort | int | `8080` | XP API Kubernetes service port number |
-| xpTreatment.service.internalPort | int | `8080` | XP API container port number |
+| xpTreatment.service.externalPort | int | `8080` | XP Treatment Service Kubernetes service port number |
+| xpTreatment.service.internalPort | int | `8080` | XP Treatment Service container port number |
 | xpTreatment.service.type | string | `"ClusterIP"` |  |

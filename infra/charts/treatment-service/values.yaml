@@ -37,9 +37,9 @@ xpTreatment:
 
   service:
     type: ClusterIP
-    # -- XP API Kubernetes service port number
+    # -- XP Treatment Service Kubernetes service port number
     externalPort: 8080
-    # -- XP API container port number
+    # -- XP Treatment Service container port number
     internalPort: 8080
 
   ingress:

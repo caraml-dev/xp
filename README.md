@@ -56,7 +56,7 @@ To test authorization for Management Service locally, make the following changes
 
 #### c. Using XP
 
-To use XP, `replace` directives need to be used when consuming both the Management and Treatment API modules since the API modules uses local relative path.
+To use the XP Go modules as API dependencies, `replace` directives need to be used when consuming both the Management and Treatment API modules since the API modules uses local relative path.
 
 ```go
 replace github.com/gojek/xp/clients => github.com/gojek/turing-experiments/clients v0.0.0
