@@ -1,6 +1,6 @@
-FROM debian:buster-slim
+FROM alpine:latest
 
-RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates
+RUN apk update && apk add git make bash unzip libtool gcc musl-dev ca-certificates dumb-init
 
 RUN mkdir -p /opt/xp_treatment
 
