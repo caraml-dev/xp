@@ -88,12 +88,6 @@ jobs:
           name: management-service-binary
           path: management-service/bin/
 
-      - name: Sync vendor directory
-        working-directory: management-service
-        run: |
-          echo "Fetching dependencies..."
-          go mod vendor
-
       - name: Build Docker image
         id: build-image
         run: |
