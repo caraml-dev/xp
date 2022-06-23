@@ -88,6 +88,10 @@ jobs:
           name: management-service-binary
           path: management-service/bin/
 
+      - run: ls ~/management-service/bin/
+      - run: ls management-service/bin/
+      - run: ls ./management-service/bin/
+
       - name: Build Docker image
         id: build-image
         run: |
