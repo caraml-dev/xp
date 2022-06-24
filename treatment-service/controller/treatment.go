@@ -163,6 +163,7 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 
 	// Fetch treatment
 	if filteredExperiment == nil {
+		statusCode = http.StatusOK
 		Ok(w, api.FetchTreatmentSuccess{
 			Data: nil,
 		}, &requestId)
