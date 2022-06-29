@@ -17,7 +17,7 @@ This impacts the `status` field in the experiment. Experiments are only consider
 
 Experiments can be created in the 'active' state and disabled later on, or vice versa, which can help instantly modify its behavior.
 
-1. In the Experiment Details Page, you can click 'Activate Experiment' or 'Deactivate Experiment' button beside the 'Edit Experiment' button to change the status. Corresponding button will be shown based on the status.
+1. In the Experiment Details Page, you can click 'Activate Experiment' or 'Deactivate Experiment' button beside the 'Edit Experiment' button to change the status. The corresponding button will be shown based on the status.
 ![Modify Experiment Deactivate Button](../assets/06_modifying_experiment_deactivate_button.png)
 2. Upon clicking the button, a confirmation window will be shown.
 ![Modify Experiment Activate Modal](../assets/06_modifying_experiment_activate.png)

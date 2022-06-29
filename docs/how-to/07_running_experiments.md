@@ -1,6 +1,6 @@
 # Running Experiments
 
-Experiments can be run using routers or independently.
+Experiments can be run using [routers](https://github.com/gojek/turing/blob/main/docs/concepts.md) or independently.
 
 Based on the segmenters enabled for the project and the experiment variables mapped to them (in the project's settings),
 all the variable(s) must be provided in the fetch treatment request body. For each segmenter below, one of the specified

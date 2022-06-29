@@ -21,7 +21,7 @@ From the Experiments List page, clicking the 'arrow' and 'Settings' icon would b
 
 ### Treatment Validation Rules
 
-Treatment Validation Rules allows users to specify rules that the treatment configuration of experiments must comply. XP uses [Go Template](https://pkg.go.dev/text/template) and the [Sprig library](http://masterminds.github.io/sprig/) as the template function. The treatment configuration will be templated with the predicate provided and the final output must return `true` for the operation to be permitted.
+Treatment Validation Rules allows users to specify rules that the treatment configuration of experiments must comply with. XP uses [Go Template](https://pkg.go.dev/text/template) and the [Sprig library](http://masterminds.github.io/sprig/) as the template function. The treatment configuration will be templated with the predicate provided and the final output must return `true` for the operation to be permitted.
 
 This is useful to prevent careless mistakes while creating the treatment configuration, such as creating rules to ensure the weight of the models sums to 1 or to ensure that a control is set for every treatment.
 

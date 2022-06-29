@@ -18,7 +18,7 @@ For access to XP, users can self-onboard via the MLP UI.
 
     - Where the segmenter may be computed from several different (groups of) variables at runtime, also select the desired variable mapping. For example, `s2_ids` may be supplied as `s2_id` or computed from `latitude,longitude`. This must be specified in the settings.
 
-5. Click on Save. And viola! The onboarding is complete and you should see the configured settings.
+5. Click on Save. And voila! The onboarding is complete and you should see the configured settings.
 The project credentials (in particular, the `passkey`) would be required for running experiments
-(Turing takes care of this if you are running the experiments through its routers).
+([Turing](https://github.com/gojek/turing/tree/main/docs) takes care of this if you are running the experiments through its routers).
 ![Experiments Settings Details](../assets/01_settings_details.png)
