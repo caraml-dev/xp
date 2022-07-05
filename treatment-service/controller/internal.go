@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/heptiolabs/healthcheck"
 
@@ -21,7 +22,9 @@ func NewInternalController(ctx *appcontext.AppContext, cfg *config.Config) *Inte
 
 	mux := http.NewServeMux()
 	mux.Handle("/health/", http.StripPrefix("/health", healthCheckHandler))
-	mux.Handle("/debug", NewDebugHandler(ctx, cfg))
+	mux.Handle("/debug/dump", NewCacheDumpHandler(ctx, cfg))
+	// For profiling. net/http/pprof will register itself to http.DefaultServeMux.
+	mux.Handle("/debug/pprof/", http.DefaultServeMux)
 	return &InternalController{Handler: mux, AppContext: ctx, Config: cfg}
 }
 
@@ -30,7 +33,7 @@ type debugHandler struct {
 	Config *config.Config
 }
 
-func NewDebugHandler(ctx *appcontext.AppContext, cfg *config.Config) http.Handler {
+func NewCacheDumpHandler(ctx *appcontext.AppContext, cfg *config.Config) http.Handler {
 	return &debugHandler{AppContext: ctx, Config: cfg}
 }
 
