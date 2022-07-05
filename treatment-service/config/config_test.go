@@ -26,6 +26,7 @@ func TestDefaultConfigs(t *testing.T) {
 		},
 		DeploymentConfig: DeploymentConfig{
 			EnvironmentType: "local",
+			MaxGoRoutines:   100,
 		},
 		AssignedTreatmentLogger: AssignedTreatmentLoggerConfig{
 			Kind:                 "",
@@ -80,7 +81,7 @@ func TestLoadMultipleConfigs(t *testing.T) {
 			URL:                  "localhost:3000/v1",
 			AuthorizationEnabled: true,
 		},
-		DeploymentConfig: DeploymentConfig{EnvironmentType: "dev"},
+		DeploymentConfig: DeploymentConfig{EnvironmentType: "dev", MaxGoRoutines: 200},
 		AssignedTreatmentLogger: AssignedTreatmentLoggerConfig{
 			Kind:                 "bq",
 			QueueLength:          1073741824,

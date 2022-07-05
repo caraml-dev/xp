@@ -18,7 +18,7 @@ type InternalController struct {
 
 func NewInternalController(ctx *appcontext.AppContext, cfg *config.Config) *InternalController {
 	healthCheckHandler := healthcheck.NewHandler()
-	healthCheckHandler.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(100))
+	healthCheckHandler.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(cfg.DeploymentConfig.MaxGoRoutines))
 
 	mux := http.NewServeMux()
 	mux.Handle("/health/", http.StripPrefix("/health", healthCheckHandler))
