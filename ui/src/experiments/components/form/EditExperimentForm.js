@@ -4,20 +4,31 @@ import { EuiLoadingChart, EuiTextAlign } from "@elastic/eui";
 import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
+import { GeneralStep } from "experiments/components/form/steps/GeneralStep";
+import { SegmentStep } from "experiments/components/form/steps/SegmentStep";
+import { TreatmentsStep } from "experiments/components/form/steps/TreatmentsStep";
+import schema from "experiments/components/form/validation/schema";
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenters/context";
 import SettingsContext from "providers/settings/context";
-
-import { GeneralStep } from "./steps/GeneralStep";
-import { SegmentStep } from "./steps/SegmentStep";
-import { TreatmentsStep } from "./steps/TreatmentsStep";
-import schema from "./validation/schema";
+import { parseSegmenterValue } from "services/experiment/Segment";
 
 export const EditExperimentForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);
   const { settings, isLoaded } = useContext(SettingsContext);
   const { data: experiment } = useContext(FormContext);
-  const { segmenterConfig } = useContext(SegmenterContext);
+  const { segmenterConfig, getSegmenterOptions } = useContext(SegmenterContext);
+
+  // retrieve name-type (in caps) mappings for active segmenters specified for this project
+  const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function (
+    map,
+    obj
+  ) {
+    map[obj.name] = obj.type.toUpperCase();
+    return map;
+  },
+  {});
+
   const requiredSegmenterNames = useMemo(
     () =>
       segmenterConfig
@@ -41,6 +52,11 @@ export const EditExperimentForm = ({ projectId, onCancel, onSuccess }) => {
       if (!settings.segmenters.names.includes(key)) {
         delete experiment.segment[key];
       }
+      experiment.segment[key] = experiment.segment[key].map(
+        (segmenterValue) => {
+          return parseSegmenterValue(segmenterValue, segmenterTypes[key]);
+        }
+      );
     }
     return submitForm({ body: experiment.stringify() }).promise;
   };
@@ -69,7 +85,7 @@ export const EditExperimentForm = ({ projectId, onCancel, onSuccess }) => {
       iconType: "package",
       children: <SegmentStep projectId={projectId} isEdit={false} />,
       validationSchema: validationSchema[1],
-      validationContext: { requiredSegmenterNames },
+      validationContext: { requiredSegmenterNames, segmenterTypes },
     },
     {
       title: "Treatments",

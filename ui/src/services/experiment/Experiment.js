@@ -3,9 +3,8 @@ import merge from "lodash/merge";
 import moment from "moment";
 
 import { appConfig } from "config";
+import { Segment } from "services/experiment/Segment";
 import { makeNewTreatment } from "utils/helpers";
-
-import { Segment } from "./Segment";
 
 const jsonBig = require(`json-bigint`);
 

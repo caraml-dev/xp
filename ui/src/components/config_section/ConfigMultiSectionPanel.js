@@ -2,7 +2,7 @@ import React from "react";
 
 import { EuiFlexGroup, EuiFlexItem, EuiPanel } from "@elastic/eui";
 
-import { ConfigSectionPanelTitle } from "./ConfigSectionPanelTitle";
+import { ConfigSectionPanelTitle } from "components/config_section/ConfigSectionPanelTitle";
 
 export const ConfigMultiSectionPanel = React.forwardRef(
   ({ items, className }, ref) => {

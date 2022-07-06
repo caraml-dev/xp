@@ -32,9 +32,10 @@ const EditSettingsView = ({ projectId, settings, ...props }) => {
             <PageTitle title="Edit Settings" />
           </EuiPageHeaderSection>
         </EuiPageHeader>
+        <EuiSpacer size="m" />
         <EuiPageContentBody>
           <FormContextProvider data={Settings.fromJson(settings)}>
-            <SegmenterContextProvider>
+            <SegmenterContextProvider projectId={projectId}>
               <EditSettingsForm
                 projectId={projectId}
                 onCancel={() => window.history.back()}

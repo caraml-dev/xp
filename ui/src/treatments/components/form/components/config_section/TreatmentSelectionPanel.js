@@ -9,8 +9,7 @@ import {
 
 import { Panel } from "components/panel/Panel";
 import TreatmentsContext from "providers/treatment/context";
-
-import { TreatmentConfigPanel } from "./TreatmentConfigPanel";
+import { TreatmentConfigPanel } from "treatments/components/form/components/config_section/TreatmentConfigPanel";
 
 export const TreatmentSelectionPanel = ({
   projectId,

@@ -3,8 +3,7 @@ import React from "react";
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
 
 import { Panel } from "components/panel/Panel";
-
-import { TreatmentValidationRulesCard } from "./TreatmentValidationRulesCard";
+import { TreatmentValidationRulesCard } from "settings/components/form/components/treatment_validation_section/TreatmentValidationRulesCard";
 
 export const TreatmentValidationRulesConfigPanel = ({
   settings,

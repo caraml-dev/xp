@@ -1,7 +1,7 @@
 import React, { Fragment, useCallback, useRef } from "react";
 
-import { ActivateExperimentModal } from "./modals/ActivateExperimentModal";
-import { DeactivateExperimentModal } from "./modals/DeactivateExperimentModal";
+import { ActivateExperimentModal } from "experiments/details/modals/ActivateExperimentModal";
+import { DeactivateExperimentModal } from "experiments/details/modals/DeactivateExperimentModal";
 
 export const ExperimentActions = ({
   onEdit,

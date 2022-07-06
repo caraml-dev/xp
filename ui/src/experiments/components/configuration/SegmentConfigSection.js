@@ -56,9 +56,11 @@ export const SegmentConfigSection = ({ experiment }) => {
     })
   );
 
-  const projectSegmenters = useMemo(() => {
+  const activeProjectSegmenters = useMemo(() => {
     return segmenterConfig.reduce((acc, segmenter) => {
-      acc.push(segmenter.name);
+      if (segmenter.status === "active") {
+        acc.push(segmenter.name);
+      }
       return acc;
     }, []);
   }, [segmenterConfig]);
@@ -71,7 +73,7 @@ export const SegmentConfigSection = ({ experiment }) => {
     <ConfigPanel>
       <ExperimentSegmentTable
         items={items}
-        projectSegmenters={projectSegmenters}
+        projectSegmenters={activeProjectSegmenters}
         buttonAction={openFlyout}
       />
       {isFlyoutVisible && (
@@ -80,6 +82,7 @@ export const SegmentConfigSection = ({ experiment }) => {
           content={flyoutItem.segmentValue}
           onClose={toggleFlyout}
           size="s"
+          contentClass="eui-textBreakWord"
           textStyle={{ textTransform: "capitalize" }}
         />
       )}

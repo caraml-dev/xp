@@ -8,7 +8,6 @@ import {
 } from "@gojek/mlp-ui";
 
 import { SegmentSelectionPanel } from "experiments/components/form/components/segment_config/SegmentSelectionPanel";
-import { SegmenterContextProvider } from "providers/segmenters/context";
 import { ConfigPanel } from "segments/components/form/components/config_section/ConfigPanel";
 
 export const ConfigurationStep = ({ projectId, isEdit }) => {
@@ -19,23 +18,21 @@ export const ConfigurationStep = ({ projectId, isEdit }) => {
   return (
     <EuiFlexGroup direction="column" gutterSize="m">
       <EuiFlexItem grow={true}>
-        <SegmenterContextProvider projectId={projectId}>
-          <ConfigPanel
-            name={data.name}
-            onChange={onChange}
-            errors={errors}
-            isEdit={!!data.id}
-          />
-          <EuiSpacer />
-          <SegmentSelectionPanel
-            isEdit={isEdit}
-            projectId={projectId}
-            segment={data.segment}
-            segmentTemplate={data.segment_template}
-            onChange={onChange}
-            errors={errors}
-          />
-        </SegmenterContextProvider>
+        <ConfigPanel
+          name={data.name}
+          onChange={onChange}
+          errors={errors}
+          isEdit={!!data.id}
+        />
+        <EuiSpacer />
+        <SegmentSelectionPanel
+          isEdit={isEdit}
+          projectId={projectId}
+          segment={data.segment}
+          segmentTemplate={data.segment_template}
+          onChange={onChange}
+          errors={errors}
+        />
       </EuiFlexItem>
     </EuiFlexGroup>
   );

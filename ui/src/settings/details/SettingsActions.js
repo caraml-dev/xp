@@ -3,6 +3,7 @@ import React, { Fragment, useCallback } from "react";
 export const SettingsActions = ({
   onEdit,
   onValidationEdit,
+  onCreateSegmenter,
   children,
   selectedTab,
 }) => {
@@ -20,8 +21,14 @@ export const SettingsActions = ({
         onClick: onValidationEdit,
         hidden: selectedTab !== "validation",
       },
+      {
+        name: "Create Segmenter",
+        icon: "documentEdit",
+        onClick: onCreateSegmenter,
+        hidden: selectedTab !== "segmenters",
+      },
     ];
-  }, [onEdit, onValidationEdit, selectedTab]);
+  }, [onEdit, onValidationEdit, onCreateSegmenter, selectedTab]);
 
   return <Fragment>{children(actions)}</Fragment>;
 };

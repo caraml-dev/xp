@@ -1,3 +1,5 @@
+import "turing/components/form/variables_config/components/FieldSourceFormLabel.scss";
+
 import React, { useMemo } from "react";
 
 import {
@@ -7,8 +9,6 @@ import {
   EuiPopover,
 } from "@elastic/eui";
 import { flattenPanelTree, useToggle } from "@gojek/mlp-ui";
-
-import "./FieldSourceFormLabel.scss";
 
 const fieldSourceOptions = [
   {

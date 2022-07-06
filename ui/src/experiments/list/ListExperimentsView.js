@@ -1,3 +1,5 @@
+import "experiments/list/ListExperimentsView.scss";
+
 import React, { useContext, useEffect, useState } from "react";
 
 import {
@@ -19,15 +21,12 @@ import classNames from "classnames";
 import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
 import { useConfig } from "config";
-import { useXpApi } from "hooks/useXpApi";
-
-import ListExperimentsTable from "./ListExperimentsTable";
+import ListExperimentsTable from "experiments/list/ListExperimentsTable";
 import ExperimentSearchContext, {
   ExperimentSearchContextProvider,
-} from "./search/context";
-import SearchExperimentsPanel from "./search/SearchExperimentsPanel";
-
-import "./ListExperimentsView.scss";
+} from "experiments/list/search/context";
+import SearchExperimentsPanel from "experiments/list/search/SearchExperimentsPanel";
+import { useXpApi } from "hooks/useXpApi";
 
 const ListExperimentsComponent = ({ projectId, props }) => {
   const { appConfig } = useConfig();

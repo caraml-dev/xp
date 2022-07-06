@@ -5,10 +5,9 @@ import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenters/context";
-
-import { RandomizationStep } from "./steps/RandomizationStep";
-import { SegmentersStep } from "./steps/SegmentersStep";
-import schema from "./validation/schema";
+import { RandomizationStep } from "settings/components/form/steps/RandomizationStep";
+import { SegmentersStep } from "settings/components/form/steps/SegmentersStep";
+import schema from "settings/components/form/validation/schema";
 
 export const CreateSettingsForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);

@@ -33,7 +33,7 @@ const CreateSettingsView = ({ projectId, ...props }) => {
           </EuiPageHeaderSection>
         </EuiPageHeader>
         <EuiPageContentBody>
-          <SegmenterContextProvider>
+          <SegmenterContextProvider projectId={projectId}>
             <FormContextProvider data={new Settings()}>
               <CreateSettingsForm
                 projectId={projectId}

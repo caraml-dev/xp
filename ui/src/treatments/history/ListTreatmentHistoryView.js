@@ -6,8 +6,7 @@ import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
-
-import ListTreatmentHistoryTable from "./ListTreatmentHistoryTable";
+import ListTreatmentHistoryTable from "treatments/history/ListTreatmentHistoryTable";
 
 const ListTreatmentHistoryView = ({ treatment, ...props }) => {
   const { appConfig } = useConfig();

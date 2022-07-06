@@ -4,24 +4,23 @@ import { Redirect, Router, useLocation } from "@reach/router";
 
 import LandingView from "components/page/LandingView";
 import { ConfigProvider } from "config";
+import CreateExperimentView from "experiments/create/CreateExperimentView";
+import ExperimentDetailsView from "experiments/details/ExperimentDetailsView";
+import ExperimentHistoryDetailsView from "experiments/history/details/ExperimentHistoryDetailsView";
+import ListExperimentsView from "experiments/list/ListExperimentsView";
 import { ProjectContextProvider } from "providers/project/context";
+import CreateSegmentView from "segments/create/CreateSegmentView";
+import SegmentDetailsView from "segments/details/SegmentDetailsView";
+import SegmentHistoryDetailsView from "segments/history/details/SegmentHistoryDetailsView";
+import ListSegmentsView from "segments/list/ListSegmentsView";
+import CreateSettingsView from "settings/create/CreateSettingsView";
+import SettingsDetailsView from "settings/details/SettingsDetailsView";
+import CreateTreatmentView from "treatments/create/CreateTreatmentView";
+import TreatmentDetailsView from "treatments/details/TreatmentDetailsView";
+import TreatmentHistoryDetailsView from "treatments/history/details/TreatmentHistoryDetailsView";
+import ListTreatmentsView from "treatments/list/ListTreatmentsView";
 
-import CreateSegmentView from "../segments/create/CreateSegmentView";
-import SegmentDetailsView from "../segments/details/SegmentDetailsView";
-import SegmentHistoryDetailsView from "../segments/history/details/SegmentHistoryDetailsView";
-import ListSegmentsView from "../segments/list/ListSegmentsView";
-import CreateSettingsView from "../settings/create/CreateSettingsView";
-import SettingsDetailsView from "../settings/details/SettingsDetailsView";
-import CreateTreatmentView from "../treatments/create/CreateTreatmentView";
-import TreatmentDetailsView from "../treatments/details/TreatmentDetailsView";
-import TreatmentHistoryDetailsView from "../treatments/history/details/TreatmentHistoryDetailsView";
-import ListTreatmentsView from "../treatments/list/ListTreatmentsView";
-import CreateExperimentView from "./create/CreateExperimentView";
-import ExperimentDetailsView from "./details/ExperimentDetailsView";
-import ExperimentHistoryDetailsView from "./history/details/ExperimentHistoryDetailsView";
-import ListExperimentsView from "./list/ListExperimentsView";
-
-const ExperimentsLandingPage = ({ projectId, ...props }) => {
+const ExperimentsLandingPage = ({ projectId }) => {
   /* Application Routes should be defined here, as ExperimentsLandingPage component is
      being exposed for use via MFE architecture. */
   return (

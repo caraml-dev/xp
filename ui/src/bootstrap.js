@@ -6,9 +6,8 @@ import ReactDOM from "react-dom";
 import * as Sentry from "@sentry/browser";
 
 import App from "App";
+import { ConfigProvider, useConfig } from "config";
 import * as serviceWorker from "serviceWorker";
-
-import { ConfigProvider, useConfig } from "./config";
 
 const SentryApp = ({ children }) => {
   const {

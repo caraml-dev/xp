@@ -16,10 +16,9 @@ import { Redirect, Router } from "@reach/router";
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
 import { SegmentConfigView } from "segments/details/config/SegmentConfigView";
+import { SegmentActions } from "segments/details/SegmentActions";
 import EditSegmentView from "segments/edit/EditSegmentView";
 import ListSegmentHistoryView from "segments/history/ListSegmentHistoryView";
-
-import { SegmentActions } from "./SegmentActions";
 
 const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
   const [{ data, isLoaded, error }, fetchSegmentDetails] = useXpApi(

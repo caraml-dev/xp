@@ -1,3 +1,5 @@
+import "settings/components/form/components/segmenter_section/SegmenterCard.scss";
+
 import { useEffect, useState } from "react";
 
 import {
@@ -14,7 +16,7 @@ import {
 import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
 
-import "./SegmenterCard.scss";
+import { StatusBadge } from "components/status_badge/StatusBadge";
 
 const VariablesMappingPanel = ({
   segmenterName,
@@ -60,6 +62,20 @@ const VariablesMappingPanel = ({
   );
 };
 
+const getScopeBadge = (scope) => {
+  const status = {
+    project: {
+      label: "Project",
+      color: "primary",
+    },
+    global: {
+      label: "Global",
+      color: "secondary",
+    },
+  };
+  return status[scope];
+};
+
 export const SegmenterCard = ({
   id,
   name,
@@ -67,16 +83,23 @@ export const SegmenterCard = ({
   variables,
   selectedVariables,
   errors,
+  scope,
   isDragging,
   isExpandable,
   onChangeSelectedVariables,
   dragHandleProps,
 }) => {
-  const displayName = isRequired ? `${name} *` : name;
+  const displayName = isRequired ? `${name} * ` : `${name} `;
   const buttonContent = isDragging ? (
-    <EuiTextColor color="accent">{displayName}</EuiTextColor>
+    <>
+      <EuiTextColor color="accent">{displayName}</EuiTextColor>
+      <StatusBadge status={getScopeBadge(scope)} />
+    </>
   ) : (
-    displayName
+    <>
+      {displayName}
+      <StatusBadge status={getScopeBadge(scope)} />
+    </>
   );
 
   //TODO: Change to gear icon using arrowProps in EuiAccordion after updating to Eui >=v40.0.0
@@ -113,7 +136,10 @@ export const SegmenterCard = ({
                 />
               </EuiAccordion>
             ) : (
-              displayName
+              <>
+                {displayName}
+                <StatusBadge status={getScopeBadge(scope)} />
+              </>
             )}
           </EuiPanel>
         </EuiFlexItem>

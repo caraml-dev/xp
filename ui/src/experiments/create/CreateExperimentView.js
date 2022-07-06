@@ -38,7 +38,7 @@ const CreateExperimentView = ({ projectId, ...props }) => {
           <TreatmentsContextProvider projectId={projectId}>
             <FormContextProvider data={new Experiment()}>
               <SettingsContextProvider projectId={projectId}>
-                <SegmenterContextProvider projectId={projectId}>
+                <SegmenterContextProvider projectId={projectId} status="active">
                   <SegmentsContextProvider projectId={projectId}>
                     <CreateExperimentForm
                       projectId={projectId}

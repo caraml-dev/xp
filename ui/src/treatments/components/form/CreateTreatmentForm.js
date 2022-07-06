@@ -4,9 +4,8 @@ import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 import { useXpApi } from "hooks/useXpApi";
-
-import { ConfigurationStep } from "./steps/ConfigurationStep";
-import schema from "./validation/schema";
+import { ConfigurationStep } from "treatments/components/form/steps/ConfigurationStep";
+import schema from "treatments/components/form/validation/schema";
 
 export const CreateTreatmentForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);

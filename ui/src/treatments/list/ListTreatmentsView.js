@@ -18,11 +18,10 @@ import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
 import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
-
-import ListTreatmentsTable from "./ListTreatmentsTable";
-import TreatmentSearchContext, {
-  TreatmentSearchContextProvider,
-} from "./search/context";
+import NameSearchContext, {
+  NameSearchContextProvider,
+} from "providers/search/NameSearchContextProvider";
+import ListTreatmentsTable from "treatments/list/ListTreatmentsTable";
 
 const ListTreatmentsComponent = ({ projectId, props }) => {
   const { appConfig } = useConfig();
@@ -32,9 +31,8 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
     size: appConfig.pagination.defaultPageSize,
   });
 
-  const { getFilter, getProcessedFilters, setFilter, isFilterSet } = useContext(
-    TreatmentSearchContext
-  );
+  const { getFilter, getProcessedFilters, setFilter, isFilterSet } =
+    useContext(NameSearchContext);
 
   const [{ data, isLoaded, error }] = useXpApi(
     `/projects/${projectId}/treatments`,
@@ -117,9 +115,9 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
 };
 
 const ListTreatmentsView = ({ projectId, ...props }) => (
-  <TreatmentSearchContextProvider>
+  <NameSearchContextProvider>
     <ListTreatmentsComponent projectId={projectId} props={props} />
-  </TreatmentSearchContextProvider>
+  </NameSearchContextProvider>
 );
 
 export default ListTreatmentsView;

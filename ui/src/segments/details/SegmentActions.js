@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useRef } from "react";
 
-import { DeleteSegmentModal } from "./modals/DeleteSegmentModal";
+import { DeleteSegmentModal } from "segments/details/modals/DeleteSegmentModal";
 
 export const SegmentActions = ({ onEdit, onDeleteSuccess, children }) => {
   const deleteSegmentRef = useRef();

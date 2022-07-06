@@ -1,3 +1,5 @@
+import "experiments/list/search/SearchExperimentsFilters.scss";
+
 import React, { useContext, useEffect, useState } from "react";
 
 import {
@@ -17,18 +19,15 @@ import {
   experimentTiers,
   experimentTypes,
 } from "experiments/components/typeOptions";
+import ExperimentDateFilter from "experiments/list/search/components/ExperimentDateFilter";
+import ExperimentSegmenterFilter from "experiments/list/search/components/ExperimentSegmenterFilter";
+import ExperimentSegmenterMatchOptionsFilter from "experiments/list/search/components/ExperimentSegmenterMatchOptionsFilter";
+import ExperimentTypeOptionsFilter from "experiments/list/search/components/ExperimentTypeOptionsFilter";
+import ExperimentUpdatedByFilter from "experiments/list/search/components/ExperimentUpdatedByFilter";
+import ExperimentSearchContext from "experiments/list/search/context";
+import schema from "experiments/list/search/validation/schema";
 import SegmenterContext from "providers/segmenters/context";
 import { extractErrors } from "utils/helpers";
-
-import ExperimentDateFilter from "./components/ExperimentDateFilter";
-import ExperimentSegmenterFilter from "./components/ExperimentSegmenterFilter";
-import ExperimentSegmenterMatchOptionsFilter from "./components/ExperimentSegmenterMatchOptionsFilter";
-import ExperimentTypeOptionsFilter from "./components/ExperimentTypeOptionsFilter";
-import ExperimentUpdatedByFilter from "./components/ExperimentUpdatedByFilter";
-import ExperimentSearchContext from "./context";
-import schema from "./validation/schema";
-
-import "./SearchExperimentsFilters.scss";
 
 const SearchExperimentFilters = ({ onChange }) => {
   const { clearFilters, getFilter, getFilters, isFilterSet, setFilter } =
@@ -55,7 +54,6 @@ const SearchExperimentFilters = ({ onChange }) => {
               filters: appliedFilters,
               errors: extractErrors(err),
             });
-            return;
           }
         });
       // No errors, update filters and clear errors

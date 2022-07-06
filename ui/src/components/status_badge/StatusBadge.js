@@ -1,8 +1,8 @@
+import "components/status_badge/StatusBadge.scss";
+
 import React from "react";
 
 import { EuiBadge } from "@elastic/eui";
-
-import "./StatusBadge.scss";
 
 export const StatusBadge = ({ status }) =>
   !!status ? (

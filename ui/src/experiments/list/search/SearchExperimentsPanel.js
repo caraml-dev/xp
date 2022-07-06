@@ -1,12 +1,11 @@
+import "experiments/list/search/SearchExperimentsPanel.scss";
+
 import React from "react";
 
 import { EuiButton, EuiFlyout, EuiFlyoutFooter } from "@elastic/eui";
 
+import SearchExperimentsFilters from "experiments/list/search/SearchExperimentsFilters";
 import { SegmenterContextProvider } from "providers/segmenters/context";
-
-import SearchExperimentsFilters from "./SearchExperimentsFilters";
-
-import "./SearchExperimentsPanel.scss";
 
 const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
   return (

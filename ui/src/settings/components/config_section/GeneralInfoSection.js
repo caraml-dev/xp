@@ -1,7 +1,7 @@
+import "settings/components/config_section/Password.scss";
+
 import { EuiDescriptionList, EuiFieldPassword, EuiPanel } from "@elastic/eui";
 import { formatDate } from "@elastic/eui";
-
-import "./Password.scss";
 
 export const GeneralInfoSection = ({ settings }) => {
   const items = [

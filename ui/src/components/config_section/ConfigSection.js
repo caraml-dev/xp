@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { ConfigSectionTitle } from "./ConfigSectionTitle";
+import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 
 export const ConfigSection = ({ title, iconType, children }) => (
   <Fragment>

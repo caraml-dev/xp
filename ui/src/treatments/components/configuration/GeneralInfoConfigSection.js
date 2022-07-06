@@ -3,10 +3,9 @@ import { React } from "react";
 import { EuiCodeBlock, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 
 import { ConfigPanel } from "components/config_section/ConfigPanel";
+import { formatJsonString } from "utils/helpers";
 
 export const GeneralInfoConfigSection = ({ treatment }) => {
-  const config = JSON.stringify(treatment.configuration);
-  const formattedText = JSON.stringify(JSON.parse(config), null, 2);
   return (
     <EuiFlexGroup direction="row">
       <EuiFlexItem>
@@ -18,7 +17,7 @@ export const GeneralInfoConfigSection = ({ treatment }) => {
             overflowHeight={500}
             style={{ minHeight: 50 }}
             isCopyable>
-            {formattedText}
+            {formatJsonString(treatment.configuration)}
           </EuiCodeBlock>
         </ConfigPanel>
       </EuiFlexItem>

@@ -188,7 +188,40 @@ const schema = [
                       );
                   }
                 }
-              ),
+              )
+              .when("$segmenterTypes", (segmenterTypes) => {
+                switch (segmenterTypes[key]) {
+                  case "BOOL":
+                    return yup.array(
+                      yup
+                        .bool()
+                        .typeError("Array elements must all be of type: BOOL")
+                    );
+                  case "INTEGER":
+                    return yup.array(
+                      yup
+                        .number()
+                        .integer()
+                        .typeError(
+                          "Array elements must all be of type: INTEGER"
+                        )
+                    );
+                  case "REAL":
+                    return yup.array(
+                      yup
+                        .number()
+                        .typeError("Array elements must all be of type: REAL")
+                    );
+                  case "STRING":
+                    return yup.array(
+                      yup
+                        .string()
+                        .typeError("Array elements must all be of type: STRING")
+                    );
+                  default:
+                    return false;
+                }
+              }),
           };
         }, {})
       )

@@ -1,11 +1,6 @@
 import React from "react";
 
-import {
-  EuiBasicTable,
-  EuiCallOut,
-  EuiLoadingChart,
-  EuiTextAlign,
-} from "@elastic/eui";
+import { BasicTable } from "components/table/BasicTable";
 
 const ListTreatmentsTable = ({
   items,
@@ -16,14 +11,7 @@ const ListTreatmentsTable = ({
   onPaginationChange,
   onRowClick,
 }) => {
-  const pagination = {
-    pageIndex: page.index,
-    pageSize: page.size,
-    totalItemCount,
-    hidePerPageOptions: true,
-  };
-
-  const columns = [
+  const tableColumns = [
     {
       field: "id",
       name: "ID",
@@ -46,35 +34,16 @@ const ListTreatmentsTable = ({
     },
   ];
 
-  const cellProps = (item) =>
-    onRowClick
-      ? {
-          style: { cursor: "pointer" },
-          onClick: () => onRowClick(item),
-        }
-      : undefined;
-
-  const onTableChange = ({ page = {} }) => onPaginationChange(page);
-
-  return !isLoaded ? (
-    <EuiTextAlign textAlign="center">
-      <EuiLoadingChart size="xl" mono />
-    </EuiTextAlign>
-  ) : error ? (
-    <EuiCallOut
-      title="Sorry, there was an error"
-      color="danger"
-      iconType="alert">
-      <p>{error.message}</p>
-    </EuiCallOut>
-  ) : (
-    <EuiBasicTable
+  return (
+    <BasicTable
       items={items}
-      columns={columns}
-      cellProps={cellProps}
-      itemId="id"
-      pagination={pagination}
-      onChange={onTableChange}
+      isLoaded={isLoaded}
+      error={error}
+      page={page}
+      totalItemCount={totalItemCount}
+      tableColumns={tableColumns}
+      onPaginationChange={onPaginationChange}
+      onRowClick={onRowClick}
     />
   );
 };

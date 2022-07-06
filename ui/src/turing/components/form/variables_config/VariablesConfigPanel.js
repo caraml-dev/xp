@@ -5,8 +5,7 @@ import { FormLabelWithToolTip, get, useOnChangeHandler } from "@gojek/mlp-ui";
 
 import { Panel } from "components/panel/Panel";
 import SettingsContext from "providers/settings/context";
-
-import { VariableConfigRow } from "./VariableConfigRow";
+import { VariableConfigRow } from "turing/components/form/variables_config/VariableConfigRow";
 
 export const VariablesConfigPanel = ({
   variables = [],

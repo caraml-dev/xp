@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ConfigMultiSectionPanel } from "./ConfigMultiSectionPanel";
+import { ConfigMultiSectionPanel } from "components/config_section/ConfigMultiSectionPanel";
 
 export const ConfigSectionPanel = (props) => (
   <ConfigMultiSectionPanel

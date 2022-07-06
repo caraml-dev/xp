@@ -1,9 +1,9 @@
+import "components/config_section/ActivityConfigSection.scss";
+
 import { EuiDescriptionList } from "@elastic/eui";
 import { formatDate } from "@elastic/eui";
 
 import { ConfigPanel } from "components/config_section/ConfigPanel";
-
-import "./ActivityConfigSection.scss";
 
 export const ActivityConfigSection = ({ spec }) => {
   const items = [
