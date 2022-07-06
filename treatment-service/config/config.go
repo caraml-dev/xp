@@ -71,6 +71,7 @@ type SwaggerConfig struct {
 // DeploymentConfig captures the config related to the deployment of Treatment Service
 type DeploymentConfig struct {
 	EnvironmentType string `default:"local"`
+	MaxGoRoutines   int    `default:"100"`
 }
 
 type MetricSinkKind = string
