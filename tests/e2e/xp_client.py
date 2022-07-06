@@ -198,13 +198,40 @@ class XPClient:
             or []
         )
 
-    def get_segmenters(self, project_id: int):
+    def get_segmenters(self, project_id: int, params: typing.Dict[str, typing.Any]={}):
         return (
             requests.get(
-                f"{self._management_url}/projects/{project_id}/segmenters"
+                f"{self._management_url}/projects/{project_id}/segmenters",
+                params=params
             ).json()["data"]
             or []
         )
+
+    def create_segmenters(self, project_id: int, segmenter: typing.Dict[str, typing.Any]):
+        resp = requests.post(
+                f"{self._management_url}/projects/{project_id}/segmenters",
+            data=json.dumps(segmenter),
+            headers={"Content-Type": "application/json"},
+            )
+        assert resp.status_code == 200, resp.content
+        return resp.json()["data"]
+
+    def update_segmenters(self, project_id: int, segmenterName: str, segmenter: typing.Dict[str, typing.Any]):
+        resp = requests.put(
+                f"{self._management_url}/projects/{project_id}/segmenters/{segmenterName}",
+            data=json.dumps(segmenter),
+            headers={"Content-Type": "application/json"},
+            )
+        assert resp.status_code == 200, resp.content
+        return resp.json()["data"]
+
+    def delete_segmenters(self, project_id: int, segmenterName: str):
+        resp = requests.delete(
+                f"{self._management_url}/projects/{project_id}/segmenters/{segmenterName}",
+            headers={"Content-Type": "application/json"},
+            )
+        assert resp.status_code == 200, resp.content
+        return resp.json()["data"]
 
     def list_segment_history(self, project_id, segment_id):
         return (
@@ -237,3 +264,14 @@ class XPClient:
             data=json.dumps(req),
             headers={"Content-Type": "application/json"},
         )
+
+    def disable_all_experiments(self):
+        existing_projects = requests.get(f"{self._management_url}/projects").json()[
+            "data"
+        ]
+        existing_projects = [p for p in existing_projects if p["id"] == TEST_PROJECT_ID]
+
+        if len(existing_projects) != 0:
+            for exp in self.list_experiments(TEST_PROJECT_ID):
+                if exp["status"] == "active":
+                    self.disable_experiment(TEST_PROJECT_ID, exp["id"])
