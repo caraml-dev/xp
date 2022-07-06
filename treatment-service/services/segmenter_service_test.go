@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/suite"
-
+	"github.com/gojek/xp/common/api/schema"
 	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/treatment-service/models"
+	"github.com/stretchr/testify/suite"
 )
 
 type SegmenterServiceTestSuite struct {
@@ -21,8 +22,11 @@ func (s *SegmenterServiceTestSuite) SetupSuite() {
 			"maxs2celllevel": 14,
 		},
 	}
+	localStorage := models.LocalStorage{
+		ProjectSegmenters: map[models.ProjectId]map[string]schema.SegmenterType{1: {}},
+	}
 	var err error
-	s.SegmenterService, err = NewSegmenterService(segmenterConfig)
+	s.SegmenterService, err = NewSegmenterService(&localStorage, segmenterConfig)
 	if err != nil {
 		s.T().Fatalf("failed to start segmenter service: %s", err)
 	}
@@ -38,6 +42,7 @@ func (s *SegmenterServiceTestSuite) TestGetTransformation() {
 	requiredVariableName := "day_of_week"
 	timezone := "tz"
 	tests := map[string]struct {
+		projectId            int
 		segmenterName        string
 		requiredVariableName string
 		providedVariables    map[string]interface{}
@@ -46,6 +51,7 @@ func (s *SegmenterServiceTestSuite) TestGetTransformation() {
 		errString            string
 	}{
 		"failure | missing experiment variable": {
+			projectId:            1,
 			segmenterName:        segmenterName,
 			requiredVariableName: requiredVariableName,
 			providedVariables: map[string]interface{}{
@@ -54,7 +60,17 @@ func (s *SegmenterServiceTestSuite) TestGetTransformation() {
 			experimentVariables: []string{requiredVariableName},
 			errString:           fmt.Sprintf(errStringFormat, requiredVariableName, segmenterName),
 		},
+		"failure | invalid proj": {
+			projectId: 99,
+			errString: "project segmenter not found for project id: 99",
+		},
+		"failure | invalid segmenter": {
+			projectId:     1,
+			segmenterName: "non-existence-segmenter",
+			errString:     "Type mapping not found for Segmenter:non-existence-segmenter",
+		},
 		"success": {
+			projectId:            1,
 			segmenterName:        segmenterName,
 			requiredVariableName: requiredVariableName,
 			providedVariables: map[string]interface{}{
@@ -67,7 +83,12 @@ func (s *SegmenterServiceTestSuite) TestGetTransformation() {
 
 	for name, data := range tests {
 		s.Suite.T().Run(name, func(t *testing.T) {
-			got, err := s.SegmenterService.GetTransformation(data.segmenterName, data.providedVariables, data.experimentVariables)
+			got, err := s.SegmenterService.GetTransformation(
+				models.ProjectId(data.projectId),
+				data.segmenterName,
+				data.providedVariables,
+				data.experimentVariables)
+
 			if data.errString == "" {
 				s.Suite.Require().NoError(err)
 				s.Suite.Assert().Equal(data.expectedValue, got)

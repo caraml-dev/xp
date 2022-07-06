@@ -66,7 +66,6 @@ func (u *PubsubSubscriber) SubscribeToManagementService(ctx context.Context) err
 		if err != nil {
 			log.Println("Warning: unable to unmarshal message for new experiment:", err)
 			msg.Ack()
-			return
 		}
 
 		updateType := update.Update
@@ -82,9 +81,24 @@ func (u *PubsubSubscriber) SubscribeToManagementService(ctx context.Context) err
 				u.localStorage.UpdateExperiment(experiment)
 			}
 		case *_pubsub.MessagePublishState_ProjectSettingsCreated:
-			u.localStorage.InsertProjectSettings(update.GetProjectSettingsCreated().ProjectSettings)
+			if err := u.localStorage.InsertProjectSettings(update.GetProjectSettingsCreated().ProjectSettings); err != nil {
+				log.Println("Warning: unable to insert segmenters for new project settings:", err)
+				return
+			}
 		case *_pubsub.MessagePublishState_ProjectSettingsUpdated:
 			u.localStorage.UpdateProjectSettings(update.GetProjectSettingsUpdated().ProjectSettings)
+		case *_pubsub.MessagePublishState_ProjectSegmenterCreated:
+			u.localStorage.UpdateProjectSegmenters(
+				update.GetProjectSegmenterCreated().ProjectSegmenter,
+				update.GetProjectSegmenterCreated().ProjectId)
+		case *_pubsub.MessagePublishState_ProjectSegmenterUpdated:
+			u.localStorage.UpdateProjectSegmenters(
+				update.GetProjectSegmenterUpdated().ProjectSegmenter,
+				update.GetProjectSegmenterUpdated().ProjectId)
+		case *_pubsub.MessagePublishState_ProjectSegmenterDeleted:
+			u.localStorage.DeleteProjectSegmenters(
+				update.GetProjectSegmenterDeleted().SegmenterName,
+				update.GetProjectSegmenterDeleted().ProjectId)
 		}
 	})
 }

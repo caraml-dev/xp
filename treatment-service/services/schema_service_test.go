@@ -90,7 +90,8 @@ func newMockProjectSettingsStore() models.ProjectSettingsStorage {
 
 func (suite *SchemaServiceTestSuite) SetupSuite() {
 	cfg := map[string]interface{}{"s2_ids": map[string]interface{}{"mins2celllevel": 10, "maxs2celllevel": 14}}
-	segmenterSvc, err := NewSegmenterService(cfg)
+	localStorage := models.LocalStorage{}
+	segmenterSvc, err := NewSegmenterService(&localStorage, cfg)
 	if err != nil {
 		suite.FailNow("error creating segmenter service")
 	}

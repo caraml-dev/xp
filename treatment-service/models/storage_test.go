@@ -1,11 +1,16 @@
 package models
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
+	"net/http"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -17,10 +22,12 @@ import (
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	managementClient "github.com/gojek/xp/clients/management"
 	"github.com/gojek/xp/common/api/schema"
 	_pubsub "github.com/gojek/xp/common/pubsub"
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	tu "github.com/gojek/xp/common/testutils"
+	"github.com/gojek/xp/common/testutils/mocks"
 )
 
 type LocalStorageLookupSuite struct {
@@ -94,19 +101,33 @@ func newProjectSettings(
 func (suite *LocalStorageLookupSuite) SetupTest() {
 	projectId := uint32(0)
 
+	mockManagementClientInterface := mocks.ClientInterface{}
+	mockManagementClient := managementClient.ClientWithResponses{ClientInterface: &mockManagementClientInterface}
+	mockManagementClientInterface.On("ListSegmenters",
+		context.TODO(),
+		int64(3),
+		&managementClient.ListSegmentersParams{}).
+		Return(&http.Response{
+			StatusCode: 200,
+			Header:     map[string][]string{"Content-Type": {"json"}},
+			Body:       ioutil.NopCloser(bytes.NewBufferString(`{"data" : []}`)),
+		}, nil)
+
 	suite.storage = LocalStorage{
-		Experiments: make(map[ProjectId][]*ExperimentIndex),
+		Experiments:       make(map[ProjectId][]*ExperimentIndex),
+		managementClient:  &mockManagementClient,
+		ProjectSegmenters: map[ProjectId]map[string]schema.SegmenterType{},
 	}
 	suite.storage.Experiments[projectId] = make([]*ExperimentIndex, 0)
 	suite.storage.ProjectSettings = []*_pubsub.ProjectSettings{}
 
 	suite.testExperiments = make([]*_pubsub.Experiment, 0)
 	segmentersType := map[string]schema.SegmenterType{
-		"string_segmenter":    "STRING",
-		"integer_segmenter":   "INTEGER",
-		"integer_segmenter_2": "INTEGER",
-		"bool_segmenter":      "BOOL",
-		"s2_ids":              "INTEGER",
+		"string_segmenter":    "string",
+		"integer_segmenter":   "integer",
+		"integer_segmenter_2": "integer",
+		"bool_segmenter":      "bool",
+		"s2_ids":              "integer",
 	}
 
 	addExperiment := func(experiment schema.Experiment) {
@@ -447,7 +468,8 @@ func (suite *LocalStorageLookupSuite) TestInsertAndUpdateProjectSettings() {
 		ProjectId:  projectId,
 		Segmenters: newSegments,
 	}
-	suite.storage.InsertProjectSettings(newProjectSettings)
+	err := suite.storage.InsertProjectSettings(newProjectSettings)
+	suite.NoError(err)
 	projectSettings := suite.storage.FindProjectSettingsWithId(ProjectId(projectId))
 	suite.Require().Equal(newSegments, projectSettings.Segmenters)
 
@@ -477,11 +499,11 @@ func TestDumpExperiments(t *testing.T) {
 	// Set up storage
 	s2Ids := []interface{}{int64(3592210796974702592)}
 	rawStringSegmenter := []interface{}{"seg-1"}
-	rawIntegerSegmenter := []interface{}{int64(1), int64(2)}
+	rawIntegerSegmenter := []interface{}{int64(1)}
 	segmentersType := map[string]schema.SegmenterType{
-		"string_segmenter":  "STRING",
-		"integer_segmenter": "INTEGER",
-		"s2_ids":            "INTEGER",
+		"string_segmenter":  "string",
+		"integer_segmenter": "integer",
+		"s2_ids":            "integer",
 	}
 	e, err := OpenAPIExperimentSpecToProtobuf(newTestXPExperiment(
 		1,
@@ -646,4 +668,56 @@ func TestExperimentIndexMatchSegment(t *testing.T) {
 			assert.Equal(t, got, tt.want)
 		})
 	}
+}
+
+func TestCustomSegmenter(t *testing.T) {
+
+	projectId := ProjectId(1)
+	storage := LocalStorage{
+		Experiments:       make(map[ProjectId][]*ExperimentIndex),
+		ProjectSegmenters: map[ProjectId]map[string]schema.SegmenterType{projectId: {}},
+	}
+	assert.Equal(t, 0, len(storage.ProjectSegmenters[projectId]))
+	segmenterName := "testseg1"
+	segmenterConfig := _segmenters.SegmenterConfiguration{Name: segmenterName, Type: _segmenters.SegmenterValueType_STRING}
+	storage.UpdateProjectSegmenters(&segmenterConfig, int64(projectId))
+	assert.Equal(t, 1, len(storage.ProjectSegmenters[projectId]))
+	segmenterTypeMapping, err := storage.GetSegmentersTypeMapping(1)
+	assert.NoError(t, err)
+	assert.Equal(t, strings.ToLower(segmenterConfig.Type.String()), string(segmenterTypeMapping[segmenterConfig.Name]))
+
+	segmenterToBeDeleted := _segmenters.SegmenterConfiguration{Name: "testseg2", Type: _segmenters.SegmenterValueType_INTEGER}
+	storage.UpdateProjectSegmenters(&segmenterToBeDeleted, int64(projectId))
+	assert.Equal(t, 2, len(storage.ProjectSegmenters[projectId]))
+	assert.Equal(t, strings.ToLower(segmenterToBeDeleted.Type.String()), string(segmenterTypeMapping[segmenterToBeDeleted.Name]))
+
+	storage.DeleteProjectSegmenters(segmenterToBeDeleted.Name, int64(projectId))
+	assert.Equal(t, 1, len(storage.ProjectSegmenters[projectId]))
+	assert.Equal(t, strings.ToLower(segmenterConfig.Type.String()), string(segmenterTypeMapping[segmenterConfig.Name]))
+	assert.Empty(t, segmenterTypeMapping[segmenterToBeDeleted.Name])
+
+	experiment := newTestXPExperiment(
+		int64(projectId),
+		schema.ExperimentSegment{
+			segmenterName: []interface{}{"stringval"},
+		},
+		time.Now(),
+		time.Now().Add(time.Hour*1))
+
+	e, err := OpenAPIExperimentSpecToProtobuf(experiment, segmenterTypeMapping)
+	assert.NoError(t, err)
+	storage.Experiments[projectId] = make([]*ExperimentIndex, 0)
+	storage.Experiments[projectId] = append(storage.Experiments[projectId], NewExperimentIndex(e))
+
+	experimentmatch := storage.FindExperiments(
+		projectId,
+		[]SegmentFilter{
+			{Key: segmenterName, Value: []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_String_{String_: "invalid"}}}}})
+	assert.Empty(t, experimentmatch)
+
+	experimentmatch = storage.FindExperiments(
+		projectId,
+		[]SegmentFilter{
+			{Key: segmenterName, Value: []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_String_{String_: "stringval"}}}}})
+	assert.Equal(t, 1, len(experimentmatch))
 }

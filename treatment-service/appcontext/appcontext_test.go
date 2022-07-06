@@ -36,10 +36,10 @@ func TestContext(t *testing.T) {
 		},
 	}
 	segmentersType := map[string]schema.SegmenterType{
-		"string_segmenter":  "STRING",
-		"integer_segmenter": "INTEGER",
-		"float_segmenter":   "REAL",
-		"bool_segmenter":    "BOOL",
+		"string_segmenter":  "string",
+		"integer_segmenter": "integer",
+		"float_segmenter":   "real",
+		"bool_segmenter":    "bool",
 	}
 
 	//Setup emulator and test server
@@ -79,7 +79,7 @@ func TestContext(t *testing.T) {
 	if err != nil {
 		assert.FailNow(t, "error while creating local storage", err.Error())
 	}
-	segmenterSvc, err := services.NewSegmenterService(testConfig.SegmenterConfig)
+	segmenterSvc, err := services.NewSegmenterService(localStorage, testConfig.SegmenterConfig)
 	if err != nil {
 		assert.FailNow(t, "error while creating segmenter service", err.Error())
 	}

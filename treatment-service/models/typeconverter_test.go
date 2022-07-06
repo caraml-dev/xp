@@ -73,7 +73,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 	traffic100 := int32(100)
 	interval := int32(60)
 	segmentersType := map[string]schema.SegmenterType{
-		"string_segmenter": "STRING",
+		"string_segmenter": "string",
 	}
 	pubsubCfg, _ := structpb.NewStruct(map[string]interface{}{
 		"key": "value",

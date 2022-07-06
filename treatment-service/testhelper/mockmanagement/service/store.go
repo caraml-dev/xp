@@ -167,11 +167,8 @@ func (i *InMemoryStore) GetProjectSettings(projectId int64) (schema.ProjectSetti
 	return schema.ProjectSettings{}, InvalidProjectSettings{projectId: projectId}
 }
 
-func (i *InMemoryStore) GetSegmenters(projectId int64) ([]*schema.Segmenter, error) {
-	panic("implement me")
-}
-
-func (i *InMemoryStore) ListSegmenters() ([]schema.Segmenter, error) {
+//TODO to be implemented in next MR
+func (i *InMemoryStore) ListSegmenters(projectId int64) ([]schema.Segmenter, error) {
 	i.RLock()
 	defer i.RUnlock()
 	projectSegmenters := make([]schema.Segmenter, 0)

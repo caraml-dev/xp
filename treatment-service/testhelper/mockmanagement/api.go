@@ -31,6 +31,16 @@ type CreateProjectSettingsSuccess struct {
 	Data externalRef0.ProjectSettings `json:"data"`
 }
 
+// CreateSegmenterSuccess defines model for CreateSegmenterSuccess.
+type CreateSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
+}
+
+// DeleteSegmenterSuccess defines model for DeleteSegmenterSuccess.
+type DeleteSegmenterSuccess struct {
+	Name *string `json:"name,omitempty"`
+}
+
 // GetExperimentHistorySuccess defines model for GetExperimentHistorySuccess.
 type GetExperimentHistorySuccess struct {
 	Data externalRef0.ExperimentHistory `json:"data"`
@@ -51,9 +61,9 @@ type GetProjectSettingsSuccess struct {
 	Data externalRef0.ProjectSettings `json:"data"`
 }
 
-// GetSegmentersSuccess defines model for GetSegmentersSuccess.
-type GetSegmentersSuccess struct {
-	Data []externalRef0.Segmenter `json:"data"`
+// GetSegmenterSuccess defines model for GetSegmenterSuccess.
+type GetSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
 }
 
 // InternalServerError defines model for InternalServerError.
@@ -94,6 +104,11 @@ type UpdateProjectSettingsSuccess struct {
 	Data externalRef0.ProjectSettings `json:"data"`
 }
 
+// UpdateSegmenterSuccess defines model for UpdateSegmenterSuccess.
+type UpdateSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
+}
+
 // CreateExperimentRequestBody defines model for CreateExperimentRequestBody.
 type CreateExperimentRequestBody struct {
 	Description *string                            `json:"description"`
@@ -120,6 +135,17 @@ type CreateProjectSettingsRequestBody struct {
 	ValidationUrl   *string                       `json:"validation_url,omitempty"`
 }
 
+// CreateSegmenterRequestBody defines model for CreateSegmenterRequestBody.
+type CreateSegmenterRequestBody struct {
+	Constraints *[]externalRef0.Constraint     `json:"constraints,omitempty"`
+	Description *string                        `json:"description,omitempty"`
+	MultiValued bool                           `json:"multi_valued"`
+	Name        string                         `json:"name"`
+	Options     *externalRef0.SegmenterOptions `json:"options,omitempty"`
+	Required    bool                           `json:"required"`
+	Type        externalRef0.SegmenterType     `json:"type"`
+}
+
 // UpdateExperimentRequestBody defines model for UpdateExperimentRequestBody.
 type UpdateExperimentRequestBody struct {
 	Description *string                            `json:"description"`
@@ -143,6 +169,15 @@ type UpdateProjectSettingsRequestBody struct {
 	// Object containing information to define a valid treatment schema
 	TreatmentSchema *externalRef0.TreatmentSchema `json:"treatment_schema,omitempty"`
 	ValidationUrl   *string                       `json:"validation_url,omitempty"`
+}
+
+// UpdateSegmenterRequestBody defines model for UpdateSegmenterRequestBody.
+type UpdateSegmenterRequestBody struct {
+	Constraints *[]externalRef0.Constraint     `json:"constraints,omitempty"`
+	Description *string                        `json:"description,omitempty"`
+	MultiValued bool                           `json:"multi_valued"`
+	Options     *externalRef0.SegmenterOptions `json:"options,omitempty"`
+	Required    bool                           `json:"required"`
 }
 
 // ListExperimentsParams defines parameters for ListExperiments.
@@ -183,11 +218,26 @@ type ListExperimentHistoryParams struct {
 	PageSize *int32 `json:"page_size,omitempty"`
 }
 
+// ListSegmentersParams defines parameters for ListSegmenters.
+type ListSegmentersParams struct {
+	Scope  *externalRef0.SegmenterScope  `json:"scope,omitempty"`
+	Status *externalRef0.SegmenterStatus `json:"status,omitempty"`
+
+	// Search treatment name for a partial match of the search text
+	Search *string `json:"search,omitempty"`
+}
+
 // CreateExperimentJSONRequestBody defines body for CreateExperiment for application/json ContentType.
 type CreateExperimentJSONRequestBody CreateExperimentRequestBody
 
 // UpdateExperimentJSONRequestBody defines body for UpdateExperiment for application/json ContentType.
 type UpdateExperimentJSONRequestBody UpdateExperimentRequestBody
+
+// CreateSegmenterJSONRequestBody defines body for CreateSegmenter for application/json ContentType.
+type CreateSegmenterJSONRequestBody CreateSegmenterRequestBody
+
+// UpdateSegmenterJSONRequestBody defines body for UpdateSegmenter for application/json ContentType.
+type UpdateSegmenterJSONRequestBody UpdateSegmenterRequestBody
 
 // CreateProjectSettingsJSONRequestBody defines body for CreateProjectSettings for application/json ContentType.
 type CreateProjectSettingsJSONRequestBody CreateProjectSettingsRequestBody
@@ -229,7 +279,19 @@ type ServerInterface interface {
 	GetExperimentHistory(w http.ResponseWriter, r *http.Request, projectId int64, experimentId int64, version int64)
 	// Get all segmenter configurations required for generating experiments for the given project
 	// (GET /projects/{project_id}/segmenters)
-	GetSegmenters(w http.ResponseWriter, r *http.Request, projectId int64)
+	ListSegmenters(w http.ResponseWriter, r *http.Request, projectId int64, params ListSegmentersParams)
+	// Create a new project-specific segmenter
+	// (POST /projects/{project_id}/segmenters)
+	CreateSegmenter(w http.ResponseWriter, r *http.Request, projectId int64)
+	// Delete a project-specific segmenter
+	// (DELETE /projects/{project_id}/segmenters/{name})
+	DeleteSegmenter(w http.ResponseWriter, r *http.Request, projectId int64, name string)
+	// Get the global/project-specific segmenter by name
+	// (GET /projects/{project_id}/segmenters/{name})
+	GetSegmenter(w http.ResponseWriter, r *http.Request, projectId int64, name string)
+	// Update an existing project-specific segmenter
+	// (PUT /projects/{project_id}/segmenters/{name})
+	UpdateSegmenter(w http.ResponseWriter, r *http.Request, projectId int64, name string)
 	// Get the settings for the given project
 	// (GET /projects/{project_id}/settings)
 	GetProjectSettings(w http.ResponseWriter, r *http.Request, projectId int64)
@@ -239,9 +301,6 @@ type ServerInterface interface {
 	// Update the settings for the given project
 	// (PUT /projects/{project_id}/settings)
 	UpdateProjectSettings(w http.ResponseWriter, r *http.Request, projectId int64)
-	// List all segmenter configurations registered with XP
-	// (GET /segmenters)
-	ListSegmenters(w http.ResponseWriter, r *http.Request)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -744,8 +803,72 @@ func (siw *ServerInterfaceWrapper) GetExperimentHistory(w http.ResponseWriter, r
 	handler(w, r.WithContext(ctx))
 }
 
-// GetSegmenters operation middleware
-func (siw *ServerInterfaceWrapper) GetSegmenters(w http.ResponseWriter, r *http.Request) {
+// ListSegmenters operation middleware
+func (siw *ServerInterfaceWrapper) ListSegmenters(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSegmentersParams
+
+	// ------------- Optional query parameter "scope" -------------
+	if paramValue := r.URL.Query().Get("scope"); paramValue != "" {
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "scope", r.URL.Query(), &params.Scope)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter scope: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "status" -------------
+	if paramValue := r.URL.Query().Get("status"); paramValue != "" {
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "status", r.URL.Query(), &params.Status)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter status: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+	if paramValue := r.URL.Query().Get("search"); paramValue != "" {
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "search", r.URL.Query(), &params.Search)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter search: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSegmenters(w, r, projectId, params)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// CreateSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) CreateSegmenter(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -762,7 +885,118 @@ func (siw *ServerInterfaceWrapper) GetSegmenters(w http.ResponseWriter, r *http.
 	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetSegmenters(w, r, projectId)
+		siw.Handler.CreateSegmenter(w, r, projectId)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// DeleteSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSegmenter(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "name" -------------
+	var name string
+
+	err = runtime.BindStyledParameter("simple", false, "name", chi.URLParam(r, "name"), &name)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter name: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteSegmenter(w, r, projectId, name)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// GetSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) GetSegmenter(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "name" -------------
+	var name string
+
+	err = runtime.BindStyledParameter("simple", false, "name", chi.URLParam(r, "name"), &name)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter name: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSegmenter(w, r, projectId, name)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// UpdateSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) UpdateSegmenter(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "name" -------------
+	var name string
+
+	err = runtime.BindStyledParameter("simple", false, "name", chi.URLParam(r, "name"), &name)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter name: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateSegmenter(w, r, projectId, name)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -856,23 +1090,6 @@ func (siw *ServerInterfaceWrapper) UpdateProjectSettings(w http.ResponseWriter, 
 	handler(w, r.WithContext(ctx))
 }
 
-// ListSegmenters operation middleware
-func (siw *ServerInterfaceWrapper) ListSegmenters(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
-
-	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.ListSegmenters(w, r)
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler(w, r.WithContext(ctx))
-}
-
 // Handler creates http.Handler with routing matching OpenAPI spec.
 func Handler(si ServerInterface) http.Handler {
 	return HandlerWithOptions(si, ChiServerOptions{})
@@ -941,7 +1158,19 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/projects/{project_id}/experiments/{experiment_id}/history/{version}", wrapper.GetExperimentHistory)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/projects/{project_id}/segmenters", wrapper.GetSegmenters)
+		r.Get(options.BaseURL+"/projects/{project_id}/segmenters", wrapper.ListSegmenters)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/projects/{project_id}/segmenters", wrapper.CreateSegmenter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/projects/{project_id}/segmenters/{name}", wrapper.DeleteSegmenter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/projects/{project_id}/segmenters/{name}", wrapper.GetSegmenter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/projects/{project_id}/segmenters/{name}", wrapper.UpdateSegmenter)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/projects/{project_id}/settings", wrapper.GetProjectSettings)
@@ -951,9 +1180,6 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Put(options.BaseURL+"/projects/{project_id}/settings", wrapper.UpdateProjectSettings)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/segmenters", wrapper.ListSegmenters)
 	})
 
 	return r

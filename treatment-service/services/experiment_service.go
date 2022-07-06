@@ -48,6 +48,12 @@ func (es *experimentService) GetExperiment(
 	matches := es.localStorage.FindExperiments(projectId, lookupRequestFilters)
 
 	projectSettings := es.localStorage.FindProjectSettingsWithId(projectId)
+	// Retrieve segmentersTypeMapping that are active with respect to the given project
+	segmentersTypeMapping, err := es.localStorage.GetSegmentersTypeMapping(projectId)
+	if err != nil {
+		return lookupRequestFilters, nil, fmt.Errorf("segmenters cannot be retrieved for projectId: %v",
+			projectId)
+	}
 	// Define filters for resolving experiment based on hierarchy
 	type HierarchyFilters func([]*models.ExperimentMatch) []*models.ExperimentMatch
 	filters := []HierarchyFilters{
@@ -57,7 +63,7 @@ func (es *experimentService) GetExperiment(
 		},
 		// Resolve granularity of Segmenters
 		func(matches []*models.ExperimentMatch) []*models.ExperimentMatch {
-			return es.filterByLookupOrder(matches, requestFilter, projectSettings.Segmenters.Names, es.localStorage.Segmenters)
+			return es.filterByLookupOrder(matches, requestFilter, projectSettings.Segmenters.Names, segmentersTypeMapping)
 		},
 		// Resolve tiers - at this point, we should ideally only be left with 1 experiment or 2
 		// (in different tiers), based on the orthogonality rules enforced by the management service.
@@ -133,19 +139,19 @@ func (es *experimentService) filterByLookupOrder(
 				for _, segmenterMatch := range filtered {
 					segmenterMatchedValue := segmenterMatch.SegmenterMatches[segmenter]
 					switch segmenterType {
-					case "STRING":
+					case "string":
 						if transformedValue.GetString_() == segmenterMatchedValue.Value.GetString_() {
 							currentFilteredList = append(currentFilteredList, segmenterMatch)
 						}
-					case "INTEGER":
+					case "integer":
 						if transformedValue.GetInteger() == segmenterMatchedValue.Value.GetInteger() {
 							currentFilteredList = append(currentFilteredList, segmenterMatch)
 						}
-					case "REAL":
+					case "real":
 						if transformedValue.GetReal() == segmenterMatchedValue.Value.GetReal() {
 							currentFilteredList = append(currentFilteredList, segmenterMatch)
 						}
-					case "BOOL":
+					case "bool":
 						if transformedValue.GetBool() == segmenterMatchedValue.Value.GetBool() {
 							currentFilteredList = append(currentFilteredList, segmenterMatch)
 						}

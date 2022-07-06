@@ -2,21 +2,33 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"strings"
 
 	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/treatment-service/models"
 	"github.com/gojek/xp/treatment-service/segmenters"
 )
 
 type SegmenterService interface {
-	GetTransformation(segmenter string, requestValues map[string]interface{}, experimentVariables []string) ([]*_segmenters.SegmenterValue, error)
+	GetTransformation(
+		id models.ProjectId,
+		segmenter string,
+		requestValues map[string]interface{},
+		experimentVariables []string) ([]*_segmenters.SegmenterValue, error)
 }
 
 type segmenterService struct {
-	runners map[string]segmenters.Runner
+	runners      map[string]segmenters.Runner
+	localStorage *models.LocalStorage
 }
 
-func NewSegmenterService(cfg map[string]interface{}) (SegmenterService, error) {
+func NewSegmenterService(
+	localStorage *models.LocalStorage,
+	cfg map[string]interface{},
+) (SegmenterService, error) {
+
 	segmentersRunner := make(map[string]segmenters.Runner)
 
 	for name := range segmenters.Runners {
@@ -40,10 +52,14 @@ func NewSegmenterService(cfg map[string]interface{}) (SegmenterService, error) {
 		segmentersRunner[name] = m
 	}
 
-	return &segmenterService{runners: segmentersRunner}, nil
+	return &segmenterService{
+		runners:      segmentersRunner,
+		localStorage: localStorage,
+	}, nil
 }
 
 func (svc *segmenterService) GetTransformation(
+	projectId models.ProjectId,
 	segmenter string,
 	requestValues map[string]interface{},
 	experimentVariables []string,
@@ -52,8 +68,24 @@ func (svc *segmenterService) GetTransformation(
 	if err != nil {
 		return nil, err
 	}
-
-	transformation, err := svc.runners[segmenter].Transform(segmenter, requestValues, experimentVariables)
+	// Check if segmenter is a global segmenter, else use project segmenters
+	runner, ok := svc.runners[segmenter]
+	if !ok {
+		projectSegmentersTypeMapping, err := svc.localStorage.GetSegmentersTypeMapping(projectId)
+		if err != nil {
+			return nil, err
+		}
+		segmenterType, ok := projectSegmentersTypeMapping[segmenter]
+		if !ok {
+			return nil, errors.New("Type mapping not found for Segmenter:" + segmenter)
+		}
+		projectSegmenterValueType := _segmenters.SegmenterValueType(_segmenters.SegmenterValueType_value[strings.ToUpper(string(segmenterType))])
+		runner = segmenters.NewBaseRunner(&segmenters.SegmenterConfig{
+			Name: segmenter,
+			Type: &projectSegmenterValueType,
+		})
+	}
+	transformation, err := runner.Transform(segmenter, requestValues, experimentVariables)
 	if err != nil {
 		return nil, err
 	}

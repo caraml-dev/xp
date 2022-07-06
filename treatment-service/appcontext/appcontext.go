@@ -35,7 +35,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	}
 
 	log.Println("Initializing segmenter service...")
-	segmenterSvc, err := services.NewSegmenterService(cfg.SegmenterConfig)
+	segmenterSvc, err := services.NewSegmenterService(localStorage, cfg.SegmenterConfig)
 	if err != nil {
 		return nil, err
 	}
