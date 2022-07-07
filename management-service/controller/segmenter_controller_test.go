@@ -268,6 +268,22 @@ func (s *SegmenterControllerTestSuite) SetupSuite() {
 				"updated_at":"0001-01-01T00:00:00Z"
 			}
 		}`,
+		`{
+			"data":[
+				{
+					"constraints":null,
+					"description":"Test Desc",
+					"multi_valued":false,
+					"name":"test-global-segmenter",
+					"options":{},
+					"required":false,
+					"scope":"global",
+					"status":"active",
+					"treatment_request_fields":[["test-global-segmenter"]],
+					"type":"string"
+				}
+			]
+		}`,
 	}
 
 	segmentersDescription := "Test Desc"
@@ -442,6 +458,9 @@ func (s *SegmenterControllerTestSuite) SetupSuite() {
 		On("getGlobalSegmenters").
 		Return(baseGlobalSegmenters, nil)
 
+	segmenterSvc.
+		On("ListGlobalSegmenters").
+		Return([]*schema.Segmenter{&activeGlobalSegmenterOpenApi}, nil)
 	segmenterSvc.
 		On(
 			"ListSegmenters",
@@ -720,9 +739,8 @@ func (s *SegmenterControllerTestSuite) TestListSegmenters() {
 		{
 			name:      "failure | mlp project not found",
 			projectID: 2,
-			expected: fmt.Sprintf(s.expectedErrorResponseFormat, 404,
-				"\"MLP Project info for id 2 not found in the cache\""),
-			params: api.ListSegmentersParams{},
+			expected:  s.expectedSegmentersResponses[12],
+			params:    api.ListSegmentersParams{},
 		},
 		{
 			name:      "failure | invalid scope param",

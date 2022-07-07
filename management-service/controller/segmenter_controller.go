@@ -22,9 +22,17 @@ func NewSegmenterController(ctx *appcontext.AppContext) *SegmenterController {
 }
 
 func (s SegmenterController) ListSegmenters(w http.ResponseWriter, r *http.Request, projectId int64, params api.ListSegmentersParams) {
-	// Perform validation checks on the projectId given
+	// Perform validation checks on the projectId given; note that instead of simply returning the error directly to
+	// the user if the project corresponding to the project id is not found in the db, we are returning a list of global
+	// segmenters. This temporary behaviour is implemented in order to allow the create settings UI page to run
+	// correctly after the removal of the '/segmenters' endpoint
 	if err := s.validateProjectId(projectId); err != nil {
-		WriteErrorResponse(w, err)
+		segmenters, err := s.Services.SegmenterService.ListGlobalSegmenters()
+		if err != nil {
+			WriteErrorResponse(w, err)
+			return
+		}
+		Ok(w, &segmenters)
 		return
 	}
 
