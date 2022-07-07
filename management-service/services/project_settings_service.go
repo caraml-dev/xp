@@ -3,12 +3,12 @@ package services
 import (
 	"time"
 
-	"github.com/golang-collections/collections/set"
 	"github.com/jinzhu/gorm"
 
 	"github.com/gojek/xp/management-service/errors"
 	"github.com/gojek/xp/management-service/models"
 	"github.com/gojek/xp/management-service/utils"
+	"github.com/golang-collections/collections/set"
 )
 
 const PASSKEY_LENGTH = 32
@@ -89,7 +89,7 @@ func (svc *projectSettingsService) GetExperimentVariables(projectId int64) (*[]s
 		return nil, errors.Newf(errors.NotFound, err.Error())
 	}
 
-	//use to track if a variable was appended. assumption is variable name is unique
+	// use to track if a variable was appended. assumption is variable name is unique
 	segmenterSet := set.New()
 	var segmenterParams []string
 	// Combine all the variables of project segmenters into a single array
@@ -124,19 +124,19 @@ func (svc *projectSettingsService) CreateProjectSettings(
 	}
 
 	// Validate segmenter are recognized and experiment variable mapping are accepted as system allowed
-	err = svc.services.SegmenterService.ValidateExperimentVariables(settings.Segmenters)
+	err = svc.services.SegmenterService.ValidateExperimentVariables(projectId, settings.Segmenters)
 	if err != nil {
 		return nil, err
 	}
 
 	// Verify required segmenters are provided
-	err = svc.services.SegmenterService.ValidateRequiredSegmenters(settings.Segmenters.Names)
+	err = svc.services.SegmenterService.ValidateRequiredSegmenters(projectId, settings.Segmenters.Names)
 	if err != nil {
 		return nil, err
 	}
 
 	// Verify dependent segmenters are provided
-	err = svc.services.SegmenterService.ValidatePrereqSegmenters(settings.Segmenters.Names)
+	err = svc.services.SegmenterService.ValidatePrereqSegmenters(projectId, settings.Segmenters.Names)
 	if err != nil {
 		return nil, err
 	}
@@ -199,25 +199,25 @@ func (svc *projectSettingsService) UpdateProjectSettings(
 	}
 
 	// Validate segmenter are recognized and experiment variable mapping are accepted as system allowed
-	err = svc.services.SegmenterService.ValidateExperimentVariables(settings.Segmenters)
+	err = svc.services.SegmenterService.ValidateExperimentVariables(projectId, settings.Segmenters)
 	if err != nil {
 		return nil, err
 	}
 
 	// Verify Segmenter names are recognised
-	_, err = svc.services.SegmenterService.GetSegmenterConfigurations(settings.Segmenters.Names)
+	_, err = svc.services.SegmenterService.GetSegmenterConfigurations(projectId, settings.Segmenters.Names)
 	if err != nil {
 		return nil, err
 	}
 
 	// Verify required segmenters are provided
-	err = svc.services.SegmenterService.ValidateRequiredSegmenters(settings.Segmenters.Names)
+	err = svc.services.SegmenterService.ValidateRequiredSegmenters(projectId, settings.Segmenters.Names)
 	if err != nil {
 		return nil, err
 	}
 
 	// Verify dependent segmenters are provided
-	err = svc.services.SegmenterService.ValidatePrereqSegmenters(settings.Segmenters.Names)
+	err = svc.services.SegmenterService.ValidatePrereqSegmenters(projectId, settings.Segmenters.Names)
 	if err != nil {
 		return nil, err
 	}
@@ -287,16 +287,8 @@ func (svc *projectSettingsService) validateProjectSettingsUpdate(
 	updatedSegmenters []string,
 ) error {
 	// Perform orthogonality checks when there are removed segmenter(s)
-	currentSegmentersInterface := make([]interface{}, len(currentSegmenters))
-	for i := range currentSegmenters {
-		currentSegmentersInterface[i] = currentSegmenters[i]
-	}
-	updatedSegmentersSetInterface := make([]interface{}, len(updatedSegmenters))
-	for i := range updatedSegmenters {
-		updatedSegmentersSetInterface[i] = updatedSegmenters[i]
-	}
-	currentSegmentersSet := set.New(currentSegmentersInterface...)
-	updatedSegmentersSet := set.New(updatedSegmentersSetInterface...)
+	currentSegmentersSet := utils.StringSliceToSet(currentSegmenters)
+	updatedSegmentersSet := utils.StringSliceToSet(updatedSegmenters)
 	hasSetDifferences := currentSegmentersSet.Difference(updatedSegmentersSet)
 
 	status := models.ExperimentStatusActive
@@ -304,8 +296,19 @@ func (svc *projectSettingsService) validateProjectSettingsUpdate(
 	endTime := time.Now().Add(855360 * time.Hour)
 	listExpParams := ListExperimentsParams{StartTime: &startTime, EndTime: &endTime, Status: &status}
 
-	if len(currentSegmenters) >= len(updatedSegmenters) && hasSetDifferences.Len() > 0 {
-		err := svc.services.ExperimentService.ValidatePairwiseExperimentOrthogonality(projectId, listExpParams, updatedSegmenters)
+	if hasSetDifferences.Len() > 0 {
+		id := models.ID(projectId)
+		exps, err := svc.services.ExperimentService.ListAllExperiments(id, listExpParams)
+		if err != nil {
+			return err
+		}
+
+		err = svc.services.ExperimentService.ValidatePairwiseExperimentOrthogonality(projectId, exps, updatedSegmenters)
+		if err != nil {
+			return err
+		}
+		// Check if the set of updated segmenters contains all the segments specified by all the experiments
+		err = svc.services.ExperimentService.ValidateProjectExperimentSegmentersExist(projectId, exps, updatedSegmenters)
 		if err != nil {
 			return err
 		}

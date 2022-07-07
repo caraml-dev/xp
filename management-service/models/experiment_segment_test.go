@@ -212,6 +212,15 @@ func TestSegmentToRawSchema(t *testing.T) {
 		"string_segmenter":  schema.SegmenterTypeString,
 		"bool_segmenter":    schema.SegmenterTypeBool,
 	}
+	invalidExperimentIntSegment := ExperimentSegment{
+		"integer_segmenter": []string{"bool"},
+	}
+	invalidExperimentFloatSegment := ExperimentSegment{
+		"float_segmenter": []string{"true"},
+	}
+	invalidExperimentBoolSegment := ExperimentSegment{
+		"bool_segmenter": []string{"1.2"},
+	}
 	experimentIntSegment := ExperimentSegment{
 		"integer_segmenter": []string{"1"},
 	}
@@ -226,42 +235,58 @@ func TestSegmentToRawSchema(t *testing.T) {
 	}
 
 	tests := []struct {
-		name           string
-		segment        ExperimentSegment
-		segmentersType map[string]schema.SegmenterType
-		expected       ExperimentSegmentRaw
+		name      string
+		segment   ExperimentSegment
+		expected  ExperimentSegmentRaw
+		errString string
 	}{
 		{
-			name:           "success | integer",
-			segment:        experimentIntSegment,
-			segmentersType: segmentersType,
-			expected:       ExperimentSegmentRaw{"integer_segmenter": []interface{}{float64(1)}},
+			name:      "failure | invalid integer",
+			segment:   invalidExperimentIntSegment,
+			errString: "received wrong type of segmenter value; integer_segmenter expects type integer",
 		},
 		{
-			name:           "success | float",
-			segment:        experimentFloatSegment,
-			segmentersType: segmentersType,
-			expected:       ExperimentSegmentRaw{"float_segmenter": []interface{}{float64(1)}},
+			name:      "failure | invalid float",
+			segment:   invalidExperimentFloatSegment,
+			errString: "received wrong type of segmenter value; float_segmenter expects type real",
 		},
 		{
-			name:           "success | string",
-			segment:        experimentStringSegment,
-			segmentersType: segmentersType,
-			expected:       ExperimentSegmentRaw{"string_segmenter": []interface{}{"1"}},
+			name:      "failure | invalid bool",
+			segment:   invalidExperimentBoolSegment,
+			errString: "received wrong type of segmenter value; bool_segmenter expects type bool",
 		},
 		{
-			name:           "success | bool",
-			segment:        experimentBoolSegment,
-			segmentersType: segmentersType,
-			expected:       ExperimentSegmentRaw{"bool_segmenter": []interface{}{true}},
+			name:     "success | integer",
+			segment:  experimentIntSegment,
+			expected: ExperimentSegmentRaw{"integer_segmenter": []interface{}{float64(1)}},
+		},
+		{
+			name:     "success | float",
+			segment:  experimentFloatSegment,
+			expected: ExperimentSegmentRaw{"float_segmenter": []interface{}{float64(1)}},
+		},
+		{
+			name:     "success | string",
+			segment:  experimentStringSegment,
+			expected: ExperimentSegmentRaw{"string_segmenter": []interface{}{"1"}},
+		},
+		{
+			name:     "success | bool",
+			segment:  experimentBoolSegment,
+			expected: ExperimentSegmentRaw{"bool_segmenter": []interface{}{true}},
 		},
 	}
 
 	// Run tests
 	for _, data := range tests {
 		t.Run(data.name, func(t *testing.T) {
-			got := data.segment.ToRawSchema(segmentersType)
-			assert.Equal(t, data.expected, got)
+			got, err := data.segment.ToRawSchema(segmentersType)
+			if data.errString == "" {
+				assert.NoError(t, err)
+				assert.Equal(t, data.expected, got)
+			} else {
+				assert.EqualError(t, err, data.errString)
+			}
 		})
 	}
 }

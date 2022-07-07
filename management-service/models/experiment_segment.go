@@ -65,11 +65,11 @@ func (s ExperimentSegment) ToApiSchema(segmentersType map[string]schema.Segmente
 
 // ToProtoSchema converts all DB string values to appropriate ListSegmenterValue based on
 // registered SegmenterType to be used when sending messages to Treatment Service
-func (s ExperimentSegment) ToProtoSchema(segmentersType map[string]schema.SegmenterType) map[string]*_segmenters.ListSegmenterValue {
+func (s ExperimentSegment) ToProtoSchema(segmenterTypes map[string]schema.SegmenterType) map[string]*_segmenters.ListSegmenterValue {
 	protoSegments := make(map[string]*_segmenters.ListSegmenterValue)
 	for key, vals := range s {
 		if len(vals) > 0 {
-			switch segmentersType[key] {
+			switch segmenterTypes[key] {
 			case schema.SegmenterTypeString:
 				protoSegments[key] = _utils.StringSliceToListSegmenterValue(&vals)
 			case schema.SegmenterTypeInteger:
@@ -101,12 +101,12 @@ func (s ExperimentSegment) ToProtoSchema(segmentersType map[string]schema.Segmen
 }
 
 // ToStorageSchema converts raw request ExperimentSegment values to string values for storing in DB
-func (s ExperimentSegmentRaw) ToStorageSchema(segmentersType map[string]schema.SegmenterType) (ExperimentSegment, error) {
+func (s ExperimentSegmentRaw) ToStorageSchema(segmenterTypes map[string]schema.SegmenterType) (ExperimentSegment, error) {
 	segmenterVals := ExperimentSegment{}
 	for k, v := range s {
 		errTmpl := fmt.Sprintf("received wrong type of segmenter value; %s expects type", k)
 		vals := v.([]interface{})
-		switch segmentersType[k] {
+		switch segmenterTypes[k] {
 		case schema.SegmenterTypeString:
 			strVals := []string{}
 			for _, val := range vals {
@@ -152,9 +152,12 @@ func (s ExperimentSegmentRaw) ToStorageSchema(segmentersType map[string]schema.S
 	return segmenterVals, nil
 }
 
-func (s ExperimentSegment) ToRawSchema(segmentersType map[string]schema.SegmenterType) ExperimentSegmentRaw {
+// ToRawSchema converts ExperimentSegment string values from the DB into their actual value types. Optional segmenters
+// will automatically be removed by this method.
+func (s ExperimentSegment) ToRawSchema(segmentersType map[string]schema.SegmenterType) (ExperimentSegmentRaw, error) {
 	rawSegments := ExperimentSegmentRaw{}
 	for key, vals := range s {
+		errTmpl := fmt.Sprintf("received wrong type of segmenter value; %s expects type", key)
 		if len(vals) > 0 {
 			switch segmentersType[key] {
 			case schema.SegmenterTypeString:
@@ -167,6 +170,10 @@ func (s ExperimentSegment) ToRawSchema(segmentersType map[string]schema.Segmente
 				// Raw Schema refers to JSON and numbers are treated as float64
 				floatVals := []interface{}{}
 				for _, val := range vals {
+					_, err := strconv.ParseInt(val, 10, 64)
+					if err != nil {
+						return nil, fmt.Errorf("%s %s", errTmpl, schema.SegmenterTypeInteger)
+					}
 					float64Val, _ := strconv.ParseFloat(val, 64)
 					floatVals = append(floatVals, float64Val)
 				}
@@ -174,14 +181,20 @@ func (s ExperimentSegment) ToRawSchema(segmentersType map[string]schema.Segmente
 			case schema.SegmenterTypeReal:
 				floatVals := []interface{}{}
 				for _, val := range vals {
-					float64Val, _ := strconv.ParseFloat(val, 64)
+					float64Val, err := strconv.ParseFloat(val, 64)
+					if err != nil {
+						return nil, fmt.Errorf("%s %s", errTmpl, schema.SegmenterTypeReal)
+					}
 					floatVals = append(floatVals, float64Val)
 				}
 				rawSegments[key] = floatVals
 			case schema.SegmenterTypeBool:
 				boolVals := []interface{}{}
 				for _, val := range vals {
-					boolVal, _ := strconv.ParseBool(val)
+					boolVal, err := strconv.ParseBool(val)
+					if err != nil {
+						return nil, fmt.Errorf("%s %s", errTmpl, schema.SegmenterTypeBool)
+					}
 					boolVals = append(boolVals, boolVal)
 				}
 				rawSegments[key] = boolVals
@@ -189,5 +202,5 @@ func (s ExperimentSegment) ToRawSchema(segmentersType map[string]schema.Segmente
 		}
 	}
 
-	return rawSegments
+	return rawSegments, nil
 }

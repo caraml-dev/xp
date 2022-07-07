@@ -48,7 +48,7 @@ func TestNewAppContext(t *testing.T) {
 		IgnoreServers:        true,
 	})
 	require.NoError(t, err)
-	segmenterSvc, err := services.NewSegmenterService(cfg.SegmenterConfig)
+	segmenterSvc, err := services.NewSegmenterService(&allServices, cfg.SegmenterConfig, db)
 	require.NoError(t, err)
 	validationService, err := services.NewValidationService(cfg.ValidationConfig)
 	require.NoError(t, err)
@@ -77,9 +77,15 @@ func TestNewAppContext(t *testing.T) {
 		return validationService, nil
 	})
 	// Patch the Segmenter service
-	monkey.Patch(services.NewSegmenterService, func(segmenterConfig map[string]interface{}) (services.SegmenterService, error) {
-		return segmenterSvc, nil
-	})
+	monkey.Patch(services.NewSegmenterService,
+		func(
+			services *services.Services,
+			segmenterConfig map[string]interface{},
+			db *gorm.DB,
+		) (services.SegmenterService, error) {
+			return segmenterSvc, nil
+		},
+	)
 	// Patch PubSub publisher service
 	monkey.Patch(services.NewPubSubPublisherService,
 		func(pubsubConfig *config.PubSubConfig) (services.PubSubPublisherService, error) {

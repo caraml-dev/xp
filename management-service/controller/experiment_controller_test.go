@@ -233,8 +233,17 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 
 	segmenterSvc := &mocks.SegmenterService{}
 	segmenterSvc.
-		On("ListSegmenterNames").
-		Return([]string{"days_of_week"})
+		On("ListSegmenters", int64(3), services.ListSegmentersParams{}).
+		Return([]*schema.Segmenter{
+			{
+				Name: "days_of_week",
+			}}, nil)
+	segmenterSvc.
+		On("ListSegmenters", int64(2), services.ListSegmentersParams{}).
+		Return([]*schema.Segmenter{
+			{
+				Name: "days_of_week",
+			}}, nil)
 	segmenterSvc.
 		On("GetSegmenterConfigurations",
 			[]string{"days_of_week"}).
@@ -244,12 +253,22 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			}, nil,
 		)
 	segmenterSvc.
-		On("GetSegmenterTypes").
+		On("GetSegmenterTypes", int64(2)).
 		Return(
 			map[string]schema.SegmenterType{
 				"hours_of_day": schema.SegmenterTypeInteger,
 				"days_of_week": schema.SegmenterTypeInteger,
 			},
+			nil,
+		)
+	segmenterSvc.
+		On("GetSegmenterTypes", int64(5)).
+		Return(
+			map[string]schema.SegmenterType{
+				"hours_of_day": schema.SegmenterTypeInteger,
+				"days_of_week": schema.SegmenterTypeInteger,
+			},
+			nil,
 		)
 
 	// Create mock MLP service and set up with test responses

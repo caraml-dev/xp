@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package services_test
@@ -15,6 +16,7 @@ import (
 
 	"github.com/gojek/xp/common/api/schema"
 	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/xp/common/segmenters"
 	common_testutils "github.com/gojek/xp/common/testutils"
 	"github.com/gojek/xp/management-service/config"
 	tu "github.com/gojek/xp/management-service/internal/testutils"
@@ -75,12 +77,6 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 	s.subscriptions = subscriptions
 
 	// Init mock segmenter service
-	stringSegmenter := []string{"seg-1"}
-	string2Segmenter := []string{"seg-1", "seg-2"}
-	createExpSegment := models.ExperimentSegment{
-		"string_segmenter": string2Segmenter,
-	}
-
 	// Define Segmenters
 	rawStringSegmenter := []interface{}{"seg-1"}
 	rawString2Segmenter := []interface{}{"seg-1", "seg-2"}
@@ -123,7 +119,7 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 			"float_segmenter": &respFloat2Segmenter,
 		}, nil)
 	segmenterSvc.
-		On("GetSegmenterTypes").
+		On("GetSegmenterTypes", int64(1)).
 		Return(
 			map[string]schema.SegmenterType{
 				"string_segmenter":  schema.SegmenterTypeString,
@@ -131,25 +127,33 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 				"float_segmenter":   schema.SegmenterTypeReal,
 				"bool_segmenter":    schema.SegmenterTypeBool,
 			},
+			nil,
 		)
 	segmenterSvc.
-		On("ValidateExperimentSegment", mock.Anything, mock.Anything).
+		On("GetSegmenterTypes", int64(2)).
+		Return(
+			map[string]schema.SegmenterType{
+				"string_segmenter":  schema.SegmenterTypeString,
+				"integer_segmenter": schema.SegmenterTypeInteger,
+				"float_segmenter":   schema.SegmenterTypeReal,
+				"bool_segmenter":    schema.SegmenterTypeBool,
+			},
+			nil,
+		)
+	segmenterSvc.
+		On("ValidateExperimentSegment", int64(1), mock.Anything, mock.Anything).
 		Return(nil)
 	segmenterSvc.
-		On("ValidateExperimentVariables", mock.Anything).
+		On("ValidateExperimentVariables", int64(2), mock.Anything).
 		Return(nil)
 	segmenterSvc.
-		On("ValidateSegmentOrthogonality", []string{"seg-1"}, createExpSegment,
-			[]models.ExperimentSegment{{"string_segmenter": stringSegmenter}}).
+		On("ValidatePrereqSegmenters", int64(2), mock.Anything).
 		Return(nil)
 	segmenterSvc.
-		On("ValidatePrereqSegmenters", mock.Anything).
+		On("ValidateRequiredSegmenters", int64(2), mock.Anything).
 		Return(nil)
 	segmenterSvc.
-		On("ValidateRequiredSegmenters", mock.Anything).
-		Return(nil)
-	segmenterSvc.
-		On("GetSegmenterConfigurations", mock.Anything).
+		On("GetSegmenterConfigurations", int64(2), mock.Anything).
 		Return(nil, nil)
 
 	expHistSvc := &mocks.ExperimentHistoryService{}
@@ -237,15 +241,16 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 
 	// Init project settings service
 	s.ProjectSettingsService = services.NewProjectSettingsService(allServices, db)
+	s.PubSubPublisherService = allServices.PubSubPublisherService
 
 	// Create experiment test data
 	err = db.Create(&models.Settings{
 		Config: &models.ExperimentationConfig{
 
 			Segmenters: models.ProjectSegmenters{
-				Names: []string{"seg1"},
+				Names: []string{"string_segmenter"},
 				Variables: map[string][]string{
-					"seg1": {"exp-var-1"},
+					"string_segmenter": {"exp-var-1"},
 				},
 			},
 		},
@@ -344,7 +349,7 @@ func (s *PubSubServiceTestSuite) TestExperimentServiceCreateUpdatePublish() {
 	}, *expResponse)
 
 	// Check Published Create message
-	publishedUpdate, err := getLastPublishedExperimentUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	publishedUpdate, err := getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)
 	s.Suite.Require().NotNil(publishedUpdate.Update)
 	s.Suite.Require().Equal(experimentId, publishedUpdate.GetExperimentCreated().GetExperiment().Id)
@@ -354,7 +359,7 @@ func (s *PubSubServiceTestSuite) TestExperimentServiceCreateUpdatePublish() {
 	s.Suite.Require().NoError(err)
 
 	// Check Published Update message
-	publishedUpdate, err = getLastPublishedExperimentUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	publishedUpdate, err = getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)
 	s.Suite.Require().NotNil(publishedUpdate.Update)
 	s.Suite.Require().Equal(_pubsub.Experiment_Inactive, publishedUpdate.GetExperimentUpdated().GetExperiment().GetStatus())
@@ -396,7 +401,7 @@ func (s *PubSubServiceTestSuite) TestProjectSettingsServiceCreateUpdatePublish()
 	s.Suite.Require().Equal(expectedUpdatedConfig, *settingsResponse.Config)
 
 	// Check Published Create message
-	publishedUpdate, err := getLastPublishedProjectSettingsUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	publishedUpdate, err := getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)
 	s.Suite.Require().NotNil(publishedUpdate.Update)
 	s.Suite.Require().Equal(projectId, publishedUpdate.GetProjectSettingsCreated().GetProjectSettings().GetProjectId())
@@ -428,7 +433,7 @@ func (s *PubSubServiceTestSuite) TestProjectSettingsServiceCreateUpdatePublish()
 	s.Suite.Require().Equal(userName, settingsResponse.Username)
 	s.Suite.Require().Equal(expectedUpdatedConfig, *settingsResponse.Config)
 
-	publishedUpdate, err = getLastPublishedProjectSettingsUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	publishedUpdate, err = getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)
 	s.Suite.Require().NotNil(publishedUpdate.Update)
 	s.Suite.Require().Equal(segmenters.Names, publishedUpdate.GetProjectSettingsUpdated().GetProjectSettings().Segmenters.Names)
@@ -437,25 +442,98 @@ func (s *PubSubServiceTestSuite) TestProjectSettingsServiceCreateUpdatePublish()
 		publishedUpdate.GetProjectSettingsUpdated().GetProjectSettings().Segmenters.Variables["seg-5"].Value)
 }
 
-func getLastPublishedExperimentUpdate(
-	ctx context.Context,
-	timeout time.Duration,
-	subscription *pubsub.Subscription,
-) (*_pubsub.MessagePublishState, error) {
-	contextWithTimeout, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-	update := _pubsub.MessagePublishState{}
-	err := subscription.Receive(contextWithTimeout, func(ctx context.Context, msg *pubsub.Message) {
-		_ = proto.Unmarshal(msg.Data, &update)
-		msg.Ack()
-	})
-	if err != nil {
-		return nil, err
+func (s *PubSubServiceTestSuite) TestProjectSettingPublish() {
+	segmenterName := "test-new-custom-segmenter"
+	segmenterDescription := "test description"
+	customSegmenter := models.CustomSegmenter{
+		Name:        segmenterName,
+		ProjectID:   1,
+		Type:        models.SegmenterValueTypeString,
+		Description: &segmenterDescription,
+		Options: &models.Options{
+			"option_a": "option_a_val",
+		},
+		Required: true,
+		Constraints: &models.Constraints{
+			{
+				PreRequisites: []models.PreRequisite{
+					{
+						SegmenterName: "segmenter_name_1",
+						SegmenterValues: []interface{}{
+							"SN1",
+						},
+					},
+				},
+				AllowedValues: []interface{}{
+					"1",
+				},
+				Options: &models.Options{
+					"option_1": "option_1_val",
+				},
+			},
+		},
 	}
-	return &update, nil
+	expectedConstraint := []*segmenters.Constraint{
+		{
+			PreRequisites: []*segmenters.PreRequisite{
+				{
+					SegmenterName: "segmenter_name_1",
+					SegmenterValues: &segmenters.ListSegmenterValue{
+						Values: []*segmenters.SegmenterValue{
+							{Value: &segmenters.SegmenterValue_String_{String_: "SN1"}},
+						},
+					},
+				},
+			},
+			AllowedValues: &segmenters.ListSegmenterValue{
+				Values: []*segmenters.SegmenterValue{
+					{Value: &segmenters.SegmenterValue_String_{String_: "1"}},
+				},
+			},
+			Options: map[string]*segmenters.SegmenterValue{
+				"option_1": {Value: &segmenters.SegmenterValue_String_{String_: "option_1_val"}},
+			},
+		},
+	}
+	expectedOptions := map[string]*segmenters.SegmenterValue{
+		"option_a": {Value: &segmenters.SegmenterValue_String_{String_: "option_a_val"}},
+	}
+	segmenterConfig, err := customSegmenter.GetConfiguration()
+	s.Suite.Require().NoError(err)
+	err = s.PubSubPublisherService.PublishProjectSegmenterMessage("create", segmenterConfig, 1)
+	s.Suite.Require().NoError(err)
+	publishedUpdate, err := getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	s.Suite.Require().NoError(err)
+	s.Suite.Require().NotNil(publishedUpdate.Update)
+	fetchSegmenter := publishedUpdate.GetProjectSegmenterCreated().GetProjectSegmenter()
+	s.Suite.Require().Equal(customSegmenter.Name, fetchSegmenter.Name)
+	s.Suite.Require().Equal(string(customSegmenter.Type), fetchSegmenter.Type.String())
+	s.Suite.Require().Equal(*customSegmenter.Description, fetchSegmenter.Description)
+	s.Suite.Require().Equal(customSegmenter.Required, fetchSegmenter.Required)
+	s.Suite.Require().Equal(expectedOptions, fetchSegmenter.Options)
+	s.Suite.Require().Equal(expectedConstraint, fetchSegmenter.Constraints)
+
+	customSegmenter.Required = !customSegmenter.Required
+	segmenterConfig, err = customSegmenter.GetConfiguration()
+	s.Suite.Require().NoError(err)
+	err = s.PubSubPublisherService.PublishProjectSegmenterMessage("update", segmenterConfig, 1)
+	s.Suite.Require().NoError(err)
+	publishedUpdate, err = getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	s.Suite.Require().NoError(err)
+	s.Suite.Require().NotNil(publishedUpdate.Update)
+	fetchSegmenter = publishedUpdate.GetProjectSegmenterUpdated().GetProjectSegmenter()
+	s.Suite.Require().False(fetchSegmenter.Required)
+
+	err = s.PubSubPublisherService.PublishProjectSegmenterMessage("delete", segmenterConfig, 1)
+	s.Suite.Require().NoError(err)
+	publishedUpdate, err = getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
+	s.Suite.Require().NoError(err)
+	s.Suite.Require().NotNil(publishedUpdate.Update)
+	s.Suite.Require().Equal(int64(1), publishedUpdate.GetProjectSegmenterDeleted().ProjectId)
+	s.Suite.Require().Equal(segmenterName, publishedUpdate.GetProjectSegmenterDeleted().SegmenterName)
 }
 
-func getLastPublishedProjectSettingsUpdate(
+func getLastPublishedUpdate(
 	ctx context.Context,
 	timeout time.Duration,
 	subscription *pubsub.Subscription,

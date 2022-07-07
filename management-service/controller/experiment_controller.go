@@ -48,7 +48,13 @@ func (e ExperimentController) GetExperiment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	Ok(w, exp.ToApiSchema(e.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := e.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+
+	Ok(w, exp.ToApiSchema(segmenterTypes))
 }
 
 func (e ExperimentController) ListExperiments(w http.ResponseWriter, r *http.Request, projectId int64, params api.ListExperimentsParams) {
@@ -63,7 +69,7 @@ func (e ExperimentController) ListExperiments(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	listExperimentParams, err := e.toListExperimentParams(params)
+	listExperimentParams, err := e.toListExperimentParams(params, projectId)
 	if err != nil {
 		WriteErrorResponse(w, err)
 		return
@@ -74,9 +80,15 @@ func (e ExperimentController) ListExperiments(w http.ResponseWriter, r *http.Req
 		WriteErrorResponse(w, err)
 		return
 	}
+
+	segmenterTypes, err := e.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
 	var expsResp []schema.Experiment
 	for _, exp := range exps {
-		expsResp = append(expsResp, exp.ToApiSchema(e.Services.SegmenterService.GetSegmenterTypes()))
+		expsResp = append(expsResp, exp.ToApiSchema(segmenterTypes))
 	}
 
 	Ok(w, expsResp, ToPagingSchema(paging))
@@ -123,7 +135,12 @@ func (e ExperimentController) CreateExperiment(w http.ResponseWriter, r *http.Re
 		WriteErrorResponse(w, err)
 		return
 	}
-	Ok(w, exp.ToApiSchema(e.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := e.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+	Ok(w, exp.ToApiSchema(segmenterTypes))
 }
 
 func (e ExperimentController) UpdateExperiment(w http.ResponseWriter, r *http.Request, projectId int64, experimentId int64) {
@@ -169,7 +186,12 @@ func (e ExperimentController) UpdateExperiment(w http.ResponseWriter, r *http.Re
 		WriteErrorResponse(w, err)
 		return
 	}
-	Ok(w, exp.ToApiSchema(e.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := e.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+	Ok(w, exp.ToApiSchema(segmenterTypes))
 }
 
 func (e ExperimentController) EnableExperiment(w http.ResponseWriter, r *http.Request, projectId int64, experimentId int64) {
@@ -268,7 +290,7 @@ func (e ExperimentController) toUpdateExperimentBody(body api.UpdateExperimentRe
 	return reqBody, nil
 }
 
-func (e ExperimentController) toListExperimentParams(params api.ListExperimentsParams) (*services.ListExperimentsParams, error) {
+func (e ExperimentController) toListExperimentParams(params api.ListExperimentsParams, projectId int64) (*services.ListExperimentsParams, error) {
 	var status *models.ExperimentStatus
 	if params.Status != nil {
 		val := models.ExperimentStatus(*params.Status)
@@ -287,9 +309,12 @@ func (e ExperimentController) toListExperimentParams(params api.ListExperimentsP
 
 	// Retrieve existing segmenters and remove invalid ones from request params
 	registeredSegmenters := set.New()
-	segmenters := e.Services.SegmenterService.ListSegmenterNames()
+	segmenters, err := e.Services.SegmenterService.ListSegmenters(projectId, services.ListSegmentersParams{})
+	if err != nil {
+		return nil, err
+	}
 	for _, segmenter := range segmenters {
-		registeredSegmenters.Insert(segmenter)
+		registeredSegmenters.Insert(segmenter.Name)
 	}
 	validSegmentParam := models.ExperimentSegment{}
 	if params.Segment != nil {

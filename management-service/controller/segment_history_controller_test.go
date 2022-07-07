@@ -92,12 +92,13 @@ func (s *SegmentHistoryControllerTestSuite) SetupSuite() {
 
 	segmenterSvc := &mocks.SegmenterService{}
 	segmenterSvc.
-		On("GetSegmenterTypes").
+		On("GetSegmenterTypes", int64(3)).
 		Return(
 			map[string]schema.SegmenterType{
 				"hours_of_day": schema.SegmenterTypeInteger,
 				"days_of_week": schema.SegmenterTypeInteger,
 			},
+			nil,
 		)
 
 	// Set up expected responses

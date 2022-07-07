@@ -39,9 +39,14 @@ func (s SegmentHistoryController) ListSegmentHistory(
 		WriteErrorResponse(w, err)
 		return
 	}
+	segmenterTypes, err := s.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
 	versionsResp := []schema.SegmentHistory{}
 	for _, v := range versions {
-		versionsResp = append(versionsResp, v.ToApiSchema(s.Services.SegmenterService.GetSegmenterTypes()))
+		versionsResp = append(versionsResp, v.ToApiSchema(segmenterTypes))
 	}
 	Ok(w, versionsResp, ToPagingSchema(paging))
 }
@@ -65,8 +70,12 @@ func (s SegmentHistoryController) GetSegmentHistory(
 		WriteErrorResponse(w, err)
 		return
 	}
-
-	Ok(w, segment.ToApiSchema(s.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := s.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+	Ok(w, segment.ToApiSchema(segmenterTypes))
 }
 
 func (s SegmentHistoryController) toListSegmentHistoryParams(params api.ListSegmentHistoryParams) services.ListSegmentHistoryParams {

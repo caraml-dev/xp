@@ -112,6 +112,29 @@ func (_m *ExperimentService) GetExperiment(projectId int64, experimentId int64) 
 	return r0, r1
 }
 
+// ListAllExperiments provides a mock function with given fields: projectId, params
+func (_m *ExperimentService) ListAllExperiments(projectId models.ID, params services.ListExperimentsParams) ([]*models.Experiment, error) {
+	ret := _m.Called(projectId, params)
+
+	var r0 []*models.Experiment
+	if rf, ok := ret.Get(0).(func(models.ID, services.ListExperimentsParams) []*models.Experiment); ok {
+		r0 = rf(projectId, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*models.Experiment)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(models.ID, services.ListExperimentsParams) error); ok {
+		r1 = rf(projectId, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ListExperiments provides a mock function with given fields: projectId, params
 func (_m *ExperimentService) ListExperiments(projectId int64, params services.ListExperimentsParams) ([]*models.Experiment, *pagination.Paging, error) {
 	ret := _m.Called(projectId, params)
@@ -181,13 +204,27 @@ func (_m *ExperimentService) UpdateExperiment(settings models.Settings, experime
 	return r0, r1
 }
 
-// ValidatePairwiseExperimentOrthogonality provides a mock function with given fields: projectId, listExpParams, segmenters
-func (_m *ExperimentService) ValidatePairwiseExperimentOrthogonality(projectId int64, listExpParams services.ListExperimentsParams, segmenters []string) error {
-	ret := _m.Called(projectId, listExpParams, segmenters)
+// ValidatePairwiseExperimentOrthogonality provides a mock function with given fields: projectId, experiments, segmenters
+func (_m *ExperimentService) ValidatePairwiseExperimentOrthogonality(projectId int64, experiments []*models.Experiment, segmenters []string) error {
+	ret := _m.Called(projectId, experiments, segmenters)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(int64, services.ListExperimentsParams, []string) error); ok {
-		r0 = rf(projectId, listExpParams, segmenters)
+	if rf, ok := ret.Get(0).(func(int64, []*models.Experiment, []string) error); ok {
+		r0 = rf(projectId, experiments, segmenters)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ValidateProjectExperimentSegmentersExist provides a mock function with given fields: projectId, experiments, segmenters
+func (_m *ExperimentService) ValidateProjectExperimentSegmentersExist(projectId int64, experiments []*models.Experiment, segmenters []string) error {
+	ret := _m.Called(projectId, experiments, segmenters)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int64, []*models.Experiment, []string) error); ok {
+		r0 = rf(projectId, experiments, segmenters)
 	} else {
 		r0 = ret.Error(0)
 	}

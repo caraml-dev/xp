@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package services_test
@@ -76,6 +77,61 @@ func TestExperimentService(t *testing.T) {
 	suite.Run(t, new(ExperimentServiceTestSuite))
 }
 
+func (s *ExperimentServiceTestSuite) TestValidateProjectExperimentSegmentersExist() {
+	tests := map[string]struct {
+		projectId   int64
+		experiments []*models.Experiment
+		segmenters  []string
+		errString   string
+	}{
+		"failure | invalid segmenters": {
+			projectId: int64(2),
+			experiments: []*models.Experiment{
+				s.Experiments[3],
+			},
+			segmenters: []string{},
+			errString:  "received wrong type of segmenter value; bool_segmenter expects type bool",
+		},
+		"failure | missing required segmenter": {
+			projectId:   int64(1),
+			experiments: []*models.Experiment{s.Experiments[0], s.Experiments[1], s.Experiments[2]},
+			segmenters: []string{
+				"integer_segmenter",
+				"integer_2_segmenter",
+				"float_segmenter",
+				"string_segmenter",
+			},
+			errString: "experiment test-exp-1 requires segmenter: bool_segmenter",
+		},
+		"success": {
+			projectId:   int64(1),
+			experiments: []*models.Experiment{s.Experiments[0], s.Experiments[1], s.Experiments[2]},
+			segmenters: []string{
+				"integer_segmenter",
+				"integer_2_segmenter",
+				"float_segmenter",
+				"string_segmenter",
+				"bool_segmenter",
+			},
+		},
+	}
+
+	for name, data := range tests {
+		s.Suite.T().Run(name, func(t *testing.T) {
+			err := s.ExperimentService.ValidateProjectExperimentSegmentersExist(
+				data.projectId,
+				data.experiments,
+				data.segmenters,
+			)
+			if data.errString == "" {
+				s.Suite.Require().NoError(err)
+			} else {
+				s.Suite.Assert().EqualError(err, data.errString)
+			}
+		})
+	}
+}
+
 func (s *ExperimentServiceTestSuite) TestExperimentServiceGetIntegration() {
 	expResponse, err := s.ExperimentService.GetExperiment(1, 1)
 	s.Suite.Require().NoError(err)
@@ -112,10 +168,10 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	expResponsesList, pagingResponse, err := svc.ListExperiments(1, services.ListExperimentsParams{})
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 1, Total: 3}, pagingResponse)
-	tu.AssertEqualValues(t, s.Experiments, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1], s.Experiments[2]}, expResponsesList)
 
 	// No experiments filtered
-	expResponsesList, pagingResponse, err = svc.ListExperiments(2, services.ListExperimentsParams{})
+	expResponsesList, pagingResponse, err = svc.ListExperiments(3, services.ListExperimentsParams{})
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 0, Total: 0}, pagingResponse)
 	tu.AssertEqualValues(t, []*models.Experiment{}, expResponsesList)
@@ -214,7 +270,7 @@ func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {
 
 	// Create Experiment
 	projectId := int64(1)
-	experimentId := int64(4)
+	experimentId := int64(5)
 	description := "Test description"
 	interval := int32(60)
 	traffic := int32(100)
@@ -298,7 +354,7 @@ func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {
 		UpdatedBy:   &updatedBy,
 	})
 	s.Suite.Require().NoError(err)
-	s.Suite.Assert().Equal(models.ID(4), expResponse.ID)
+	s.Suite.Assert().Equal(models.ID(5), expResponse.ID)
 	s.Suite.Assert().Equal(&newDescription, expResponse.Description)
 	s.Suite.Assert().Equal(models.ExperimentStatusActive, expResponse.Status)
 
@@ -435,7 +491,20 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 		ProjectID: models.ID(1),
 		Config: &models.ExperimentationConfig{
 			Segmenters: models.ProjectSegmenters{
-				Names:     []string{"seg-1"},
+				Names:     []string{"string_segmenter"},
+				Variables: nil,
+			},
+		},
+	}).Error
+	if err != nil {
+		return settings, []*models.Experiment{}, err
+	}
+	err = db.Create(&models.Settings{
+		ProjectID: models.ID(2),
+		Username:  "user_2",
+		Config: &models.ExperimentationConfig{
+			Segmenters: models.ProjectSegmenters{
+				Names:     []string{"string_segmenter"},
 				Variables: nil,
 			},
 		},
@@ -518,6 +587,23 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 			},
 			Description: &description,
 		},
+		{
+			ProjectID:  models.ID(2),
+			Name:       "test-exp-1",
+			Type:       models.ExperimentTypeAB,
+			Tier:       models.ExperimentTierOverride,
+			Treatments: nil,
+			Segment: models.ExperimentSegment{
+				"bool_segmenter": stringSegmenter,
+			},
+			Status:    models.ExperimentStatusActive,
+			StartTime: time.Date(2021, 2, 2, 3, 5, 7, 0, time.UTC),
+			EndTime:   time.Date(2021, 2, 2, 3, 5, 8, 0, time.UTC),
+			Model: models.Model{
+				CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
+				UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
+			},
+		},
 	}
 
 	// Create test experiments
@@ -530,7 +616,7 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 
 	// Return expected experiment responses
 	experimentRecords := []*models.Experiment{
-		&experiments[0], &experiments[1], &experiments[2],
+		&experiments[0], &experiments[1], &experiments[2], &experiments[3],
 	}
 	experimentRecords[0].ID = models.ID(1)
 	experimentRecords[1].ID = models.ID(2)
@@ -549,7 +635,6 @@ func setupMockSegmenterService() services.SegmenterService {
 	rawBoolSegmenter := []interface{}{true}
 
 	stringSegmenter := []string{"seg-1"}
-	string2Segmenter := []string{"seg-1", "seg-2"}
 
 	respIntegerSegmenter := []interface{}{"1"}
 	respInteger2Segmenter := []interface{}{"1", "10"}
@@ -560,9 +645,6 @@ func setupMockSegmenterService() services.SegmenterService {
 
 	createExpSegmentRaw := models.ExperimentSegmentRaw{
 		"string_segmenter": rawString2Segmenter,
-	}
-	createExpSegment := models.ExperimentSegment{
-		"string_segmenter": string2Segmenter,
 	}
 	segmenterSvc := &mocks.SegmenterService{}
 	segmenterSvc.On("GetFormattedSegmenters", models.ExperimentSegmentRaw(nil)).
@@ -599,7 +681,13 @@ func setupMockSegmenterService() services.SegmenterService {
 			"float_segmenter": &respFloat2Segmenter,
 		}, nil)
 	segmenterSvc.
-		On("GetSegmenterTypes").
+		On("GetSegmenterTypes", int64(0)).
+		Return(
+			nil,
+			gorm.ErrRecordNotFound,
+		)
+	segmenterSvc.
+		On("GetSegmenterTypes", int64(1)).
 		Return(
 			map[string]schema.SegmenterType{
 				"integer_segmenter":   schema.SegmenterTypeInteger,
@@ -608,18 +696,31 @@ func setupMockSegmenterService() services.SegmenterService {
 				"string_segmenter":    schema.SegmenterTypeString,
 				"bool_segmenter":      schema.SegmenterTypeBool,
 			},
+			nil,
 		)
 	segmenterSvc.
-		On("ValidateExperimentSegment", []string{
-			"seg-1",
-		}, createExpSegmentRaw).
+		On("GetSegmenterTypes", int64(2)).
+		Return(
+			map[string]schema.SegmenterType{
+				"bool_segmenter": schema.SegmenterTypeBool,
+			},
+			nil,
+		)
+	segmenterSvc.
+		On(
+			"ValidateExperimentSegment",
+			int64(1),
+			[]string{"string_segmenter"},
+			createExpSegmentRaw).
 		Return(nil)
 
 	desc := "test-desc-1"
 	segmenterSvc.
-		On("ValidateSegmentOrthogonality", []string{
-			"seg-1",
-		}, createExpSegmentRaw,
+		On(
+			"ValidateSegmentOrthogonality",
+			int64(1),
+			[]string{"string_segmenter"},
+			createExpSegmentRaw,
 			[]models.Experiment{
 				{
 					ID:          models.ID(3),
@@ -642,35 +743,6 @@ func setupMockSegmenterService() services.SegmenterService {
 					Treatments: nil,
 					StartTime:  time.Date(2021, 2, 2, 3, 5, 7, 0, time.UTC),
 					EndTime:    time.Date(2021, 2, 2, 3, 5, 8, 0, time.UTC),
-				},
-			}).
-		Return(nil)
-	segmenterSvc.
-		On("ValidateSegmentOrthogonality", []string{
-			"seg-1",
-		}, createExpSegment,
-			[]models.Experiment{
-				{
-					ID:          models.ID(4),
-					ProjectID:   models.ID(1),
-					Name:        "test-experiment-create",
-					Description: &desc,
-					Type:        models.ExperimentTypeSwitchback,
-					Tier:        models.ExperimentTierDefault,
-					Status:      models.ExperimentStatusActive,
-					Model: models.Model{
-						// time.FixedZone is used to bypass fields defined in Postgres as timestamp with NO timezone,
-						// where offset 0 is treated as UTC
-						// Relevant SO: https://github.com/lib/pq/issues/329
-						CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.FixedZone("", 0)),
-						UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.FixedZone("", 0)),
-					},
-					Segment: models.ExperimentSegment{
-						"string_segmenter": stringSegmenter,
-					},
-					Treatments: nil,
-					StartTime:  time.Date(2021, 2, 2, 3, 0, 0, 0, time.UTC),
-					EndTime:    time.Date(2021, 2, 2, 4, 0, 0, 0, time.UTC),
 				},
 			}).
 		Return(nil)
