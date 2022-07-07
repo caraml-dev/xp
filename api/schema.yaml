@@ -432,8 +432,7 @@ components:
       oneOf:
         - type: string
         - type: boolean
-        - type: integer
-        - type: number
+        - type: number  # 'number' represents both int and float values
     SegmenterType:
       type: string
       enum:
