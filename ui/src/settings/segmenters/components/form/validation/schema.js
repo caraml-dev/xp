@@ -8,10 +8,6 @@ const nameRegexDescription =
   "Name must begin with an alphanumeric character and have no trailing spaces and can contain letters, numbers, blank spaces and the following symbols: -_()#$%&:.";
 const typeOptionsValues = typeOptions.map((e) => e.value);
 
-// Note: The validation functions below are specifically not defined using the
-// arrow format, for access to `this` from the invocation context:
-// https://stackoverflow.com/a/33308151
-
 const segmenterValueSchema = yup.mixed();
 
 const segmenterValuesSchema = yup
