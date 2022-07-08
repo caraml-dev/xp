@@ -191,14 +191,15 @@ func testCreateUpdateDeleteSegment(s *SegmentServiceTestSuite) {
 		UpdatedBy: &updatedBy,
 	}
 	s.ValidationService.On("Validate", createSegmentBody).Return(nil)
-	s.SegmenterService.On("ValidateExperimentSegment", mock.Anything, mock.Anything).Return(nil)
+	s.SegmenterService.On("ValidateExperimentSegment", int64(1), mock.Anything, mock.Anything).Return(nil)
 	s.SegmenterService.
-		On("GetSegmenterTypes").
+		On("GetSegmenterTypes", int64(1)).
 		Return(
 			map[string]schema.SegmenterType{
 				"string_segmenter":  schema.SegmenterTypeString,
 				"integer_segmenter": schema.SegmenterTypeInteger,
 			},
+			nil,
 		)
 	segmentResponse, err := svc.CreateSegment(s.Settings, createSegmentBody)
 	s.Suite.Require().NoError(err)

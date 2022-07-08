@@ -52,7 +52,7 @@ jobs:
         with:
           version: v1.41.1
           working-directory: common
-          args: --timeout 3m --verbose
+          args: --timeout 3m --verbose --skip-files=testutils/mocks/ManagementClientInterface.go
       - name: Lint Management Service module
         uses: golangci/golangci-lint-action@v3
         with:

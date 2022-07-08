@@ -47,9 +47,22 @@ export const SegmentConfigPanel = ({
   // dependent segmenters
   const onChangeSegmenterValue = (name, value) => {
     const dependentSegmenters = dependencyMap[name] || [];
+    const depSegmentersSet = new Set(dependentSegmenters);
+    // get a map of segmenter names as keys and the set of valid options as values
+    const depOptions = options.reduce(
+      (acc, cur) =>
+        depSegmentersSet.has(cur.name)
+          ? { ...acc, [cur.name]: new Set(cur.options.map((x) => x.value)) }
+          : acc,
+      {}
+    );
+
     const updatedSegment = dependentSegmenters.reduce((acc, dep) => {
-      // Reset dependent segmenter values
-      return { ...acc, [dep]: [] };
+      // Reset dependent segmenter values by removing any invalid options
+      return {
+        ...acc,
+        [dep]: segment[dep].filter((x) => depOptions[dep].has(x)),
+      };
     }, segment);
     onChange("segment")({ ...updatedSegment, [name]: value });
   };

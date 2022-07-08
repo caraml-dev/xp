@@ -57,6 +57,16 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 	segment6 := makeSegment(
 		&rawStringSegmenter, &daysOfWeek, &hoursOfDay, &rawBoolSegmenter, &rawIntegerSegmenter, nil, &s2ID1)
 
+	dummyProjectSegmenters := map[string]schema.SegmenterType{
+		"string_segmenter":  "string",
+		"integer_segmenter": "integer",
+		"float_segmenter":   "float",
+		"bool_segmenter":    "bool",
+		"s2_ids":            "integer",
+		"days_of_week":      "integer",
+		"hours_of_day":      "integer",
+	}
+
 	// Set up local storage
 	s.LocalStorage = models.LocalStorage{
 		ProjectSettings: []*_pubsub.ProjectSettings{
@@ -159,13 +169,22 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 			},
 		},
 		Segmenters: map[string]schema.SegmenterType{
-			"string_segmenter":  "STRING",
-			"integer_segmenter": "INTEGER",
-			"float_segmenter":   "FLOAT",
-			"bool_segmenter":    "BOOL",
-			"s2_ids":            "INTEGER",
-			"days_of_week":      "INTEGER",
-			"hours_of_day":      "INTEGER",
+			"string_segmenter":  "string",
+			"integer_segmenter": "integer",
+			"float_segmenter":   "float",
+			"bool_segmenter":    "bool",
+			"s2_ids":            "integer",
+			"days_of_week":      "integer",
+			"hours_of_day":      "integer",
+		},
+		ProjectSegmenters: map[uint32]map[string]schema.SegmenterType{
+			1: dummyProjectSegmenters,
+			2: dummyProjectSegmenters,
+			3: dummyProjectSegmenters,
+			4: dummyProjectSegmenters,
+			5: dummyProjectSegmenters,
+			6: dummyProjectSegmenters,
+			7: dummyProjectSegmenters,
 		},
 	}
 

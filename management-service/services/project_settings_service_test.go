@@ -1,4 +1,3 @@
-//go:build integration
 // +build integration
 
 package services_test
@@ -13,6 +12,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/management-service/errors"
 	tu "github.com/gojek/xp/management-service/internal/testutils"
 	"github.com/gojek/xp/management-service/models"
 	"github.com/gojek/xp/management-service/services"
@@ -46,40 +46,75 @@ func (s *ProjectSettingsServiceTestSuite) SetupSuite() {
 	}
 
 	// Init mock experiment service
-	status := models.ExperimentStatusActive
-	startTime := time.Now()
-	endTime := time.Now().Add(855360 * time.Hour)
-	listExpParams := services.ListExperimentsParams{StartTime: &startTime, EndTime: &endTime, Status: &status}
 	expSvc := &mocks.ExperimentService{}
 	expSvc.
+		On("ListAllExperiments",
+			models.ID(2),
+			mock.Anything,
+		).
+		Return(nil, gorm.ErrRecordNotFound)
+	expSvc.
+		On("ListAllExperiments",
+			models.ID(1),
+			mock.Anything,
+		).
+		Return([]*models.Experiment{}, nil)
+	expSvc.
 		On("ValidatePairwiseExperimentOrthogonality",
-			int64(3),
-			listExpParams,
-			[]string{"seg-5", "seg-6"},
+			int64(1),
+			mock.Anything,
+			[]string{"seg1"},
 		).
 		Return(nil)
+	expSvc.
+		On("ValidateProjectExperimentSegmentersExist",
+			int64(1),
+			mock.Anything,
+			[]string{"seg1"},
+		).
+		Return(
+			errors.Newf(
+				errors.BadInput,
+				"Error validating segmenters required for active experiment dummy experiment: experiment "+
+					"test-experiment requires segmenter: inexistent_segmenter",
+			),
+		)
 
 	// Init mock segmenter service
 	segmenterSvc := &mocks.SegmenterService{}
 	segmenterSvc.
-		On("GetSegmenterConfigurations", []string{"seg-3", "seg-4"}).
-		Return(s.SegmenterConfigurations, nil)
-	segmenterSvc.
-		On("GetSegmenterConfigurations", []string{"seg-3"}).
-		Return(s.SegmenterConfigurations, nil)
-	segmenterSvc.
-		On("GetSegmenterConfigurations", []string{"seg5", "seg6"}).
+		On("GetSegmenterConfigurations", int64(3), []string{"seg5", "seg6"}).
 		Return(nil, nil)
 	segmenterSvc.
-		On("ListSegmenterNames").
+		On("GetSegmenterConfigurations", int64(2), []string{"seg1"}).
+		Return(nil, nil)
+	segmenterSvc.
+		On("GetSegmenterConfigurations", int64(1), []string{"seg1"}).
+		Return(nil, nil)
+	segmenterSvc.
+		On("ListGlobalSegmentersNames").
 		Return([]string{"seg-3"})
 	segmenterSvc.
-		On("ValidateRequiredSegmenters", mock.Anything).
+		On("ValidateRequiredSegmenters", int64(3), mock.Anything).
 		Return(nil)
 	segmenterSvc.
-		On("ValidatePrereqSegmenters", mock.Anything).
+		On("ValidateRequiredSegmenters", int64(2), mock.Anything).
 		Return(nil)
-	segmenterSvc.On("ValidateExperimentVariables", mock.Anything).Return(nil)
+	segmenterSvc.
+		On("ValidateRequiredSegmenters", int64(1), []string{"seg1"}).
+		Return(nil)
+	segmenterSvc.
+		On("ValidatePrereqSegmenters", int64(3), mock.Anything).
+		Return(nil)
+	segmenterSvc.
+		On("ValidatePrereqSegmenters", int64(2), mock.Anything).
+		Return(nil)
+	segmenterSvc.
+		On("ValidatePrereqSegmenters", int64(1), []string{"seg1"}).
+		Return(nil)
+	segmenterSvc.On("ValidateExperimentVariables", int64(3), mock.Anything).Return(nil)
+	segmenterSvc.On("ValidateExperimentVariables", int64(2), mock.Anything).Return(nil)
+	segmenterSvc.On("ValidateExperimentVariables", int64(1), mock.Anything).Return(nil)
 
 	// Init mock validation service
 	validationSvc := &mocks.ValidationService{}
@@ -125,6 +160,18 @@ func (s *ProjectSettingsServiceTestSuite) SetupSuite() {
 			ValidationUrl:        nil,
 			RandomizationKey:     "rand-4",
 			EnableS2idClustering: nil,
+		},
+	).Return(nil)
+	validationSvc.On(
+		"Validate",
+		services.UpdateProjectSettingsRequestBody{
+			Segmenters: models.ProjectSegmenters{
+				Names: []string{"seg1"},
+				Variables: map[string][]string{
+					"seg1": {"exp-var-1", "exp-var-2"},
+				}},
+			ValidationUrl:    nil,
+			RandomizationKey: "rand-2",
 		},
 	).Return(nil)
 
@@ -180,11 +227,11 @@ func (s *ProjectSettingsServiceTestSuite) TestProjectSettingsServiceGetIntegrati
 }
 
 func (s *ProjectSettingsServiceTestSuite) TestGetExperimentVariablesIntegration() {
-	// Get request parameters for valid segmenters, seg2 is duplicate, GetExperimentVariables should not return duplicate
+	// Get request parameters for valid global segmenters, seg2 is duplicate, GetExperimentVariables should not return duplicate
 	params, err := s.ProjectSettingsService.GetExperimentVariables(1)
 	s.Suite.Require().NoError(err)
 	assert.ElementsMatch(s.Suite.T(), []string{"exp-var-1", "exp-var-2", "exp-var-3", "rand-1"}, *params)
-	// Get request parameters for valid segmenters
+	// Get request parameters for valid global segmenters
 	params, err = s.ProjectSettingsService.GetExperimentVariables(2)
 	s.Suite.Require().NoError(err)
 	assert.ElementsMatch(s.Suite.T(), []string{"exp-var-3", "exp-var-4", "rand-2"}, *params)
@@ -324,6 +371,41 @@ func (s *ProjectSettingsServiceTestSuite) TestProjectSettingsServiceListCreateUp
 		},
 		ValidationUrl: nil,
 	}, *settingsResponse)
+}
+
+func (s *ProjectSettingsServiceTestSuite) TestProjectSettingsServiceUpdateExperimentsNotFound() {
+	// Update Settings
+	settingsResponse, err := s.ProjectSettingsService.UpdateProjectSettings(
+		int64(2),
+		services.UpdateProjectSettingsRequestBody{
+			Segmenters: models.ProjectSegmenters{
+				Names: []string{"seg1"},
+				Variables: map[string][]string{
+					"seg1": {"exp-var-1", "exp-var-2"},
+				}},
+			ValidationUrl:    nil,
+			RandomizationKey: "rand-2",
+		})
+	s.Suite.Assert().EqualError(err, "record not found")
+	s.Suite.Require().Nil(settingsResponse)
+}
+
+func (s *ProjectSettingsServiceTestSuite) TestProjectSettingsServiceUpdateInvalidRequiredSegmenterRemoval() {
+	// Update Settings
+	settingsResponse, err := s.ProjectSettingsService.UpdateProjectSettings(
+		int64(1),
+		services.UpdateProjectSettingsRequestBody{
+			Segmenters: models.ProjectSegmenters{
+				Names: []string{"seg1"},
+				Variables: map[string][]string{
+					"seg1": {"exp-var-1", "exp-var-2"},
+				}},
+			ValidationUrl:    nil,
+			RandomizationKey: "rand-2",
+		})
+	s.Suite.Assert().EqualError(err, "Error validating segmenters required for active experiment dummy experiment: "+
+		"experiment test-experiment requires segmenter: inexistent_segmenter")
+	s.Suite.Require().Nil(settingsResponse)
 }
 
 func createTestUsers(db *gorm.DB) ([]models.Settings, error) {

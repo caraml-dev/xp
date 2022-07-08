@@ -323,7 +323,7 @@ components:
         names:
           description: List of segmenters name within Project, in priority order.
           type: array
-          items: 
+          items:
             type: string
         variables:
           description: Mapping of segmenter to the configured experiment variables
@@ -432,8 +432,7 @@ components:
       oneOf:
         - type: string
         - type: boolean
-        - type: integer
-        - type: number
+        - type: number  # 'number' represents both int and float values
     SegmenterType:
       type: string
       enum:
@@ -441,6 +440,16 @@ components:
         - bool
         - integer
         - real
+    SegmenterScope:
+      type: string
+      enum:
+        - global
+        - project
+    SegmenterStatus:
+      type: string
+      enum:
+        - active
+        - inactive
     Segmenter:
       required:
         - name
@@ -466,7 +475,7 @@ components:
           items:
             description: List of experiment variables, when used in conjunction, can be derived this segmenter
             type: array
-            items: 
+            items:
               type: string
         constraints:
           type: array
@@ -476,6 +485,16 @@ components:
           type: boolean
         description:
           type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        scope:
+          $ref: '#/components/schemas/SegmenterScope'
+        status:
+          $ref: '#/components/schemas/SegmenterStatus'
     SegmentField:
       type: string
       enum:

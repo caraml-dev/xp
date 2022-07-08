@@ -120,10 +120,7 @@ func (s *ProjectSettingsControllerTestSuite) SetupSuite() {
 		On("GetExperimentVariables", int64(2)).
 		Return(&[]string{"rand", "exp_var_1", "exp_var_2"}, nil)
 	settingsSvc.
-		On("GetSegmenters", int64(2)).
-		Return(segmenter, nil)
-	settingsSvc.
-		On("ListSegmenters").
+		On("ListSegmenters", int64(2)).
 		Return(segmenter, nil)
 	settingsSvc.
 		On("ListProjectSettings").

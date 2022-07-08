@@ -48,8 +48,13 @@ func (s SegmentController) ListSegments(w http.ResponseWriter, r *http.Request, 
 			fields = append(fields, models.SegmentField(field))
 		}
 	}
+	segmenterTypes, err := s.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
 	for _, segment := range segments {
-		segmentsResp = append(segmentsResp, segment.ToApiSchema(s.Services.SegmenterService.GetSegmenterTypes(), fields...))
+		segmentsResp = append(segmentsResp, segment.ToApiSchema(segmenterTypes, fields...))
 	}
 
 	Ok(w, segmentsResp, ToPagingSchema(paging))
@@ -74,7 +79,13 @@ func (s SegmentController) GetSegment(w http.ResponseWriter, r *http.Request, pr
 		return
 	}
 
-	Ok(w, segment.ToApiSchema(s.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := s.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+
+	Ok(w, segment.ToApiSchema(segmenterTypes))
 }
 
 func (s SegmentController) CreateSegment(w http.ResponseWriter, r *http.Request, projectId int64) {
@@ -118,7 +129,12 @@ func (s SegmentController) CreateSegment(w http.ResponseWriter, r *http.Request,
 		WriteErrorResponse(w, err)
 		return
 	}
-	Ok(w, segment.ToApiSchema(s.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := s.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+	Ok(w, segment.ToApiSchema(segmenterTypes))
 }
 
 func (s SegmentController) UpdateSegment(w http.ResponseWriter, r *http.Request, projectId int64, segmentId int64) {
@@ -162,7 +178,12 @@ func (s SegmentController) UpdateSegment(w http.ResponseWriter, r *http.Request,
 		WriteErrorResponse(w, err)
 		return
 	}
-	Ok(w, segment.ToApiSchema(s.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := s.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+	Ok(w, segment.ToApiSchema(segmenterTypes))
 }
 
 func (s SegmentController) DeleteSegment(w http.ResponseWriter, r *http.Request, projectId int64, segmentId int64) {

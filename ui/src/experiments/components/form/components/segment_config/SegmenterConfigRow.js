@@ -108,6 +108,12 @@ export const SegmenterConfigRow = ({
   errors,
 }) => {
   const formattedName = `${name}${isRequired ? " *" : ""}`;
+
+  // return only the first error since all the errors are of the form: Array elements must all be of type: X
+  if (errors !== undefined) {
+    errors = Object.values(errors)[0];
+  }
+
   return (
     <EuiFlexItem grow={1}>
       <EuiFormRow

@@ -21,11 +21,13 @@ export const extractErrors = (validationError) => {
 
 export const formatDateCell = (value) => (
   <>
-    {formatDate(
-      moment(value, appConfig.datetime.format).utcOffset(
-        appConfig.datetime.tzOffsetMinutes
-      )
-    )}
+    {!!value
+      ? formatDate(
+          moment(value, appConfig.datetime.format).utcOffset(
+            appConfig.datetime.tzOffsetMinutes
+          )
+        )
+      : "-"}
   </>
 );
 
@@ -39,3 +41,19 @@ export const makeNewTreatment = (treatment) => ({
     ? JSON.stringify(treatment.configuration)
     : "",
 });
+
+export const formatJsonString = (input) => {
+  return JSON.stringify(JSON.parse(JSON.stringify(input)), null, 2);
+};
+
+export const convertObjectToString = (obj) => {
+  return !obj || obj.length === 0
+    ? ""
+    : Object.entries(obj).reduce((str, [p, val]) => {
+        return `${str}${p}: ${val}\n`;
+      }, "");
+};
+
+export const convertArrayToString = (arr) => {
+  return !arr || arr.length === 0 ? "" : arr.join("\n");
+};

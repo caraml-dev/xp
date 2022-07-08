@@ -120,11 +120,11 @@ func (ss *schemaService) GetRequestFilter(
 	if projectSettings == nil {
 		return nil, ProjectSettingsNotFound(fmt.Sprintf("unable to find project id %d", projectId))
 	}
-	projectSegmenters := ss.ProjectSettingsStorage.FindProjectSettingsWithId(projectId).Segmenters
+	projectSettingsSegmenters := ss.ProjectSettingsStorage.FindProjectSettingsWithId(projectId).Segmenters
 
 	allTransformations := map[string][]*_segmenters.SegmenterValue{}
-	for _, k := range projectSegmenters.Names {
-		transformation, err := ss.segmenterService.GetTransformation(k, filterParams, projectSegmenters.Variables[k].Value)
+	for _, k := range projectSettingsSegmenters.Names {
+		transformation, err := ss.segmenterService.GetTransformation(projectId, k, filterParams, projectSettingsSegmenters.Variables[k].Value)
 		if err != nil {
 			return nil, err
 		}

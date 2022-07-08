@@ -8,11 +8,10 @@ import (
 	"github.com/gojek/xp/common/api/schema"
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	_utils "github.com/gojek/xp/common/utils"
-	"github.com/gojek/xp/management-service/models"
 )
 
 func ToProtoValues(
-	segments models.ExperimentSegmentRaw,
+	segments map[string]interface{},
 	segmentersType map[string]schema.SegmenterType,
 ) (map[string]*_segmenters.ListSegmenterValue, error) {
 	protoSegments := make(map[string]*_segmenters.ListSegmenterValue)
@@ -86,7 +85,7 @@ func ProtobufSegmenterConfigToOpenAPISegmenterConfig(segmenterConfiguration *_se
 	}
 
 	// Format Type
-	segmenterType := schema.SegmenterType(segmenterConfiguration.GetType().String())
+	segmenterType := schema.SegmenterType(strings.ToLower(segmenterConfiguration.GetType().String()))
 
 	// Format Constraints
 	var segmenterConstraints []schema.Constraint

@@ -144,6 +144,7 @@ func (svc *segmentService) CreateSegment(
 
 	// Validate segmenters
 	err = svc.services.SegmenterService.ValidateExperimentSegment(
+		int64(settings.ProjectID),
 		settings.Config.Segmenters.Names,
 		segmentData.Segment,
 	)
@@ -152,7 +153,11 @@ func (svc *segmentService) CreateSegment(
 	}
 
 	// Create the segment record
-	segmenterStorageSchema, err := segmentData.Segment.ToStorageSchema(svc.services.SegmenterService.GetSegmenterTypes())
+	segmenterTypes, err := svc.services.SegmenterService.GetSegmenterTypes(int64(settings.ProjectID))
+	if err != nil {
+		return nil, err
+	}
+	segmenterStorageSchema, err := segmentData.Segment.ToStorageSchema(segmenterTypes)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +189,11 @@ func (svc *segmentService) UpdateSegment(
 	}
 
 	// Validate segmenters
-	err = svc.services.SegmenterService.ValidateExperimentSegment(settings.Config.Segmenters.Names, segmentData.Segment)
+	err = svc.services.SegmenterService.ValidateExperimentSegment(
+		int64(settings.ProjectID),
+		settings.Config.Segmenters.Names,
+		segmentData.Segment,
+	)
 	if err != nil {
 		return nil, errors.Newf(errors.BadInput, err.Error())
 	}
@@ -196,7 +205,11 @@ func (svc *segmentService) UpdateSegment(
 	}
 
 	// Validate segmenters
-	err = svc.services.SegmenterService.ValidateExperimentSegment(settings.Config.Segmenters.Names, segmentData.Segment)
+	err = svc.services.SegmenterService.ValidateExperimentSegment(
+		int64(settings.ProjectID),
+		settings.Config.Segmenters.Names,
+		segmentData.Segment,
+	)
 	if err != nil {
 		return nil, errors.Newf(errors.BadInput, err.Error())
 	}
@@ -208,7 +221,11 @@ func (svc *segmentService) UpdateSegment(
 	}
 
 	// Update current segment and save to DB
-	segmenterStorageSchema, err := segmentData.Segment.ToStorageSchema(svc.services.SegmenterService.GetSegmenterTypes())
+	segmenterTypes, err := svc.services.SegmenterService.GetSegmenterTypes(int64(settings.ProjectID))
+	if err != nil {
+		return nil, err
+	}
+	segmenterStorageSchema, err := segmentData.Segment.ToStorageSchema(segmenterTypes)
 	if err != nil {
 		return nil, err
 	}

@@ -24,17 +24,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-  /segmenters:
-    get:
-      operationId: ListSegmenters
-      tags:
-        - segmenters
-      summary: List all segmenter configurations registered with XP
-      responses:
-        200:
-          $ref: '#/components/responses/ListSegmentersSuccess'
-        500:
-          $ref: '#/components/responses/InternalServerError'
   /projects:
     get:
       operationId: ListProjects
@@ -68,7 +57,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
   /projects/{project_id}/segmenters:
     get:
-      operationId: GetSegmenters
+      operationId: ListSegmenters
       tags:
         - segmenters
       summary: Get all segmenter configurations required for generating experiments for the given project
@@ -79,11 +68,122 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: scope
+          in: query
+          required: false
+          schema:
+            $ref: 'schema.yaml#/components/schemas/SegmenterScope'
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: 'schema.yaml#/components/schemas/SegmenterStatus'
+        - name: search
+          description: Search treatment name for a partial match of the search text
+          in: query
+          schema:
+            type: string
       responses:
         200:
-          $ref: '#/components/responses/GetSegmentersSuccess'
+          $ref: '#/components/responses/ListSegmentersSuccess'
         404:
           $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      operationId: CreateSegmenter
+      tags:
+        - segmenters
+      summary: Create a new project-specific segmenter
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/CreateSegmenterRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/CreateSegmenterSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /projects/{project_id}/segmenters/{name}:
+    get:
+      operationId: GetSegmenter
+      tags:
+        - segmenters
+      summary: Get the global/project-specific segmenter by name
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/GetSegmenterSuccess'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      operationId: UpdateSegmenter
+      tags:
+        - segmenters
+      summary: Update an existing project-specific segmenter
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateSegmenterRequestBody'
+      responses:
+        200:
+          $ref: '#/components/responses/UpdateSegmenterSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: DeleteSegmenter
+      tags:
+        - segmenters
+      summary: Delete a project-specific segmenter
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/DeleteSegmenterSuccess'
+        400:
+          $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
 
@@ -721,7 +821,7 @@ paths:
           $ref: '#/components/responses/BadRequest'
         500:
           $ref: '#/components/responses/InternalServerError'
-      x-codegen-request-body-name: CreateSegmentRequest    
+      x-codegen-request-body-name: CreateSegmentRequest
   /projects/{project_id}/segments/{segment_id}:
     get:
       operationId: GetSegment
@@ -936,9 +1036,7 @@ components:
             required:
               - name
               - type
-              - options
               - multi_valued
-              - constraints
               - required
             type: object
             properties:
@@ -964,15 +1062,10 @@ components:
         application/json:
           schema:
             required:
-              - type
-              - options
               - multi_valued
-              - constraints
               - required
             type: object
             properties:
-              type:
-                $ref: 'schema.yaml#/components/schemas/SegmenterType'
               options:
                 $ref: 'schema.yaml#/components/schemas/SegmenterOptions'
               multi_valued:
@@ -1150,19 +1243,6 @@ components:
         application/json:
           schema:
             $ref: 'schema.yaml#/components/schemas/Error'
-    ListSegmentersSuccess:
-      description: Returns all segmenter configurations registered with XP
-      content:
-        application/json:
-          schema:
-            required:
-              - data
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: 'schema.yaml#/components/schemas/Segmenter'
     ListProjectsSuccess:
       description: Returns details of all projects set up for experimentation
       content:
@@ -1187,7 +1267,7 @@ components:
             properties:
               data:
                 $ref: 'schema.yaml#/components/schemas/ProjectSettings'
-    GetSegmentersSuccess:
+    ListSegmentersSuccess:
       description: Get segmenters of the project with the given project_id
       content:
         application/json:

@@ -3,6 +3,21 @@ syntax = "proto3";
 package segmenters;
 option go_package = "github.com/gojek/xp/common/segmenters";
 
+message ProjectSegmenterCreated {
+  int64 project_id = 1;
+  SegmenterConfiguration project_segmenter = 2;
+}
+
+message ProjectSegmenterUpdated {
+  int64 project_id = 1;
+  SegmenterConfiguration project_segmenter = 2;
+}
+
+message ProjectSegmenterDeleted {
+  int64 project_id = 1;
+  string segmenter_name = 2;
+}
+
 // SegmenterValue represents a single value of a segmenter
 message SegmenterValue {
   oneof value {
@@ -59,13 +74,12 @@ message ListExperimentVariables { repeated ExperimentVariables values = 1; }
 // SegmenterConfiguration holds the configuration for a segmenter
 message SegmenterConfiguration {
   // name is the human-readable name of the segmenter. This must be unique
-  // across various segmenters.
+  // across global and project segmenters.
   string name = 1;
-  // type is the type of the segmenter's values. All values of a segmenter
+  // type of the segmenter's values. All values of a segmenter
   // should be of the same type.
   SegmenterValueType type = 2;
-  // options is an optional map of the segmenter values (human-readable name ->
-  // internal value)
+  // an optional map of the segmenter values (human-readable name -> internal value)
   map<string, SegmenterValue> options = 3;
   // multi_valued represents whether multiple values of the segmenter can be
   // chosen in an experiment. Only single-valued segmenters can act as

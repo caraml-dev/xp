@@ -38,7 +38,7 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 		return nil, err
 	}
 
-	segmenterSvc, err := services.NewSegmenterService(cfg.SegmenterConfig)
+	segmenterSvc, err := services.NewSegmenterService(&allServices, cfg.SegmenterConfig, db)
 	if err != nil {
 		return nil, err
 	}

@@ -8,12 +8,14 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	_pubsub "github.com/gojek/xp/common/pubsub"
+	"github.com/gojek/xp/common/segmenters"
 	"github.com/gojek/xp/management-service/config"
 )
 
 type PubSubPublisherService interface {
 	PublishProjectSettingsMessage(updateType string, settings *_pubsub.ProjectSettings) error
 	PublishExperimentMessage(updateType string, experiment *_pubsub.Experiment) error
+	PublishProjectSegmenterMessage(updateType string, segmenter *segmenters.SegmenterConfiguration, projectId int64) error
 }
 
 type pubSubPublisherService struct {
@@ -154,4 +156,73 @@ func (p *pubSubPublisherService) PublishExperimentMessage(updateType string, exp
 	}
 
 	return nil
+}
+
+func (p *pubSubPublisherService) PublishProjectSegmenterMessage(
+	updateType string,
+	segmenter *segmenters.SegmenterConfiguration,
+	projectId int64,
+) error {
+
+	var payload []byte
+	var err error
+
+	switch updateType {
+	case "create":
+		payload, err = serializeCreateSegmenter(segmenter, projectId)
+	case "update":
+		payload, err = serializeUpdateSegmenter(segmenter, projectId)
+	case "delete":
+		payload, err = serializeDeleteSegmenter(segmenter, projectId)
+	}
+
+	if err != nil {
+		return err
+	}
+	message := pubsub.Message{
+		Data: payload,
+	}
+
+	_, err = p.topic.Publish(p.context, &message).Get(p.context)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func serializeCreateSegmenter(segmenter *segmenters.SegmenterConfiguration, projectId int64) ([]byte, error) {
+	updateClientState := _pubsub.MessagePublishState{
+		Update: &_pubsub.MessagePublishState_ProjectSegmenterCreated{
+			ProjectSegmenterCreated: &segmenters.ProjectSegmenterCreated{
+				ProjectId:        projectId,
+				ProjectSegmenter: segmenter,
+			},
+		},
+	}
+	return proto.Marshal(&updateClientState)
+}
+
+func serializeUpdateSegmenter(segmenter *segmenters.SegmenterConfiguration, projectId int64) ([]byte, error) {
+	updateClientState := _pubsub.MessagePublishState{
+		Update: &_pubsub.MessagePublishState_ProjectSegmenterUpdated{
+			ProjectSegmenterUpdated: &segmenters.ProjectSegmenterUpdated{
+				ProjectId:        projectId,
+				ProjectSegmenter: segmenter,
+			},
+		},
+	}
+	return proto.Marshal(&updateClientState)
+}
+
+func serializeDeleteSegmenter(segmenter *segmenters.SegmenterConfiguration, projectId int64) ([]byte, error) {
+	updateClientState := _pubsub.MessagePublishState{
+		Update: &_pubsub.MessagePublishState_ProjectSegmenterDeleted{
+			ProjectSegmenterDeleted: &segmenters.ProjectSegmenterDeleted{
+				ProjectId:     projectId,
+				SegmenterName: segmenter.Name,
+			},
+		},
+	}
+	return proto.Marshal(&updateClientState)
 }

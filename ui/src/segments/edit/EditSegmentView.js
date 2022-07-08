@@ -36,7 +36,7 @@ const EditSegmentView = ({ projectId, segmentSpec, ...props }) => {
         </EuiPageHeader>
         <EuiPageContentBody>
           <FormContextProvider data={CustomSegment.fromJson(segmentSpec)}>
-            <SegmenterContextProvider projectId={projectId}>
+            <SegmenterContextProvider projectId={projectId} status="active">
               <SegmentsContextProvider projectId={projectId}>
                 <EditSegmentForm
                   projectId={projectId}

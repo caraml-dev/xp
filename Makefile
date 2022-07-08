@@ -49,6 +49,7 @@ generate-api:
 	oapi-codegen -templates api/templates/chi -config api/management/server.conf api/experiments.yaml
 	oapi-codegen -config api/mockmanagement/server.conf api/experiments.yaml
 	oapi-codegen -config api/treatment/server.conf api/treatment.yaml
+	cd clients/management/ && mockery --name=ClientInterface --output=../../common/testutils/mocks --filename=ManagementClientInterface.go
 
 # ==================================
 # Setup Management & Treatment Services
@@ -85,7 +86,7 @@ $(protoc_dir):
 compile-protos: | $(protoc_dir)
 	go get github.com/golang/protobuf/protoc-gen-go@v${PROTOC_VERSION}
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=treatment-service api/proto/logs.proto
-	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/segmenters.proto
+	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common/segmenters --go_opt=module=github.com/gojek/xp/common/segmenters api/proto/segmenters.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/message.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/experiment.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/settings.proto
@@ -139,7 +140,7 @@ test-treatment-service: tidy-treatment-service compile-protos
 	@cd ${TREATMENT_SVC_PATH} && go mod vendor
 	@echo "> Running Fetch Treatment Service tests..."
 	cd ${TREATMENT_SVC_PATH} && go test -v ./... -coverpkg ./... -race -coverprofile cover.out.tmp -tags unit,integration ${API_ALL_PACKAGES}
-	cd ${TREATMENT_SVC_PATH} && cat cover.out.tmp | grep -v "api/api.go\|cmd\|.pb.go\|testhelper\|server"  > cover.out
+	cd ${TREATMENT_SVC_PATH} && cat cover.out.tmp | grep -v "api/api.go\|cmd\|.pb.go\|testhelper\|server\|internal"  > cover.out
 	cd ${TREATMENT_SVC_PATH} && go tool cover -func cover.out
 
 test: test-management-service test-treatment-service

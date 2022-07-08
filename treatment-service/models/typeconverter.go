@@ -3,13 +3,12 @@ package models
 import (
 	"reflect"
 
-	"google.golang.org/protobuf/types/known/structpb"
-	"google.golang.org/protobuf/types/known/timestamppb"
-
 	"github.com/gojek/xp/common/api/schema"
 	_pubsub "github.com/gojek/xp/common/pubsub"
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	_utils "github.com/gojek/xp/common/utils"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type ExperimentTreatment struct {
@@ -63,13 +62,13 @@ func OpenAPIExperimentSpecToProtobuf(
 	for key, val := range xpExperiment.Segment {
 		vals := val.([]interface{})
 		switch segmentersType[key] {
-		case "STRING":
+		case "string":
 			stringVals := []string{}
 			for _, val := range vals {
 				stringVals = append(stringVals, val.(string))
 			}
 			segments[key] = _utils.StringSliceToListSegmenterValue(&stringVals)
-		case "INTEGER":
+		case "integer":
 			intVals := []int64{}
 			for _, val := range vals {
 				reflectedVal := reflect.ValueOf(val)
@@ -81,13 +80,13 @@ func OpenAPIExperimentSpecToProtobuf(
 				}
 			}
 			segments[key] = _utils.Int64ListToListSegmenterValue(&intVals)
-		case "REAL":
+		case "real":
 			floatVals := []float64{}
 			for _, val := range vals {
 				floatVals = append(floatVals, val.(float64))
 			}
 			segments[key] = _utils.FloatListToListSegmenterValue(&floatVals)
-		case "BOOL":
+		case "bool":
 			boolVals := []bool{}
 			for _, val := range vals {
 				boolVals = append(boolVals, val.(bool))

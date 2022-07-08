@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const TreatmentSearchContext = React.createContext({});
+const NameSearchContext = React.createContext({});
 
-export const TreatmentSearchContextProvider = ({ children }) => {
+export const NameSearchContextProvider = ({ children }) => {
   const [filters, setFilters] = useState({});
 
   const updateFilters = (name, value) => {
@@ -17,7 +17,7 @@ export const TreatmentSearchContextProvider = ({ children }) => {
   };
 
   return (
-    <TreatmentSearchContext.Provider
+    <NameSearchContext.Provider
       value={{
         getFilter: (name) => filters[name],
         getProcessedFilters: () => filters,
@@ -25,8 +25,8 @@ export const TreatmentSearchContextProvider = ({ children }) => {
         isFilterSet: () => Object.keys(filters).length !== 0,
       }}>
       {children}
-    </TreatmentSearchContext.Provider>
+    </NameSearchContext.Provider>
   );
 };
 
-export default TreatmentSearchContext;
+export default NameSearchContext;

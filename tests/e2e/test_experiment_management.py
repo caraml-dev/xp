@@ -5,14 +5,7 @@ from typing import Tuple
 
 import pytest
 import s2cell
-from data import (
-    BASE_EXPERIMENT,
-    DAY_OF_WEEK_MONDAY,
-    DAY_OF_WEEK_TUESDAY,
-    ID_S2_POINT,
-    SG_S2_POINT,
-    SG_S2_POINT2,
-)
+from data import BASE_EXPERIMENT, DAY_OF_WEEK_MONDAY, SG_S2_POINT, SG_S2_POINT2
 from utils import (
     eventually,
     generate_segment,
@@ -25,6 +18,7 @@ from xp_client import NotFound, XPClient
 
 @pytest.fixture()
 def xp_project(xp_client: XPClient):
+    xp_client.disable_all_experiments()
     p = xp_client.create_or_update_project(
         user_name="test-project",
         randomization_key="order_id",
@@ -43,7 +37,7 @@ def xp_project(xp_client: XPClient):
 
 
 def generate_experiment_spec(
-    s2_point: Tuple, day_of_week: int, start_after_seconds: int = 2
+    s2_point: Tuple, day_of_week: int, start_after_seconds: int = 5
 ):
     s2id = s2cell.lat_lon_to_cell_id(s2_point[0], s2_point[1], 14)
     experiment_spec = copy.deepcopy(BASE_EXPERIMENT)
@@ -254,11 +248,6 @@ def test_project_remove_segmenter_valid_updating(xp_client: XPClient, xp_project
         "variables": {"days_of_week": ["day_of_week"]},
     }
 
-    experiment_spec1 = generate_experiment_spec(SG_S2_POINT, DAY_OF_WEEK_MONDAY)
-    experiment_spec2 = generate_experiment_spec(ID_S2_POINT, DAY_OF_WEEK_TUESDAY)
-    xp_client.create_experiment(xp_project["project_id"], experiment_spec1)
-    xp_client.create_experiment(xp_project["project_id"], experiment_spec2)
-
     resp = xp_client.create_or_update_project(
         user_name="test-project",
         randomization_key="order_id",
@@ -393,9 +382,109 @@ def test_all_segmenters(xp_client: XPClient, xp_project):
 
 def test_get_segmenters(xp_client: XPClient, xp_project):
     segmenters = xp_client.get_segmenters(xp_project["project_id"])
-    assert segmenters[0]["name"] == "s2_ids"
-    assert segmenters[0]["treatment_request_fields"] == [
+
+    s2_ids_segmenter = None
+    for segmenter in segmenters:
+        if segmenter["name"] == "s2_ids":
+            s2_ids_segmenter = segmenter
+
+    assert s2_ids_segmenter is not None
+    assert s2_ids_segmenter["name"] == "s2_ids"
+    assert s2_ids_segmenter["treatment_request_fields"] == [
         ["s2id"],
         ["latitude", "longitude"],
     ]
-    assert segmenters[0]["type"] == "INTEGER"
+    assert s2_ids_segmenter["type"] == "integer"
+
+
+def test_custom_segmenters(xp_client: XPClient, xp_project):
+    # Init a project without custom segmenters
+    initial_segmenters = {
+        "names": ["days_of_week"],
+        "variables": {"days_of_week": ["day_of_week"]},
+    }
+    project = xp_client.create_or_update_project(
+        user_name="test-project",
+        randomization_key="order_id",
+        segmenters=initial_segmenters,
+    )
+
+    # Create a custom segmenters and update project
+    custom_seg = {
+        "name": "custom_seg_1",
+        "type": "string",
+        "multi_valued": False,
+        "required": False,
+    }
+    xp_client.create_segmenters(xp_project["project_id"], custom_seg)
+    updated_segmenters = {
+        "names": ["days_of_week", "custom_seg_1"],
+        "variables": {
+            "days_of_week": ["day_of_week"],
+            "custom_seg_1": ["custom_seg_1"],
+        },
+    }
+    project = xp_client.create_or_update_project(
+        user_name="test-project",
+        randomization_key="order_id",
+        segmenters=updated_segmenters,
+    )
+
+    # Create an experiment with custom segmenter and fetch treatment
+    exp_spec = copy.deepcopy(BASE_EXPERIMENT)
+    exp_spec["name"] = "custom_seg_test"
+    exp_spec["start_time"] = (
+        datetime.datetime.utcnow() + datetime.timedelta(seconds=1)
+    ).isoformat() + "Z"
+    exp_spec["end_time"] = (
+        datetime.datetime.utcnow() + datetime.timedelta(days=1)
+    ).isoformat() + "Z"
+    exp_spec["segment"]["days_of_week"] = [DAY_OF_WEEK_MONDAY]
+    exp_spec["segment"]["custom_seg_1"] = ["testing"]
+
+    experiment = xp_client.create_experiment(xp_project["project_id"], exp_spec)
+    assert experiment["segment"] == exp_spec["segment"]
+
+    segmenters = xp_client.get_segmenters(
+        xp_project["project_id"], params={"scope": "project"}
+    )
+    assert len(segmenters) == 1
+
+    treatment = eventually(
+        lambda: xp_client.fetch_treatment(
+            xp_project["project_id"],
+            {
+                "day_of_week": DAY_OF_WEEK_MONDAY,
+                "custom_seg_1": "testing",
+                "order_id": 1,
+            },
+            pass_key=xp_project["passkey"],
+        )
+    )
+
+    assert treatment == {
+        "experiment_id": experiment["id"],
+        "experiment_name": experiment["name"],
+        "treatment": experiment["treatments"][0],
+    }
+
+    # Disable experiments and remove custom segmenter so that it can be deleted
+    xp_client.disable_all_experiments()
+    xp_client.create_or_update_project(
+        user_name="test-project",
+        randomization_key="order_id",
+        segmenters=initial_segmenters,
+    )
+
+    # Test update and delete of custom segmenters
+    custom_seg["multi_valued"] = True
+    resp = xp_client.update_segmenters(
+        project["project_id"], "custom_seg_1", custom_seg
+    )
+    assert resp["multi_valued"] is True
+
+    xp_client.delete_segmenters(project["project_id"], "custom_seg_1")
+    segmenters = xp_client.get_segmenters(
+        xp_project["project_id"], params={"scope": "project"}
+    )
+    assert len(segmenters) == 0

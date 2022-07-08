@@ -39,9 +39,14 @@ func (e ExperimentHistoryController) ListExperimentHistory(
 		WriteErrorResponse(w, err)
 		return
 	}
+	segmenterTypes, err := e.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
 	versionsResp := []schema.ExperimentHistory{}
 	for _, v := range versions {
-		versionsResp = append(versionsResp, v.ToApiSchema(e.Services.SegmenterService.GetSegmenterTypes()))
+		versionsResp = append(versionsResp, v.ToApiSchema(segmenterTypes))
 	}
 	Ok(w, versionsResp, ToPagingSchema(paging))
 }
@@ -65,8 +70,12 @@ func (e ExperimentHistoryController) GetExperimentHistory(
 		WriteErrorResponse(w, err)
 		return
 	}
-
-	Ok(w, exp.ToApiSchema(e.Services.SegmenterService.GetSegmenterTypes()))
+	segmenterTypes, err := e.Services.SegmenterService.GetSegmenterTypes(projectId)
+	if err != nil {
+		WriteErrorResponse(w, err)
+		return
+	}
+	Ok(w, exp.ToApiSchema(segmenterTypes))
 }
 
 func (e ExperimentHistoryController) toListExperimentHistoryParams(params api.ListExperimentHistoryParams) services.ListExperimentHistoryParams {

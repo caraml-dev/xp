@@ -8,15 +8,22 @@ import { useXpApi } from "hooks/useXpApi";
 
 const SegmenterContext = React.createContext({});
 
-export const SegmenterContextProvider = ({ projectId, children }) => {
-  const url = projectId ? `/projects/${projectId}/segmenters` : "/segmenters";
+export const SegmenterContextProvider = ({ projectId, children, status }) => {
   const [
     {
       data: { data: segmenters },
       isLoading,
       isLoaded,
     },
-  ] = useXpApi(url, {}, []);
+  ] = useXpApi(
+    `/projects/${projectId}/segmenters`,
+    {
+      query: {
+        status: status,
+      },
+    },
+    []
+  );
 
   // Map of segmenter name -> [dependent segmenter names]
   const [dependencyMap, setDependencyMap] = useState({});
@@ -41,6 +48,8 @@ export const SegmenterContextProvider = ({ projectId, children }) => {
           name: s.name,
           required: s.required,
           variables: s.treatment_request_fields,
+          status: s.status,
+          scope: s.scope,
         });
         if (!!s.constraints) {
           s.constraints.forEach((c) => {

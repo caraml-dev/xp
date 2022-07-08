@@ -18,11 +18,11 @@ import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
 import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
+import NameSearchContext, {
+  NameSearchContextProvider,
+} from "providers/search/NameSearchContextProvider";
 
 import ListSegmentsTable from "./ListSegmentsTable";
-import SegmentSearchContext, {
-  SegmentSearchContextProvider,
-} from "./search/context";
 
 const ListSegmentsComponent = ({ projectId, props }) => {
   const { appConfig } = useConfig();
@@ -33,7 +33,7 @@ const ListSegmentsComponent = ({ projectId, props }) => {
   });
 
   const { getFilter, getProcessedFilters, setFilter, isFilterSet } =
-    useContext(SegmentSearchContext);
+    useContext(NameSearchContext);
 
   const [{ data, isLoaded, error }] = useXpApi(
     `/projects/${projectId}/segments`,
@@ -116,9 +116,9 @@ const ListSegmentsComponent = ({ projectId, props }) => {
 };
 
 const ListSegmentsView = ({ projectId, ...props }) => (
-  <SegmentSearchContextProvider>
+  <NameSearchContextProvider>
     <ListSegmentsComponent projectId={projectId} props={props} />
-  </SegmentSearchContextProvider>
+  </NameSearchContextProvider>
 );
 
 export default ListSegmentsView;

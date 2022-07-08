@@ -35,7 +35,7 @@ const CreateSegmentView = ({ projectId, ...props }) => {
         </EuiPageHeader>
         <EuiPageContentBody>
           <FormContextProvider data={new CustomSegment()}>
-            <SegmenterContextProvider projectId={projectId}>
+            <SegmenterContextProvider projectId={projectId} status="active">
               <SegmentsContextProvider projectId={projectId}>
                 <CreateSegmentForm
                   projectId={projectId}

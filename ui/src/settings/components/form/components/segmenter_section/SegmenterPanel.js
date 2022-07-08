@@ -26,6 +26,9 @@ import { SegmenterCard } from "./SegmenterCard";
 
 let toastId = 0;
 
+const availableSegmentersAreaName = "AVAILABLE_SEGMENTERS_DROPPABLE_AREA";
+const selectedSegmentersAreaName = "SELECTED_SEGMENTERS_DROPPABLE_AREA";
+
 const makeSegmenterItem = (item, selectedVariables) => {
   const newItem = {
     id: makeId(),
@@ -33,6 +36,7 @@ const makeSegmenterItem = (item, selectedVariables) => {
     variables: item.variables || [],
     selectedVariables: selectedVariables || [],
     isRequired: item.required || false,
+    scope: item.scope,
   };
   // Auto-assign selected variables where the variables list has only 1 option
   if (!newItem.selectedVariables.length && newItem.variables.length === 1) {
@@ -41,8 +45,19 @@ const makeSegmenterItem = (item, selectedVariables) => {
   return newItem;
 };
 
+const sortAvailableSegmenters = (availableSegmenters) => {
+  availableSegmenters.sort((a, b) => {
+    if (a.scope === "project" && b.scope === "global") return -1;
+    if (a.scope === "global" && b.scope === "project") return 1;
+
+    if (a.name > b.name) return 1;
+    if (a.name < b.name) return -1;
+    return 0;
+  });
+};
+
 const makeSegmenterCard = (
-  { id, name, variables, selectedVariables, isRequired },
+  { id, name, variables, selectedVariables, isRequired, scope },
   idx,
   isExpandable,
   onChangeSelectedVariables,
@@ -64,6 +79,7 @@ const makeSegmenterCard = (
           selectedVariables={selectedVariables}
           errors={(errors || {})[name] || ""}
           isRequired={isRequired}
+          scope={scope}
           isDragging={state.isDragging}
           isExpandable={isExpandable}
           onChangeSelectedVariables={onChangeSelectedVariables(name)}
@@ -83,6 +99,8 @@ export const SegmenterPanel = ({ segmenters, onChange, errors = {} }) => {
     return segmenters.names.map((name) => makeSegmenterItem({ name }));
   });
   const { segmenterConfig, isLoaded } = useContext(SegmenterContext);
+  const [isAvailableSegmenterSelected, setIsAvailableSegmenterSelected] =
+    useState(false);
 
   // This hook handles changes to the selected segmenter names.
   useEffect(() => {
@@ -127,33 +145,33 @@ export const SegmenterPanel = ({ segmenters, onChange, errors = {} }) => {
           selectedDraggableSegmenters.splice(orderIdx, 0, item);
         }
       });
+      sortAvailableSegmenters(availableDraggableSegmenters);
       setAvailableSegmenters(availableDraggableSegmenters);
       setSelectedSegmenters(selectedDraggableSegmenters);
     }
   }, [segmenterConfig, isLoaded, segmenters]);
 
+  const onDragStart = ({ source, _ }) => {
+    setIsAvailableSegmenterSelected(
+      source.droppableId === availableSegmentersAreaName
+    );
+  };
+
   const onDragEnd = ({ source, destination }) => {
     const lists = {
-      AVAILABLE_SEGMENTERS_DROPPABLE_AREA: availableSegmenters,
-      SELECTED_SEGMENTERS_DROPPABLE_AREA: selectedSegmenters,
+      [availableSegmentersAreaName]: availableSegmenters,
+      [selectedSegmentersAreaName]: selectedSegmenters,
     };
     const actions = {
-      AVAILABLE_SEGMENTERS_DROPPABLE_AREA: setAvailableSegmenters,
-      SELECTED_SEGMENTERS_DROPPABLE_AREA: setSelectedSegmenters,
+      [availableSegmentersAreaName]: setAvailableSegmenters,
+      [selectedSegmentersAreaName]: setSelectedSegmenters,
     };
     if (source && destination) {
-      if (source.droppableId === destination.droppableId) {
-        const items = euiDragDropReorder(
-          lists[destination.droppableId],
-          source.index,
-          destination.index
-        );
-        actions[destination.droppableId](items);
-      } else {
+      if (source.droppableId !== destination.droppableId) {
         const sourceId = source.droppableId;
         const destinationId = destination.droppableId;
         if (
-          sourceId === "SELECTED_SEGMENTERS_DROPPABLE_AREA" &&
+          sourceId === selectedSegmentersAreaName &&
           lists[sourceId][source.index].isRequired
         ) {
           setToasts(
@@ -178,8 +196,16 @@ export const SegmenterPanel = ({ segmenters, onChange, errors = {} }) => {
           source,
           destination
         );
+        sortAvailableSegmenters(result[availableSegmentersAreaName]);
         actions[sourceId](result[sourceId]);
         actions[destinationId](result[destinationId]);
+      } else if (selectedSegmentersAreaName === source.droppableId) {
+        const items = euiDragDropReorder(
+          lists[destination.droppableId],
+          source.index,
+          destination.index
+        );
+        actions[destination.droppableId](items);
       }
     }
   };
@@ -202,7 +228,7 @@ export const SegmenterPanel = ({ segmenters, onChange, errors = {} }) => {
 
   return (
     <>
-      <EuiDragDropContext onDragEnd={onDragEnd}>
+      <EuiDragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         <EuiPanel>
           <EuiForm>
             <EuiFormRow
@@ -221,9 +247,10 @@ export const SegmenterPanel = ({ segmenters, onChange, errors = {} }) => {
                   <EuiFlexItem>
                     <Panel title="Available Segmenters">
                       <EuiDroppable
-                        droppableId="AVAILABLE_SEGMENTERS_DROPPABLE_AREA"
+                        droppableId={availableSegmentersAreaName}
                         spacing="m"
                         grow={true}
+                        isDropDisabled={isAvailableSegmenterSelected}
                         ignoreContainerClipping={true}>
                         {availableSegmenters.length > 0
                           ? availableSegmenters.map((item, idx) =>
@@ -242,7 +269,7 @@ export const SegmenterPanel = ({ segmenters, onChange, errors = {} }) => {
                   <EuiFlexItem>
                     <Panel title="Selected Segmenters">
                       <EuiDroppable
-                        droppableId="SELECTED_SEGMENTERS_DROPPABLE_AREA"
+                        droppableId={selectedSegmentersAreaName}
                         spacing="m"
                         grow={true}
                         ignoreContainerClipping={true}>

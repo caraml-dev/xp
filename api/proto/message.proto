@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "api/proto/experiment.proto";
 import "api/proto/settings.proto";
+import "api/proto/segmenters.proto";
 
 package pubsub;
 option go_package = "/pubsub";
@@ -13,5 +14,9 @@ message MessagePublishState {
 
     ProjectSettingsCreated project_settings_created = 3;
     ProjectSettingsUpdated project_settings_updated = 4;
+
+    segmenters.ProjectSegmenterCreated project_segmenter_created = 5;
+    segmenters.ProjectSegmenterUpdated project_segmenter_updated = 6;
+    segmenters.ProjectSegmenterDeleted project_segmenter_deleted = 7;
   }
 }

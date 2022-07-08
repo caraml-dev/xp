@@ -10,7 +10,6 @@ import (
 
 	"github.com/gojek/xp/common/api/schema"
 	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/management-service/models"
 )
 
 func TestProtobufSegmenterConfigToOpenAPISegmenterConfig(t *testing.T) {
@@ -92,7 +91,7 @@ func TestProtobufSegmenterConfigToOpenAPISegmenterConfig(t *testing.T) {
 				TreatmentRequestFields: [][]string{
 					{"country"},
 				},
-				Type: "STRING",
+				Type: schema.SegmenterTypeString,
 			},
 		},
 		"bool values": {
@@ -127,7 +126,7 @@ func TestProtobufSegmenterConfigToOpenAPISegmenterConfig(t *testing.T) {
 				TreatmentRequestFields: [][]string{
 					{"bool_test"},
 				},
-				Type: "BOOL",
+				Type: schema.SegmenterTypeBool,
 			},
 		},
 		"integer values": {
@@ -168,7 +167,7 @@ func TestProtobufSegmenterConfigToOpenAPISegmenterConfig(t *testing.T) {
 				TreatmentRequestFields: [][]string{
 					{"tz"},
 				},
-				Type: "INTEGER",
+				Type: schema.SegmenterTypeInteger,
 			},
 		},
 	}
@@ -217,50 +216,50 @@ func TestToProtoValues(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		segment        models.ExperimentSegmentRaw
+		segment        map[string]interface{}
 		segmentersType map[string]schema.SegmenterType
 		expected       map[string]*_segmenters.ListSegmenterValue
 		err            *string
 	}{
 		{
 			name:           "invalid type | expected integer, got string",
-			segment:        models.ExperimentSegmentRaw{"integer_segmenter": []interface{}{"1"}},
+			segment:        map[string]interface{}{"integer_segmenter": []interface{}{"1"}},
 			segmentersType: segmentersType,
 			err:            &errInteger,
 		},
 		{
 			name:           "invalid type | expected float, got string",
-			segment:        models.ExperimentSegmentRaw{"float_segmenter": []interface{}{"1"}},
+			segment:        map[string]interface{}{"float_segmenter": []interface{}{"1"}},
 			segmentersType: segmentersType,
 			err:            &errFloat,
 		},
 		{
 			name:           "invalid type | expected string, got integer",
-			segment:        models.ExperimentSegmentRaw{"string_segmenter": []interface{}{float64(1)}},
+			segment:        map[string]interface{}{"string_segmenter": []interface{}{float64(1)}},
 			segmentersType: segmentersType,
 			err:            &errString,
 		},
 		{
 			name:           "invalid type | expected bool, got integer",
-			segment:        models.ExperimentSegmentRaw{"bool_segmenter": []interface{}{"1"}},
+			segment:        map[string]interface{}{"bool_segmenter": []interface{}{"1"}},
 			segmentersType: segmentersType,
 			err:            &errBool,
 		},
 		{
 			name:           "success | integer",
-			segment:        models.ExperimentSegmentRaw{"integer_segmenter": []interface{}{float64(1)}},
+			segment:        map[string]interface{}{"integer_segmenter": []interface{}{float64(1)}},
 			segmentersType: segmentersType,
 			expected:       experimentSegmentListInteger,
 		},
 		{
 			name:           "success | string",
-			segment:        models.ExperimentSegmentRaw{"string_segmenter": []interface{}{"1"}},
+			segment:        map[string]interface{}{"string_segmenter": []interface{}{"1"}},
 			segmentersType: segmentersType,
 			expected:       experimentSegmentListString,
 		},
 		{
 			name:           "success | bool",
-			segment:        models.ExperimentSegmentRaw{"bool_segmenter": []interface{}{true}},
+			segment:        map[string]interface{}{"bool_segmenter": []interface{}{true}},
 			segmentersType: segmentersType,
 			expected:       experimentSegmentListBool,
 		},

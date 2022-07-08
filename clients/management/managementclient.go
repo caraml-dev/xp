@@ -41,6 +41,11 @@ type CreateSegmentSuccess struct {
 	Data externalRef0.Segment `json:"data"`
 }
 
+// CreateSegmenterSuccess defines model for CreateSegmenterSuccess.
+type CreateSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
+}
+
 // CreateTreatmentSuccess defines model for CreateTreatmentSuccess.
 type CreateTreatmentSuccess struct {
 	Data externalRef0.Treatment `json:"data"`
@@ -49,6 +54,11 @@ type CreateTreatmentSuccess struct {
 // DeleteSegmentSuccess defines model for DeleteSegmentSuccess.
 type DeleteSegmentSuccess struct {
 	Id *int `json:"id,omitempty"`
+}
+
+// DeleteSegmenterSuccess defines model for DeleteSegmenterSuccess.
+type DeleteSegmenterSuccess struct {
+	Name *string `json:"name,omitempty"`
 }
 
 // DeleteTreatmentSuccess defines model for DeleteTreatmentSuccess.
@@ -86,9 +96,9 @@ type GetSegmentSuccess struct {
 	Data externalRef0.Segment `json:"data"`
 }
 
-// GetSegmentersSuccess defines model for GetSegmentersSuccess.
-type GetSegmentersSuccess struct {
-	Data []externalRef0.Segmenter `json:"data"`
+// GetSegmenterSuccess defines model for GetSegmenterSuccess.
+type GetSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
 }
 
 // GetTreatmentHistorySuccess defines model for GetTreatmentHistorySuccess.
@@ -168,6 +178,11 @@ type UpdateSegmentSuccess struct {
 	Data externalRef0.Segment `json:"data"`
 }
 
+// UpdateSegmenterSuccess defines model for UpdateSegmenterSuccess.
+type UpdateSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
+}
+
 // UpdateTreatmentSuccess defines model for UpdateTreatmentSuccess.
 type UpdateTreatmentSuccess struct {
 	Data externalRef0.Treatment `json:"data"`
@@ -206,6 +221,17 @@ type CreateSegmentRequestBody struct {
 	UpdatedBy *string                        `json:"updated_by,omitempty"`
 }
 
+// CreateSegmenterRequestBody defines model for CreateSegmenterRequestBody.
+type CreateSegmenterRequestBody struct {
+	Constraints *[]externalRef0.Constraint     `json:"constraints,omitempty"`
+	Description *string                        `json:"description,omitempty"`
+	MultiValued bool                           `json:"multi_valued"`
+	Name        string                         `json:"name"`
+	Options     *externalRef0.SegmenterOptions `json:"options,omitempty"`
+	Required    bool                           `json:"required"`
+	Type        externalRef0.SegmenterType     `json:"type"`
+}
+
 // CreateTreatmentRequestBody defines model for CreateTreatmentRequestBody.
 type CreateTreatmentRequestBody struct {
 	Configuration map[string]interface{} `json:"configuration"`
@@ -242,6 +268,15 @@ type UpdateProjectSettingsRequestBody struct {
 type UpdateSegmentRequestBody struct {
 	Segment   externalRef0.ExperimentSegment `json:"segment"`
 	UpdatedBy *string                        `json:"updated_by,omitempty"`
+}
+
+// UpdateSegmenterRequestBody defines model for UpdateSegmenterRequestBody.
+type UpdateSegmenterRequestBody struct {
+	Constraints *[]externalRef0.Constraint     `json:"constraints,omitempty"`
+	Description *string                        `json:"description,omitempty"`
+	MultiValued bool                           `json:"multi_valued"`
+	Options     *externalRef0.SegmenterOptions `json:"options,omitempty"`
+	Required    bool                           `json:"required"`
 }
 
 // UpdateTreatmentRequestBody defines model for UpdateTreatmentRequestBody.
@@ -295,6 +330,15 @@ type ListExperimentHistoryParams struct {
 
 	// Number of items on each page. It defaults to 10.
 	PageSize *int32 `json:"page_size,omitempty"`
+}
+
+// ListSegmentersParams defines parameters for ListSegmenters.
+type ListSegmentersParams struct {
+	Scope  *externalRef0.SegmenterScope  `json:"scope,omitempty"`
+	Status *externalRef0.SegmenterStatus `json:"status,omitempty"`
+
+	// Search treatment name for a partial match of the search text
+	Search *string `json:"search,omitempty"`
 }
 
 // ListSegmentsParams defines parameters for ListSegments.
@@ -358,6 +402,12 @@ type CreateExperimentJSONRequestBody CreateExperimentRequestBody
 
 // UpdateExperimentJSONRequestBody defines body for UpdateExperiment for application/json ContentType.
 type UpdateExperimentJSONRequestBody UpdateExperimentRequestBody
+
+// CreateSegmenterJSONRequestBody defines body for CreateSegmenter for application/json ContentType.
+type CreateSegmenterJSONRequestBody CreateSegmenterRequestBody
+
+// UpdateSegmenterJSONRequestBody defines body for UpdateSegmenter for application/json ContentType.
+type UpdateSegmenterJSONRequestBody UpdateSegmenterRequestBody
 
 // CreateSegmentJSONRequestBody defines body for CreateSegment for application/json ContentType.
 type CreateSegmentJSONRequestBody CreateSegmentRequestBody
@@ -487,8 +537,24 @@ type ClientInterface interface {
 	// GetExperimentHistory request
 	GetExperimentHistory(ctx context.Context, projectId int64, experimentId int64, version int64, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetSegmenters request
-	GetSegmenters(ctx context.Context, projectId int64, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListSegmenters request
+	ListSegmenters(ctx context.Context, projectId int64, params *ListSegmentersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateSegmenter request  with any body
+	CreateSegmenterWithBody(ctx context.Context, projectId int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSegmenter(ctx context.Context, projectId int64, body CreateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteSegmenter request
+	DeleteSegmenter(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetSegmenter request
+	GetSegmenter(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateSegmenter request  with any body
+	UpdateSegmenterWithBody(ctx context.Context, projectId int64, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateSegmenter(ctx context.Context, projectId int64, name string, body UpdateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListSegments request
 	ListSegments(ctx context.Context, projectId int64, params *ListSegmentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -552,9 +618,6 @@ type ClientInterface interface {
 
 	// GetTreatmentHistory request
 	GetTreatmentHistory(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListSegmenters request
-	ListSegmenters(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ValidateEntity request  with any body
 	ValidateEntityWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -706,8 +769,80 @@ func (c *Client) GetExperimentHistory(ctx context.Context, projectId int64, expe
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetSegmenters(ctx context.Context, projectId int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetSegmentersRequest(c.Server, projectId)
+func (c *Client) ListSegmenters(ctx context.Context, projectId int64, params *ListSegmentersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSegmentersRequest(c.Server, projectId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSegmenterWithBody(ctx context.Context, projectId int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSegmenterRequestWithBody(c.Server, projectId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSegmenter(ctx context.Context, projectId int64, body CreateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSegmenterRequest(c.Server, projectId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteSegmenter(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSegmenterRequest(c.Server, projectId, name)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSegmenter(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSegmenterRequest(c.Server, projectId, name)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSegmenterWithBody(ctx context.Context, projectId int64, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSegmenterRequestWithBody(c.Server, projectId, name, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSegmenter(ctx context.Context, projectId int64, name string, body UpdateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateSegmenterRequest(c.Server, projectId, name, body)
 	if err != nil {
 		return nil, err
 	}
@@ -984,18 +1119,6 @@ func (c *Client) ListTreatmentHistory(ctx context.Context, projectId int64, trea
 
 func (c *Client) GetTreatmentHistory(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTreatmentHistoryRequest(c.Server, projectId, treatmentId, version)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListSegmenters(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListSegmentersRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1670,8 +1793,8 @@ func NewGetExperimentHistoryRequest(server string, projectId int64, experimentId
 	return req, nil
 }
 
-// NewGetSegmentersRequest generates requests for GetSegmenters
-func NewGetSegmentersRequest(server string, projectId int64) (*http.Request, error) {
+// NewListSegmentersRequest generates requests for ListSegmenters
+func NewListSegmentersRequest(server string, projectId int64, params *ListSegmentersParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1696,10 +1819,245 @@ func NewGetSegmentersRequest(server string, projectId int64) (*http.Request, err
 
 	queryURL := serverURL.ResolveReference(&operationURL)
 
+	queryValues := queryURL.Query()
+
+	if params.Scope != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "scope", runtime.ParamLocationQuery, *params.Scope); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Status != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "status", runtime.ParamLocationQuery, *params.Status); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Search != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "search", runtime.ParamLocationQuery, *params.Search); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
+
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreateSegmenterRequest calls the generic CreateSegmenter builder with application/json body
+func NewCreateSegmenterRequest(server string, projectId int64, body CreateSegmenterJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateSegmenterRequestWithBody(server, projectId, "application/json", bodyReader)
+}
+
+// NewCreateSegmenterRequestWithBody generates requests for CreateSegmenter with any type of body
+func NewCreateSegmenterRequestWithBody(server string, projectId int64, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "project_id", runtime.ParamLocationPath, projectId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/segmenters", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteSegmenterRequest generates requests for DeleteSegmenter
+func NewDeleteSegmenterRequest(server string, projectId int64, name string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "project_id", runtime.ParamLocationPath, projectId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "name", runtime.ParamLocationPath, name)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/segmenters/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetSegmenterRequest generates requests for GetSegmenter
+func NewGetSegmenterRequest(server string, projectId int64, name string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "project_id", runtime.ParamLocationPath, projectId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "name", runtime.ParamLocationPath, name)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/segmenters/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateSegmenterRequest calls the generic UpdateSegmenter builder with application/json body
+func NewUpdateSegmenterRequest(server string, projectId int64, name string, body UpdateSegmenterJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateSegmenterRequestWithBody(server, projectId, name, "application/json", bodyReader)
+}
+
+// NewUpdateSegmenterRequestWithBody generates requests for UpdateSegmenter with any type of body
+func NewUpdateSegmenterRequestWithBody(server string, projectId int64, name string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "project_id", runtime.ParamLocationPath, projectId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "name", runtime.ParamLocationPath, name)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/projects/%s/segmenters/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2684,33 +3042,6 @@ func NewGetTreatmentHistoryRequest(server string, projectId int64, treatmentId i
 	return req, nil
 }
 
-// NewListSegmentersRequest generates requests for ListSegmenters
-func NewListSegmentersRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/segmenters")
-	if operationPath[0] == '/' {
-		operationPath = operationPath[1:]
-	}
-	operationURL := url.URL{
-		Path: operationPath,
-	}
-
-	queryURL := serverURL.ResolveReference(&operationURL)
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewValidateEntityRequest calls the generic ValidateEntity builder with application/json body
 func NewValidateEntityRequest(server string, body ValidateEntityJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2828,8 +3159,24 @@ type ClientWithResponsesInterface interface {
 	// GetExperimentHistory request
 	GetExperimentHistoryWithResponse(ctx context.Context, projectId int64, experimentId int64, version int64, reqEditors ...RequestEditorFn) (*GetExperimentHistoryResponse, error)
 
-	// GetSegmenters request
-	GetSegmentersWithResponse(ctx context.Context, projectId int64, reqEditors ...RequestEditorFn) (*GetSegmentersResponse, error)
+	// ListSegmenters request
+	ListSegmentersWithResponse(ctx context.Context, projectId int64, params *ListSegmentersParams, reqEditors ...RequestEditorFn) (*ListSegmentersResponse, error)
+
+	// CreateSegmenter request  with any body
+	CreateSegmenterWithBodyWithResponse(ctx context.Context, projectId int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSegmenterResponse, error)
+
+	CreateSegmenterWithResponse(ctx context.Context, projectId int64, body CreateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSegmenterResponse, error)
+
+	// DeleteSegmenter request
+	DeleteSegmenterWithResponse(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*DeleteSegmenterResponse, error)
+
+	// GetSegmenter request
+	GetSegmenterWithResponse(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*GetSegmenterResponse, error)
+
+	// UpdateSegmenter request  with any body
+	UpdateSegmenterWithBodyWithResponse(ctx context.Context, projectId int64, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSegmenterResponse, error)
+
+	UpdateSegmenterWithResponse(ctx context.Context, projectId int64, name string, body UpdateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSegmenterResponse, error)
 
 	// ListSegments request
 	ListSegmentsWithResponse(ctx context.Context, projectId int64, params *ListSegmentsParams, reqEditors ...RequestEditorFn) (*ListSegmentsResponse, error)
@@ -2893,9 +3240,6 @@ type ClientWithResponsesInterface interface {
 
 	// GetTreatmentHistory request
 	GetTreatmentHistoryWithResponse(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*GetTreatmentHistoryResponse, error)
-
-	// ListSegmenters request
-	ListSegmentersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSegmentersResponse, error)
 
 	// ValidateEntity request  with any body
 	ValidateEntityWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateEntityResponse, error)
@@ -3158,7 +3502,7 @@ func (r GetExperimentHistoryResponse) StatusCode() int {
 	return 0
 }
 
-type GetSegmentersResponse struct {
+type ListSegmentersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -3169,7 +3513,7 @@ type GetSegmentersResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r GetSegmentersResponse) Status() string {
+func (r ListSegmentersResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3177,7 +3521,111 @@ func (r GetSegmentersResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetSegmentersResponse) StatusCode() int {
+func (r ListSegmentersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateSegmenterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data externalRef0.Segmenter `json:"data"`
+	}
+	JSON400 *externalRef0.Error
+	JSON500 *externalRef0.Error
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateSegmenterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateSegmenterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteSegmenterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Name *string `json:"name,omitempty"`
+	}
+	JSON400 *externalRef0.Error
+	JSON500 *externalRef0.Error
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteSegmenterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteSegmenterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetSegmenterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data externalRef0.Segmenter `json:"data"`
+	}
+	JSON404 *externalRef0.Error
+	JSON500 *externalRef0.Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSegmenterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSegmenterResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateSegmenterResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data externalRef0.Segmenter `json:"data"`
+	}
+	JSON400 *externalRef0.Error
+	JSON500 *externalRef0.Error
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateSegmenterResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateSegmenterResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3630,31 +4078,6 @@ func (r GetTreatmentHistoryResponse) StatusCode() int {
 	return 0
 }
 
-type ListSegmentersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Data []externalRef0.Segmenter `json:"data"`
-	}
-	JSON500 *externalRef0.Error
-}
-
-// Status returns HTTPResponse.Status
-func (r ListSegmentersResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListSegmentersResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type ValidateEntityResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3784,13 +4207,65 @@ func (c *ClientWithResponses) GetExperimentHistoryWithResponse(ctx context.Conte
 	return ParseGetExperimentHistoryResponse(rsp)
 }
 
-// GetSegmentersWithResponse request returning *GetSegmentersResponse
-func (c *ClientWithResponses) GetSegmentersWithResponse(ctx context.Context, projectId int64, reqEditors ...RequestEditorFn) (*GetSegmentersResponse, error) {
-	rsp, err := c.GetSegmenters(ctx, projectId, reqEditors...)
+// ListSegmentersWithResponse request returning *ListSegmentersResponse
+func (c *ClientWithResponses) ListSegmentersWithResponse(ctx context.Context, projectId int64, params *ListSegmentersParams, reqEditors ...RequestEditorFn) (*ListSegmentersResponse, error) {
+	rsp, err := c.ListSegmenters(ctx, projectId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetSegmentersResponse(rsp)
+	return ParseListSegmentersResponse(rsp)
+}
+
+// CreateSegmenterWithBodyWithResponse request with arbitrary body returning *CreateSegmenterResponse
+func (c *ClientWithResponses) CreateSegmenterWithBodyWithResponse(ctx context.Context, projectId int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSegmenterResponse, error) {
+	rsp, err := c.CreateSegmenterWithBody(ctx, projectId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSegmenterResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateSegmenterWithResponse(ctx context.Context, projectId int64, body CreateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSegmenterResponse, error) {
+	rsp, err := c.CreateSegmenter(ctx, projectId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSegmenterResponse(rsp)
+}
+
+// DeleteSegmenterWithResponse request returning *DeleteSegmenterResponse
+func (c *ClientWithResponses) DeleteSegmenterWithResponse(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*DeleteSegmenterResponse, error) {
+	rsp, err := c.DeleteSegmenter(ctx, projectId, name, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteSegmenterResponse(rsp)
+}
+
+// GetSegmenterWithResponse request returning *GetSegmenterResponse
+func (c *ClientWithResponses) GetSegmenterWithResponse(ctx context.Context, projectId int64, name string, reqEditors ...RequestEditorFn) (*GetSegmenterResponse, error) {
+	rsp, err := c.GetSegmenter(ctx, projectId, name, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSegmenterResponse(rsp)
+}
+
+// UpdateSegmenterWithBodyWithResponse request with arbitrary body returning *UpdateSegmenterResponse
+func (c *ClientWithResponses) UpdateSegmenterWithBodyWithResponse(ctx context.Context, projectId int64, name string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSegmenterResponse, error) {
+	rsp, err := c.UpdateSegmenterWithBody(ctx, projectId, name, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSegmenterResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateSegmenterWithResponse(ctx context.Context, projectId int64, name string, body UpdateSegmenterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSegmenterResponse, error) {
+	rsp, err := c.UpdateSegmenter(ctx, projectId, name, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateSegmenterResponse(rsp)
 }
 
 // ListSegmentsWithResponse request returning *ListSegmentsResponse
@@ -3992,15 +4467,6 @@ func (c *ClientWithResponses) GetTreatmentHistoryWithResponse(ctx context.Contex
 		return nil, err
 	}
 	return ParseGetTreatmentHistoryResponse(rsp)
-}
-
-// ListSegmentersWithResponse request returning *ListSegmentersResponse
-func (c *ClientWithResponses) ListSegmentersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListSegmentersResponse, error) {
-	rsp, err := c.ListSegmenters(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListSegmentersResponse(rsp)
 }
 
 // ValidateEntityWithBodyWithResponse request with arbitrary body returning *ValidateEntityResponse
@@ -4417,15 +4883,15 @@ func ParseGetExperimentHistoryResponse(rsp *http.Response) (*GetExperimentHistor
 	return response, nil
 }
 
-// ParseGetSegmentersResponse parses an HTTP response from a GetSegmentersWithResponse call
-func ParseGetSegmentersResponse(rsp *http.Response) (*GetSegmentersResponse, error) {
+// ParseListSegmentersResponse parses an HTTP response from a ListSegmentersWithResponse call
+func ParseListSegmentersResponse(rsp *http.Response) (*ListSegmentersResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer rsp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetSegmentersResponse{
+	response := &ListSegmentersResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -4446,6 +4912,174 @@ func ParseGetSegmentersResponse(rsp *http.Response) (*GetSegmentersResponse, err
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateSegmenterResponse parses an HTTP response from a CreateSegmenterWithResponse call
+func ParseCreateSegmenterResponse(rsp *http.Response) (*CreateSegmenterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateSegmenterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data externalRef0.Segmenter `json:"data"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteSegmenterResponse parses an HTTP response from a DeleteSegmenterWithResponse call
+func ParseDeleteSegmenterResponse(rsp *http.Response) (*DeleteSegmenterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteSegmenterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Name *string `json:"name,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSegmenterResponse parses an HTTP response from a GetSegmenterWithResponse call
+func ParseGetSegmenterResponse(rsp *http.Response) (*GetSegmenterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSegmenterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data externalRef0.Segmenter `json:"data"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateSegmenterResponse parses an HTTP response from a UpdateSegmenterWithResponse call
+func ParseUpdateSegmenterResponse(rsp *http.Response) (*UpdateSegmenterResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateSegmenterResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data externalRef0.Segmenter `json:"data"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
 		var dest externalRef0.Error
@@ -5164,41 +5798,6 @@ func ParseGetTreatmentHistoryResponse(rsp *http.Response) (*GetTreatmentHistoryR
 			return nil, err
 		}
 		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest externalRef0.Error
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListSegmentersResponse parses an HTTP response from a ListSegmentersWithResponse call
-func ParseListSegmentersResponse(rsp *http.Response) (*ListSegmentersResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer rsp.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListSegmentersResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Data []externalRef0.Segmenter `json:"data"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
 		var dest externalRef0.Error

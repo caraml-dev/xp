@@ -17,6 +17,7 @@ import {
   experimentTiers,
   experimentTypes,
 } from "experiments/components/typeOptions";
+
 import SegmenterContext from "providers/segmenters/context";
 import { extractErrors } from "utils/helpers";
 
@@ -55,7 +56,6 @@ const SearchExperimentFilters = ({ onChange }) => {
               filters: appliedFilters,
               errors: extractErrors(err),
             });
-            return;
           }
         });
       // No errors, update filters and clear errors

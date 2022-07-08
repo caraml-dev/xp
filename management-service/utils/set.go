@@ -12,3 +12,11 @@ func IsUniqueStrings(strings []string) bool {
 	valueSet := set.New(values...)
 	return valueSet.Len() == len(strings)
 }
+
+func StringSliceToSet(strings []string) *set.Set {
+	stringSetInterface := make([]interface{}, len(strings))
+	for i := range strings {
+		stringSetInterface[i] = strings[i]
+	}
+	return set.New(stringSetInterface...)
+}

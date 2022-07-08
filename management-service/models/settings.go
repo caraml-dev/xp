@@ -111,7 +111,7 @@ func (c *Settings) ToApiSchema() schema.ProjectSettings {
 		UpdatedAt:       c.UpdatedAt,
 		Username:        c.Username,
 		TreatmentSchema: c.TreatmentSchema.ToOpenApi(),
-		ValidationUrl:   (c.ValidationUrl),
+		ValidationUrl:   c.ValidationUrl,
 	}
 
 	return user

@@ -43,6 +43,11 @@ type CreateSegmentSuccess struct {
 	Data externalRef0.Segment `json:"data"`
 }
 
+// CreateSegmenterSuccess defines model for CreateSegmenterSuccess.
+type CreateSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
+}
+
 // CreateTreatmentSuccess defines model for CreateTreatmentSuccess.
 type CreateTreatmentSuccess struct {
 	Data externalRef0.Treatment `json:"data"`
@@ -51,6 +56,11 @@ type CreateTreatmentSuccess struct {
 // DeleteSegmentSuccess defines model for DeleteSegmentSuccess.
 type DeleteSegmentSuccess struct {
 	Id *int `json:"id,omitempty"`
+}
+
+// DeleteSegmenterSuccess defines model for DeleteSegmenterSuccess.
+type DeleteSegmenterSuccess struct {
+	Name *string `json:"name,omitempty"`
 }
 
 // DeleteTreatmentSuccess defines model for DeleteTreatmentSuccess.
@@ -88,9 +98,9 @@ type GetSegmentSuccess struct {
 	Data externalRef0.Segment `json:"data"`
 }
 
-// GetSegmentersSuccess defines model for GetSegmentersSuccess.
-type GetSegmentersSuccess struct {
-	Data []externalRef0.Segmenter `json:"data"`
+// GetSegmenterSuccess defines model for GetSegmenterSuccess.
+type GetSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
 }
 
 // GetTreatmentHistorySuccess defines model for GetTreatmentHistorySuccess.
@@ -170,6 +180,11 @@ type UpdateSegmentSuccess struct {
 	Data externalRef0.Segment `json:"data"`
 }
 
+// UpdateSegmenterSuccess defines model for UpdateSegmenterSuccess.
+type UpdateSegmenterSuccess struct {
+	Data externalRef0.Segmenter `json:"data"`
+}
+
 // UpdateTreatmentSuccess defines model for UpdateTreatmentSuccess.
 type UpdateTreatmentSuccess struct {
 	Data externalRef0.Treatment `json:"data"`
@@ -208,6 +223,17 @@ type CreateSegmentRequestBody struct {
 	UpdatedBy *string                        `json:"updated_by,omitempty"`
 }
 
+// CreateSegmenterRequestBody defines model for CreateSegmenterRequestBody.
+type CreateSegmenterRequestBody struct {
+	Constraints *[]externalRef0.Constraint     `json:"constraints,omitempty"`
+	Description *string                        `json:"description,omitempty"`
+	MultiValued bool                           `json:"multi_valued"`
+	Name        string                         `json:"name"`
+	Options     *externalRef0.SegmenterOptions `json:"options,omitempty"`
+	Required    bool                           `json:"required"`
+	Type        externalRef0.SegmenterType     `json:"type"`
+}
+
 // CreateTreatmentRequestBody defines model for CreateTreatmentRequestBody.
 type CreateTreatmentRequestBody struct {
 	Configuration map[string]interface{} `json:"configuration"`
@@ -244,6 +270,15 @@ type UpdateProjectSettingsRequestBody struct {
 type UpdateSegmentRequestBody struct {
 	Segment   externalRef0.ExperimentSegment `json:"segment"`
 	UpdatedBy *string                        `json:"updated_by,omitempty"`
+}
+
+// UpdateSegmenterRequestBody defines model for UpdateSegmenterRequestBody.
+type UpdateSegmenterRequestBody struct {
+	Constraints *[]externalRef0.Constraint     `json:"constraints,omitempty"`
+	Description *string                        `json:"description,omitempty"`
+	MultiValued bool                           `json:"multi_valued"`
+	Options     *externalRef0.SegmenterOptions `json:"options,omitempty"`
+	Required    bool                           `json:"required"`
 }
 
 // UpdateTreatmentRequestBody defines model for UpdateTreatmentRequestBody.
@@ -297,6 +332,15 @@ type ListExperimentHistoryParams struct {
 
 	// Number of items on each page. It defaults to 10.
 	PageSize *int32 `json:"page_size,omitempty"`
+}
+
+// ListSegmentersParams defines parameters for ListSegmenters.
+type ListSegmentersParams struct {
+	Scope  *externalRef0.SegmenterScope  `json:"scope,omitempty"`
+	Status *externalRef0.SegmenterStatus `json:"status,omitempty"`
+
+	// Search treatment name for a partial match of the search text
+	Search *string `json:"search,omitempty"`
 }
 
 // ListSegmentsParams defines parameters for ListSegments.
@@ -361,6 +405,12 @@ type CreateExperimentJSONRequestBody CreateExperimentRequestBody
 // UpdateExperimentJSONRequestBody defines body for UpdateExperiment for application/json ContentType.
 type UpdateExperimentJSONRequestBody UpdateExperimentRequestBody
 
+// CreateSegmenterJSONRequestBody defines body for CreateSegmenter for application/json ContentType.
+type CreateSegmenterJSONRequestBody CreateSegmenterRequestBody
+
+// UpdateSegmenterJSONRequestBody defines body for UpdateSegmenter for application/json ContentType.
+type UpdateSegmenterJSONRequestBody UpdateSegmenterRequestBody
+
 // CreateSegmentJSONRequestBody defines body for CreateSegment for application/json ContentType.
 type CreateSegmentJSONRequestBody CreateSegmentRequestBody
 
@@ -416,7 +466,19 @@ type ServerInterface interface {
 	GetExperimentHistory(w http.ResponseWriter, r *http.Request, projectId int64, experimentId int64, version int64)
 	// Get all segmenter configurations required for generating experiments for the given project
 	// (GET /projects/{project_id}/segmenters)
-	GetSegmenters(w http.ResponseWriter, r *http.Request, projectId int64)
+	ListSegmenters(w http.ResponseWriter, r *http.Request, projectId int64, params ListSegmentersParams)
+	// Create a new project-specific segmenter
+	// (POST /projects/{project_id}/segmenters)
+	CreateSegmenter(w http.ResponseWriter, r *http.Request, projectId int64)
+	// Delete a project-specific segmenter
+	// (DELETE /projects/{project_id}/segmenters/{name})
+	DeleteSegmenter(w http.ResponseWriter, r *http.Request, projectId int64, name string)
+	// Get the global/project-specific segmenter by name
+	// (GET /projects/{project_id}/segmenters/{name})
+	GetSegmenter(w http.ResponseWriter, r *http.Request, projectId int64, name string)
+	// Update an existing project-specific segmenter
+	// (PUT /projects/{project_id}/segmenters/{name})
+	UpdateSegmenter(w http.ResponseWriter, r *http.Request, projectId int64, name string)
 	// Get segments for a project w.r.t query params
 	// (GET /projects/{project_id}/segments)
 	ListSegments(w http.ResponseWriter, r *http.Request, projectId int64, params ListSegmentsParams)
@@ -468,15 +530,14 @@ type ServerInterface interface {
 	// List a treatment's historical versions
 	// (GET /projects/{project_id}/treatments/{treatment_id}/history/{version})
 	GetTreatmentHistory(w http.ResponseWriter, r *http.Request, projectId int64, treatmentId int64, version int64)
-	// List all segmenter configurations registered with XP
-	// (GET /segmenters)
-	ListSegmenters(w http.ResponseWriter, r *http.Request)
 	// validates an entity against a given treatment schema or validation url
 	// (POST /validate)
 	ValidateEntity(w http.ResponseWriter, r *http.Request)
 }
 
 // Copied from https://github.com/deepmap/oapi-codegen/blob/v1.8.1/pkg/codegen/templates/chi-middleware.tmpl
+// Motivation behind customizing the template is for capturing segmenter values via query parameters for
+// ListExperiments (GET method)
 
 // ServerInterfaceWrapper converts contexts to parameters.
 type ServerInterfaceWrapper struct {
@@ -1002,8 +1063,76 @@ func (siw *ServerInterfaceWrapper) GetExperimentHistory(w http.ResponseWriter, r
 	handler(w, r.WithContext(ctx))
 }
 
-// GetSegmenters operation middleware
-func (siw *ServerInterfaceWrapper) GetSegmenters(w http.ResponseWriter, r *http.Request) {
+// ListSegmenters operation middleware
+func (siw *ServerInterfaceWrapper) ListSegmenters(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSegmentersParams
+	paramsSet := map[string]bool{}
+
+	// ------------- Optional query parameter "scope" -------------
+	if paramValue := r.URL.Query().Get("scope"); paramValue != "" {
+		paramsSet["scope"] = true
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "scope", r.URL.Query(), &params.Scope)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter scope: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "status" -------------
+	if paramValue := r.URL.Query().Get("status"); paramValue != "" {
+		paramsSet["status"] = true
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "status", r.URL.Query(), &params.Status)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter status: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "search" -------------
+	if paramValue := r.URL.Query().Get("search"); paramValue != "" {
+		paramsSet["search"] = true
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "search", r.URL.Query(), &params.Search)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter search: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSegmenters(w, r, projectId, params)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// CreateSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) CreateSegmenter(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -1020,7 +1149,118 @@ func (siw *ServerInterfaceWrapper) GetSegmenters(w http.ResponseWriter, r *http.
 	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetSegmenters(w, r, projectId)
+		siw.Handler.CreateSegmenter(w, r, projectId)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// DeleteSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSegmenter(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "name" -------------
+	var name string
+
+	err = runtime.BindStyledParameter("simple", false, "name", chi.URLParam(r, "name"), &name)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter name: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteSegmenter(w, r, projectId, name)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// GetSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) GetSegmenter(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "name" -------------
+	var name string
+
+	err = runtime.BindStyledParameter("simple", false, "name", chi.URLParam(r, "name"), &name)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter name: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSegmenter(w, r, projectId, name)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
+// UpdateSegmenter operation middleware
+func (siw *ServerInterfaceWrapper) UpdateSegmenter(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var err error
+
+	// ------------- Path parameter "project_id" -------------
+	var projectId int64
+
+	err = runtime.BindStyledParameter("simple", false, "project_id", chi.URLParam(r, "project_id"), &projectId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter project_id: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Path parameter "name" -------------
+	var name string
+
+	err = runtime.BindStyledParameter("simple", false, "name", chi.URLParam(r, "name"), &name)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter name: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateSegmenter(w, r, projectId, name)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1798,23 +2038,6 @@ func (siw *ServerInterfaceWrapper) GetTreatmentHistory(w http.ResponseWriter, r 
 	handler(w, r.WithContext(ctx))
 }
 
-// ListSegmenters operation middleware
-func (siw *ServerInterfaceWrapper) ListSegmenters(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
-
-	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.ListSegmenters(w, r)
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler(w, r.WithContext(ctx))
-}
-
 // ValidateEntity operation middleware
 func (siw *ServerInterfaceWrapper) ValidateEntity(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -1900,7 +2123,19 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/projects/{project_id}/experiments/{experiment_id}/history/{version}", wrapper.GetExperimentHistory)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/projects/{project_id}/segmenters", wrapper.GetSegmenters)
+		r.Get(options.BaseURL+"/projects/{project_id}/segmenters", wrapper.ListSegmenters)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/projects/{project_id}/segmenters", wrapper.CreateSegmenter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/projects/{project_id}/segmenters/{name}", wrapper.DeleteSegmenter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/projects/{project_id}/segmenters/{name}", wrapper.GetSegmenter)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/projects/{project_id}/segmenters/{name}", wrapper.UpdateSegmenter)
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/projects/{project_id}/segments", wrapper.ListSegments)
@@ -1954,9 +2189,6 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/projects/{project_id}/treatments/{treatment_id}/history/{version}", wrapper.GetTreatmentHistory)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/segmenters", wrapper.ListSegmenters)
-	})
-	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/validate", wrapper.ValidateEntity)
 	})
 
@@ -1966,57 +2198,61 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

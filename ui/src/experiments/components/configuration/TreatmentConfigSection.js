@@ -12,15 +12,14 @@ import { useDimension, useToggle } from "@gojek/mlp-ui";
 import { ConfigPanel } from "components/config_section/ConfigPanel";
 import { ConfigSectionFlyout } from "components/config_section/ConfigSectionFlyout";
 import { ExpandableTableColumn } from "components/table/ExpandableTableColumn";
+import { formatJsonString } from "utils/helpers";
 
 export const TreatmentConfigSection = ({ experiment }) => {
   const [isFlyoutVisible, toggleFlyout] = useToggle();
 
   const [flyoutItem, setFlyoutItem] = useState();
   const openFlyout = (configuration) => () => {
-    var config = JSON.stringify(configuration);
-    var formattedText = JSON.stringify(JSON.parse(config), null, 2);
-    setFlyoutItem(formattedText);
+    setFlyoutItem(formatJsonString(configuration));
     toggleFlyout();
   };
 

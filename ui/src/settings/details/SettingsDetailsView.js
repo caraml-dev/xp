@@ -16,10 +16,14 @@ import classNames from "classnames";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
+import CreateSettingsView from "settings/create/CreateSettingsView";
 import { SettingsConfigView } from "settings/details/config/SettingsConfigView";
 import { SettingsActions } from "settings/details/SettingsActions";
 import EditSettingsView from "settings/edit/EditSettingsView";
 import EditValidationView from "settings/edit/EditValidationView";
+import CreateSegmenterView from "settings/segmenters/create/CreateSegmenterView";
+import SegmenterDetailsView from "settings/segmenters/details/SegmenterDetailsView";
+import { ListSegmentersView } from "settings/segmenters/list/ListSegmentersView";
 import ValidationView from "settings/validation/ValidationView";
 
 import "./SettingsDetailsView.scss";
@@ -39,6 +43,10 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
       id: "validation",
       name: "Validation",
     },
+    {
+      id: "segmenters",
+      name: "Segmenters",
+    },
   ];
 
   useEffect(() => {
@@ -51,7 +59,7 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
     <EuiPage
       paddingSize="none"
       className={classNames({ pageWithRightSidebar: isFlyoutVisible })}>
-      <EuiPageBody>
+      <EuiPageBody paddingSize="m">
         {!isLoaded ? (
           <EuiTextAlign textAlign="center">
             <EuiLoadingChart size="xl" mono />
@@ -65,7 +73,8 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
           </EuiCallOut>
         ) : (
           <>
-            {!props["*"].includes("edit") ? (
+            {!props["*"].includes("edit") &&
+            !props["*"].includes("segmenters/") ? (
               <>
                 <EuiPageHeader>
                   <EuiPageHeaderSection>
@@ -75,6 +84,9 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
                 <SettingsActions
                   onEdit={() => props.navigate("./edit")}
                   onValidationEdit={() => props.navigate("./validation/edit")}
+                  onCreateSegmenter={() =>
+                    props.navigate("./segmenters/create")
+                  }
                   selectedTab={props["*"]}>
                   {(getActions) => (
                     <PageNavigation
@@ -95,11 +107,16 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
               <SettingsConfigView path="details" settings={data?.data} />
               <EditSettingsView path="edit" settings={data.data} />
               <ValidationView path="validation" settings={data.data} />
+              <CreateSettingsView path="create" />
+              <ListSegmentersView path="segmenters" />
+              <CreateSegmenterView path="segmenters/create" />
+              <SegmenterDetailsView path="segmenters/:segmenterName/*" />
               <EditValidationView
                 path="validation/edit"
                 settings={data.data}
                 isFlyoutVisible={isFlyoutVisible}
-                toggleFlyout={toggleFlyout}></EditValidationView>
+                toggleFlyout={toggleFlyout}
+              />
             </Router>
           </>
         )}
