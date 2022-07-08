@@ -377,8 +377,8 @@ func (s *CustomSegmenter) ValidateConstraintValues() error {
 }
 
 // ConvertToTypedValues converts a CustomSegmenter's segmenter values that are untyped to the type specified in
-// the Type field. This method is also used to validate the unknown segmenter value types (i.e. validate values passed
-// in as user input with respect to the specified type)
+// the Type field. As this method also indirectly validates the type of each value, it is also used to validate
+// unknown segmenter value types (i.e. validate values passed in as user input with respect to the specified type)
 func (s *CustomSegmenter) ConvertToTypedValues(segmenterTypes map[string]schema.SegmenterType) error {
 	return s.ConvertCustomSegmenterValues(segmenterTypes, convertToTypedSegmenterValue)
 }
