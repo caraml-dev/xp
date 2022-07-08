@@ -3,13 +3,14 @@ import React, { useContext, useEffect, useMemo } from "react";
 import { EuiLoadingChart, EuiTextAlign } from "@elastic/eui";
 import { FormContext, StepsWizardHorizontal, addToast } from "@gojek/mlp-ui";
 
-import { GeneralStep } from "experiments/components/form/steps/GeneralStep";
-import { SegmentStep } from "experiments/components/form/steps/SegmentStep";
-import { TreatmentsStep } from "experiments/components/form/steps/TreatmentsStep";
-import schema from "experiments/components/form/validation/schema";
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenters/context";
 import SettingsContext from "providers/settings/context";
+
+import { GeneralStep } from "./steps/GeneralStep";
+import { SegmentStep } from "./steps/SegmentStep";
+import { TreatmentsStep } from "./steps/TreatmentsStep";
+import schema from "./validation/schema";
 import { parseSegmenterValue } from "services/experiment/Segment";
 
 export const CreateExperimentForm = ({ projectId, onCancel, onSuccess }) => {

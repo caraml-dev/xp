@@ -1,9 +1,9 @@
-import "components/config_section/ConfigPanel.scss";
-
 import React from "react";
 
 import { EuiHorizontalRule, EuiPanel, EuiTitle } from "@elastic/eui";
 import classNames from "classnames";
+
+import "./ConfigPanel.scss";
 
 export const ConfigPanel = ({ title, className, children }) => {
   const classProps = {

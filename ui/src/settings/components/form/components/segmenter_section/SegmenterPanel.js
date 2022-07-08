@@ -20,8 +20,9 @@ import isEqual from "lodash/isEqual";
 
 import { Panel } from "components/panel/Panel";
 import SegmenterContext from "providers/segmenters/context";
-import { SegmenterCard } from "settings/components/form/components/segmenter_section/SegmenterCard";
 import { makeId } from "utils/helpers";
+
+import { SegmenterCard } from "./SegmenterCard";
 
 let toastId = 0;
 

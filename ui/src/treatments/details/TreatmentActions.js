@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useRef } from "react";
 
-import { DeleteTreatmentModal } from "treatments/details/modals/DeleteTreatmentModal";
+import { DeleteTreatmentModal } from "./modals/DeleteTreatmentModal";
 
 export const TreatmentActions = ({ onEdit, onDeleteSuccess, children }) => {
   const deleteTreatmentRef = useRef();

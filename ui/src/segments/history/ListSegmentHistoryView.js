@@ -6,7 +6,8 @@ import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
-import ListSegmentHistoryTable from "segments/history/ListSegmentHistoryTable";
+
+import ListSegmentHistoryTable from "./ListSegmentHistoryTable";
 
 const ListSegmentHistoryView = ({ segment, ...props }) => {
   const { appConfig } = useConfig();

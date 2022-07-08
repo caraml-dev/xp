@@ -1,5 +1,3 @@
-import "turing/components/form/variables_config/VariableConfigRow.scss";
-
 import React from "react";
 
 import {
@@ -11,7 +9,9 @@ import {
 } from "@elastic/eui";
 import { useOnChangeHandler } from "@gojek/mlp-ui";
 
-import { FieldSourceFormLabel } from "turing/components/form/variables_config/components/FieldSourceFormLabel";
+import { FieldSourceFormLabel } from "./components/FieldSourceFormLabel";
+
+import "./VariableConfigRow.scss";
 
 export const VariableConfigRow = ({
   name,

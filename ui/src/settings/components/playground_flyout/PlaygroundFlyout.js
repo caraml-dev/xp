@@ -1,5 +1,3 @@
-import "settings/components/playground_flyout/PlaygroundFlyout.scss";
-
 import React, { useContext, useEffect, useState } from "react";
 
 import {
@@ -22,6 +20,8 @@ import { ValidateEntityRequest } from "services/validate/ValidateEntityRequest";
 import schema from "settings/components/form/validation/schema";
 import { PlaygroundRadioGroup } from "settings/components/playground_flyout/PlaygroundRadioGroup";
 import { getValidationOptions } from "settings/components/playground_flyout/typeOptions";
+
+import "./PlaygroundFlyout.scss";
 
 var JSONbig = require("json-bigint");
 

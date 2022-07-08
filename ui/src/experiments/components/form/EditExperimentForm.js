@@ -4,14 +4,15 @@ import { EuiLoadingChart, EuiTextAlign } from "@elastic/eui";
 import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
-import { GeneralStep } from "experiments/components/form/steps/GeneralStep";
-import { SegmentStep } from "experiments/components/form/steps/SegmentStep";
-import { TreatmentsStep } from "experiments/components/form/steps/TreatmentsStep";
-import schema from "experiments/components/form/validation/schema";
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenters/context";
 import SettingsContext from "providers/settings/context";
 import { parseSegmenterValue } from "services/experiment/Segment";
+
+import { GeneralStep } from "./steps/GeneralStep";
+import { SegmentStep } from "./steps/SegmentStep";
+import { TreatmentsStep } from "./steps/TreatmentsStep";
+import schema from "./validation/schema";
 
 export const EditExperimentForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);

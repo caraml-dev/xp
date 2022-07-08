@@ -8,8 +8,9 @@ import {
 } from "@elastic/eui";
 
 import { Panel } from "components/panel/Panel";
-import { SegmentConfigPanel } from "experiments/components/form/components/segment_config/SegmentConfigPanel";
 import SegmentsContext from "providers/segment/context";
+
+import { SegmentConfigPanel } from "./SegmentConfigPanel";
 
 export const SegmentSelectionPanel = ({
   projectId,

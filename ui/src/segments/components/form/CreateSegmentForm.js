@@ -5,8 +5,9 @@ import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenters/context";
-import { ConfigurationStep } from "segments/components/form/steps/ConfigurationStep";
-import schema from "segments/components/form/validation/schema";
+
+import { ConfigurationStep } from "./steps/ConfigurationStep";
+import schema from "./validation/schema";
 
 export const CreateSegmentForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);

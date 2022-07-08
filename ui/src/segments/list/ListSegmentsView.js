@@ -21,7 +21,8 @@ import { useXpApi } from "hooks/useXpApi";
 import NameSearchContext, {
   NameSearchContextProvider,
 } from "providers/search/NameSearchContextProvider";
-import ListSegmentsTable from "segments/list/ListSegmentsTable";
+
+import ListSegmentsTable from "./ListSegmentsTable";
 
 const ListSegmentsComponent = ({ projectId, props }) => {
   const { appConfig } = useConfig();

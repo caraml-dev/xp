@@ -1,7 +1,8 @@
 import { EuiPanel } from "@elastic/eui";
 
-import { CodeBlockPanel } from "settings/segmenters/details/config/component/CodeBlockPanel";
 import { convertObjectToString } from "utils/helpers";
+
+import { CodeBlockPanel } from "./component/CodeBlockPanel";
 
 export const SegmentersOptionsSection = ({ options }) => {
   return (

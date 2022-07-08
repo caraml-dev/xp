@@ -1,5 +1,3 @@
-import "settings/components/form/components/segmenter_section/SegmenterCard.scss";
-
 import { useEffect, useState } from "react";
 
 import {
@@ -17,6 +15,8 @@ import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
 
 import { StatusBadge } from "components/status_badge/StatusBadge";
+
+import "./SegmenterCard.scss";
 
 const VariablesMappingPanel = ({
   segmenterName,

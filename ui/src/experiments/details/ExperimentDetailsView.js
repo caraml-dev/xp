@@ -15,12 +15,13 @@ import { Redirect, Router } from "@reach/router";
 
 import { PageTitle } from "components/page/PageTitle";
 import { StatusBadge } from "components/status_badge/StatusBadge";
-import { ExperimentConfigView } from "experiments/details/config/ExperimentConfigView";
-import { ExperimentActions } from "experiments/details/ExperimentActions";
 import EditExperimentView from "experiments/edit/EditExperimentView";
 import ListExperimentHistoryView from "experiments/history/ListExperimentHistoryView";
 import { useXpApi } from "hooks/useXpApi";
 import { getExperimentStatus } from "services/experiment/ExperimentStatus";
+
+import { ExperimentConfigView } from "./config/ExperimentConfigView";
+import { ExperimentActions } from "./ExperimentActions";
 
 const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
   const [{ data, isLoaded, error }, fetchExperimentDetails] = useXpApi(

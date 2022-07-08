@@ -4,11 +4,12 @@ import { Redirect, Router, useLocation } from "@reach/router";
 
 import LandingView from "components/page/LandingView";
 import { ConfigProvider } from "config";
-import CreateExperimentView from "experiments/create/CreateExperimentView";
-import ExperimentDetailsView from "experiments/details/ExperimentDetailsView";
-import ExperimentHistoryDetailsView from "experiments/history/details/ExperimentHistoryDetailsView";
-import ListExperimentsView from "experiments/list/ListExperimentsView";
 import { ProjectContextProvider } from "providers/project/context";
+
+import CreateExperimentView from "./create/CreateExperimentView";
+import ExperimentDetailsView from "./details/ExperimentDetailsView";
+import ExperimentHistoryDetailsView from "./history/details/ExperimentHistoryDetailsView";
+import ListExperimentsView from "./list/ListExperimentsView";
 import CreateSegmentView from "segments/create/CreateSegmentView";
 import SegmentDetailsView from "segments/details/SegmentDetailsView";
 import SegmentHistoryDetailsView from "segments/history/details/SegmentHistoryDetailsView";

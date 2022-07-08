@@ -9,7 +9,8 @@ import ProjectContext, {
   ProjectContextProvider,
 } from "providers/project/context";
 import { SettingsContextProvider } from "providers/settings/context";
-import { VariablesConfigPanel } from "turing/components/form/variables_config/VariablesConfigPanel";
+
+import { VariablesConfigPanel } from "./variables_config/VariablesConfigPanel";
 
 const EditExperimentEngineConfigComponent = ({
   projectId,

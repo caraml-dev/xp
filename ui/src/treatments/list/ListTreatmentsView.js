@@ -21,7 +21,8 @@ import { useXpApi } from "hooks/useXpApi";
 import NameSearchContext, {
   NameSearchContextProvider,
 } from "providers/search/NameSearchContextProvider";
-import ListTreatmentsTable from "treatments/list/ListTreatmentsTable";
+
+import ListTreatmentsTable from "./ListTreatmentsTable";
 
 const ListTreatmentsComponent = ({ projectId, props }) => {
   const { appConfig } = useConfig();

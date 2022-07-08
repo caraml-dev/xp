@@ -16,9 +16,10 @@ import { Redirect, Router } from "@reach/router";
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
 import { TreatmentConfigView } from "treatments/details/config/TreatmentConfigView";
-import { TreatmentActions } from "treatments/details/TreatmentActions";
 import EditTreatmentView from "treatments/edit/EditTreatmentView";
 import ListTreatmentHistoryView from "treatments/history/ListTreatmentHistoryView";
+
+import { TreatmentActions } from "./TreatmentActions";
 
 const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
   const [{ data, isLoaded, error }, fetchTreatmentDetails] = useXpApi(

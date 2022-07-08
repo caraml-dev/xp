@@ -10,9 +10,10 @@ import {
 } from "@elastic/eui";
 import { OverlayMask, get } from "@gojek/mlp-ui";
 
-import { SegmenterConfigRow } from "experiments/components/form/components/segment_config/SegmenterConfigRow";
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenters/context";
+
+import { SegmenterConfigRow } from "./SegmenterConfigRow";
 
 export const SegmentConfigPanel = ({
   projectId,

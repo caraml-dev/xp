@@ -1,5 +1,3 @@
-import "settings/details/SettingsDetailsView.scss";
-
 import React, { useEffect } from "react";
 
 import {
@@ -27,6 +25,8 @@ import CreateSegmenterView from "settings/segmenters/create/CreateSegmenterView"
 import SegmenterDetailsView from "settings/segmenters/details/SegmenterDetailsView";
 import { ListSegmentersView } from "settings/segmenters/list/ListSegmentersView";
 import ValidationView from "settings/validation/ValidationView";
+
+import "./SettingsDetailsView.scss";
 
 const SettingsDetailsView = ({ projectId, ...props }) => {
   const [isFlyoutVisible, toggleFlyout] = useToggle();

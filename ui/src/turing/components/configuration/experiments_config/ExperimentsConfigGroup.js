@@ -1,5 +1,3 @@
-import "turing/components/configuration/experiments_config/ExperimentsConfigGroup.scss";
-
 import React, { useMemo, useRef } from "react";
 
 import {
@@ -18,6 +16,8 @@ import moment from "moment";
 
 import { useConfig } from "config";
 import { useXpApi } from "hooks/useXpApi";
+
+import "./ExperimentsConfigGroup.scss";
 
 export const ExperimentsConfigGroup = ({ projectId }) => {
   const { appConfig } = useConfig();

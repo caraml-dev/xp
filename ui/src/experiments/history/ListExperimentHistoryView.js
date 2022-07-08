@@ -5,8 +5,9 @@ import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { useConfig } from "config";
-import ListExperimentHistoryTable from "experiments/history/ListExperimentHistoryTable";
 import { useXpApi } from "hooks/useXpApi";
+
+import ListExperimentHistoryTable from "./ListExperimentHistoryTable";
 
 const ListExperimentHistoryView = ({ experiment, ...props }) => {
   const { appConfig } = useConfig();

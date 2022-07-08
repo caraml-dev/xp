@@ -13,9 +13,10 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 
-import { TreatmentPanel } from "experiments/components/form/components/treatments_config/TreatmentPanel";
 import { useXpApi } from "hooks/useXpApi";
 import TreatmentsContext from "providers/treatment/context";
+
+import { TreatmentPanel } from "./TreatmentPanel";
 
 export const TreatmentCard = ({
   treatment,

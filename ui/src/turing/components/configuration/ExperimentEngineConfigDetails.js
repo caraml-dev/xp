@@ -4,8 +4,9 @@ import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 
 import { ConfigSectionPanel } from "components/config_section/ConfigSectionPanel";
 import { ConfigProvider } from "config";
-import { ExperimentsConfigGroup } from "turing/components/configuration/experiments_config/ExperimentsConfigGroup";
-import { VariablesConfigGroup } from "turing/components/configuration/variables_config/VariablesConfigGroup";
+
+import { ExperimentsConfigGroup } from "./experiments_config/ExperimentsConfigGroup";
+import { VariablesConfigGroup } from "./variables_config/VariablesConfigGroup";
 
 const ExperimentEngineConfigDetails = ({ projectId, config }) => (
   <ConfigProvider>
