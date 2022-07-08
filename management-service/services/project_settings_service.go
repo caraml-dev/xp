@@ -3,12 +3,12 @@ package services
 import (
 	"time"
 
+	"github.com/golang-collections/collections/set"
 	"github.com/jinzhu/gorm"
 
 	"github.com/gojek/xp/management-service/errors"
 	"github.com/gojek/xp/management-service/models"
 	"github.com/gojek/xp/management-service/utils"
-	"github.com/golang-collections/collections/set"
 )
 
 const PASSKEY_LENGTH = 32
