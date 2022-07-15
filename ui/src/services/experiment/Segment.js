@@ -4,7 +4,7 @@ export class Segment { }
 
 export const parseSegmenterValue = (value, type) => {
   let parsedValue;
-  switch (type.toUpperCase()) {
+  switch ((type || "").toUpperCase()) {
     case "BOOL":
       parsedValue = value.toLowerCase() === "true";
       break;

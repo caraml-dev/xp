@@ -190,7 +190,7 @@ const schema = [
                 }
               )
               .when("$segmenterTypes", (segmenterTypes) => {
-                switch (segmenterTypes[key].toUpperCase()) {
+                switch ((segmenterTypes[key] || "").toUpperCase()) {
                   case "BOOL":
                     return yup.array(
                       yup
