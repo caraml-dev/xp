@@ -124,7 +124,7 @@ export const SegmenterGeneralPanel = ({
             label={
               <FormLabelWithToolTip
                 label="Multi-Valued"
-                content="Specify if this segmenter can take on multiple values."
+                content="If selected, multiple values of the segmenter can be chosen at once, in segment configurations."
               />
             }
             checked={multiValued}
