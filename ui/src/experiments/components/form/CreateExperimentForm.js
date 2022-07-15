@@ -11,7 +11,6 @@ import { GeneralStep } from "./steps/GeneralStep";
 import { SegmentStep } from "./steps/SegmentStep";
 import { TreatmentsStep } from "./steps/TreatmentsStep";
 import schema from "./validation/schema";
-import { parseSegmenterValue } from "services/experiment/Segment";
 
 export const CreateExperimentForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);
@@ -20,14 +19,14 @@ export const CreateExperimentForm = ({ projectId, onCancel, onSuccess }) => {
   const { segmenterConfig, getSegmenterOptions } = useContext(SegmenterContext);
 
   // retrieve name-type (in caps) mappings for active segmenters specified for this project
-  const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function (
+  const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function(
     map,
     obj
   ) {
-    map[obj.name] = obj.type.toUpperCase();
+    map[obj.name] = obj.type;
     return map;
   },
-  {});
+    {});
 
   const requiredSegmenterNames = useMemo(
     () =>
@@ -46,16 +45,7 @@ export const CreateExperimentForm = ({ projectId, onCancel, onSuccess }) => {
     {},
     false
   );
-  const onSubmit = () => {
-    for (const key of Object.keys(experiment.segment)) {
-      experiment.segment[key] = experiment.segment[key].map(
-        (segmenterValue) => {
-          return parseSegmenterValue(segmenterValue, segmenterTypes[key]);
-        }
-      );
-    }
-    return submitForm({ body: experiment.stringify() }).promise;
-  };
+  const onSubmit = () => submitForm({ body: experiment.stringify() }).promise;
 
   useEffect(() => {
     if (submissionResponse.isLoaded && !submissionResponse.error) {
