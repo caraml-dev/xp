@@ -23,7 +23,7 @@ export const CreateExperimentForm = ({ projectId, onCancel, onSuccess }) => {
     map,
     obj
   ) {
-    map[obj.name] = obj.type.toUpperCase();
+    map[obj.name] = obj.type;
     return map;
   },
     {});

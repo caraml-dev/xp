@@ -20,7 +20,6 @@ export class Segmenter {
     const clone = cloneDeep(json);
     let obj = merge(new Segmenter(""), clone);
 
-    obj.type = obj.type.toLowerCase();
     obj.options =
       obj?.options != null && Object.keys(obj.options).length !== 0
         ? JSON.stringify(obj?.options)
@@ -74,7 +73,7 @@ export const newConstraint = (segmenter) => {
           : "[]",
       options:
         segmenter?.options != null &&
-        Object.keys(segmenter.options).length !== 0
+          Object.keys(segmenter.options).length !== 0
           ? JSON.stringify(segmenter?.options)
           : "",
     };

@@ -18,7 +18,7 @@ const experimentTierValues = experimentTiers.map((e) => e.value);
 // arrow format, for access to `this` from the invocation context:
 // https://stackoverflow.com/a/33308151
 
-const validateABTreatmentTraffic = function (items) {
+const validateABTreatmentTraffic = function(items) {
   const sum = items.reduce(
     (total, e) => total + (!!e.traffic ? e.traffic : 0),
     0
@@ -45,7 +45,7 @@ const validateABTreatmentTraffic = function (items) {
   return !!errors.length ? new yup.ValidationError(errors) : true;
 };
 
-const validateSwitchbackTreatmentTraffic = function (items) {
+const validateSwitchbackTreatmentTraffic = function(items) {
   const sum = items.reduce(
     (total, e) => total + (!!e.traffic ? e.traffic : 0),
     0
@@ -74,7 +74,7 @@ const validateSwitchbackTreatmentTraffic = function (items) {
   return !!errors.length ? new yup.ValidationError(errors) : true;
 };
 
-const validateTreatmentNames = function (items) {
+const validateTreatmentNames = function(items) {
   const uniqueNamesMap = items.reduce((acc, item) => {
     const current = item.name in acc ? acc[item.name] : 0;
     // If name is set, increment the count
@@ -143,10 +143,10 @@ const schema = [
     interval: yup.mixed().when("type", (type, schema) => {
       return type === "Switchback"
         ? yup
-            .number()
-            .required("Interval is required for Switchback experiments")
-            .integer("Interval must be an integer")
-            .min(5, "Interval cannot be lower than 5 minutes")
+          .number()
+          .required("Interval is required for Switchback experiments")
+          .integer("Interval must be an integer")
+          .min(5, "Interval cannot be lower than 5 minutes")
         : schema;
     }),
     tier: yup
@@ -190,7 +190,7 @@ const schema = [
                 }
               )
               .when("$segmenterTypes", (segmenterTypes) => {
-                switch (segmenterTypes[key]) {
+                switch (segmenterTypes[key].toUpperCase()) {
                   case "BOOL":
                     return yup.array(
                       yup
@@ -219,7 +219,7 @@ const schema = [
                         .typeError("Array elements must all be of type: STRING")
                     );
                   default:
-                    return false;
+                    return yup.array(); // Type is unknown for deactivated segmenters
                 }
               }),
           };
