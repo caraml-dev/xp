@@ -1,11 +1,11 @@
 xpTreatment:
   image:
     # -- Docker registry for XP Treatment Service image
-    registry: docker.io/
+    registry: ghcr.io
     # -- Docker image repository for XP Treatment Service
-    repository: xp-treatment
+    repository: gojek/turing-experiments/xp-treatment
     # -- Docker image tag for XP Treatment Service
-    tag: latest
+    tag: v0.6.0
     # -- Docker image pull policy
     pullPolicy: IfNotPresent
   

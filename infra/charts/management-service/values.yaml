@@ -1,11 +1,11 @@
 xpManagement:
   image:
     # -- Docker registry for XP Management Service image
-    registry: docker.io/
+    registry: ghcr.io
     # -- Docker image repository for XP Management Service
-    repository: xp-management
+    repository: gojek/turing-experiments/xp-management
     # -- Docker image tag for XP Management Service
-    tag: latest
+    tag: v0.6.0
     # -- Docker image pull policy
     pullPolicy: IfNotPresent
 
@@ -114,6 +114,41 @@ xpManagement:
     # -- Sentry DSN value used by both XP Management Service and XP UI
     dsn: ""
 
+# -- Postgresql configuration to be applied to XP Management Service's postgresql database deployment
+# Reference: https://artifacthub.io/packages/helm/bitnami/postgresql/10.16.2#parameters
+postgresql:
+  # -- Resources requests and limits for XP Management Service database. This should be set
+  # according to your cluster capacity and service level objectives.
+  # Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 500m
+  persistence:
+    # -- Persist Postgresql data in a Persistent Volume Claim
+    enabled: true
+    size: 10Gi
+  postgresqlDatabase: xp
+  postgresqlUsername: xp
+  # -- Password for XP Management Service Postgresql database
+  postgresqlPassword: xp
+  tls:
+    enabled: false
+  containerPorts:
+    postgresql: 5432
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+    replication:
+      enabled: false
+      user: repl_user
+      password: repl_password
+      slaveReplicas: 2
+      synchronousCommit: "on"
+      numSynchronousReplicas: 2
+      applicationName: xp
+
 global:
   sentry:
     # -- (string) Global Sentry DSN value
@@ -135,3 +170,8 @@ swaggerUi:
     internalPort: 8081
     # -- Swagger UI Kubernetes service port number
     externalPort: 8080
+
+# Tags are used to include/exclude chart dependencies
+tags:
+  # -- Specifies if Postgresql database needs to be installed together with XP Management Service
+  db: true
