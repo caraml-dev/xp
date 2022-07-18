@@ -18,7 +18,7 @@ export const CreateExperimentForm = ({ projectId, onCancel, onSuccess }) => {
   const { data: experiment } = useContext(FormContext);
   const { segmenterConfig, getSegmenterOptions } = useContext(SegmenterContext);
 
-  // retrieve name-type (in caps) mappings for active segmenters specified for this project
+  // retrieve name-type mappings for active segmenters specified for this project
   const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function(
     map,
     obj

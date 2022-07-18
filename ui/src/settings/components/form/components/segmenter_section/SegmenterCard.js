@@ -15,6 +15,7 @@ import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
 
 import { StatusBadge } from "components/status_badge/StatusBadge";
+import { getSegmenterScope } from "services/segmenter/SegmenterScope";
 
 import "./SegmenterCard.scss";
 
@@ -62,20 +63,6 @@ const VariablesMappingPanel = ({
   );
 };
 
-const getScopeBadge = (scope) => {
-  const status = {
-    project: {
-      label: "Project",
-      color: "primary",
-    },
-    global: {
-      label: "Global",
-      color: "secondary",
-    },
-  };
-  return status[scope];
-};
-
 export const SegmenterCard = ({
   id,
   name,
@@ -93,12 +80,12 @@ export const SegmenterCard = ({
   const buttonContent = isDragging ? (
     <>
       <EuiTextColor color="accent">{displayName}</EuiTextColor>
-      <StatusBadge status={getScopeBadge(scope)} />
+      <StatusBadge status={getSegmenterScope(scope)} />
     </>
   ) : (
     <>
       {displayName}
-      <StatusBadge status={getScopeBadge(scope)} />
+      <StatusBadge status={getSegmenterScope(scope)} />
     </>
   );
 
@@ -138,7 +125,7 @@ export const SegmenterCard = ({
             ) : (
               <>
                 {displayName}
-                <StatusBadge status={getScopeBadge(scope)} />
+                <StatusBadge status={getSegmenterScope(scope)} />
               </>
             )}
           </EuiPanel>

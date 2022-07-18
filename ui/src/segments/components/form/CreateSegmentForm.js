@@ -12,7 +12,17 @@ import schema from "./validation/schema";
 export const CreateSegmentForm = ({ projectId, onCancel, onSuccess }) => {
   const validationSchema = useMemo(() => schema, []);
   const { data: segment } = useContext(FormContext);
-  const { segmenterConfig } = useContext(SegmenterContext);
+  const { segmenterConfig, getSegmenterOptions } = useContext(SegmenterContext);
+
+  // retrieve name-type mappings for active segmenters specified for this project
+  const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function(
+    map,
+    obj
+  ) {
+    map[obj.name] = obj.type;
+    return map;
+  },
+    {});
   const requiredSegmenterNames = useMemo(
     () =>
       segmenterConfig
@@ -50,7 +60,7 @@ export const CreateSegmentForm = ({ projectId, onCancel, onSuccess }) => {
       iconType: "package",
       children: <ConfigurationStep projectId={projectId} isEdit={false} />,
       validationSchema: validationSchema[0],
-      validationContext: { requiredSegmenterNames },
+      validationContext: { requiredSegmenterNames, segmenterTypes },
     },
   ];
 
