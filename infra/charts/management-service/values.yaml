@@ -1,11 +1,11 @@
 xpManagement:
   image:
     # -- Docker registry for XP Management Service image
-    registry: docker.io/
+    registry: ghcr.io
     # -- Docker image repository for XP Management Service
-    repository: xp-management
+    repository: gojek/turing-experiments/xp-management
     # -- Docker image tag for XP Management Service
-    tag: latest
+    tag: v0.6.1
     # -- Docker image pull policy
     pullPolicy: IfNotPresent
 
