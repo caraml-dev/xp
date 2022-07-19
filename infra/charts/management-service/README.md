@@ -1,8 +1,8 @@
 # xp-management
 
 ---
-![Version: 0.0.1-dev0.1](https://img.shields.io/badge/Version-0.0.1--dev0.1-informational?style=flat-square)
-![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square)
+![AppVersion: v0.7.0](https://img.shields.io/badge/AppVersion-v0.7.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes Deployment of the XP Managment Service
 
@@ -59,10 +59,15 @@ The following table lists the configurable parameters of the XP Management Servi
 |-----|------|---------|-------------|
 | global.mlp.encryption.key | string | `nil` | Global MLP Encryption Key to be used by all MLP components |
 | global.sentry.dsn | string | `nil` | Global Sentry DSN value |
+| postgresql | object | `{"containerPorts":{"postgresql":5432},"metrics":{"enabled":false,"replication":{"applicationName":"xp","enabled":false,"numSynchronousReplicas":2,"password":"repl_password","slaveReplicas":2,"synchronousCommit":"on","user":"repl_user"},"serviceMonitor":{"enabled":false}},"persistence":{"enabled":true,"size":"10Gi"},"postgresqlDatabase":"xp","postgresqlPassword":"xp","postgresqlUsername":"xp","resources":{"requests":{"cpu":"500m","memory":"256Mi"}},"tls":{"enabled":false}}` | Postgresql configuration to be applied to XP Management Service's postgresql database deployment Reference: https://artifacthub.io/packages/helm/bitnami/postgresql/10.16.2#parameters |
+| postgresql.persistence.enabled | bool | `true` | Persist Postgresql data in a Persistent Volume Claim |
+| postgresql.postgresqlPassword | string | `"xp"` | Password for XP Management Service Postgresql database |
+| postgresql.resources | object | `{"requests":{"cpu":"500m","memory":"256Mi"}}` | Resources requests and limits for XP Management Service database. This should be set according to your cluster capacity and service level objectives. Reference: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/ |
 | swaggerUi.apiServer | string | `"http://127.0.0.1/v1"` | URL of API server |
 | swaggerUi.image | object | `{"tag":"v3.47.1"}` | Docker tag for Swagger UI https://hub.docker.com/r/swaggerapi/swagger-ui |
 | swaggerUi.service.externalPort | int | `8080` | Swagger UI Kubernetes service port number |
 | swaggerUi.service.internalPort | int | `8081` | Swagger UI container port number |
+| tags.db | bool | `true` | Specifies if Postgresql database needs to be installed together with XP Management Service |
 | xpManagement.apiConfig | object | `{}` | XP Management Service server configuration. |
 | xpManagement.extraArgs | list | `[]` | List of string containing additional XP Management Service server arguments. For example, multiple "-config" can be specified to use multiple config files |
 | xpManagement.extraEnvs | list | `[]` | List of extra environment variables to add to XP Management Service server container |
@@ -70,9 +75,9 @@ The following table lists the configurable parameters of the XP Management Servi
 | xpManagement.extraVolumeMounts | list | `[]` | Extra volume mounts to attach to XP Management Service server container. For example to mount the extra volume containing secrets |
 | xpManagement.extraVolumes | list | `[]` | Extra volumes to attach to the Pod. For example, you can mount  additional secrets to these volumes |
 | xpManagement.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
-| xpManagement.image.registry | string | `"docker.io/"` | Docker registry for XP Management Service image |
-| xpManagement.image.repository | string | `"xp-management"` | Docker image repository for XP Management Service |
-| xpManagement.image.tag | string | `"latest"` | Docker image tag for XP Management Service |
+| xpManagement.image.registry | string | `"ghcr.io"` | Docker registry for XP Management Service image |
+| xpManagement.image.repository | string | `"gojek/turing-experiments/xp-management"` | Docker image repository for XP Management Service |
+| xpManagement.image.tag | string | `"v0.7.0"` | Docker image tag for XP Management Service |
 | xpManagement.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule, useful when there are multiple ingress controllers installed |
 | xpManagement.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP Management Service |
 | xpManagement.ingress.host | string | `""` | Set host value to enable name based virtual hosting. This allows routing HTTP traffic to multiple host names at the same IP address. If no host is specified, the ingress rule applies to all inbound HTTP traffic through  the IP address specified. https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting |
