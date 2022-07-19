@@ -15,6 +15,7 @@ import { Redirect, Router } from "@reach/router";
 import { PageTitle } from "components/page/PageTitle";
 import { StatusBadge } from "components/status_badge/StatusBadge";
 import { useXpApi } from "hooks/useXpApi";
+import { getSegmenterStatus } from "services/segmenter/SegmenterStatus";
 import { SegmentersConfigView } from "settings/segmenters/details/config/SegmentersConfigView";
 import { SegmenterActions } from "settings/segmenters/details/SegmenterActions";
 import EditSegmenterView from "settings/segmenters/edit/EditSegmenterView";
@@ -34,24 +35,6 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
       error,
     },
   ] = useXpApi(`/projects/${projectId}/segmenters/${segmenterName}`, {}, []);
-
-  const getStatusBadge = (item) => {
-    const status = {
-      active: {
-        label: "Active",
-        color: "#017D73",
-        healthColor: "success",
-        iconType: "check",
-      },
-      inactive: {
-        label: "Inactive",
-        color: "#6A717D",
-        healthColor: "subdued",
-        iconType: "cross",
-      },
-    };
-    return status[item.status];
-  };
 
   // ../../segmenters is required, with pure .. it will end up with /segmenters/ and the tab routing is bugged
   useEffect(() => {
@@ -86,7 +69,7 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
                     icon="package"
                     title={segmenter.name}
                     postpend={
-                      <StatusBadge status={getStatusBadge(segmenter)} />
+                      <StatusBadge status={getSegmenterStatus(segmenter)} />
                     }
                   />
                 </EuiPageHeaderSection>
@@ -103,9 +86,9 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
                       actions={
                         segmenter.scope === "project"
                           ? getActions({
-                              name: segmenterName,
-                              projectId: projectId,
-                            })
+                            name: segmenterName,
+                            projectId: projectId,
+                          })
                           : null
                       }
                       selectedTab={props["*"]}

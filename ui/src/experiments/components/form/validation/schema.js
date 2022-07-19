@@ -6,6 +6,7 @@ import {
   experimentTiers,
   experimentTypes,
 } from "experiments/components/typeOptions";
+import { segmentConfigSchema } from "segments/components/form/validation/schema";
 
 const nameRegex = /^[A-Za-z\d][\w\d \-()#$%&:.]*[\w\d\-()#$%&:.]$/;
 const nameRegexDescription =
@@ -169,63 +170,7 @@ const schema = [
       }),
   }),
   yup.object().shape({
-    segment: yup.lazy((obj) =>
-      yup.object().shape(
-        Object.keys(obj).reduce((acc, key) => {
-          return {
-            ...acc,
-            [key]: yup
-              .array()
-              .when(
-                "$requiredSegmenterNames",
-                (requiredSegmenterNames, schema) => {
-                  if (requiredSegmenterNames.includes(key)) {
-                    return schema
-                      .required(`Segmenter ${key} is required`)
-                      .min(
-                        1,
-                        `Segmenter ${key} should at least have 1 valid value`
-                      );
-                  }
-                }
-              )
-              .when("$segmenterTypes", (segmenterTypes) => {
-                switch (segmenterTypes[key].toUpperCase()) {
-                  case "BOOL":
-                    return yup.array(
-                      yup
-                        .bool()
-                        .typeError("Array elements must all be of type: BOOL")
-                    );
-                  case "INTEGER":
-                    return yup.array(
-                      yup
-                        .number()
-                        .integer()
-                        .typeError(
-                          "Array elements must all be of type: INTEGER"
-                        )
-                    );
-                  case "REAL":
-                    return yup.array(
-                      yup
-                        .number()
-                        .typeError("Array elements must all be of type: REAL")
-                    );
-                  case "STRING":
-                    return yup.array(
-                      yup
-                        .string()
-                        .typeError("Array elements must all be of type: STRING")
-                    );
-                  default:
-                    return yup.array(); // Type is unknown for deactivated segmenters
-                }
-              }),
-          };
-        }, {})
-      )
-    ),
+    segment: segmentConfigSchema,
   }),
   yup.object().shape({
     treatments: yup

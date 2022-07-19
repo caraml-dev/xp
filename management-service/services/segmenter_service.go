@@ -249,8 +249,10 @@ func (svc *segmenterService) ListSegmenters(
 			}
 			// UpdatedAt and CreatedAt fields are manually updated for custom segmenters but not global segmenters since
 			// global segmenters do not contain these fields
-			formattedCustomSegmenter.UpdatedAt = &customSegmenter.UpdatedAt
-			formattedCustomSegmenter.CreatedAt = &customSegmenter.CreatedAt
+			customSegmenterUpdatedAt := customSegmenter.UpdatedAt
+			customSegmenterCreatedAt := customSegmenter.CreatedAt
+			formattedCustomSegmenter.UpdatedAt = &customSegmenterUpdatedAt
+			formattedCustomSegmenter.CreatedAt = &customSegmenterCreatedAt
 			if params.Status == nil || string(*params.Status) == string(*formattedCustomSegmenter.Status) {
 				allSegmenters = append(allSegmenters, formattedCustomSegmenter)
 			}
