@@ -573,7 +573,7 @@ func TestConvertSegmenterValueToString(t *testing.T) {
 		"success | real": {
 			segmenterValue: 1.1,
 			typeName:       SegmenterValueTypeReal,
-			expected:       "1.100000",
+			expected:       "1.1",
 		},
 		"success | integer": {
 			segmenterValue: int64(1),
