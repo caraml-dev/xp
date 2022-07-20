@@ -235,7 +235,7 @@ func (svc *segmenterService) ListSegmenters(
 		if err != nil {
 			return nil, err
 		}
-		for _, customSegmenter := range customSegmenters {
+		for idx, customSegmenter := range customSegmenters {
 			if err := customSegmenter.FromStorageSchema(segmenterTypes); err != nil {
 				return nil, err
 			}
@@ -249,10 +249,8 @@ func (svc *segmenterService) ListSegmenters(
 			}
 			// UpdatedAt and CreatedAt fields are manually updated for custom segmenters but not global segmenters since
 			// global segmenters do not contain these fields
-			customSegmenterUpdatedAt := customSegmenter.UpdatedAt
-			customSegmenterCreatedAt := customSegmenter.CreatedAt
-			formattedCustomSegmenter.UpdatedAt = &customSegmenterUpdatedAt
-			formattedCustomSegmenter.CreatedAt = &customSegmenterCreatedAt
+			formattedCustomSegmenter.UpdatedAt = &customSegmenters[idx].UpdatedAt
+			formattedCustomSegmenter.CreatedAt = &customSegmenters[idx].CreatedAt
 			if params.Status == nil || string(*params.Status) == string(*formattedCustomSegmenter.Status) {
 				allSegmenters = append(allSegmenters, formattedCustomSegmenter)
 			}

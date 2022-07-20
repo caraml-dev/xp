@@ -134,7 +134,7 @@ func (s ExperimentSegmentRaw) ToStorageSchema(segmenterTypes map[string]schema.S
 				if !ok {
 					return nil, fmt.Errorf("%s %s", errTmpl, schema.SegmenterTypeReal)
 				}
-				strVals = append(strVals, fmt.Sprintf("%f", floatVal))
+				strVals = append(strVals, strconv.FormatFloat(floatVal, 'f', -1, 64))
 			}
 			segmenterVals[k] = strVals
 		case schema.SegmenterTypeBool:

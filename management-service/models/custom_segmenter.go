@@ -550,7 +550,7 @@ func convertSegmenterValueToString(segmenterValue interface{}, typeName Segmente
 		if !ok {
 			return nil, fmt.Errorf("%s %s", errTmpl, schema.SegmenterTypeReal)
 		}
-		return fmt.Sprintf("%f", floatVal), nil
+		return strconv.FormatFloat(floatVal, 'f', -1, 64), nil
 	case SegmenterValueTypeBool:
 		boolVal, ok := segmenterValue.(bool)
 		if !ok {
