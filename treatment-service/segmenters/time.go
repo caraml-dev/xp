@@ -8,6 +8,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 
 	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/gojek/xp/common/utils"
 	"github.com/gojek/xp/treatment-service/util"
 )
 
@@ -48,7 +49,7 @@ func (s *hoursOfDay) Transform(
 		}
 		hourOfDay = util.RetrieveHourOfDay(*timeLoc)
 	case cmp.Equal(experimentVariables, []string{"hour_of_day"}):
-		hoursOfDayRequestVal, err := util.GetFloatSegmenter(requestValues, "hour_of_day", segmenter)
+		hoursOfDayRequestVal, err := utils.GetFloatSegmenter(requestValues["hour_of_day"], "hour_of_day", segmenter)
 		if err != nil {
 			return nil, err
 		}
@@ -94,7 +95,7 @@ func (s *daysOfWeek) Transform(
 		}
 		dayOfWeek = util.RetrieveDayOfWeek(*timeLoc)
 	case cmp.Equal(experimentVariables, []string{"day_of_week"}):
-		daysOfWeekRequestVal, err := util.GetFloatSegmenter(requestValues, "day_of_week", segmenter)
+		daysOfWeekRequestVal, err := utils.GetFloatSegmenter(requestValues["day_of_week"], "day_of_week", segmenter)
 		if err != nil {
 			return nil, err
 		}

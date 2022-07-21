@@ -68,12 +68,12 @@ func (s *s2ids) Transform(
 	switch {
 	case cmp.Diff(experimentVariables, []string{"latitude", "longitude"}, cmpopts.SortSlices(utils.Less)) == "":
 		// Convert latitude to appropriate float64 type
-		latitude, err := util.GetFloatSegmenter(requestValues, "latitude", segmenter)
+		latitude, err := utils.GetFloatSegmenter(requestValues["latitude"], "latitude", segmenter)
 		if err != nil {
 			return nil, err
 		}
 		// Convert longitude to appropriate float64 type
-		longitude, err := util.GetFloatSegmenter(requestValues, "longitude", segmenter)
+		longitude, err := utils.GetFloatSegmenter(requestValues["longitude"], "longitude", segmenter)
 		if err != nil {
 			return nil, err
 		}
@@ -84,7 +84,7 @@ func (s *s2ids) Transform(
 		}
 		s2CellID = retrievedS2id
 	case cmp.Equal(experimentVariables, []string{"s2id"}):
-		s2id, err := util.GetFloatSegmenter(requestValues, "s2id", segmenter)
+		s2id, err := utils.GetFloatSegmenter(requestValues["s2id"], "s2id", segmenter)
 		if err != nil {
 			return nil, err
 		}

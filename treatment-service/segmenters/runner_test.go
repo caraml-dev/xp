@@ -1,7 +1,6 @@
 package segmenters
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,7 +36,6 @@ func (s *RunnersTestSuite) TestBaseRunnerGet() {
 func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 	t := s.Suite.T()
 	segmenterName := "test-seg"
-	expectedErr := fmt.Sprintf("segmenter type for %s is not supported", segmenterName)
 	protoStringType := _segmenters.SegmenterValueType_STRING
 	protoBoolType := _segmenters.SegmenterValueType_BOOL
 	protoIntegerType := _segmenters.SegmenterValueType_INTEGER
@@ -47,7 +45,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		requestValues map[string]interface{}
 		segmenterType *_segmenters.SegmenterValueType
 		expected      []*_segmenters.SegmenterValue
-		errString     *string
+		errString     string
 	}{
 		{
 			testName:      "success | default untyped string inferred",
@@ -81,7 +79,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 			// using float as JSON value via browser are sent as float
 			requestValues: map[string]interface{}{segmenterName: ""},
 			segmenterType: &protoIntegerType,
-			errString:     &expectedErr,
+			errString:     "invalid type of variable (test-seg) was provided for test-seg segmenter; expected int64",
 		},
 		{
 			testName:      "success | string type",
@@ -93,7 +91,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 			testName:      "failure | string type",
 			requestValues: map[string]interface{}{segmenterName: 1},
 			segmenterType: &protoStringType,
-			errString:     &expectedErr,
+			errString:     "segmenter type for test-seg is not supported",
 		},
 		{
 			testName:      "success | float type",
@@ -105,7 +103,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 			testName:      "failure | float type",
 			requestValues: map[string]interface{}{segmenterName: ""},
 			segmenterType: &protoRealType,
-			errString:     &expectedErr,
+			errString:     "invalid type of variable (test-seg) was provided for test-seg segmenter; expected float64",
 		},
 		{
 			testName:      "success | bool type",
@@ -117,7 +115,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 			testName:      "failure | bool type",
 			requestValues: map[string]interface{}{segmenterName: ""},
 			segmenterType: &protoBoolType,
-			errString:     &expectedErr,
+			errString:     "invalid type of variable (test-seg) was provided for test-seg segmenter; expected bool",
 		},
 	}
 
@@ -128,11 +126,11 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 				Type: test.segmenterType,
 			})
 			res, err := runner.Transform(segmenterName, test.requestValues, []string{segmenterName})
-			if test.errString == nil {
+			if test.errString == "" {
 				s.Assert().NoError(err)
 				s.Assert().Equal(test.expected, res)
 			} else {
-				s.Assert().EqualError(err, *test.errString)
+				s.Assert().EqualError(err, test.errString)
 			}
 		})
 	}
