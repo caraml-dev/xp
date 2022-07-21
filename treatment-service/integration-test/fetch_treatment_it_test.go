@@ -747,7 +747,7 @@ func (suite *TreatmentServiceTestSuite) TestInvalidLatLongType() {
 		PassKey: "test_project_1234",
 	}
 	reqBody := `{
-			"latitude": "1.2537040223936706",
+			"latitude": true,
 			"longitude": 103.8998991137485,
 			"order-id": "1234"
 		}`
@@ -761,7 +761,7 @@ func (suite *TreatmentServiceTestSuite) TestInvalidLatLongType() {
 	)
 
 	suite.Require().Equal(400, resp.StatusCode())
-	suite.Require().Equal("incorrect type provided for latitude; expected float64", resp.JSON400.Message)
+	suite.Require().Equal("invalid type of variable (latitude) was provided for s2_ids segmenter; expected float64", resp.JSON400.Message)
 }
 
 func (suite *TreatmentServiceTestSuite) TestAllFiltersSwitchback() {

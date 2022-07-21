@@ -179,13 +179,13 @@ func (suite *SchemaServiceTestSuite) TestGetRequestFilter() {
 	suite.Require().Equal(expected, actual)
 
 	filterParams = map[string]interface{}{
-		"longitude": "103.8998991137485",
+		"longitude": true,
 		"latitude":  1.2537040223936706,
 		"order-id":  "1234",
 		"tz":        timezone,
 	}
 	_, err = suite.schemaService.GetRequestFilter(1, filterParams)
-	suite.Require().Equal("incorrect type provided for longitude; expected float64", err.Error())
+	suite.Require().Equal("invalid type of variable (longitude) was provided for s2_ids segmenter; expected float64", err.Error())
 
 	filterParams = map[string]interface{}{}
 	_, err = suite.schemaService.GetRequestFilter(5, filterParams)

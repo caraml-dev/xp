@@ -67,30 +67,28 @@ func (s *s2ids) Transform(
 	var s2CellID s2.CellID
 	switch {
 	case cmp.Diff(experimentVariables, []string{"latitude", "longitude"}, cmpopts.SortSlices(utils.Less)) == "":
-		err := util.ValidateLatLong(requestValues)
+		// Convert latitude to appropriate float64 type
+		latitude, err := util.GetFloatSegmenter(requestValues, "latitude", segmenter)
+		if err != nil {
+			return nil, err
+		}
+		// Convert longitude to appropriate float64 type
+		longitude, err := util.GetFloatSegmenter(requestValues, "longitude", segmenter)
 		if err != nil {
 			return nil, err
 		}
 		// Generate S2ID for the supplied level
-		latitude, ok := requestValues["latitude"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "latitude", segmenter, "float64")
-		}
-		longitude, ok := requestValues["longitude"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "longitude", segmenter, "float64")
-		}
-		retrievedS2id, err := util.GetS2ID(latitude, longitude, s.MaxS2Level)
+		retrievedS2id, err := util.GetS2ID(*latitude, *longitude, s.MaxS2Level)
 		if err != nil {
 			return nil, err
 		}
 		s2CellID = retrievedS2id
 	case cmp.Equal(experimentVariables, []string{"s2id"}):
-		s2idCast, ok := requestValues["s2id"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "s2id", segmenter, "float64")
+		s2id, err := util.GetFloatSegmenter(requestValues, "s2id", segmenter)
+		if err != nil {
+			return nil, err
 		}
-		s2CellID = s2.CellID(int64(s2idCast))
+		s2CellID = s2.CellID(int64(*s2id))
 		if !s2CellID.IsValid() {
 			return nil, fmt.Errorf("provided s2id variable for %s segmenter is invalid", segmenter)
 		}

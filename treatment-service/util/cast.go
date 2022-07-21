@@ -1,8 +1,13 @@
 package util
 
 import (
+	"fmt"
 	"hash/fnv"
+	"reflect"
+	"strconv"
 )
+
+const TypeCastingErrorTmpl = "invalid type of variable (%s) was provided for %s segmenter; expected %s"
 
 // ConvertFloat64ToInt64 default interface type of float64 needs to be converted to expected int64 type
 // required by proto
@@ -49,4 +54,23 @@ func DereferenceBool(ref *bool, default_ bool) bool {
 	}
 
 	return *ref
+}
+
+func GetFloatSegmenter(values map[string]interface{}, key string, segmenter string) (*float64, error) {
+	var val float64
+	var err error
+	if reflect.TypeOf(values[key]).String() == "string" {
+		val, err = strconv.ParseFloat(values[key].(string), 64)
+		if err != nil {
+			return nil, fmt.Errorf(TypeCastingErrorTmpl, key, segmenter, "float64")
+		}
+	} else {
+		castedVal, ok := values[key].(float64)
+		if !ok {
+			return nil, fmt.Errorf(TypeCastingErrorTmpl, key, segmenter, "float64")
+		}
+		val = castedVal
+	}
+
+	return &val, nil
 }

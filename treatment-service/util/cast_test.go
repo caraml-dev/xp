@@ -141,3 +141,45 @@ func TestDereferenceBool(t *testing.T) {
 		})
 	}
 }
+
+func TestGetFloatSegmenter(t *testing.T) {
+	tests := map[string]struct {
+		values    map[string]interface{}
+		key       string
+		segmenter string
+		expected  float64
+		errString string
+	}{
+		"failure | bool": {
+			values:    map[string]interface{}{"key": true},
+			key:       "key",
+			segmenter: "float-seg",
+			errString: "invalid type of variable (key) was provided for float-seg segmenter; expected float64",
+		},
+		"success | float64": {
+			values:    map[string]interface{}{"key": 1.2537040223936706},
+			key:       "key",
+			segmenter: "float-seg",
+			expected:  1.2537040223936706,
+		},
+		"success | string": {
+			values:    map[string]interface{}{"key": "1.2537040223936706"},
+			key:       "key",
+			segmenter: "float-seg",
+			expected:  1.2537040223936706,
+		},
+	}
+
+	for name, data := range tests {
+		t.Run(name, func(t *testing.T) {
+			resp, err := GetFloatSegmenter(data.values, data.key, data.segmenter)
+
+			if data.errString == "" {
+				assert.NoError(t, err)
+				assert.Equal(t, data.expected, *resp)
+			} else {
+				assert.EqualError(t, err, data.errString)
+			}
+		})
+	}
+}

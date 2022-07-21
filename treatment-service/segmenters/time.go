@@ -48,11 +48,11 @@ func (s *hoursOfDay) Transform(
 		}
 		hourOfDay = util.RetrieveHourOfDay(*timeLoc)
 	case cmp.Equal(experimentVariables, []string{"hour_of_day"}):
-		hoursOfDayCast, ok := requestValues["hour_of_day"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "hour_of_day", segmenter, "float64")
+		hoursOfDayRequestVal, err := util.GetFloatSegmenter(requestValues, "hour_of_day", segmenter)
+		if err != nil {
+			return nil, err
 		}
-		hourOfDay = int64(hoursOfDayCast)
+		hourOfDay = int64(*hoursOfDayRequestVal)
 		if hourOfDay < hourMin || hourOfDay > hourMax {
 			return nil, fmt.Errorf("provided hour_of_day variable for %s segmenter is invalid", segmenter)
 		}
@@ -94,11 +94,11 @@ func (s *daysOfWeek) Transform(
 		}
 		dayOfWeek = util.RetrieveDayOfWeek(*timeLoc)
 	case cmp.Equal(experimentVariables, []string{"day_of_week"}):
-		dayOfWeekCast, ok := requestValues["day_of_week"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "day_of_week", segmenter, "float64")
+		daysOfWeekRequestVal, err := util.GetFloatSegmenter(requestValues, "day_of_week", segmenter)
+		if err != nil {
+			return nil, err
 		}
-		dayOfWeek = int64(dayOfWeekCast)
+		dayOfWeek = int64(*daysOfWeekRequestVal)
 		if dayOfWeek < dayMin || dayOfWeek > dayMax {
 			return nil, fmt.Errorf("provided day_of_week variable for %s segmenter is invalid", segmenter)
 		}
