@@ -8,11 +8,17 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
     branches:
       - main
+    paths-ignore:
+      - "plugins/**"
+      - ".github/workflows/plugins.yml"
 
   # Automatically run CI on branches, that have active PR opened
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "plugins/**"
+      - ".github/workflows/plugins.yml"
   
   # To make it possible to trigger e2e CI workflow for any arbitrary git ref
   workflow_dispatch:
