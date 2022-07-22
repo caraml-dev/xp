@@ -49,7 +49,8 @@ generate-api:
 	oapi-codegen -templates api/templates/chi -config api/management/server.conf api/experiments.yaml
 	oapi-codegen -config api/mockmanagement/server.conf api/experiments.yaml
 	oapi-codegen -config api/treatment/server.conf api/treatment.yaml
-	cd clients/management/ && mockery --name=ClientInterface --output=../../common/testutils/mocks --filename=ManagementClientInterface.go
+	cd clients/management/ && mockery --name=ClientInterface --output=../../clients/testutils/mocks --filename=ManagementClientInterface.go
+	cd clients/treatment/ && mockery --name=TreatmentClientInterface --output=../../clients/testutils/mocks --filename=TreatmentClientInterface.go
 
 # ==================================
 # Setup Management & Treatment Services

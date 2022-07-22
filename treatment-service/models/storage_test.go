@@ -23,11 +23,11 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	managementClient "github.com/gojek/xp/clients/management"
+	"github.com/gojek/xp/clients/testutils/mocks"
 	"github.com/gojek/xp/common/api/schema"
 	_pubsub "github.com/gojek/xp/common/pubsub"
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	tu "github.com/gojek/xp/common/testutils"
-	"github.com/gojek/xp/common/testutils/mocks"
 )
 
 type LocalStorageLookupSuite struct {

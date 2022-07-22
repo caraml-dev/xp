@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/spf13/cast"
 
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	"github.com/gojek/xp/treatment-service/util"
@@ -36,6 +37,7 @@ func (s *hoursOfDay) Transform(
 	experimentVariables []string,
 ) ([]*_segmenters.SegmenterValue, error) {
 	var hourOfDay int64
+	var err error
 	switch {
 	case cmp.Equal(experimentVariables, []string{"tz"}):
 		tzString, ok := requestValues["tz"].(string)
@@ -48,11 +50,10 @@ func (s *hoursOfDay) Transform(
 		}
 		hourOfDay = util.RetrieveHourOfDay(*timeLoc)
 	case cmp.Equal(experimentVariables, []string{"hour_of_day"}):
-		hoursOfDayCast, ok := requestValues["hour_of_day"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "hour_of_day", segmenter, "float64")
+		hourOfDay, err = cast.ToInt64E(requestValues["hour_of_day"])
+		if err != nil {
+			return nil, err
 		}
-		hourOfDay = int64(hoursOfDayCast)
 		if hourOfDay < hourMin || hourOfDay > hourMax {
 			return nil, fmt.Errorf("provided hour_of_day variable for %s segmenter is invalid", segmenter)
 		}
@@ -82,6 +83,7 @@ func (s *daysOfWeek) Transform(
 	experimentVariables []string,
 ) ([]*_segmenters.SegmenterValue, error) {
 	var dayOfWeek int64
+	var err error
 	switch {
 	case cmp.Equal(experimentVariables, []string{"tz"}):
 		tzString, ok := requestValues["tz"].(string)
@@ -94,11 +96,10 @@ func (s *daysOfWeek) Transform(
 		}
 		dayOfWeek = util.RetrieveDayOfWeek(*timeLoc)
 	case cmp.Equal(experimentVariables, []string{"day_of_week"}):
-		dayOfWeekCast, ok := requestValues["day_of_week"].(float64)
-		if !ok {
-			return nil, fmt.Errorf(TypeCastingErrorTmpl, "day_of_week", segmenter, "float64")
+		dayOfWeek, err = cast.ToInt64E(requestValues["day_of_week"])
+		if err != nil {
+			return nil, err
 		}
-		dayOfWeek = int64(dayOfWeekCast)
 		if dayOfWeek < dayMin || dayOfWeek > dayMax {
 			return nil, fmt.Errorf("provided day_of_week variable for %s segmenter is invalid", segmenter)
 		}

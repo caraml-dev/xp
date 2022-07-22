@@ -3,6 +3,7 @@ package segmenters
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -78,14 +79,6 @@ func (s *TimeRunnerTestSuite) TestHourOfDayTransform() {
 			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "tz", s.name, "string"),
 		},
 		{
-			name: "failure | invalid type hour_of_day variable",
-			requestParam: map[string]interface{}{
-				"hour_of_day": "1",
-			},
-			experimentVariables: []string{"hour_of_day"},
-			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "hour_of_day", s.name, "float64"),
-		},
-		{
 			name: "success | tz",
 			requestParam: map[string]interface{}{
 				"tz": tzString,
@@ -97,6 +90,14 @@ func (s *TimeRunnerTestSuite) TestHourOfDayTransform() {
 			name: "success | hour_of_day",
 			requestParam: map[string]interface{}{
 				"hour_of_day": float64(hourOfDay),
+			},
+			experimentVariables: []string{"hour_of_day"},
+			expected:            []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_Integer{Integer: hourOfDay}}},
+		},
+		{
+			name: "success | hour_of_day (string)",
+			requestParam: map[string]interface{}{
+				"hour_of_day": strconv.Itoa(int(hourOfDay)),
 			},
 			experimentVariables: []string{"hour_of_day"},
 			expected:            []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_Integer{Integer: hourOfDay}}},
@@ -156,14 +157,6 @@ func (s *TimeRunnerTestSuite) TestDayOfWeekTransform() {
 			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "tz", s.name, "string"),
 		},
 		{
-			name: "failure | invalid type day_of_week variable",
-			requestParam: map[string]interface{}{
-				"day_of_week": "1",
-			},
-			experimentVariables: []string{"day_of_week"},
-			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "day_of_week", s.name, "float64"),
-		},
-		{
 			name: "success | tz",
 			requestParam: map[string]interface{}{
 				"tz": tzString,
@@ -175,6 +168,14 @@ func (s *TimeRunnerTestSuite) TestDayOfWeekTransform() {
 			name: "success | day_of_week",
 			requestParam: map[string]interface{}{
 				"day_of_week": float64(dayOfWeek),
+			},
+			experimentVariables: []string{"day_of_week"},
+			expected:            []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_Integer{Integer: dayOfWeek}}},
+		},
+		{
+			name: "success | day_of_week (string)",
+			requestParam: map[string]interface{}{
+				"day_of_week": strconv.Itoa(int(dayOfWeek)),
 			},
 			experimentVariables: []string{"day_of_week"},
 			expected:            []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_Integer{Integer: dayOfWeek}}},

@@ -20,6 +20,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.12.2
 	github.com/rs/cors v1.8.2
+	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.4.0
 	github.com/stretchr/testify v1.7.1
 	github.com/testcontainers/testcontainers-go v0.13.0
@@ -34,5 +35,4 @@ replace (
 	github.com/gojek/xp/clients => ../clients
 	github.com/gojek/xp/common => ../common
 	github.com/gojek/xp/management-service => ../management-service
-	github.com/gojek/xp/treatment-service => ./
 )

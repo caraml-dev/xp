@@ -68,7 +68,7 @@ func (s *S2IDsRunnerTestSuite) TestTransform() {
 				"s2id": int64(3348536),
 			},
 			experimentVariables: []string{"s2id"},
-			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "s2id", s.name, "float64"),
+			errString:           fmt.Sprintf("provided s2id variable for %s segmenter is invalid", s.name),
 		},
 		{
 			name: "failure | invalid type latitude variable",
@@ -77,13 +77,28 @@ func (s *S2IDsRunnerTestSuite) TestTransform() {
 				"longitude": 103.899899113748,
 			},
 			experimentVariables: []string{"latitude", "longitude"},
-			errString:           "incorrect type provided for latitude; expected float64",
+			errString:           "received invalid latitude, longitude values",
 		},
 		{
 			name: "success | lat-long + ordering",
 			requestParam: map[string]interface{}{
 				"latitude":  1.2537040223936706,
 				"longitude": 103.899899113748,
+			},
+			experimentVariables: []string{"longitude", "latitude"},
+			expected: []*_segmenters.SegmenterValue{
+				{Value: &_segmenters.SegmenterValue_Integer{Integer: 3592210809859604480}},
+				{Value: &_segmenters.SegmenterValue_Integer{Integer: 3592210814154571776}},
+				{Value: &_segmenters.SegmenterValue_Integer{Integer: 3592210796974702592}},
+				{Value: &_segmenters.SegmenterValue_Integer{Integer: 3592210865694179328}},
+				{Value: &_segmenters.SegmenterValue_Integer{Integer: 3592211140572086272}},
+			},
+		},
+		{
+			name: "success | lat-long + ordering (string)",
+			requestParam: map[string]interface{}{
+				"latitude":  "1.2537040223936706",
+				"longitude": "103.899899113748",
 			},
 			experimentVariables: []string{"longitude", "latitude"},
 			expected: []*_segmenters.SegmenterValue{

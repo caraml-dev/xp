@@ -36,9 +36,9 @@ func (r *BaseRunner) Transform(
 	errTmpl := fmt.Sprintf("received wrong type of segmenter value; %s expects type", segmenter)
 	transformedVals := []*_segmenters.SegmenterValue{}
 
-	convertedVal := _utils.InterfaceToSegmenterValue(requestValues[segmenter], r.config.Type)
-	if convertedVal == nil {
-		return nil, fmt.Errorf("segmenter type for %s is not supported", segmenter)
+	convertedVal, err := _utils.InterfaceToSegmenterValue(requestValues[segmenter], segmenter, r.config.Type)
+	if err != nil {
+		return nil, err
 	}
 	// If type is provided, validate the converted val. Do conversion for integer.
 	if r.config.Type != nil {

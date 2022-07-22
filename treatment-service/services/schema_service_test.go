@@ -178,15 +178,6 @@ func (suite *SchemaServiceTestSuite) TestGetRequestFilter() {
 	suite.Require().Nil(err)
 	suite.Require().Equal(expected, actual)
 
-	filterParams = map[string]interface{}{
-		"longitude": "103.8998991137485",
-		"latitude":  1.2537040223936706,
-		"order-id":  "1234",
-		"tz":        timezone,
-	}
-	_, err = suite.schemaService.GetRequestFilter(1, filterParams)
-	suite.Require().Equal("incorrect type provided for longitude; expected float64", err.Error())
-
 	filterParams = map[string]interface{}{}
 	_, err = suite.schemaService.GetRequestFilter(5, filterParams)
 	suite.Require().Errorf(err, "unable to find project id 5")

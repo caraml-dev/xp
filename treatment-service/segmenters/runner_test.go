@@ -1,7 +1,6 @@
 package segmenters
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,7 +36,6 @@ func (s *RunnersTestSuite) TestBaseRunnerGet() {
 func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 	t := s.Suite.T()
 	segmenterName := "test-seg"
-	expectedErr := fmt.Sprintf("segmenter type for %s is not supported", segmenterName)
 	protoStringType := _segmenters.SegmenterValueType_STRING
 	protoBoolType := _segmenters.SegmenterValueType_BOOL
 	protoIntegerType := _segmenters.SegmenterValueType_INTEGER
@@ -47,7 +45,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		requestValues map[string]interface{}
 		segmenterType *_segmenters.SegmenterValueType
 		expected      []*_segmenters.SegmenterValue
-		errString     *string
+		errString     string
 	}{
 		{
 			testName:      "success | default untyped string inferred",
@@ -79,9 +77,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		{
 			testName: "failure | integer type",
 			// using float as JSON value via browser are sent as float
-			requestValues: map[string]interface{}{segmenterName: ""},
+			requestValues: map[string]interface{}{segmenterName: "string_segmenter"},
 			segmenterType: &protoIntegerType,
-			errString:     &expectedErr,
+			errString:     "unable to cast \"string_segmenter\" of type string to int64",
 		},
 		{
 			testName:      "success | string type",
@@ -93,7 +91,7 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 			testName:      "failure | string type",
 			requestValues: map[string]interface{}{segmenterName: 1},
 			segmenterType: &protoStringType,
-			errString:     &expectedErr,
+			errString:     "segmenter type for test-seg is not supported",
 		},
 		{
 			testName:      "success | float type",
@@ -103,9 +101,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		},
 		{
 			testName:      "failure | float type",
-			requestValues: map[string]interface{}{segmenterName: ""},
+			requestValues: map[string]interface{}{segmenterName: "string_segmenter"},
 			segmenterType: &protoRealType,
-			errString:     &expectedErr,
+			errString:     "unable to cast \"string_segmenter\" of type string to float64",
 		},
 		{
 			testName:      "success | bool type",
@@ -115,9 +113,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		},
 		{
 			testName:      "failure | bool type",
-			requestValues: map[string]interface{}{segmenterName: ""},
+			requestValues: map[string]interface{}{segmenterName: "string"},
 			segmenterType: &protoBoolType,
-			errString:     &expectedErr,
+			errString:     "strconv.ParseBool: parsing \"string\": invalid syntax",
 		},
 	}
 
@@ -128,11 +126,11 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 				Type: test.segmenterType,
 			})
 			res, err := runner.Transform(segmenterName, test.requestValues, []string{segmenterName})
-			if test.errString == nil {
+			if test.errString == "" {
 				s.Assert().NoError(err)
 				s.Assert().Equal(test.expected, res)
 			} else {
-				s.Assert().EqualError(err, *test.errString)
+				s.Assert().EqualError(err, test.errString)
 			}
 		})
 	}
