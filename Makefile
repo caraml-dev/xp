@@ -42,7 +42,7 @@ version:
 	@echo "xp-api version:" $(VERSION)
 
 generate-api:
-	test -x ${GOPATH}/bin/oapi-codegen || go get github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v${OPENAPI_VERSION}
+	test -x ${GOPATH}/bin/oapi-codegen || go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v${OPENAPI_VERSION}
 	oapi-codegen -config api/common/schema.conf api/schema.yaml
 	oapi-codegen -config api/clients/management.conf api/experiments.yaml
 	oapi-codegen -config api/clients/treatment.conf api/treatment.yaml
@@ -85,7 +85,7 @@ $(protoc_dir):
 	unzip protoc-${PB_VERSION}-${PLATFROM}.zip -d ${protoc_dir}
 
 compile-protos: | $(protoc_dir)
-	go get github.com/golang/protobuf/protoc-gen-go@v${PROTOC_VERSION}
+	go install github.com/golang/protobuf/protoc-gen-go@v${PROTOC_VERSION}
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=treatment-service api/proto/logs.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common/segmenters --go_opt=module=github.com/gojek/xp/common/segmenters api/proto/segmenters.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/message.proto
@@ -98,7 +98,7 @@ compile-protos: | $(protoc_dir)
 .PHONY: setup
 setup:
 	@echo "> Initializing dependencies ..."
-	@test -x ${GOPATH}/bin/golangci-lint || go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
 
 tidy-management-service:
 	cd ${MANAGEMENT_SVC_PATH} && go mod tidy
