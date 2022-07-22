@@ -30,7 +30,7 @@ build:
 
 .PHONY: build-image
 build-image: vendor version
-	@$(eval IMAGE_TAG = $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/,)xp-engine-plugin:${VERSION})
+	@$(eval IMAGE_TAG = $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/,)turing-plugin:${VERSION})
 	@echo "Building docker image: ${IMAGE_TAG}"
 	docker build . --tag ${IMAGE_TAG}
 

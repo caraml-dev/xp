@@ -5,7 +5,7 @@ on:
   # (only if there are changes to relevant paths)
   push:
     tags:
-      - "xp-engine-plugin/v[0-9]+.[0-9]+.[0-9]+*"
+      - "turing-plugin/v[0-9]+.[0-9]+.[0-9]+*"
     branches:
       - main
     paths:
@@ -39,7 +39,7 @@ jobs:
           skip-build-cache: true
           args: --timeout 3m --verbose
 
-  turing-experiment-engine-xp-plugin-tests:
+  turing-plugin-tests:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -63,9 +63,9 @@ jobs:
       - id: release-rules
         uses: ./.github/actions/release-rules
         with:
-          prefix: xp-engine-plugin/
+          prefix: turing-plugin/
 
-  publish-turing-experiment-engine-xp-plugin:
+  publish-turing-plugin:
     # Automatically publish release and pre-release artifacts.
     #
     # As for dev releases, make it possible to publish artifacts
@@ -80,10 +80,10 @@ jobs:
 #    environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
     runs-on: ubuntu-latest
     outputs:
-      xp-engine-plugin-image: ${{ steps.build-image.outputs.xp-engine-plugin-image }}
+      turing-plugin-image: ${{ steps.build-image.outputs.turing-plugin-image }}
     needs:
       - release-rules
-      - turing-experiment-engine-xp-plugin-tests
+      - turing-plugin-tests
     steps:
       - uses: actions/checkout@v2
         with:
@@ -109,7 +109,7 @@ jobs:
         run: |
           set -o pipefail
           make build-image | tee output.log
-          echo "::set-output name=xp-engine-plugin-image::$(sed -n 's%Building docker image: \(.*\)%\1%p' output.log)"
+          echo "::set-output name=turing-plugin-image::$(sed -n 's%Building docker image: \(.*\)%\1%p' output.log)"
 
 #      - name: Publish Turing Experiment Engine XP Plugin Docker Image
 #        run: docker push ${{ steps.build-image.outputs.xp-engine-plugin-image }}
