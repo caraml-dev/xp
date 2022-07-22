@@ -1,22 +1,22 @@
 package runner
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
-	"reflect"
 	"testing"
 
-	"bou.ke/monkey"
 	"github.com/gojek/turing/engines/experiment/pkg/request"
 	"github.com/gojek/turing/engines/experiment/runner"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	xpclient "github.com/gojek/xp/clients/treatment"
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/gojek/xp/clients/testutils/mocks"
+	treatmentClient "github.com/gojek/xp/clients/treatment"
 	"github.com/gojek/xp/plugins/turing/config"
 	"github.com/gojek/xp/plugins/turing/internal/testutils"
 )
@@ -143,48 +143,52 @@ func TestMissingRequestValue(t *testing.T) {
 }
 
 func TestFetchTreatment(t *testing.T) {
-	treatmentClient := &xpclient.ClientWithResponses{}
-	monkey.PatchInstanceMethod(
-		reflect.TypeOf(treatmentClient),
-		"FetchTreatmentWithBodyWithResponse",
-		func(tc *xpclient.ClientWithResponses, ctx context.Context, projectId int64, params *xpclient.FetchTreatmentParams,
-			contentType string, body io.Reader, reqEditors ...xpclient.RequestEditorFn,
-		) (*xpclient.FetchTreatmentResponse, error) {
-			var json200Struct struct {
-				Data *schema.SelectedTreatment `json:"data,omitempty"`
-			}
+	mockTreatmentClientInterface := mocks.TreatmentClientInterface{}
+	mockTreatmentClient := treatmentClient.ClientWithResponses{ClientInterface: &mockTreatmentClientInterface}
+	mockTreatmentClientInterface.On("FetchTreatmentWithBody",
+		context.Background(),
+		int64(1),
+		&treatmentClient.FetchTreatmentParams{PassKey: "abc"},
+		"application/json",
+		mock.Anything,
+	).Return(
+		&http.Response{
+			StatusCode: 200,
+			Header:     map[string][]string{"Content-Type": {"json"}},
+			Body:       ioutil.NopCloser(bytes.NewBufferString(`{}`)),
+		}, nil)
 
-			if projectId == 1 {
-				return &xpclient.FetchTreatmentResponse{
-					Body:    []byte{},
-					JSON200: &json200Struct,
-				}, nil
-			}
-			if projectId == 2 {
-				traffic := int32(50)
-				selectedTreatment := &schema.SelectedTreatment{
-					ExperimentId:   712,
-					ExperimentName: "test_experiment",
-					Treatment: schema.SelectedTreatmentData{
-						Configuration: map[string]interface{}{"foo": "bar"},
-						Name:          "test_experiment-control",
-						Traffic:       &traffic,
-					},
-				}
-				json200Struct.Data = selectedTreatment
-
-				return &xpclient.FetchTreatmentResponse{
-					Body:    []byte{},
-					JSON200: &json200Struct,
-				}, nil
-			}
-			return nil, fmt.Errorf("Unexpected ProjectID: %d", projectId)
-		},
-	)
-	defer monkey.UnpatchAll()
+	mockTreatmentClientInterface.On("FetchTreatmentWithBody",
+		context.Background(),
+		int64(2),
+		&treatmentClient.FetchTreatmentParams{PassKey: "abc"},
+		"application/json",
+		mock.Anything,
+	).Return(
+		&http.Response{
+			StatusCode: 200,
+			Header:     map[string][]string{"Content-Type": {"json"}},
+			Body: ioutil.NopCloser(
+				bytes.NewBufferString(
+					`{
+							"data" : {
+								"experiment_id": 712,
+								"experiment_name": "test_experiment",
+								"treatment": {
+									"configuration": {
+										"foo": "bar"
+									},
+									"name": "test_experiment-control",
+									"traffic": 50
+								}
+							}
+						}`,
+				),
+			),
+		}, nil)
 
 	expRunner := experimentRunner{
-		httpClient: treatmentClient,
+		httpClient: &mockTreatmentClient,
 		projectID:  1,
 		passkey:    "abc",
 		parameters: []config.RequestParameter{

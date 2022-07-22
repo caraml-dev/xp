@@ -77,9 +77,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		{
 			testName: "failure | integer type",
 			// using float as JSON value via browser are sent as float
-			requestValues: map[string]interface{}{segmenterName: "string"},
+			requestValues: map[string]interface{}{segmenterName: "string_segmenter"},
 			segmenterType: &protoIntegerType,
-			errString:     "unable to cast \"string\" of type string to int64",
+			errString:     "unable to cast \"string_segmenter\" of type string to int64",
 		},
 		{
 			testName:      "success | string type",
@@ -101,9 +101,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		},
 		{
 			testName:      "failure | float type",
-			requestValues: map[string]interface{}{segmenterName: "string"},
+			requestValues: map[string]interface{}{segmenterName: "string_segmenter"},
 			segmenterType: &protoRealType,
-			errString:     "unable to cast \"string\" of type string to float64",
+			errString:     "unable to cast \"string_segmenter\" of type string to float64",
 		},
 		{
 			testName:      "success | bool type",
