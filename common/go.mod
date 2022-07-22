@@ -9,6 +9,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.3
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	github.com/testcontainers/testcontainers-go v0.11.0
@@ -17,3 +18,5 @@ require (
 	golang.org/x/tools v0.1.0 // indirect
 	google.golang.org/protobuf v1.26.0-rc.1
 )
+
+replace github.com/gojek/xp/clients => ../clients

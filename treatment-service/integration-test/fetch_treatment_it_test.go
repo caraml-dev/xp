@@ -741,29 +741,6 @@ func (suite *TreatmentServiceTestSuite) TestMissingRequestParams() {
 	suite.Require().Equal(400, resp.StatusCode())
 }
 
-func (suite *TreatmentServiceTestSuite) TestInvalidLatLongType() {
-	projectId := int64(1)
-	params := treatment.FetchTreatmentParams{
-		PassKey: "test_project_1234",
-	}
-	reqBody := `{
-			"latitude": true,
-			"longitude": 103.8998991137485,
-			"order-id": "1234"
-		}`
-	postBody := bytes.NewBuffer([]byte(reqBody))
-	resp, _ := suite.treatmentServiceClient.FetchTreatmentWithBodyWithResponse(
-		suite.ctx,
-		projectId,
-		&params,
-		"application/json",
-		postBody,
-	)
-
-	suite.Require().Equal(400, resp.StatusCode())
-	suite.Require().Equal("invalid type of variable (latitude) was provided for s2_ids segmenter; expected float64", resp.JSON400.Message)
-}
-
 func (suite *TreatmentServiceTestSuite) TestAllFiltersSwitchback() {
 	projectId := int64(3)
 	params := treatment.FetchTreatmentParams{PassKey: "test_project_1234"}

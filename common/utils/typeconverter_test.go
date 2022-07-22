@@ -158,7 +158,7 @@ func TestInterfaceToSegmenterValue(t *testing.T) {
 			SegmenterValue: "test",
 			SegmenterType:  &segmenterTypeInt,
 			Expected:       nil,
-			ErrString:      "invalid type of variable (seg-name) was provided for seg-name segmenter; expected int64",
+			ErrString:      "unable to cast \"test\" of type string to int64",
 		},
 		{
 			Name:           "success | infer float",
@@ -179,7 +179,7 @@ func TestInterfaceToSegmenterValue(t *testing.T) {
 			SegmenterValue: "test",
 			SegmenterType:  &segmenterTypeReal,
 			Expected:       nil,
-			ErrString:      "invalid type of variable (seg-name) was provided for seg-name segmenter; expected float64",
+			ErrString:      "unable to cast \"test\" of type string to float64",
 		},
 		{
 			Name:           "success | infer bool",
@@ -200,7 +200,7 @@ func TestInterfaceToSegmenterValue(t *testing.T) {
 			SegmenterValue: "test",
 			SegmenterType:  &segmenterTypeBool,
 			Expected:       nil,
-			ErrString:      "invalid type of variable (seg-name) was provided for seg-name segmenter; expected bool",
+			ErrString:      "strconv.ParseBool: parsing \"test\": invalid syntax",
 		},
 	}
 
@@ -214,138 +214,6 @@ func TestInterfaceToSegmenterValue(t *testing.T) {
 				assert.Equal(t, data.Expected, val)
 			} else {
 				assert.EqualError(t, err, data.ErrString)
-			}
-		})
-	}
-}
-
-func TestGetIntSegmenter(t *testing.T) {
-	tests := map[string]struct {
-		values    interface{}
-		key       string
-		segmenter string
-		expected  int64
-		errString string
-	}{
-		"failure | bool": {
-			values:    true,
-			key:       "key",
-			segmenter: "int-seg",
-			errString: "invalid type of variable (key) was provided for int-seg segmenter; expected float64",
-		},
-		"success | float64": {
-			values:    1.0,
-			key:       "key",
-			segmenter: "int-seg",
-			expected:  1.0,
-		},
-		"success | int64": {
-			values:    int64(1),
-			key:       "key",
-			segmenter: "int-seg",
-			expected:  1,
-		},
-		"success | string": {
-			values:    "1",
-			key:       "key",
-			segmenter: "int-seg",
-			expected:  1,
-		},
-	}
-
-	for name, data := range tests {
-		t.Run(name, func(t *testing.T) {
-			resp, err := GetIntSegmenter(data.values, data.key, data.segmenter)
-
-			if data.errString == "" {
-				assert.NoError(t, err)
-				assert.Equal(t, data.expected, *resp)
-			} else {
-				assert.EqualError(t, err, data.errString)
-			}
-		})
-	}
-}
-
-func TestGetFloatSegmenter(t *testing.T) {
-	tests := map[string]struct {
-		values    interface{}
-		key       string
-		segmenter string
-		expected  float64
-		errString string
-	}{
-		"failure | bool": {
-			values:    true,
-			key:       "key",
-			segmenter: "float-seg",
-			errString: "invalid type of variable (key) was provided for float-seg segmenter; expected float64",
-		},
-		"success | float64": {
-			values:    1.2537040223936706,
-			key:       "key",
-			segmenter: "float-seg",
-			expected:  1.2537040223936706,
-		},
-		"success | string": {
-			values:    "1.2537040223936706",
-			key:       "key",
-			segmenter: "float-seg",
-			expected:  1.2537040223936706,
-		},
-	}
-
-	for name, data := range tests {
-		t.Run(name, func(t *testing.T) {
-			resp, err := GetFloatSegmenter(data.values, data.key, data.segmenter)
-
-			if data.errString == "" {
-				assert.NoError(t, err)
-				assert.Equal(t, data.expected, *resp)
-			} else {
-				assert.EqualError(t, err, data.errString)
-			}
-		})
-	}
-}
-
-func TestGetBoolSegmenter(t *testing.T) {
-	tests := map[string]struct {
-		values    interface{}
-		key       string
-		segmenter string
-		expected  bool
-		errString string
-	}{
-		"failure | bool": {
-			values:    1.23,
-			key:       "key",
-			segmenter: "bool-seg",
-			errString: "invalid type of variable (key) was provided for bool-seg segmenter; expected bool",
-		},
-		"success | bool": {
-			values:    true,
-			key:       "key",
-			segmenter: "bool-seg",
-			expected:  true,
-		},
-		"success | string": {
-			values:    "true",
-			key:       "key",
-			segmenter: "bool-seg",
-			expected:  true,
-		},
-	}
-
-	for name, data := range tests {
-		t.Run(name, func(t *testing.T) {
-			resp, err := GetBoolSegmenter(data.values, data.key, data.segmenter)
-
-			if data.errString == "" {
-				assert.NoError(t, err)
-				assert.Equal(t, data.expected, *resp)
-			} else {
-				assert.EqualError(t, err, data.errString)
 			}
 		})
 	}

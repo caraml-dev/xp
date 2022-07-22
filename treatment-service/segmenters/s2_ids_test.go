@@ -68,7 +68,7 @@ func (s *S2IDsRunnerTestSuite) TestTransform() {
 				"s2id": int64(3348536),
 			},
 			experimentVariables: []string{"s2id"},
-			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "s2id", s.name, "float64"),
+			errString:           fmt.Sprintf("provided s2id variable for %s segmenter is invalid", s.name),
 		},
 		{
 			name: "failure | invalid type latitude variable",
@@ -77,7 +77,7 @@ func (s *S2IDsRunnerTestSuite) TestTransform() {
 				"longitude": 103.899899113748,
 			},
 			experimentVariables: []string{"latitude", "longitude"},
-			errString:           "invalid type of variable (latitude) was provided for s2_ids segmenter; expected float64",
+			errString:           "received invalid latitude, longitude values",
 		},
 		{
 			name: "success | lat-long + ordering",

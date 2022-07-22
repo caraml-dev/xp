@@ -77,9 +77,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		{
 			testName: "failure | integer type",
 			// using float as JSON value via browser are sent as float
-			requestValues: map[string]interface{}{segmenterName: ""},
+			requestValues: map[string]interface{}{segmenterName: "string"},
 			segmenterType: &protoIntegerType,
-			errString:     "invalid type of variable (test-seg) was provided for test-seg segmenter; expected int64",
+			errString:     "unable to cast \"string\" of type string to int64",
 		},
 		{
 			testName:      "success | string type",
@@ -101,9 +101,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		},
 		{
 			testName:      "failure | float type",
-			requestValues: map[string]interface{}{segmenterName: ""},
+			requestValues: map[string]interface{}{segmenterName: "string"},
 			segmenterType: &protoRealType,
-			errString:     "invalid type of variable (test-seg) was provided for test-seg segmenter; expected float64",
+			errString:     "unable to cast \"string\" of type string to float64",
 		},
 		{
 			testName:      "success | bool type",
@@ -113,9 +113,9 @@ func (s *RunnersTestSuite) TestBaseRunnerTransform() {
 		},
 		{
 			testName:      "failure | bool type",
-			requestValues: map[string]interface{}{segmenterName: ""},
+			requestValues: map[string]interface{}{segmenterName: "string"},
 			segmenterType: &protoBoolType,
-			errString:     "invalid type of variable (test-seg) was provided for test-seg segmenter; expected bool",
+			errString:     "strconv.ParseBool: parsing \"string\": invalid syntax",
 		},
 	}
 

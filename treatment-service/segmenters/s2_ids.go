@@ -8,6 +8,7 @@ import (
 	"github.com/golang/geo/s2"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/spf13/cast"
 
 	_segmenters "github.com/gojek/xp/common/segmenters"
 	"github.com/gojek/xp/common/utils"
@@ -68,27 +69,27 @@ func (s *s2ids) Transform(
 	switch {
 	case cmp.Diff(experimentVariables, []string{"latitude", "longitude"}, cmpopts.SortSlices(utils.Less)) == "":
 		// Convert latitude to appropriate float64 type
-		latitude, err := utils.GetFloatSegmenter(requestValues["latitude"], "latitude", segmenter)
+		latitude, err := cast.ToFloat64E(requestValues["latitude"])
 		if err != nil {
 			return nil, err
 		}
 		// Convert longitude to appropriate float64 type
-		longitude, err := utils.GetFloatSegmenter(requestValues["longitude"], "longitude", segmenter)
+		longitude, err := cast.ToFloat64E(requestValues["longitude"])
 		if err != nil {
 			return nil, err
 		}
 		// Generate S2ID for the supplied level
-		retrievedS2id, err := util.GetS2ID(*latitude, *longitude, s.MaxS2Level)
+		retrievedS2id, err := util.GetS2ID(latitude, longitude, s.MaxS2Level)
 		if err != nil {
 			return nil, err
 		}
 		s2CellID = retrievedS2id
 	case cmp.Equal(experimentVariables, []string{"s2id"}):
-		s2id, err := utils.GetFloatSegmenter(requestValues["s2id"], "s2id", segmenter)
+		s2id, err := cast.ToInt64E(requestValues["s2id"])
 		if err != nil {
 			return nil, err
 		}
-		s2CellID = s2.CellID(int64(*s2id))
+		s2CellID = s2.CellID(s2id)
 		if !s2CellID.IsValid() {
 			return nil, fmt.Errorf("provided s2id variable for %s segmenter is invalid", segmenter)
 		}

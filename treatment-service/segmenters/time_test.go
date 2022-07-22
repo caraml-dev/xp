@@ -79,14 +79,6 @@ func (s *TimeRunnerTestSuite) TestHourOfDayTransform() {
 			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "tz", s.name, "string"),
 		},
 		{
-			name: "failure | invalid type hour_of_day variable",
-			requestParam: map[string]interface{}{
-				"hour_of_day": false,
-			},
-			experimentVariables: []string{"hour_of_day"},
-			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "hour_of_day", s.name, "float64"),
-		},
-		{
 			name: "success | tz",
 			requestParam: map[string]interface{}{
 				"tz": tzString,
@@ -163,14 +155,6 @@ func (s *TimeRunnerTestSuite) TestDayOfWeekTransform() {
 			},
 			experimentVariables: []string{"tz"},
 			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "tz", s.name, "string"),
-		},
-		{
-			name: "failure | invalid type day_of_week variable",
-			requestParam: map[string]interface{}{
-				"day_of_week": true,
-			},
-			experimentVariables: []string{"day_of_week"},
-			errString:           fmt.Sprintf(TypeCastingErrorTmpl, "day_of_week", s.name, "float64"),
 		},
 		{
 			name: "success | tz",
