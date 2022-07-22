@@ -1,15 +1,22 @@
 package runner
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"reflect"
 	"testing"
 
+	"bou.ke/monkey"
 	"github.com/gojek/turing/engines/experiment/pkg/request"
+	"github.com/gojek/turing/engines/experiment/runner"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	xpclient "github.com/gojek/xp/clients/treatment"
+	"github.com/gojek/xp/common/api/schema"
 	"github.com/gojek/xp/plugins/turing/config"
 	"github.com/gojek/xp/plugins/turing/internal/testutils"
 )
@@ -131,6 +138,125 @@ func TestMissingRequestValue(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, test.err, logObj.Msg)
 			}
+		})
+	}
+}
+
+func TestFetchTreatment(t *testing.T) {
+	treatmentClient := &xpclient.ClientWithResponses{}
+	monkey.PatchInstanceMethod(
+		reflect.TypeOf(treatmentClient),
+		"FetchTreatmentWithBodyWithResponse",
+		func(tc *xpclient.ClientWithResponses, ctx context.Context, projectId int64, params *xpclient.FetchTreatmentParams,
+			contentType string, body io.Reader, reqEditors ...xpclient.RequestEditorFn,
+		) (*xpclient.FetchTreatmentResponse, error) {
+			var json200Struct struct {
+				Data *schema.SelectedTreatment `json:"data,omitempty"`
+			}
+
+			if projectId == 1 {
+				return &xpclient.FetchTreatmentResponse{
+					Body:    []byte{},
+					JSON200: &json200Struct,
+				}, nil
+			}
+			if projectId == 2 {
+				traffic := int32(50)
+				selectedTreatment := &schema.SelectedTreatment{
+					ExperimentId:   712,
+					ExperimentName: "test_experiment",
+					Treatment: schema.SelectedTreatmentData{
+						Configuration: map[string]interface{}{"foo": "bar"},
+						Name:          "test_experiment-control",
+						Traffic:       &traffic,
+					},
+				}
+				json200Struct.Data = selectedTreatment
+
+				return &xpclient.FetchTreatmentResponse{
+					Body:    []byte{},
+					JSON200: &json200Struct,
+				}, nil
+			}
+			return nil, fmt.Errorf("Unexpected ProjectID: %d", projectId)
+		},
+	)
+	defer monkey.UnpatchAll()
+
+	expRunner := experimentRunner{
+		httpClient: treatmentClient,
+		projectID:  1,
+		passkey:    "abc",
+		parameters: []config.RequestParameter{
+			{Parameter: "country", Field: "Country", FieldSrc: "header"},
+			{Parameter: "latitude", Field: "pos.lat", FieldSrc: "payload"},
+			{Parameter: "longitude", Field: "pos.lng", FieldSrc: "payload"},
+			{Parameter: "geo_area", Field: "geo-area", FieldSrc: "payload"},
+			{Parameter: "order_id", Field: "order-id", FieldSrc: "payload"},
+		},
+	}
+
+	// Define tests
+	testHeader := http.Header{
+		http.CanonicalHeaderKey("Country"): []string{"SG"},
+	}
+	tests := map[string]struct {
+		projectId int
+		payload   string
+		expected  *runner.Treatment
+	}{
+		"nil experiment": {
+			projectId: 1,
+			payload: `{
+				"geo-area": "100",
+				"pos": {
+					"lat": "1.234",
+					"lng": "103.5678"
+				},
+				"order-id": "12345"
+			}`,
+			expected: &runner.Treatment{
+				Config: json.RawMessage("null"),
+			},
+		},
+		"success": {
+			projectId: 2,
+			payload: `{
+				"pos": {"lat": "1.2485558597961544", "lng": "103.54947567634105"},
+				"geo-area": "50",
+				"order-id": "12345"
+			}`,
+			expected: &runner.Treatment{
+				ExperimentName: "test_experiment",
+				Name:           "test_experiment-control",
+				Config: json.RawMessage(`{
+					"experiment_id": 712,
+					"experiment_name": "test_experiment",
+					"treatment": {
+						"configuration": {"foo":"bar"},
+						"name": "test_experiment-control",
+						"traffic": 50
+					}
+				}`),
+			},
+		},
+	}
+
+	// Run tests
+	for name, data := range tests {
+		t.Run(name, func(t *testing.T) {
+			// Run experiment
+			expRunner.projectID = data.projectId
+			actual, err := expRunner.GetTreatmentForRequest(
+				testHeader,
+				[]byte(data.payload),
+				runner.GetTreatmentOptions{})
+			require.NoError(t, err)
+
+			// Validate
+			assert.Equal(t, data.expected.ExperimentName, actual.ExperimentName)
+			assert.Equal(t, data.expected.Name, actual.Name)
+			assert.JSONEq(t, string(data.expected.Config), string(actual.Config))
 		})
 	}
 }
