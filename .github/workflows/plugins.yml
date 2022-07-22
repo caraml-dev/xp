@@ -73,11 +73,11 @@ jobs:
     #
     # Dev build can be released either from the 'main' branch or
     # by running this workflow manually with `workflow_dispatch` event.
-#    if: >-
-#      contains('release,pre-release', needs.release-rules.outputs.release-type)
-#        || ( github.event_name != 'pull_request' )
-#        || ( github.event.pull_request.head.repo.full_name == github.repository )
-#    environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
+    if: >-
+      contains('release,pre-release', needs.release-rules.outputs.release-type)
+        || ( github.event_name != 'pull_request' )
+        || ( github.event.pull_request.head.repo.full_name == github.repository )
+    environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
     runs-on: ubuntu-latest
     outputs:
       turing-plugin-image: ${{ steps.build-image.outputs.turing-plugin-image }}
@@ -111,5 +111,5 @@ jobs:
           make build-image | tee output.log
           echo "::set-output name=turing-plugin-image::$(sed -n 's%Building docker image: \(.*\)%\1%p' output.log)"
 
-#      - name: Publish Turing Experiment Engine XP Plugin Docker Image
-#        run: docker push ${{ steps.build-image.outputs.xp-engine-plugin-image }}
+      - name: Publish Turing Experiment Engine XP Plugin Docker Image
+        run: docker push ${{ steps.build-image.outputs.turing-plugin-image }}
