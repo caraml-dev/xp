@@ -12,7 +12,7 @@ runs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: ${{ inputs.go_version }}
+        go-version: ${{ inputs.go-version }}
 
     - name: Cache Dependencies
       uses: actions/cache@v3
