@@ -112,7 +112,7 @@ jobs:
         run: make test-management-service
 
   unit-tests-treatment:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       GOPATH: ${{ github.workspace }}/api/.go
     services:
