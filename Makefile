@@ -98,7 +98,7 @@ compile-protos: | $(protoc_dir)
 .PHONY: setup
 setup:
 	@echo "> Initializing dependencies ..."
-	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
+	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.45.2
 
 tidy-management-service:
 	cd ${MANAGEMENT_SVC_PATH} && go mod tidy
