@@ -25,6 +25,8 @@ on:
 
 env:
   ARTIFACT_RETENTION_DAYS: 7
+  GO_VERSION: 1.18
+  GO_LINT_VERSION: v1.45.2
 
 jobs:
   lint-python:
@@ -47,30 +49,30 @@ jobs:
   lint-go:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Go
+      - name: Set up Go
         id: setup-go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.16
+          go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
       - name: Lint Common module
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.41.1
+          version: ${{ env.GO_LINT_VERSION }}
           working-directory: common
           args: --timeout 3m --verbose --skip-files=testutils/mocks/ManagementClientInterface.go
       - name: Lint Management Service module
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.41.1
+          version: ${{ env.GO_LINT_VERSION }}
           working-directory: management-service
           skip-pkg-cache: true
           skip-build-cache: true
           args: --timeout 3m --verbose
       - name: Lint Treatment Service module
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.41.1
+          version: ${{ env.GO_LINT_VERSION }}
           working-directory: treatment-service
           skip-pkg-cache: true
           skip-build-cache: true
@@ -102,6 +104,8 @@ jobs:
 
       - name: Setup Test Dependencies
         uses: ./.github/actions/setup-tests
+        with:
+          go-version: ${{ env.GO_VERSION }}
       
       - name: Run Management Service test
         env:
@@ -137,6 +141,8 @@ jobs:
 
       - name: Setup Test Dependencies
         uses: ./.github/actions/setup-tests
+        with:
+          go-version: ${{ env.GO_VERSION }}
       
       - name: Run Treatment Service test
         env:
@@ -172,6 +178,8 @@ jobs:
 
       - name: Setup Test Dependencies
         uses: ./.github/actions/setup-tests
+        with:
+          go-version: ${{ env.GO_VERSION }}
       
       - name: Setup Python
         id: setup-python

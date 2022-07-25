@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine as builder
+FROM golang:1.18-alpine as builder
 
 ARG binary_name="plugin"
 ARG build_path="github.com/gojek/turing-experiments/plugins/turing/cmd"
