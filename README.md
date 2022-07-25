@@ -11,6 +11,12 @@ The API is broken down into 2 services:
 - **Management Service**: Used to configure experiments
 - **Treatment Service**: Used to obtain the treatment configuration from active experiments
 
+### Architecture
+
+The following diagram summarizes the interaction between the various components of the system. The Management service is packaged together with the UI, while the Treatment service is published separately - this is so that the Treatment service, which is lightweight, can be deployed and made to scale independently.
+
+![XP Architecture](./docs/assets/xp_architecture.png)
+
 ## Why XP?
 
 - **Reliable** - Inherent fault-detection rules help create experiments without conflicts.
