@@ -25,7 +25,6 @@ import (
 	"github.com/gojek/xp/clients/treatment"
 	"github.com/gojek/xp/common/api/schema"
 	"github.com/gojek/xp/common/testutils"
-	tu "github.com/gojek/xp/treatment-service/internal/testutils"
 	"github.com/gojek/xp/treatment-service/models"
 	"github.com/gojek/xp/treatment-service/monitoring"
 	"github.com/gojek/xp/treatment-service/server"
@@ -63,8 +62,7 @@ type TreatmentServiceTestSuite struct {
 	terminationChannel chan bool
 	ctx                context.Context
 	emulator           testcontainers.Container
-	kafkaCluster       *tu.KafkaCluster
-	exposedKafkaHost   string
+	kafka              testcontainers.DockerCompose
 }
 
 func int32Ptr(value int32) *int32 {
@@ -367,14 +365,19 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 	suite.managementServiceClient = managementClient
 	suite.managementServiceServer = managementServer
 
-	kafkaCluster := tu.NewKafkaCluster()
-	err = kafkaCluster.StartCluster()
+	// Docker compose file copied from official confluentinc repository.
+	// See: https://github.com/confluentinc/cp-all-in-one/blob/7.0.1-post/cp-all-in-one-kraft/docker-compose.yml
+	composeFilePaths := []string{"docker-compose/kafka/docker-compose.yaml"}
+	kafka := testcontainers.NewLocalDockerCompose(composeFilePaths, "kafka")
+	execError := kafka.
+		WithCommand([]string{"up", "-d"}).
+		Invoke()
+	err = execError.Error
 	if err != nil {
 		panic(err)
 	}
-	suite.kafkaCluster = kafkaCluster
-	suite.exposedKafkaHost = kafkaCluster.GetKafkaHost()
-	os.Setenv("ASSIGNEDTREATMENTLOGGER::KAFKACONFIG::BROKERS", kafkaCluster.GetKafkaHost())
+	suite.kafka = kafka
+	os.Setenv("ASSIGNEDTREATMENTLOGGER::KAFKACONFIG::BROKERS", "localhost:9092")
 
 	c, treatmentServer := setupTreatmentService(suite.managementServiceServer.URL)
 	waitForServerToListen := func() bool {
@@ -403,6 +406,7 @@ func (suite *TreatmentServiceTestSuite) TearDownSuite() {
 	suite.treatmentServiceServer.Close()
 	suite.terminationChannel <- true
 
+	_ = suite.kafka.Down()
 	_ = suite.emulator.Terminate(context.Background())
 }
 
@@ -442,7 +446,7 @@ func (suite *TreatmentServiceTestSuite) TestAdditionalFilters() {
 
 	consumer, err := kafka.NewConsumer(
 		&kafka.ConfigMap{
-			"bootstrap.servers":    suite.exposedKafkaHost,
+			"bootstrap.servers":    "localhost:9092",
 			"group.id":             "test-group",
 			"default.topic.config": kafka.ConfigMap{"auto.offset.reset": "earliest"},
 		})
