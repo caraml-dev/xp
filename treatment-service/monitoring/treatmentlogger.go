@@ -1,6 +1,7 @@
 package monitoring
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -95,11 +96,13 @@ func NewKafkaAssignedTreatmentLogger(
 	queueLength int,
 	flushInterval time.Duration,
 ) (*AssignedTreatmentLogger, error) {
-
+	fmt.Println("@NewKafkaAssignedTreatmentLogger")
 	c := make(chan *AssignedTreatmentLog, queueLength)
+	fmt.Println("Configuring publisher...")
 	publisher, err := NewKafkaLogPublisher(
 		config.Brokers, config.Topic, config.MaxMessageBytes, config.CompressionType, config.ConnectTimeoutMS,
 	)
+	fmt.Println("Configured publisher...")
 	if err != nil {
 		return nil, err
 	}
@@ -108,8 +111,10 @@ func NewKafkaAssignedTreatmentLogger(
 		publisher:     publisher,
 		flushInterval: flushInterval,
 	}
+	fmt.Println("Configured AssignedTreatmentLogger...")
 
 	go logger.worker()
 
+	fmt.Println("Returning AssignedTreatmentLogger...")
 	return logger, nil
 }

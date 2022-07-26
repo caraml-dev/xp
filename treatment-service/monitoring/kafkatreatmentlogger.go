@@ -64,12 +64,14 @@ func NewKafkaLogPublisher(
 	KafkaConnectTimeoutMS int,
 ) (*KafkaLogPublisher, error) {
 	// Create Kafka Producer
+	fmt.Println("Configuring Producer...")
 	producer, err := newKafkaProducer(kafkaBrokers, kafkaMaxMessageBytes, kafkaCompressionType)
 	if err != nil {
 		return nil, err
 	}
 	// Test that we are able to query the broker on the topic. If the topic
 	// does not already exist on the broker, this should create it.
+	fmt.Println("Checking if topic exists...")
 	_, err = producer.GetMetadata(&kafkaTopic, false, KafkaConnectTimeoutMS)
 	if err != nil {
 		return nil, fmt.Errorf("error Querying topic %s from Kafka broker(s): %s", kafkaTopic, err)
