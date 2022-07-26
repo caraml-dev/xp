@@ -139,6 +139,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: List Docker objects
+        run: |
+          docker ps -a
+          docker network ls
+
       - name: Setup Test Dependencies
         uses: ./.github/actions/setup-tests
         with:
