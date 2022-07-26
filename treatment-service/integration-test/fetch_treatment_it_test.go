@@ -13,12 +13,10 @@ import (
 	"net/http/httptest"
 	"os"
 	"strconv"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
@@ -367,8 +365,8 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 	suite.managementServiceClient = managementClient
 	suite.managementServiceServer = managementServer
 
-	composeFilePaths := []string{"docker-compose.yaml"}
-	kafka := testcontainers.NewLocalDockerCompose(composeFilePaths, strings.ToLower(uuid.New().String()))
+	composeFilePaths := []string{"docker-compose/kafka.yaml"}
+	kafka := testcontainers.NewLocalDockerCompose(composeFilePaths, "kafka")
 	execError := kafka.
 		WithCommand([]string{"up", "-d"}).
 		Invoke()
