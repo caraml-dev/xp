@@ -3,6 +3,7 @@ package monitoring
 import (
 	"fmt"
 	"log"
+	"runtime"
 	"time"
 
 	_pubsub "github.com/gojek/xp/common/pubsub"
@@ -97,7 +98,7 @@ func NewKafkaAssignedTreatmentLogger(
 	flushInterval time.Duration,
 ) (*AssignedTreatmentLogger, error) {
 	fmt.Println("@NewKafkaAssignedTreatmentLogger")
-	c := make(chan *AssignedTreatmentLog, queueLength)
+	c := make(chan *AssignedTreatmentLog, runtime.NumCPU())
 	fmt.Println("Configuring publisher...")
 	publisher, err := NewKafkaLogPublisher(
 		config.Brokers, config.Topic, config.MaxMessageBytes, config.CompressionType, config.ConnectTimeoutMS,
