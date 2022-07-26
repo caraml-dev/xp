@@ -365,7 +365,9 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 	suite.managementServiceClient = managementClient
 	suite.managementServiceServer = managementServer
 
-	composeFilePaths := []string{"docker-compose/kafka.yaml"}
+	// Docker compose file copied from official confluentinc repository.
+	// See: https://github.com/confluentinc/cp-all-in-one/blob/7.0.1-post/cp-all-in-one-kraft/docker-compose.yml
+	composeFilePaths := []string{"docker-compose/kafka/docker-compose.yaml"}
 	kafka := testcontainers.NewLocalDockerCompose(composeFilePaths, "kafka")
 	execError := kafka.
 		WithCommand([]string{"up", "-d"}).
