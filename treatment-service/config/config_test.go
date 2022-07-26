@@ -30,7 +30,7 @@ func TestDefaultConfigs(t *testing.T) {
 		},
 		AssignedTreatmentLogger: AssignedTreatmentLoggerConfig{
 			Kind:                 "",
-			QueueLength:          1073741824,
+			QueueLength:          100,
 			FlushIntervalSeconds: 1,
 			BQConfig:             &BigqueryConfig{},
 			KafkaConfig: &KafkaConfig{
@@ -84,7 +84,7 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		DeploymentConfig: DeploymentConfig{EnvironmentType: "dev", MaxGoRoutines: 200},
 		AssignedTreatmentLogger: AssignedTreatmentLoggerConfig{
 			Kind:                 "bq",
-			QueueLength:          1073741824,
+			QueueLength:          100,
 			FlushIntervalSeconds: 1,
 			BQConfig: &BigqueryConfig{
 				Project: "dev",

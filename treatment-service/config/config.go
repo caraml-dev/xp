@@ -37,7 +37,7 @@ type Config struct {
 
 type AssignedTreatmentLoggerConfig struct {
 	Kind                 AssignedTreatmentLoggerKind `default:""`
-	QueueLength          int                         `default:"1073741824"`
+	QueueLength          int                         `default:"100"`
 	FlushIntervalSeconds int                         `default:"1"`
 
 	BQConfig    *BigqueryConfig
