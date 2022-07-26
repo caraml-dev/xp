@@ -24,7 +24,7 @@ import (
 
 func TestContext(t *testing.T) {
 
-	//Config for emulator and test server
+	// Config for emulator and test server
 	pubSubConfig := config.PubSub{
 		Project:              "test",
 		TopicName:            "updates",
@@ -42,13 +42,13 @@ func TestContext(t *testing.T) {
 		"bool_segmenter":    "bool",
 	}
 
-	//Setup emulator and test server
+	// Setup emulator and test server
 	emulator, testServer, err := SetupTest(pubSubConfig, projectSettings, segmentersType)
 	if err != nil {
 		assert.FailNow(t, "Test Setup fail", err.Error())
 	}
 
-	//Config setup for app context
+	// Config setup for appcontext
 	testConfig := config.Config{
 		Port:                    0,
 		ProjectIds:              []string{"1"},
@@ -66,11 +66,11 @@ func TestContext(t *testing.T) {
 		SegmenterConfig:  map[string]interface{}{"s2_ids": map[string]interface{}{"mins2celllevel": 10, "maxs2celllevel": 14}},
 	}
 
-	//Create appcontext
+	// Create appcontext
 	appContext, err := NewAppContext(&testConfig)
 	assert.NoError(t, err)
 
-	//Create expected components less pubsub which cant be replicated due to context init
+	// Create expected components less pubsub which cant be replicated due to context init
 	localStorage, err := models.NewLocalStorage(
 		testConfig.GetProjectIds(),
 		testConfig.ManagementService.URL,
@@ -120,7 +120,7 @@ func TeardownTest(testServer *httptest.Server, emulator testcontainers.Container
 	testServer.Close()
 	err := emulator.Terminate(ctx)
 	if err != nil {
-		log.Fatal("Fail to shut down emulate gracefully")
+		log.Fatal("Fail to shut down emulator gracefully")
 	}
 }
 
@@ -129,7 +129,6 @@ func SetupTest(
 	projectSettings []schema.ProjectSettings,
 	segmentersType map[string]schema.SegmenterType,
 ) (testcontainers.Container, *httptest.Server, error) {
-	//Create pubsub emulator and
 	ctx := context.Background()
 	emulator, pubsubClient, err := testutils.StartPubSubEmulator(ctx, pubSubConfig.Project)
 	if err != nil {
