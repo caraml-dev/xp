@@ -70,9 +70,11 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 
 	switch loggerConfig.Kind {
 	case config.KafkaLogger:
+		fmt.Println("Detected KafkaLogger...")
 		logger, err = monitoring.NewKafkaAssignedTreatmentLogger(
 			*loggerConfig.KafkaConfig,
 			loggerConfig.QueueLength, time.Duration(loggerConfig.FlushIntervalSeconds)*time.Second)
+		fmt.Println("Configured KafkaLogger...")
 	case config.BQLogger:
 		logger, err = monitoring.NewBQAssignedTreatmentLogger(
 			*loggerConfig.BQConfig,
