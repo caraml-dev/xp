@@ -13,10 +13,12 @@ import (
 	"net/http/httptest"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
@@ -25,7 +27,6 @@ import (
 	"github.com/gojek/xp/clients/treatment"
 	"github.com/gojek/xp/common/api/schema"
 	"github.com/gojek/xp/common/testutils"
-	tu "github.com/gojek/xp/treatment-service/internal/testutils"
 	"github.com/gojek/xp/treatment-service/models"
 	"github.com/gojek/xp/treatment-service/monitoring"
 	"github.com/gojek/xp/treatment-service/server"
@@ -63,8 +64,7 @@ type TreatmentServiceTestSuite struct {
 	terminationChannel chan bool
 	ctx                context.Context
 	emulator           testcontainers.Container
-	kafkaCluster       *tu.KafkaCluster
-	exposedKafkaHost   string
+	kafka              testcontainers.DockerCompose
 }
 
 func int32Ptr(value int32) *int32 {
@@ -367,14 +367,17 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 	suite.managementServiceClient = managementClient
 	suite.managementServiceServer = managementServer
 
-	kafkaCluster := tu.NewKafkaCluster()
-	err = kafkaCluster.StartCluster()
+	composeFilePaths := []string{"docker-compose.yaml"}
+	kafka := testcontainers.NewLocalDockerCompose(composeFilePaths, strings.ToLower(uuid.New().String()))
+	execError := kafka.
+		WithCommand([]string{"up", "-d"}).
+		Invoke()
+	err = execError.Error
 	if err != nil {
 		panic(err)
 	}
-	suite.kafkaCluster = kafkaCluster
-	suite.exposedKafkaHost = kafkaCluster.GetKafkaHost()
-	os.Setenv("ASSIGNEDTREATMENTLOGGER::KAFKACONFIG::BROKERS", kafkaCluster.GetKafkaHost())
+	suite.kafka = kafka
+	os.Setenv("ASSIGNEDTREATMENTLOGGER::KAFKACONFIG::BROKERS", "localhost:9092")
 
 	c, treatmentServer := setupTreatmentService(suite.managementServiceServer.URL)
 	waitForServerToListen := func() bool {
@@ -403,6 +406,7 @@ func (suite *TreatmentServiceTestSuite) TearDownSuite() {
 	suite.treatmentServiceServer.Close()
 	suite.terminationChannel <- true
 
+	_ = suite.kafka.Down()
 	_ = suite.emulator.Terminate(context.Background())
 }
 
@@ -442,7 +446,7 @@ func (suite *TreatmentServiceTestSuite) TestAdditionalFilters() {
 
 	consumer, err := kafka.NewConsumer(
 		&kafka.ConfigMap{
-			"bootstrap.servers":    suite.exposedKafkaHost,
+			"bootstrap.servers":    "localhost:9092",
 			"group.id":             "test-group",
 			"default.topic.config": kafka.ConfigMap{"auto.offset.reset": "earliest"},
 		})
