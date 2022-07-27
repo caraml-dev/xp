@@ -39,7 +39,7 @@ Common labels
 */}}
 {{- define "xp.labels" -}}
 helm.sh/chart: {{ include "xp.chart" . }}
-{{- with .Values.xpManagement.extraLabels }}
+{{- with (.Values.xpManagement).extraLabels }}
 {{- toYaml . | nindent 0 }}
 {{- end }}
 {{ include "xp.selectorLabels" . }}
