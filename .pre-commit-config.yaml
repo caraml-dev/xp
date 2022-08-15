@@ -1,5 +1,3 @@
-default_stages:
-  - push
 repos:
   - repo: https://github.com/norwoodj/helm-docs
     rev: v1.11.0
@@ -8,13 +6,13 @@ repos:
         name: 'Helm Docs for XP Management Service Chart'
         files: '^infra/charts/management-service/'
         args:
-          - --chart-search-root='infra/charts/management-service'
+          - --chart-search-root=infra/charts/management-service
           - --template-files=./README.md.gotmpl
       - id: helm-docs-built
         name: 'Helm Docs for XP Treatment Service Chart'
         files: '^infra/charts/treatment-service/'
         args:
-          - --chart-search-root='infra/charts/treatment-service'
+          - --chart-search-root=infra/charts/treatment-service
           - --template-files=./README.md.gotmpl
   - repo: local
     hooks:
