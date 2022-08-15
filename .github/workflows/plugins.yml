@@ -20,6 +20,9 @@ on:
       - ".github/workflows/plugins.yml"
       - "plugins/**"
 
+  # To make it possible to trigger e2e CI workflow for any arbitrary git ref
+  workflow_dispatch:
+
 env:
   GO_VERSION: 1.18
   GO_LINT_VERSION: v1.45.2
