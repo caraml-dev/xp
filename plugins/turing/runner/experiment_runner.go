@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gojek/turing/engines/experiment/log"
-	"github.com/gojek/turing/engines/experiment/pkg/request"
-	inproc "github.com/gojek/turing/engines/experiment/plugin/inproc/runner"
-	"github.com/gojek/turing/engines/experiment/runner"
+	"github.com/caraml-dev/turing/engines/experiment/log"
+	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
+	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/runner"
+	"github.com/caraml-dev/turing/engines/experiment/runner"
 	"github.com/pkg/errors"
 
 	xpclient "github.com/caraml-dev/xp/clients/treatment"

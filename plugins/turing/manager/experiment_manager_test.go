@@ -8,8 +8,7 @@ import (
 	"testing"
 
 	"bou.ke/monkey"
-	"github.com/go-playground/validator/v10"
-	"github.com/gojek/turing/engines/experiment/manager"
+	"github.com/caraml-dev/turing/engines/experiment/manager"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/caraml-dev/xp/common/api/schema"

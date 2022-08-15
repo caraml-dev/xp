@@ -5,7 +5,7 @@ go 1.18
 require (
 	bou.ke/monkey v1.0.2
 	github.com/go-playground/validator/v10 v10.4.1
-	github.com/gojek/turing/engines/experiment v0.0.0-20220719121551-2a7eb84e97b4
+	github.com/caraml-dev/turing/engines/experiment v0.0.0-20220719121551-2a7eb84e97b4
 	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
 	github.com/caraml-dev/xp/common v0.0.0
 	github.com/pkg/errors v0.9.1
