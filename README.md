@@ -75,4 +75,4 @@ replace github.com/gojek/xp/treatment-service => github.com/gojek/turing-experim
 
 XP is still under active development. Please have a look at our contributing and development guides if you want to contribute to the project:
 
-- [Contribution Process for XP](https://github.com/gojek/xp/blob/main/CONTRIBUTING.md)
+- [Contribution Process for XP](https://github.com/caraml-dev/turing-experiments/blob/main/CONTRIBUTING.md)

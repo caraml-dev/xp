@@ -56,11 +56,14 @@ Setup [`pre-commit`](https://pre-commit.com/) to automatically lint and format t
 2. Install `pre-commit` with `pip` &amp; install pre-push hooks
 
     ```sh
-    pip install pre-commit
-    pre-commit install --hook-type pre-commit --hook-type pre-push
+    # Clear existing hooks    
+    git config --unset-all core.hooksPath
+    rm -rf .git/hooks
+    # Install hooks
+    make setup
     ```
 
-3. On push, the pre-commit hook will run. This runs `make format` and `make lint`.
+3. On push, the pre-commit hook will run. This runs `make format`, `make lint`, `UI linting` and `generation of helm docs`.
 
 ## XP Management/Treatment Service using Go
 
