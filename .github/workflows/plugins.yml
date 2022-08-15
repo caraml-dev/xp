@@ -85,11 +85,11 @@ jobs:
     #
     # Dev build can be released either from the 'main' branch or
     # by running this workflow manually with `workflow_dispatch` event.
-    if: >-
-      contains('release,pre-release', needs.release-rules.outputs.release-type)
-        || ( github.event_name != 'pull_request' )
-        || ( github.event.pull_request.head.repo.full_name == github.repository )
-    environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
+#    if: >-
+#      contains('release,pre-release', needs.release-rules.outputs.release-type)
+#        || ( github.event_name != 'pull_request' )
+#        || ( github.event.pull_request.head.repo.full_name == github.repository )
+#    environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
     runs-on: ubuntu-latest
     outputs:
       turing-plugin-image: ${{ steps.build-image.outputs.turing-plugin-image }}
