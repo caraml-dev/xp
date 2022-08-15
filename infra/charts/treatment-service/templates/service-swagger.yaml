@@ -15,7 +15,8 @@ metadata:
 spec:
   type: {{ .Values.swaggerUi.service.type }}
   ports:
-    - port: {{ .Values.swaggerUi.service.externalPort }}
+    - name: http
+      port: {{ .Values.swaggerUi.service.externalPort }}
       targetPort: {{ .Values.swaggerUi.service.internalPort }}
       protocol: TCP
   selector:
