@@ -14,8 +14,8 @@ import (
 	"github.com/gojek/turing/engines/experiment/runner"
 	"github.com/pkg/errors"
 
-	xpclient "github.com/gojek/xp/clients/treatment"
-	"github.com/gojek/xp/plugins/turing/config"
+	xpclient "github.com/caraml-dev/xp/clients/treatment"
+	"github.com/caraml-dev/xp/plugins/turing/config"
 )
 
 // init ensures this runner is registered when the package is imported.

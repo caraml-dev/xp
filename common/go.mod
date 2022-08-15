@@ -1,4 +1,4 @@
-module github.com/gojek/xp/common
+module github.com/caraml-dev/xp/common
 
 go 1.18
 

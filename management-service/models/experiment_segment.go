@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	_utils "github.com/gojek/xp/common/utils"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	_utils "github.com/caraml-dev/xp/common/utils"
 )
 
 type ExperimentSegmentRaw map[string]interface{}

@@ -6,9 +6,9 @@ import (
 	"cloud.google.com/go/pubsub"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
 type MessageQueue interface {

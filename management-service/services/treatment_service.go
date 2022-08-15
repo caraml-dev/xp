@@ -10,9 +10,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/pagination"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/pagination"
 )
 
 type CreateTreatmentRequestBody struct {

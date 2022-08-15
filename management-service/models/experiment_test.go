@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	_utils "github.com/gojek/xp/common/utils"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	_utils "github.com/caraml-dev/xp/common/utils"
 )
 
 var testExperimentInterval int32 = 100

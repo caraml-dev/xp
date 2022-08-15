@@ -13,15 +13,15 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/common/segmenters"
-	common_testutils "github.com/gojek/xp/common/testutils"
-	"github.com/gojek/xp/management-service/config"
-	tu "github.com/gojek/xp/management-service/internal/testutils"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/common/segmenters"
+	common_testutils "github.com/caraml-dev/xp/common/testutils"
+	"github.com/caraml-dev/xp/management-service/config"
+	tu "github.com/caraml-dev/xp/management-service/internal/testutils"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
 const (

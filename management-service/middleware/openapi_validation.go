@@ -9,7 +9,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 
-	"github.com/gojek/xp/management-service/api"
+	"github.com/caraml-dev/xp/management-service/api"
 )
 
 type OpenAPIValidationOptions struct {

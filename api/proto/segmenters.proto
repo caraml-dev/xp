@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package segmenters;
-option go_package = "github.com/gojek/xp/common/segmenters";
+option go_package = "github.com/caraml-dev/xp/common/segmenters";
 
 message ProjectSegmenterCreated {
   int64 project_id = 1;

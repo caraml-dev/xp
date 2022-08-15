@@ -6,10 +6,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/monitoring"
-	"github.com/gojek/xp/treatment-service/services"
+	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/monitoring"
+	"github.com/caraml-dev/xp/treatment-service/services"
 )
 
 type AppContext struct {

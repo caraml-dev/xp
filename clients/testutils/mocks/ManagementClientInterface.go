@@ -8,7 +8,7 @@ import (
 
 	io "io"
 
-	management "github.com/gojek/xp/clients/management"
+	management "github.com/caraml-dev/xp/clients/management"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/management-service/segmenters"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/management-service/segmenters"
 	"github.com/golang-collections/collections/set"
 )
 

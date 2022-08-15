@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	api "github.com/gojek/xp/treatment-service/testhelper/mockmanagement"
+	api "github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement"
 )
 
 type ExperimentHistory struct{}

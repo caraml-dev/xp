@@ -11,13 +11,13 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/gojek/xp/management-service/api"
-	"github.com/gojek/xp/management-service/appcontext"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/pagination"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	"github.com/caraml-dev/xp/management-service/api"
+	"github.com/caraml-dev/xp/management-service/appcontext"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/pagination"
+	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
 type TreatmentHistoryControllerTestSuite struct {

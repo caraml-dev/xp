@@ -12,8 +12,8 @@ import (
 	"github.com/gojek/turing/engines/experiment/manager"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/plugins/turing/config"
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/plugins/turing/config"
 )
 
 func TestNewExperimentManager(t *testing.T) {

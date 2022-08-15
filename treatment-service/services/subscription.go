@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/proto"
 
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/treatment-service/models"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
 type ExperimentSubscriber interface {

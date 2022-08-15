@@ -1,6 +1,6 @@
 # xp
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/gojek/xp/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/caraml-dev/xp/blob/master/LICENSE)
 
 ## Overview
 
@@ -65,10 +65,10 @@ To test authorization for Management Service locally, make the following changes
 To use the XP Go modules as API dependencies, `replace` directives need to be used when consuming both the Management and Treatment API modules since the API modules uses local relative path.
 
 ```go
-replace github.com/gojek/xp/clients => github.com/gojek/turing-experiments/clients v0.0.0
-replace github.com/gojek/xp/common => github.com/gojek/turing-experiments/common v0.0.0
-replace github.com/gojek/xp/management-service => github.com/gojek/turing-experiments/management-service v0.0.0
-replace github.com/gojek/xp/treatment-service => github.com/gojek/turing-experiments/treatment-service v0.0.0
+replace github.com/caraml-dev/xp/clients => github.com/caraml-dev/turing-experiments/clients v0.0.0
+replace github.com/caraml-dev/xp/common => github.com/caraml-dev/turing-experiments/common v0.0.0
+replace github.com/caraml-dev/xp/management-service => github.com/caraml-dev/turing-experiments/management-service v0.0.0
+replace github.com/caraml-dev/xp/treatment-service => github.com/caraml-dev/turing-experiments/treatment-service v0.0.0
 ```
 
 ## Contributing

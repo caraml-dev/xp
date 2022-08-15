@@ -3,7 +3,7 @@ xpTreatment:
     # -- Docker registry for XP Treatment Service image
     registry: ghcr.io
     # -- Docker image repository for XP Treatment Service
-    repository: gojek/turing-experiments/xp-treatment
+    repository: caraml-dev/turing-experiments/xp-treatment
     # -- Docker image tag for XP Treatment Service
     tag: v0.7.0
     # -- Docker image pull policy

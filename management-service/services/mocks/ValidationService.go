@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	services "github.com/gojek/xp/management-service/services"
+	services "github.com/caraml-dev/xp/management-service/services"
 	mock "github.com/stretchr/testify/mock"
 )
 

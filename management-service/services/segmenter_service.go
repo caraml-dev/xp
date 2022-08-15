@@ -10,12 +10,12 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/jinzhu/gorm"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/segmenters"
-	"github.com/gojek/xp/management-service/utils"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/segmenters"
+	"github.com/caraml-dev/xp/management-service/utils"
 )
 
 type SegmenterScope string

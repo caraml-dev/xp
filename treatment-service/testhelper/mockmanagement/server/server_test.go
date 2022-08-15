@@ -15,11 +15,11 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/xp/clients/management"
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/common/testutils"
-	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
+	"github.com/caraml-dev/xp/clients/management"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/common/testutils"
+	"github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement/service"
 )
 
 const (

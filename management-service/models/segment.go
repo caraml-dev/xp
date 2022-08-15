@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/api/schema"
 )
 
 type SegmentField string

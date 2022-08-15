@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	tu "github.com/gojek/xp/common/testutils"
+	tu "github.com/caraml-dev/xp/common/testutils"
 )
 
 func TestDefaultConfigs(t *testing.T) {

@@ -1,6 +1,6 @@
 package models
 
-import "github.com/gojek/xp/common/api/schema"
+import "github.com/caraml-dev/xp/common/api/schema"
 
 type TreatmentHistory struct {
 	// CreatedAt - the current value of the UpdatedAt timestamp of the treatment.

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/api/schema"
 )
 
 type TreatmentField string

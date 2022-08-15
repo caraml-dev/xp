@@ -11,13 +11,13 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	tu "github.com/gojek/xp/management-service/internal/testutils"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/segmenters"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	tu "github.com/caraml-dev/xp/management-service/internal/testutils"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/segmenters"
+	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
 var segmenterScopeGlobal = schema.SegmenterScopeGlobal

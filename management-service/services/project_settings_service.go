@@ -6,9 +6,9 @@ import (
 	"github.com/golang-collections/collections/set"
 	"github.com/jinzhu/gorm"
 
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/utils"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/utils"
 )
 
 const PASSKEY_LENGTH = 32

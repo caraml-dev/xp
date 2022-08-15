@@ -15,10 +15,10 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/xp/clients/testutils/mocks"
-	treatmentClient "github.com/gojek/xp/clients/treatment"
-	"github.com/gojek/xp/plugins/turing/config"
-	"github.com/gojek/xp/plugins/turing/internal/testutils"
+	"github.com/caraml-dev/xp/clients/testutils/mocks"
+	treatmentClient "github.com/caraml-dev/xp/clients/treatment"
+	"github.com/caraml-dev/xp/plugins/turing/config"
+	"github.com/caraml-dev/xp/plugins/turing/internal/testutils"
 )
 
 func TestNewExperimentRunner(t *testing.T) {

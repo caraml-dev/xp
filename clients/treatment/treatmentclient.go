@@ -14,8 +14,8 @@ import (
 	"net/url"
 	"strings"
 
+	externalRef0 "github.com/caraml-dev/xp/common/api/schema"
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
-	externalRef0 "github.com/gojek/xp/common/api/schema"
 	"github.com/pkg/errors"
 )
 

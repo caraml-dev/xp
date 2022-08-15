@@ -17,12 +17,12 @@ import (
 	"github.com/rs/cors"
 	_ "go.uber.org/automaxprocs"
 
-	"github.com/gojek/xp/common/web"
-	"github.com/gojek/xp/treatment-service/api"
-	"github.com/gojek/xp/treatment-service/appcontext"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/controller"
-	"github.com/gojek/xp/treatment-service/middleware"
+	"github.com/caraml-dev/xp/common/web"
+	"github.com/caraml-dev/xp/treatment-service/api"
+	"github.com/caraml-dev/xp/treatment-service/appcontext"
+	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/controller"
+	"github.com/caraml-dev/xp/treatment-service/middleware"
 )
 
 type Server struct {

@@ -3,8 +3,8 @@ package segmenters
 import (
 	"fmt"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	_utils "github.com/gojek/xp/common/utils"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	_utils "github.com/caraml-dev/xp/common/utils"
 )
 
 const TypeCastingErrorTmpl = "invalid type of variable (%s) was provided for %s segmenter; expected %s"

@@ -1,4 +1,4 @@
-module github.com/gojek/xp/treatment-service
+module github.com/caraml-dev/xp/treatment-service
 
 go 1.18
 
@@ -10,8 +10,8 @@ require (
 	github.com/getkin/kin-openapi v0.94.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/gojek/mlp v1.5.3
-	github.com/gojek/xp/clients v0.0.0-00010101000000-000000000000
-	github.com/gojek/xp/common v0.0.0
+	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
+	github.com/caraml-dev/xp/common v0.0.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/google/go-cmp v0.5.8
@@ -102,6 +102,6 @@ require (
 )
 
 replace (
-	github.com/gojek/xp/clients => ../clients
-	github.com/gojek/xp/common => ../common
+	github.com/caraml-dev/xp/clients => ../clients
+	github.com/caraml-dev/xp/common => ../common
 )

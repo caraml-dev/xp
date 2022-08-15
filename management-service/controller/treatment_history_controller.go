@@ -3,13 +3,13 @@ package controller
 import (
 	"net/http"
 
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/management-service/api"
-	"github.com/gojek/xp/management-service/appcontext"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/pagination"
-	"github.com/gojek/xp/management-service/services"
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/management-service/api"
+	"github.com/caraml-dev/xp/management-service/appcontext"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/pagination"
+	"github.com/caraml-dev/xp/management-service/services"
 )
 
 type TreatmentHistoryController struct {

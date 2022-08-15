@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/api/schema"
 )
 
 type Project struct {

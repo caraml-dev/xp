@@ -11,7 +11,7 @@ import (
 	"github.com/patrickmn/go-cache"
 	"golang.org/x/oauth2/google"
 
-	"github.com/gojek/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/errors"
 )
 
 const (

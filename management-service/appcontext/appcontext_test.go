@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/xp/management-service/config"
-	mw "github.com/gojek/xp/management-service/middleware"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	"github.com/caraml-dev/xp/management-service/config"
+	mw "github.com/caraml-dev/xp/management-service/middleware"
+	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
 func TestNewAppContext(t *testing.T) {

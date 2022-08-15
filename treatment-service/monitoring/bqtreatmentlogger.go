@@ -10,9 +10,9 @@ import (
 	"go.einride.tech/protobuf-bigquery/encoding/protobq"
 	"google.golang.org/api/googleapi"
 
-	_utils "github.com/gojek/xp/common/utils"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/util"
+	_utils "github.com/caraml-dev/xp/common/utils"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/util"
 )
 
 type BQLogPublisher struct {
