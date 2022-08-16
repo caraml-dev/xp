@@ -76,7 +76,7 @@ The following table lists the configurable parameters of the XP Management Servi
 | xpManagement.extraVolumes | list | `[]` | Extra volumes to attach to the Pod. For example, you can mount  additional secrets to these volumes |
 | xpManagement.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
 | xpManagement.image.registry | string | `"ghcr.io"` | Docker registry for XP Management Service image |
-| xpManagement.image.repository | string | `"caraml-dev/turing-experiments/xp-management"` | Docker image repository for XP Management Service |
+| xpManagement.image.repository | string | `"caraml-dev/xp/xp-management"` | Docker image repository for XP Management Service |
 | xpManagement.image.tag | string | `"v0.7.0"` | Docker image tag for XP Management Service |
 | xpManagement.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule, useful when there are multiple ingress controllers installed |
 | xpManagement.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP Management Service |

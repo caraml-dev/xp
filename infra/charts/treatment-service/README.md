@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the XP Treatment Servic
 | xpTreatment.extraVolumes | list | `[]` | Extra volumes to attach to the Pod. For example, you can mount  additional secrets to these volumes |
 | xpTreatment.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
 | xpTreatment.image.registry | string | `"ghcr.io"` | Docker registry for XP Treatment Service image |
-| xpTreatment.image.repository | string | `"caraml-dev/turing-experiments/xp-treatment"` | Docker image repository for XP Treatment Service |
+| xpTreatment.image.repository | string | `"caraml-dev/xp/xp-treatment"` | Docker image repository for XP Treatment Service |
 | xpTreatment.image.tag | string | `"v0.7.0"` | Docker image tag for XP Treatment Service |
 | xpTreatment.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule,  useful when there are multiple ingress controllers installed |
 | xpTreatment.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP Treatment Service |

@@ -3,7 +3,7 @@ xpManagement:
     # -- Docker registry for XP Management Service image
     registry: ghcr.io
     # -- Docker image repository for XP Management Service
-    repository: caraml-dev/turing-experiments/xp-management
+    repository: caraml-dev/xp/xp-management
     # -- Docker image tag for XP Management Service
     tag: v0.7.0
     # -- Docker image pull policy
