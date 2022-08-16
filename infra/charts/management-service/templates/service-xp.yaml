@@ -14,7 +14,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.xpManagement.service.externalPort }}
+    - name: http
+      port: {{ .Values.xpManagement.service.externalPort }}
       targetPort: {{ .Values.xpManagement.service.internalPort }}
       protocol: TCP
   selector:

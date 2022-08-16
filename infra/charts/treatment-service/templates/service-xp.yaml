@@ -14,7 +14,8 @@ metadata:
 spec:
   type: {{ .Values.xpTreatment.service.type }}
   ports:
-    - port: {{ .Values.xpTreatment.service.externalPort }}
+    - name: http
+      port: {{ .Values.xpTreatment.service.externalPort }}
       targetPort: {{ .Values.xpTreatment.service.internalPort }}
       protocol: TCP
   selector:

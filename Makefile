@@ -100,6 +100,11 @@ setup:
 	@echo "> Initializing dependencies ..."
 	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
 
+	@echo "Setting up dev tools..."
+	@test -x "$(which pre-commit)" || pip install pre-commit
+	@pre-commit install
+	@pre-commit install-hooks
+
 tidy-management-service:
 	cd ${MANAGEMENT_SVC_PATH} && go mod tidy
 
