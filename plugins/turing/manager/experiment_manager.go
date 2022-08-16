@@ -9,6 +9,7 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
+	"github.com/go-playground/validator/v10"
 	"golang.org/x/oauth2/google"
 
 	xpclient "github.com/caraml-dev/xp/clients/management"
