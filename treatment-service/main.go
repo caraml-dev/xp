@@ -1,6 +1,6 @@
 package main
 
-import "github.com/gojek/xp/treatment-service/cmd"
+import "github.com/caraml-dev/xp/treatment-service/cmd"
 
 func main() {
 	cmd.Execute()

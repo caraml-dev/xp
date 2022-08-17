@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/models"
 	"github.com/stretchr/testify/suite"
 )
 

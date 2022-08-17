@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gojek/xp/common/segmenters"
+	"github.com/caraml-dev/xp/common/segmenters"
 	"github.com/stretchr/testify/assert"
 )
 

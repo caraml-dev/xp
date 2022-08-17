@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/api/schema"
 )
 
 func TestExperimentHistoryToApiSchema(t *testing.T) {

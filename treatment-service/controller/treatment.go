@@ -11,16 +11,16 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/api"
-	"github.com/gojek/xp/treatment-service/appcontext"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/instrumentation"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/monitoring"
-	"github.com/gojek/xp/treatment-service/services"
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/pubsub"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/api"
+	"github.com/caraml-dev/xp/treatment-service/appcontext"
+	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/instrumentation"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/monitoring"
+	"github.com/caraml-dev/xp/treatment-service/services"
 )
 
 type TreatmentController struct {

@@ -3,8 +3,8 @@ package config
 import (
 	"sync"
 
+	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
 	"github.com/go-playground/validator/v10"
-	"github.com/gojek/turing/engines/experiment/pkg/request"
 )
 
 // RequestParameter captures a single parameter's config for parsing the incoming

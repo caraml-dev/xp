@@ -25,7 +25,7 @@ var xpConfig = {
      * "environment": "dev",
      *
      * Default page for documentation
-     * "docsUrl": "https://github.com/gojek/xp"
+     * "docsUrl": "https://github.com/caraml-dev/xp"
      */
   },
 

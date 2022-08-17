@@ -15,10 +15,10 @@ import (
 	"github.com/golang-collections/collections/set"
 	"golang.org/x/oauth2/google"
 
-	managementClient "github.com/gojek/xp/clients/management"
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	managementClient "github.com/caraml-dev/xp/clients/management"
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/pubsub"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 )
 
 var GoogleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"

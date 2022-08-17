@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/caraml-dev/turing/engines/experiment/log"
+	"github.com/caraml-dev/turing/engines/experiment/manager"
+	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
 	"github.com/go-playground/validator/v10"
-	"github.com/gojek/turing/engines/experiment/log"
-	"github.com/gojek/turing/engines/experiment/manager"
-	inproc "github.com/gojek/turing/engines/experiment/plugin/inproc/manager"
 	"golang.org/x/oauth2/google"
 
-	xpclient "github.com/gojek/xp/clients/management"
-	"github.com/gojek/xp/common/api/schema"
-	_config "github.com/gojek/xp/plugins/turing/config"
+	xpclient "github.com/caraml-dev/xp/clients/management"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_config "github.com/caraml-dev/xp/plugins/turing/config"
 )
 
 func init() {

@@ -7,8 +7,8 @@ import (
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 
-	common_config "github.com/gojek/xp/common/config"
-	"github.com/gojek/xp/treatment-service/models"
+	common_config "github.com/caraml-dev/xp/common/config"
+	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
 type AssignedTreatmentLoggerKind = string

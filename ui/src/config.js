@@ -33,7 +33,7 @@ export const appConfig = {
   appIcon: "advancedSettingsApp",
   docsUrl: process.env.REACT_APP_USER_DOCS_URL
     ? JSON.parse(process.env.REACT_APP_USER_DOCS_URL)
-    : [{ href: "https://github.com/gojek/xp", label: "XP User Guide" }],
+    : [{ href: "https://github.com/caraml-dev/xp", label: "XP User Guide" }],
   pagination: {
     defaultPageSize: 10,
   },

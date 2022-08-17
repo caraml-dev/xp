@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gojek/turing/engines/experiment/log"
+	"github.com/caraml-dev/turing/engines/experiment/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

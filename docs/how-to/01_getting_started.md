@@ -20,5 +20,5 @@ For access to XP, users can self-onboard via the MLP UI.
 
 5. Click on Save. And voila! The onboarding is complete and you should see the configured settings.
 The project credentials (in particular, the `passkey`) would be required for running experiments
-([Turing](https://github.com/gojek/turing/tree/main/docs) takes care of this if you are running the experiments through its routers).
+([Turing](https://github.com/caraml-dev/turing/tree/main/docs) takes care of this if you are running the experiments through its routers).
 ![Experiments Settings Details](../assets/01_settings_details.png)

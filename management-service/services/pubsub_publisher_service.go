@@ -7,9 +7,9 @@ import (
 	"google.golang.org/api/iterator"
 	"google.golang.org/protobuf/proto"
 
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	"github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/management-service/config"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/management-service/config"
 )
 
 type PubSubPublisherService interface {

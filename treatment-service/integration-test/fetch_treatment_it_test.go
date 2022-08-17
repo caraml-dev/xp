@@ -21,15 +21,15 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gojek/xp/clients/management"
-	"github.com/gojek/xp/clients/treatment"
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/common/testutils"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/monitoring"
-	"github.com/gojek/xp/treatment-service/server"
-	mgmtSvcServer "github.com/gojek/xp/treatment-service/testhelper/mockmanagement/server"
-	mgmtSvc "github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
+	"github.com/caraml-dev/xp/clients/management"
+	"github.com/caraml-dev/xp/clients/treatment"
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/testutils"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/monitoring"
+	"github.com/caraml-dev/xp/treatment-service/server"
+	mgmtSvcServer "github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement/server"
+	mgmtSvc "github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement/service"
 )
 
 const (

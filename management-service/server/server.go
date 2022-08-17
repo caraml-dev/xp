@@ -17,14 +17,14 @@ import (
 	"github.com/heptiolabs/healthcheck"
 	"github.com/rs/cors"
 
-	"github.com/gojek/xp/common/web"
-	"github.com/gojek/xp/management-service/api"
-	"github.com/gojek/xp/management-service/appcontext"
-	"github.com/gojek/xp/management-service/config"
-	"github.com/gojek/xp/management-service/controller"
-	"github.com/gojek/xp/management-service/database"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/middleware"
+	"github.com/caraml-dev/xp/common/web"
+	"github.com/caraml-dev/xp/management-service/api"
+	"github.com/caraml-dev/xp/management-service/appcontext"
+	"github.com/caraml-dev/xp/management-service/config"
+	"github.com/caraml-dev/xp/management-service/controller"
+	"github.com/caraml-dev/xp/management-service/database"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/middleware"
 )
 
 type Server struct {

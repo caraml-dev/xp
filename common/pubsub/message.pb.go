@@ -7,7 +7,7 @@
 package pubsub
 
 import (
-	segmenters "github.com/gojek/xp/common/segmenters"
+	segmenters "github.com/caraml-dev/xp/common/segmenters"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

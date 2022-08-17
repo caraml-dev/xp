@@ -1,6 +1,6 @@
 # Running Experiments
 
-Experiments can be run using [routers](https://github.com/gojek/turing/blob/main/docs/concepts.md) or independently.
+Experiments can be run using [routers](https://github.com/caraml-dev/turing/blob/main/docs/concepts.md) or independently.
 
 Based on the segmenters enabled for the project and the experiment variables mapped to them (in the project's settings),
 all the variable(s) must be provided in the fetch treatment request body. For each segmenter below, one of the specified
@@ -14,7 +14,7 @@ all the variable(s) must be provided in the fetch treatment request body. For ea
 
 ## Running Experiments with Turing Routers
 
-When deploying a Turing router, the experiment engine can be configured to 'Turing Experiments'. For more information, check [Turing - Creating a Router](https://github.com/gojek/turing/tree/main/docs/how-to/create-a-router).
+When deploying a Turing router, the experiment engine can be configured to 'Turing Experiments'. For more information, check [Turing - Creating a Router](https://github.com/caraml-dev/turing/tree/main/docs/how-to/create-a-router).
 
 ## Running Experiments with API
 

@@ -9,11 +9,11 @@ import (
 
 	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/instrumentation"
-	"github.com/gojek/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/instrumentation"
+	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
 type MetricService interface {

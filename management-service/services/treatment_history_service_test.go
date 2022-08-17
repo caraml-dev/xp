@@ -10,10 +10,10 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/suite"
 
-	tu "github.com/gojek/xp/management-service/internal/testutils"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/pagination"
-	"github.com/gojek/xp/management-service/services"
+	tu "github.com/caraml-dev/xp/management-service/internal/testutils"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/pagination"
+	"github.com/caraml-dev/xp/management-service/services"
 )
 
 type TreatmentHistoryServiceTestSuite struct {

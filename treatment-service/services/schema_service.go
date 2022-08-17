@@ -8,8 +8,8 @@ import (
 
 	"github.com/golang-collections/collections/set"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/models"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
 type SchemaService interface {

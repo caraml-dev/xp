@@ -8,16 +8,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/gojek/mlp/api/client"
-	"github.com/gojek/xp/common/api/schema"
 	"github.com/stretchr/testify/suite"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/management-service/appcontext"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/management-service/appcontext"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
 type ProjectSettingsControllerTestSuite struct {

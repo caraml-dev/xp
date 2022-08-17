@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
-	"github.com/gojek/xp/common/api/schema"
-	api "github.com/gojek/xp/treatment-service/testhelper/mockmanagement"
-	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
+	"github.com/caraml-dev/xp/common/api/schema"
+	api "github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement"
+	"github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement/service"
 )
 
 type Segmenter struct {

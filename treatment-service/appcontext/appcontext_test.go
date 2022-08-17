@@ -12,14 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 
-	"github.com/gojek/xp/common/api/schema"
-	"github.com/gojek/xp/common/testutils"
-	"github.com/gojek/xp/treatment-service/config"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/monitoring"
-	"github.com/gojek/xp/treatment-service/services"
-	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/server"
-	"github.com/gojek/xp/treatment-service/testhelper/mockmanagement/service"
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/testutils"
+	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/monitoring"
+	"github.com/caraml-dev/xp/treatment-service/services"
+	"github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement/server"
+	"github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement/service"
 )
 
 func TestContext(t *testing.T) {

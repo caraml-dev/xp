@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/xp/management-service/api"
+	"github.com/caraml-dev/xp/management-service/api"
 )
 
 func TestNewOpenAPIValidator(t *testing.T) {

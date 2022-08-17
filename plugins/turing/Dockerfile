@@ -1,7 +1,7 @@
 FROM golang:1.18-alpine as builder
 
 ARG binary_name="plugin"
-ARG build_path="github.com/gojek/turing-experiments/plugins/turing/cmd"
+ARG build_path="github.com/caraml-dev/xp/plugins/turing/cmd"
 
 ENV GO111MODULE=on \
     GOOS=linux \

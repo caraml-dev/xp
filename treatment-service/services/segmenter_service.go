@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/segmenters"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/segmenters"
 )
 
 type SegmenterService interface {

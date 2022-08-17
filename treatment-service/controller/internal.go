@@ -6,8 +6,8 @@ import (
 
 	"github.com/heptiolabs/healthcheck"
 
-	"github.com/gojek/xp/treatment-service/appcontext"
-	"github.com/gojek/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/appcontext"
+	"github.com/caraml-dev/xp/treatment-service/config"
 )
 
 type InternalController struct {

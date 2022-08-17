@@ -3,10 +3,10 @@ package models
 import (
 	"reflect"
 
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	_utils "github.com/gojek/xp/common/utils"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	_utils "github.com/caraml-dev/xp/common/utils"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

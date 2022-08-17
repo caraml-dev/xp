@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/gojek/xp/management-service/server"
+	"github.com/caraml-dev/xp/management-service/server"
 )
 
 var cfgFile []string

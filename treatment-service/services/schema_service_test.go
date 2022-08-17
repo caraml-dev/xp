@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	"github.com/gojek/xp/treatment-service/models"
-	"github.com/gojek/xp/treatment-service/util"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/util"
 )
 
 type SchemaServiceTestSuite struct {

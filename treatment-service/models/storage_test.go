@@ -22,12 +22,12 @@ import (
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	managementClient "github.com/gojek/xp/clients/management"
-	"github.com/gojek/xp/clients/testutils/mocks"
-	"github.com/gojek/xp/common/api/schema"
-	_pubsub "github.com/gojek/xp/common/pubsub"
-	_segmenters "github.com/gojek/xp/common/segmenters"
-	tu "github.com/gojek/xp/common/testutils"
+	managementClient "github.com/caraml-dev/xp/clients/management"
+	"github.com/caraml-dev/xp/clients/testutils/mocks"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	tu "github.com/caraml-dev/xp/common/testutils"
 )
 
 type LocalStorageLookupSuite struct {

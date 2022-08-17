@@ -87,7 +87,7 @@ $(protoc_dir):
 compile-protos: | $(protoc_dir)
 	go install github.com/golang/protobuf/protoc-gen-go@v${PROTOC_VERSION}
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=treatment-service api/proto/logs.proto
-	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common/segmenters --go_opt=module=github.com/gojek/xp/common/segmenters api/proto/segmenters.proto
+	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common/segmenters --go_opt=module=github.com/caraml-dev/xp/common/segmenters api/proto/segmenters.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/message.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/experiment.proto
 	${protoc_dir}/bin/protoc --proto_path=. -I=api/proto/ --go_out=common api/proto/settings.proto

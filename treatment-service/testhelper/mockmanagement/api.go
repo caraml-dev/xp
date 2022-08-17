@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"time"
 
+	externalRef0 "github.com/caraml-dev/xp/common/api/schema"
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/go-chi/chi/v5"
-	externalRef0 "github.com/gojek/xp/common/api/schema"
 )
 
 const (

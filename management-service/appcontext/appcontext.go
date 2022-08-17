@@ -4,9 +4,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 
-	"github.com/gojek/xp/management-service/config"
-	mw "github.com/gojek/xp/management-service/middleware"
-	"github.com/gojek/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/config"
+	mw "github.com/caraml-dev/xp/management-service/middleware"
+	"github.com/caraml-dev/xp/management-service/services"
 )
 
 type AppContext struct {

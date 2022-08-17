@@ -8,7 +8,7 @@ A Helm chart for Kubernetes Deployment of the XP Treatment Service
 
 ## Introduction
 
-This Helm chart installs [Treatment Service](https://github.com/gojek/xp/treatment-service) and all its dependencies in a Kubernetes cluster.
+This Helm chart installs [Treatment Service](https://github.com/caraml-dev/xp/treatment-service) and all its dependencies in a Kubernetes cluster.
 
 ## Prerequisites
 
@@ -73,7 +73,7 @@ The following table lists the configurable parameters of the XP Treatment Servic
 | xpTreatment.extraVolumes | list | `[]` | Extra volumes to attach to the Pod. For example, you can mount  additional secrets to these volumes |
 | xpTreatment.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
 | xpTreatment.image.registry | string | `"ghcr.io"` | Docker registry for XP Treatment Service image |
-| xpTreatment.image.repository | string | `"gojek/turing-experiments/xp-treatment"` | Docker image repository for XP Treatment Service |
+| xpTreatment.image.repository | string | `"caraml-dev/xp/xp-treatment"` | Docker image repository for XP Treatment Service |
 | xpTreatment.image.tag | string | `"v0.7.0"` | Docker image tag for XP Treatment Service |
 | xpTreatment.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule,  useful when there are multiple ingress controllers installed |
 | xpTreatment.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP Treatment Service |

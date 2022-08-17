@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 )
 
 type Segmenter interface {

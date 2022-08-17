@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/gojek/xp/management-service/config"
-	"github.com/gojek/xp/management-service/models"
-	"github.com/gojek/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/config"
+	"github.com/caraml-dev/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/services"
 )
 
 // testHTTPServerAddr is the address of the test HTTP server assumed to be running and

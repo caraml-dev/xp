@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gojek/xp/common/api/schema"
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 )
 
 func TestProtobufSegmenterConfigToOpenAPISegmenterConfig(t *testing.T) {

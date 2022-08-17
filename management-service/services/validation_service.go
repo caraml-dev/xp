@@ -14,9 +14,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 
-	"github.com/gojek/xp/management-service/config"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/models"
+	"github.com/caraml-dev/xp/management-service/config"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/models"
 )
 
 var nameRegex = regexp.MustCompile(`^[A-Za-z\d][\w\d \-()#$%&:.]{2,62}[\w\d\-()#$%&:.]$`)

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gojek/xp/common/api/schema"
+	"github.com/caraml-dev/xp/common/api/schema"
 )
 
 const xpRequestIDHeaderKey = "XP-Request-ID"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang/geo/s2"
 
-	_segmenters "github.com/gojek/xp/common/segmenters"
+	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 )
 
 const (

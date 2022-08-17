@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gojek/xp/management-service/appcontext"
-	"github.com/gojek/xp/management-service/errors"
-	"github.com/gojek/xp/management-service/services"
-	"github.com/gojek/xp/management-service/services/mocks"
+	"github.com/caraml-dev/xp/management-service/appcontext"
+	"github.com/caraml-dev/xp/management-service/errors"
+	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/mocks"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )

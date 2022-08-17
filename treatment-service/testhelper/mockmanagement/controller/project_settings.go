@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gojek/xp/common/api/schema"
-	api "github.com/gojek/xp/treatment-service/testhelper/mockmanagement"
-	"github.com/gojek/xp/treatment-service/util"
+	"github.com/caraml-dev/xp/common/api/schema"
+	api "github.com/caraml-dev/xp/treatment-service/testhelper/mockmanagement"
+	"github.com/caraml-dev/xp/treatment-service/util"
 )
 
 type ProjectSettings struct {
