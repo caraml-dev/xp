@@ -15,7 +15,7 @@ jobs:
         uses: caraml-dev/docs/.github/actions/trigger-remote-docs-sync@main
         with:
           module: 'experiment'
-          git_https: 'https://github.com/caraml-dev/turing-experiments.git'
+          git_https: 'https://github.com/caraml-dev/xp.git'
           doc_folder: 'docs'
           ref_name: ${{ github.ref_name }}
           ref_type: ${{ github.ref_type }}
