@@ -26,7 +26,7 @@ tidy-plugin:
 .PHONY: build
 build:
 	@echo "Building binary..."
-	go build -o ./bin/plugin
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/plugin
 
 .PHONY: build-image
 build-image: vendor version
