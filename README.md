@@ -62,14 +62,7 @@ To test authorization for Management Service locally, make the following changes
 
 #### c. Using XP
 
-To use the XP Go modules as API dependencies, `replace` directives need to be used when consuming both the Management and Treatment API modules since the API modules uses local relative path.
-
-```go
-replace github.com/caraml-dev/xp/clients => github.com/caraml-dev/xp/clients v0.0.0
-replace github.com/caraml-dev/xp/common => github.com/caraml-dev/xp/common v0.0.0
-replace github.com/caraml-dev/xp/management-service => github.com/caraml-dev/xp/management-service v0.0.0
-replace github.com/caraml-dev/xp/treatment-service => github.com/caraml-dev/xp/treatment-service v0.0.0
-```
+To use the XP Go modules as API dependencies, simply import the XP Go modules directly i.e. `import "github.com/caraml-dev/xp/..."`
 
 ## Contributing
 
