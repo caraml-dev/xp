@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
-import { EuiPanel } from "@elastic/eui";
+import { EuiPanel, EuiSpacer, EuiPageTemplate } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
@@ -38,19 +38,24 @@ const ListSegmentHistoryView = ({ segment, ...props }) => {
   }, [segment]);
 
   return (
-    <ConfigSection title="Versions">
-      <EuiPanel>
-        <ListSegmentHistoryTable
-          items={data.data}
-          isLoaded={isLoaded}
-          error={error}
-          page={page}
-          totalItemCount={data.paging.total}
-          onPaginationChange={setPage}
-          onRowClick={onRowClick}
-        />
-      </EuiPanel>
-    </ConfigSection>
+    <Fragment>
+      <EuiSpacer size="m" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <ConfigSection title="Versions">
+          <EuiPanel>
+            <ListSegmentHistoryTable
+              items={data.data}
+              isLoaded={isLoaded}
+              error={error}
+              page={page}
+              totalItemCount={data.paging.total}
+              onPaginationChange={setPage}
+              onRowClick={onRowClick}
+            />
+          </EuiPanel>
+        </ConfigSection>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 

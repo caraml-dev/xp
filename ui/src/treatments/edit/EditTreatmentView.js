@@ -1,11 +1,7 @@
-import React, { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -26,29 +22,26 @@ const EditTreatmentView = ({ projectId, treatmentSpec, ...props }) => {
   });
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Edit Treatment" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiPageContentBody>
-          <FormContextProvider data={Treatment.fromJson(treatmentSpec)}>
-            <TreatmentsContextProvider projectId={projectId}>
-              <EditTreatmentForm
-                projectId={projectId}
-                onCancel={() => window.history.back()}
-                onSuccess={() => {
-                  props.navigate("../", { state: { refresh: true } });
-                }}
-              />
-            </TreatmentsContextProvider>
-          </FormContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <Fragment>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Edit Treatment" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={Treatment.fromJson(treatmentSpec)}>
+          <TreatmentsContextProvider projectId={projectId}>
+            <EditTreatmentForm
+              projectId={projectId}
+              onCancel={() => window.history.back()}
+              onSuccess={() => {
+                props.navigate("../", { state: { refresh: true } });
+              }}
+            />
+          </TreatmentsContextProvider>
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 

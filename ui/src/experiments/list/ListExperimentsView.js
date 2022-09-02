@@ -5,13 +5,10 @@ import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiPage,
-  EuiPageBody,
-  EuiPageContent,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPanel,
   EuiSearchBar,
   EuiSpacer,
+  EuiPageTemplate
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 import classNames from "classnames";
@@ -70,9 +67,12 @@ const ListExperimentsComponent = ({ projectId, props }) => {
   const onRowClick = (item) => props.navigate(`./${item.id}/details`);
 
   return (
-    <EuiPage
-      paddingSize="none"
-      className={classNames({ pageWithLeftSidebar: isSearchPanelVisible })}>
+    <EuiPageTemplate
+      className={classNames({ pageWithLeftSidebar: isSearchPanelVisible })}
+      restrictWidth={appConfig.pageTemplate.restrictWidth}
+      paddingSize={appConfig.pageTemplate.paddingSize}
+    >
+      <EuiSpacer size="l" />
       {isSearchPanelVisible && (
         <SearchExperimentsPanel
           onChange={() => setPage({ ...page, index: 0 })}
@@ -81,26 +81,28 @@ const ListExperimentsComponent = ({ projectId, props }) => {
         />
       )}
 
-      <EuiPageBody paddingSize="m">
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle
-              title="Experiments"
-              postpend={
-                isFilterSet() && <EuiBadge color="primary">Filtered</EuiBadge>
-              }
-            />
-          </EuiPageHeaderSection>
-          <EuiPageHeaderSection>
-            <NavigationMenu curPage={"experiments"} props={props} />
-            &emsp;
-            <EuiButton size="s" onClick={() => props.navigate("./create")} fill>
-              Create Experiment
-            </EuiButton>
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={
+          <PageTitle
+            title="Experiments"
+            postpend={
+              isFilterSet() && <EuiBadge color="primary">Filtered</EuiBadge>
+            }
+          />
+        }
+        rightSideItems={[
+          <EuiButton size="s" onClick={() => props.navigate("./create")} fill>
+            Create Experiment
+          </EuiButton>,
+          <NavigationMenu curPage={"experiments"} props={props} />,
+        ]}
+        alignItems={"center"}
+      />
 
-        <EuiPageContent>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <EuiPanel>
           <EuiFlexGroup direction="row" gutterSize="s" alignItems="center">
             <EuiFlexItem grow={false}>
               <EuiButton
@@ -132,9 +134,10 @@ const ListExperimentsComponent = ({ projectId, props }) => {
             totalItemCount={results.totalItemCount}
             props={props}
           />
-        </EuiPageContent>
-      </EuiPageBody>
-    </EuiPage>
+        </EuiPanel>
+      </EuiPageTemplate.Section>
+      <EuiSpacer size="l" />
+    </EuiPageTemplate>
   );
 };
 

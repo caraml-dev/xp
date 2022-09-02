@@ -19,19 +19,19 @@ export const getExperimentStatus = (experiment) => {
     },
     Completed: {
       label: "Completed",
-      color: "#017D73",
+      color: "#00BFB3",
       healthColor: "success",
       iconType: "check",
     },
     Scheduled: {
       label: "Scheduled",
-      color: "#F5A700",
+      color: "#FEC514",
       healthColor: "warning",
       iconType: "calendar",
     },
     Running: {
       label: "Running",
-      color: "#0077CC",
+      color: "#07C",
       healthColor: "primary",
       iconType: "clock",
     },

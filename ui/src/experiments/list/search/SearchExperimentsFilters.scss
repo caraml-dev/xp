@@ -1,5 +1,5 @@
 @import "~@elastic/eui/src/global_styling/variables/animations";
-@import "~@elastic/eui/src/global_styling/variables/colors";
+//@import "~@elastic/eui/src/global_styling/variables/colors";
 @use "~@elastic/eui/src/global_styling/utility/animations";
 
 .searchPanelFlyoutHeader {
@@ -15,7 +15,7 @@
   animation-duration: 0s;
   border-left: 1px solid #d3dae6;
   box-shadow: inset -5px 0 9px -9px rgba(0, 0, 0, 0.4);
-  scrollbar-width: thin;
+  //scrollbar-width: thin;
   position: sticky;
   min-height: calc(100vh - 49px);
   max-height: calc(100vh - 49px);

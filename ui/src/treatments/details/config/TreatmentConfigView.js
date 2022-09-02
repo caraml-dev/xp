@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiPageTemplate } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { ActivityConfigSection } from "components/config_section/ActivityConfigSection";
@@ -31,22 +31,25 @@ export const TreatmentConfigView = ({ treatment }) => {
 
   return (
     <Fragment>
-      <EuiFlexGroup>
-        <EuiFlexItem>
-          <ConfigSection title={activity.title} iconType={activity.iconType}>
-            {activity.children}
-          </ConfigSection>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup>
-        <EuiFlexItem>
-          <ConfigSection
-            title={generalInfo.title}
-            iconType={generalInfo.iconType}>
-            {generalInfo.children}
-          </ConfigSection>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+      <EuiSpacer size="m" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <ConfigSection title={activity.title} iconType={activity.iconType}>
+              {activity.children}
+            </ConfigSection>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <ConfigSection
+              title={generalInfo.title}
+              iconType={generalInfo.iconType}>
+              {generalInfo.children}
+            </ConfigSection>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiPageTemplate.Section>
     </Fragment>
   );
 };

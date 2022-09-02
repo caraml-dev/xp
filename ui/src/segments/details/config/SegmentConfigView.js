@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiPageTemplate } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { ActivityConfigSection } from "components/config_section/ActivityConfigSection";
@@ -43,24 +43,27 @@ export const SegmentConfigView = ({ segment }) => {
 
   return (
     <Fragment>
-      <EuiFlexGroup>
-        <EuiFlexItem>
-          <ConfigSection title={activity.title} iconType={activity.iconType}>
-            {activity.children}
-          </ConfigSection>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="l" />
-      <EuiFlexGroup direction="column">
-        {singleColumnSection.map((section, idx) => (
-          <EuiFlexItem key={`config-section-${idx}`}>
-            <ConfigSection title={section.title} iconType={section.iconType}>
-              {section.children}
+      <EuiSpacer size="m" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <ConfigSection title={activity.title} iconType={activity.iconType}>
+              {activity.children}
             </ConfigSection>
           </EuiFlexItem>
-        ))}
+        </EuiFlexGroup>
         <EuiSpacer size="l" />
-      </EuiFlexGroup>
+        <EuiFlexGroup direction="column">
+          {singleColumnSection.map((section, idx) => (
+            <EuiFlexItem key={`config-section-${idx}`}>
+              <ConfigSection title={section.title} iconType={section.iconType}>
+                {section.children}
+              </ConfigSection>
+            </EuiFlexItem>
+          ))}
+          <EuiSpacer size="l" />
+        </EuiFlexGroup>
+      </EuiPageTemplate.Section>
     </Fragment>
   );
 };

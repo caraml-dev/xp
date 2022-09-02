@@ -6,14 +6,15 @@ import { SegmenterContextProvider } from "providers/segmenters/context";
 
 import SearchExperimentsFilters from "./SearchExperimentsFilters";
 
-import "./SearchExperimentsPanel.scss";
+// import "./SearchExperimentsPanel.scss";
 
 const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
   return (
     <SegmenterContextProvider projectId={projectId}>
       <EuiFlyout
         id="experiments-search-panel"
-        className="searchPanelFlyout--left"
+        side="left"
+        // className="searchPanelFlyout--left"
         onClose={onClose}
         size="s"
         maxWidth={true}

@@ -65,7 +65,7 @@ const makeSegmenterCard = (
 ) => {
   return (
     <EuiDraggable
-      spacing="m"
+      spacing="l"
       key={id}
       index={idx}
       draggableId={id}

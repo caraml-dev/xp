@@ -1,11 +1,7 @@
-import React, { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -27,31 +23,28 @@ const EditSegmentView = ({ projectId, segmentSpec, ...props }) => {
   });
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Edit Segment" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiPageContentBody>
-          <FormContextProvider data={CustomSegment.fromJson(segmentSpec)}>
-            <SegmenterContextProvider projectId={projectId} status="active">
-              <SegmentsContextProvider projectId={projectId}>
-                <EditSegmentForm
-                  projectId={projectId}
-                  onCancel={() => window.history.back()}
-                  onSuccess={() => {
-                    props.navigate("../", { state: { refresh: true } });
-                  }}
-                />
-              </SegmentsContextProvider>
-            </SegmenterContextProvider>
-          </FormContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <Fragment>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Edit Segment" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={CustomSegment.fromJson(segmentSpec)}>
+          <SegmenterContextProvider projectId={projectId} status="active">
+            <SegmentsContextProvider projectId={projectId}>
+              <EditSegmentForm
+                projectId={projectId}
+                onCancel={() => window.history.back()}
+                onSuccess={() => {
+                  props.navigate("../", { state: { refresh: true } });
+                }}
+              />
+            </SegmentsContextProvider>
+          </SegmenterContextProvider>
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 

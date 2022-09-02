@@ -92,7 +92,7 @@ export const SegmenterCard = ({
   //TODO: Change to gear icon using arrowProps in EuiAccordion after updating to Eui >=v40.0.0
   return (
     <EuiPanel className="euiPanel--settingsSegmenterCard" paddingSize="none">
-      <EuiFlexGroup alignItems="center" gutterSize="m">
+      <EuiFlexGroup alignItems="center" gutterSize="s">
         <EuiFlexItem
           className="euiFlex--settingsSegmenterCardHandle"
           grow={false}

@@ -3,12 +3,9 @@ import React, { Fragment, useCallback, useEffect } from "react";
 import {
   EuiCallOut,
   EuiLoadingChart,
-  EuiPage,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
   EuiSpacer,
   EuiTextAlign,
+  EuiPageTemplate
 } from "@elastic/eui";
 import { PageNavigation } from "@gojek/mlp-ui";
 import { Redirect, Router } from "@reach/router";
@@ -22,8 +19,15 @@ import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 
 import { ExperimentConfigView } from "./config/ExperimentConfigView";
 import { ExperimentActions } from "./ExperimentActions";
+import { useConfig } from "../../config";
 
 const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [{ data, isLoaded, error }, fetchExperimentDetails] = useXpApi(
     `/projects/${projectId}/experiments/${experimentId}`
   );
@@ -58,33 +62,34 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
   ];
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : error ? (
-          <EuiCallOut
-            title="Sorry, there was an error"
-            color="danger"
-            iconType="alert">
-            <p>{error.message}</p>
-          </EuiCallOut>
-        ) : (
-          <Fragment>
-            {!(props["*"] === "edit") ? (
-              <Fragment>
-                <EuiPageHeader>
-                  <EuiPageHeaderSection>
-                    <PageTitle
-                      title={data.data.name}
-                      postpend={
-                        <StatusBadge status={getExperimentStatus(data.data)} />
-                      }
-                    />
-                  </EuiPageHeaderSection>
-                </EuiPageHeader>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : error ? (
+        <EuiCallOut
+          title="Sorry, there was an error"
+          color="danger"
+          iconType="alert">
+          <p>{error.message}</p>
+        </EuiCallOut>
+      ) : (
+        <Fragment>
+          {!(props["*"] === "edit") ? (
+            <Fragment>
+              <EuiPageTemplate.Header
+                bottomBorder={false}
+                pageTitle={
+                  <PageTitle
+                    title={data.data.name}
+                    postpend={
+                      <StatusBadge status={getExperimentStatus(data.data)} />
+                    }
+                  />
+                }
+              >
                 <ExperimentActions
                   onEdit={() => props.navigate("./edit")}
                   onActivateSuccess={onExperimentChange}
@@ -98,12 +103,19 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
                     />
                   )}
                 </ExperimentActions>
-                <EuiSpacer size="xl" />
-              </Fragment>
-            ) : (
-              <EuiSpacer />
-            )}
+              </EuiPageTemplate.Header>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <EuiPageTemplate.Header
+                bottomBorder={false}
+                pageTitle={<PageTitle title="Edit Experiment" />}
+              />
+            </Fragment>
+          )}
 
+          <EuiSpacer size="m" />
+          <EuiPageTemplate.Section color={"transparent"}>
             <Router primary={false}>
               <Redirect from="/" to="details" noThrow />
               <ExperimentConfigView path="details" experiment={data.data} />
@@ -115,10 +127,11 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
 
               <EditExperimentView path="edit" experimentSpec={data.data} />
             </Router>
-          </Fragment>
-        )}
-      </EuiPageBody>
-    </EuiPage>
+          </EuiPageTemplate.Section>
+        </Fragment>
+      )}
+      <EuiSpacer size="l" />
+    </EuiPageTemplate>
   );
 };
 

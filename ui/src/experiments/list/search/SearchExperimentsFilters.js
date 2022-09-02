@@ -29,7 +29,7 @@ import ExperimentUpdatedByFilter from "./components/ExperimentUpdatedByFilter";
 import ExperimentSearchContext from "./context";
 import schema from "./validation/schema";
 
-import "./SearchExperimentsFilters.scss";
+// import "./SearchExperimentsFilters.scss";
 
 const SearchExperimentFilters = ({ onChange }) => {
   const { clearFilters, getFilter, getFilters, isFilterSet, setFilter } =

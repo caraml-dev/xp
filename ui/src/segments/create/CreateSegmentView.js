@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -15,8 +11,15 @@ import { SegmentsContextProvider } from "providers/segment/context";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { CreateSegmentForm } from "segments/components/form/CreateSegmentForm";
 import { CustomSegment } from "services/segment/CustomSegment";
+import { useConfig } from "../../config";
 
 const CreateSegmentView = ({ projectId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: ".." },
@@ -26,29 +29,28 @@ const CreateSegmentView = ({ projectId, ...props }) => {
   }, [projectId]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Create Segment" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiPageContentBody>
-          <FormContextProvider data={new CustomSegment()}>
-            <SegmenterContextProvider projectId={projectId} status="active">
-              <SegmentsContextProvider projectId={projectId}>
-                <CreateSegmentForm
-                  projectId={projectId}
-                  onCancel={() => window.history.back()}
-                  onSuccess={(segmentId) => props.navigate(`../${segmentId}`)}
-                />
-              </SegmentsContextProvider>
-            </SegmenterContextProvider>
-          </FormContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Create Segment" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={new CustomSegment()}>
+          <SegmenterContextProvider projectId={projectId} status="active">
+            <SegmentsContextProvider projectId={projectId}>
+              <CreateSegmentForm
+                projectId={projectId}
+                onCancel={() => window.history.back()}
+                onSuccess={(segmentId) => props.navigate(`../${segmentId}`)}
+              />
+            </SegmentsContextProvider>
+          </SegmenterContextProvider>
+        </FormContextProvider>
+        <EuiSpacer size="l" />
+      </EuiPageTemplate.Section>
+    </EuiPageTemplate>
   );
 };
 

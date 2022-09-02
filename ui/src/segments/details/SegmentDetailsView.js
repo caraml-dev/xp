@@ -3,10 +3,7 @@ import React, { Fragment, useCallback, useEffect } from "react";
 import {
   EuiCallOut,
   EuiLoadingChart,
-  EuiPage,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
   EuiTextAlign,
 } from "@elastic/eui";
@@ -20,8 +17,15 @@ import EditSegmentView from "segments/edit/EditSegmentView";
 import ListSegmentHistoryView from "segments/history/ListSegmentHistoryView";
 
 import { SegmentActions } from "./SegmentActions";
+import { useConfig } from "../../config";
 
 const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [{ data, isLoaded, error }, fetchSegmentDetails] = useXpApi(
     `/projects/${projectId}/segments/${segmentId}`
   );
@@ -56,8 +60,8 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
   ];
 
   return (
-    <EuiPage>
-      <EuiPageBody>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
         {!isLoaded ? (
           <EuiTextAlign textAlign="center">
             <EuiLoadingChart size="xl" mono />
@@ -73,27 +77,26 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
           <Fragment>
             {!(props["*"] === "edit") ? (
               <Fragment>
-                <EuiPageHeader>
-                  <EuiPageHeaderSection>
-                    <PageTitle title={data.data.name} />
-                  </EuiPageHeaderSection>
-                </EuiPageHeader>
-                <SegmentActions
-                  onEdit={() => props.navigate("./edit")}
-                  onDeleteSuccess={() => props.navigate("../")}>
-                  {(getActions) => (
-                    <PageNavigation
-                      tabs={tabs}
-                      actions={getActions(data.data)}
-                      selectedTab={props["*"]}
-                      {...props}
-                    />
-                  )}
-                </SegmentActions>
-                <EuiSpacer size="xl" />
+                <EuiPageTemplate.Header
+                  bottomBorder={false}
+                  pageTitle={<PageTitle title={data.data.name} />}
+                >
+                  <SegmentActions
+                    onEdit={() => props.navigate("./edit")}
+                    onDeleteSuccess={() => props.navigate("../")}>
+                    {(getActions) => (
+                      <PageNavigation
+                        tabs={tabs}
+                        actions={getActions(data.data)}
+                        selectedTab={props["*"]}
+                        {...props}
+                      />
+                    )}
+                  </SegmentActions>
+                </EuiPageTemplate.Header>
               </Fragment>
             ) : (
-              <EuiSpacer />
+              <></>
             )}
             <Router primary={false}>
               <Redirect from="/" to="details" noThrow />
@@ -104,8 +107,7 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
             </Router>
           </Fragment>
         )}
-      </EuiPageBody>
-    </EuiPage>
+    </EuiPageTemplate>
   );
 };
 

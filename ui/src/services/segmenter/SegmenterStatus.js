@@ -8,7 +8,7 @@ export const getSegmenterStatus = (segmenter) => {
     },
     active: {
       label: "Active",
-      color: "#017D73",
+      color: "#00BFB3",
       healthColor: "success",
       iconType: "check",
     },

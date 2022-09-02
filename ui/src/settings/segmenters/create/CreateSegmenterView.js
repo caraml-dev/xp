@@ -1,11 +1,7 @@
-import React, { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -23,26 +19,22 @@ const CreateSegmenterView = ({ projectId, ...props }) => {
   }, [projectId]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Create Segmenter" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiSpacer size="m" />
-        <EuiPageContentBody>
-          <FormContextProvider data={new Segmenter()}>
-            <CreateSegmenterForm
-              projectId={projectId}
-              onCancel={() => window.history.back()}
-              onSuccess={() => props.navigate(`../`)}
-            />
-          </FormContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <Fragment>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={ <PageTitle title="Create Segmenter" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={new Segmenter()}>
+          <CreateSegmenterForm
+            projectId={projectId}
+            onCancel={() => window.history.back()}
+            onSuccess={() => props.navigate(`../`)}
+          />
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 

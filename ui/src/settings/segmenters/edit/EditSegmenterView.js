@@ -1,11 +1,7 @@
-import React, { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -24,27 +20,24 @@ const EditSegmenterView = ({ projectId, segmenter, ...props }) => {
   }, [segmenter]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Edit Segmenter" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiSpacer size="m" />
-        <EuiPageContentBody>
-          <FormContextProvider data={Segmenter.fromJson(segmenter)}>
-            <EditSegmenterForm
-              projectId={projectId}
-              onCancel={() => window.history.back()}
-              onSuccess={() =>
-                props.navigate("../", { state: { refresh: true } })
-              }
-            />
-          </FormContextProvider>
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <Fragment>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Edit Segmenter" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={Segmenter.fromJson(segmenter)}>
+          <EditSegmenterForm
+            projectId={projectId}
+            onCancel={() => window.history.back()}
+            onSuccess={() =>
+              props.navigate("../", { state: { refresh: true } })
+            }
+          />
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 

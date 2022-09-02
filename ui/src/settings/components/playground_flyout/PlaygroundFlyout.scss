@@ -1,5 +1,5 @@
 @import "~@elastic/eui/src/global_styling/variables/animations";
-@import "~@elastic/eui/src/global_styling/variables/colors";
+//@import "~@elastic/eui/src/global_styling/variables/colors";
 @use "~@elastic/eui/src/global_styling/utility/animations";
 
 .playgroundFlyoutFooter {
@@ -12,7 +12,7 @@
   border-left: 0;
   border-right: 0;
   box-shadow: inset 5px 0 9px -9px rgba(0, 0, 0, 0.4);
-  scrollbar-width: thin;
+  //scrollbar-width: thin;
   position: sticky;
   min-height: calc(100vh - 49px);
   max-height: calc(100vh - 49px);

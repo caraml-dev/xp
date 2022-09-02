@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -14,8 +10,15 @@ import { PageTitle } from "components/page/PageTitle";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { Settings } from "services/settings/Settings";
 import { CreateSettingsForm } from "settings/components/form/CreateSettingsForm";
+import { useConfig } from "../../config";
 
 const CreateSettingsView = ({ projectId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: ".." },
@@ -25,27 +28,26 @@ const CreateSettingsView = ({ projectId, ...props }) => {
   }, [projectId]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Create Settings" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiPageContentBody>
-          <SegmenterContextProvider projectId={projectId}>
-            <FormContextProvider data={new Settings()}>
-              <CreateSettingsForm
-                projectId={projectId}
-                onCancel={() => window.history.back()}
-                onSuccess={() => props.navigate(`..`)}
-              />
-            </FormContextProvider>
-          </SegmenterContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Create Settings" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <SegmenterContextProvider projectId={projectId}>
+          <FormContextProvider data={new Settings()}>
+            <CreateSettingsForm
+              projectId={projectId}
+              onCancel={() => window.history.back()}
+              onSuccess={() => props.navigate(`..`)}
+            />
+          </FormContextProvider>
+        </SegmenterContextProvider>
+        <EuiSpacer size="l" />
+      </EuiPageTemplate.Section>
+    </EuiPageTemplate>
   );
 };
 
