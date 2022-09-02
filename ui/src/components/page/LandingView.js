@@ -1,4 +1,4 @@
-import React, {Fragment, useContext} from "react";
+import React, { Fragment, useContext } from "react";
 
 import {
   EuiLink,
