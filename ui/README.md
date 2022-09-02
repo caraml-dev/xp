@@ -4,7 +4,7 @@ This is the UI component of XP based on React web framework.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/en/download/) v14
+- [Node.js](https://nodejs.org/en/download/) v16
 - yarn 1.22.x (`npm install --global yarn`)
 
 ## Install Dependencies

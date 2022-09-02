@@ -1,13 +1,12 @@
-import React, { useContext } from "react";
+import React, {Fragment, useContext} from "react";
 
 import {
   EuiLink,
   EuiLoadingChart,
-  EuiPage,
-  EuiPanel,
   EuiSpacer,
   EuiText,
   EuiTextAlign,
+  EuiPageTemplate
 } from "@elastic/eui";
 
 import ProjectContext from "providers/project/context";
@@ -22,21 +21,27 @@ const LandingView = ({ Component, name, projectId, ...props }) => {
           <EuiLoadingChart size="xl" mono />
         </EuiTextAlign>
       ) : !isProjectOnboarded(projectId) ? (
-        <EuiPage>
-          <EuiPanel>
-            <EuiText>
-              Welcome to {name}.{"\n\n"}
-            </EuiText>
-            <EuiSpacer />
-            <EuiText>
-              This project has not been set up. Get started{" "}
-              <EuiLink onClick={() => props.navigate("./settings/create")}>
+        <EuiPageTemplate panelled={false}>
+          <EuiPageTemplate.EmptyPrompt
+            title={
+              <EuiText>
+                Welcome to {name}.{"\n\n"}
+              </EuiText>
+            }
+            body={
+              <Fragment>
+                <EuiSpacer />
+                <EuiText>
+                This project has not been set up. Get started{" "}
+                <EuiLink onClick={() => props.navigate("./settings/create")}>
                 here
-              </EuiLink>
-              .
-            </EuiText>
-          </EuiPanel>
-        </EuiPage>
+                </EuiLink>
+                .
+                </EuiText>
+              </Fragment>
+            }
+          />
+        </EuiPageTemplate>
       ) : (
         <Component projectId={projectId} {...props} />
       )}

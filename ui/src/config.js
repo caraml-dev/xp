@@ -47,6 +47,14 @@ export const appConfig = {
     tzOffsetMinutes: 0,
     tz: "UTC",
   },
+  // Specifies a set of page templating configurations that will soon be controlled by the mlp-ui package
+  // TO-DO: to review if these set of specifications are still needed after the update to mlp-ui
+  pageTemplate: {
+    // Width of page template
+    restrictWidth: "90%",
+    // Padding of page template
+    paddingSize: "none",
+  },
 };
 
 const sentryConfig = {
