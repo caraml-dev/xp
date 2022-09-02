@@ -39,7 +39,7 @@
   "scripts": {
     "start": "PORT=3002 craco start --verbose",
     "build": "craco build",
-    "lint": "eslint --max-warning  s 0 src",
+    "lint": "eslint --max-warnings 0 src",
     "prepare": "cd ../ && husky install ui/.husky"
   },
   "eslintConfig": {
