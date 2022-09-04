@@ -9,7 +9,6 @@ import {
 } from "@elastic/eui";
 import { PageNavigation, useToggle } from "@gojek/mlp-ui";
 import { Redirect, Router } from "@reach/router";
-import classNames from "classnames";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
@@ -23,7 +22,6 @@ import SegmenterDetailsView from "settings/segmenters/details/SegmenterDetailsVi
 import { ListSegmentersView } from "settings/segmenters/list/ListSegmentersView";
 import ValidationView from "settings/validation/ValidationView";
 
-import "./SettingsDetailsView.scss";
 import { useConfig } from "../../config";
 
 const SettingsDetailsView = ({ projectId, ...props }) => {
@@ -58,10 +56,9 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
       fetchXPSettings();
     }
   }, [fetchXPSettings, props.location.state]);
-  console.log(props["*"]);
+
   return (
     <EuiPageTemplate
-      className={classNames({ pageWithRightSidebar: isFlyoutVisible })}
       restrictWidth={restrictWidth}
       paddingSize={paddingSize}
     >

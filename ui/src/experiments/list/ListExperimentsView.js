@@ -11,7 +11,6 @@ import {
   EuiPageTemplate
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
-import classNames from "classnames";
 
 import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
@@ -23,8 +22,6 @@ import ExperimentSearchContext, {
   ExperimentSearchContextProvider,
 } from "./search/context";
 import SearchExperimentsPanel from "./search/SearchExperimentsPanel";
-
-import "./ListExperimentsView.scss";
 
 const ListExperimentsComponent = ({ projectId, props }) => {
   const { appConfig } = useConfig();
@@ -68,7 +65,6 @@ const ListExperimentsComponent = ({ projectId, props }) => {
 
   return (
     <EuiPageTemplate
-      className={classNames({ pageWithLeftSidebar: isSearchPanelVisible })}
       restrictWidth={appConfig.pageTemplate.restrictWidth}
       paddingSize={appConfig.pageTemplate.paddingSize}
     >
