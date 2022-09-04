@@ -121,11 +121,6 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
               toggleFlyout={toggleFlyout}
             />
           </Router>
-
-          {/*<EuiSpacer size="m" />*/}
-          {/*<EuiPageTemplate.Section color={"transparent"}>*/}
-
-          {/*</EuiPageTemplate.Section>*/}
         </>
       )}
       <EuiSpacer size="l" />
