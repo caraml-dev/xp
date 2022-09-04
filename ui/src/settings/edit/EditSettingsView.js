@@ -21,7 +21,7 @@ const EditSettingsView = ({ projectId, settings, ...props }) => {
     <Fragment>
       <EuiPageTemplate.Header
         bottomBorder={false}
-        pageTitle={ <PageTitle title="Edit Settings" />}
+        pageTitle={<PageTitle title="Edit Settings" />}
       />
       <EuiSpacer size="l" />
       <EuiPageTemplate.Section color={"transparent"}>

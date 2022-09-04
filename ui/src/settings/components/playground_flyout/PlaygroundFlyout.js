@@ -21,8 +21,6 @@ import schema from "settings/components/form/validation/schema";
 import { PlaygroundRadioGroup } from "settings/components/playground_flyout/PlaygroundRadioGroup";
 import { getValidationOptions } from "settings/components/playground_flyout/typeOptions";
 
-import "./PlaygroundFlyout.scss";
-
 var JSONbig = require("json-bigint");
 
 const PlaygroundFlyout = ({ onClose }) => {
@@ -76,9 +74,8 @@ const PlaygroundFlyout = ({ onClose }) => {
 
   return (
     <EuiFlyout
-      className="playgroundFlyout--right"
       onClose={onClose}
-      size="s"
+      size="313px"
       maxWidth={true}
       paddingSize="m">
       <EuiFlyoutHeader hasBorder>
@@ -132,7 +129,7 @@ const PlaygroundFlyout = ({ onClose }) => {
           </EuiFlexItem>
         </EuiText>
       </EuiFlyoutBody>
-      <EuiFlyoutFooter className="playgroundFlyoutFooter">
+      <EuiFlyoutFooter>
         <EuiFlexGroup justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
             <EuiButton
