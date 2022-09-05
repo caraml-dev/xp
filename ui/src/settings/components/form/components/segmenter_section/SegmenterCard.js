@@ -1,67 +1,16 @@
-import { useEffect, useState } from "react";
-
 import {
-  EuiAccordion,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
-  EuiHorizontalRule,
   EuiIcon,
   EuiPanel,
-  EuiRadioGroup,
   EuiTextColor,
 } from "@elastic/eui";
-import isEqual from "lodash/isEqual";
-import sortBy from "lodash/sortBy";
 
 import { StatusBadge } from "components/status_badge/StatusBadge";
 import { getSegmenterScope } from "services/segmenter/SegmenterScope";
 
 import "./SegmenterCard.scss";
-
-const VariablesMappingPanel = ({
-  segmenterName,
-  variables,
-  selectedVariables,
-  errors,
-  onChange,
-}) => {
-  const options = variables.map((names, idx) => ({
-    id: `${segmenterName}-${idx}`,
-    label: names.join(", "),
-    names: names, // Store the names as is, for selection comparison
-  }));
-  const [selectedOption, setSelectedOption] = useState();
-
-  useEffect(() => {
-    const selected = options.find((e) =>
-      isEqual(sortBy(e.names), sortBy(selectedVariables))
-    );
-    if (!!selected && selectedOption !== selected.id) {
-      setSelectedOption(selected.id);
-    }
-  }, [options, selectedOption, selectedVariables]);
-
-  const onChangeSelectedVariables = (id) => {
-    const item = options.find((e) => e.id === id);
-    onChange(!!item ? item.names : []);
-  };
-
-  return (
-    <EuiPanel paddingSize="none" color="ghostwhite">
-      <EuiFormRow fullWidth isInvalid={!!errors} error={errors}>
-        <EuiRadioGroup
-          options={options}
-          idSelected={selectedOption}
-          onChange={onChangeSelectedVariables}
-          legend={{
-            children: <span>Experiment Variable(s)</span>,
-          }}
-        />
-      </EuiFormRow>
-    </EuiPanel>
-  );
-};
+import {SegmenterSettings} from "./SegmenterSettings";
 
 export const SegmenterCard = ({
   id,
@@ -89,7 +38,6 @@ export const SegmenterCard = ({
     </>
   );
 
-  //TODO: Change to gear icon using arrowProps in EuiAccordion after updating to Eui >=v40.0.0
   return (
     <EuiPanel className="euiPanel--settingsSegmenterCard" paddingSize="none">
       <EuiFlexGroup alignItems="center" gutterSize="s">
@@ -107,21 +55,15 @@ export const SegmenterCard = ({
         <EuiFlexItem>
           <EuiPanel paddingSize="s" color="ghostwhite">
             {!!isExpandable ? (
-              <EuiAccordion
+              <SegmenterSettings
                 id={id}
-                paddingSize="xs"
-                initialIsOpen={variables.length > 1}
+                name={name}
+                variables={variables}
+                selectedVariables={selectedVariables}
                 buttonContent={buttonContent}
-                arrowDisplay="right">
-                <EuiHorizontalRule margin="xs" />
-                <VariablesMappingPanel
-                  segmenterName={name}
-                  variables={variables}
-                  selectedVariables={selectedVariables}
-                  errors={errors}
-                  onChange={onChangeSelectedVariables}
-                />
-              </EuiAccordion>
+                errors={errors}
+                onChangeSelectedVariables={onChangeSelectedVariables}
+              />
             ) : (
               <>
                 {displayName}
