@@ -102,7 +102,6 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
               <Redirect from="/" to="details" noThrow />
               <SegmentConfigView path="details" segment={data.data} />
               <ListSegmentHistoryView path="history" segment={data.data} />
-
               <EditSegmentView path="edit" segmentSpec={data.data} />
             </Router>
           </Fragment>

@@ -106,28 +106,15 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
               </EuiPageTemplate.Header>
             </Fragment>
           ) : (
-            <Fragment>
-              <EuiPageTemplate.Header
-                bottomBorder={false}
-                pageTitle={<PageTitle title="Edit Experiment" />}
-              />
-            </Fragment>
+            <></>
           )}
 
-          <EuiSpacer size="m" />
-          <EuiPageTemplate.Section color={"transparent"}>
-            <Router primary={false}>
-              <Redirect from="/" to="details" noThrow />
-              <ExperimentConfigView path="details" experiment={data.data} />
-
-              <ListExperimentHistoryView
-                path="history"
-                experiment={data.data}
-              />
-
-              <EditExperimentView path="edit" experimentSpec={data.data} />
-            </Router>
-          </EuiPageTemplate.Section>
+          <Router primary={false}>
+            <Redirect from="/" to="details" noThrow />
+            <ExperimentConfigView path="details" experiment={data.data} />
+            <ListExperimentHistoryView path="history" experiment={data.data} />
+            <EditExperimentView path="edit" experimentSpec={data.data} />
+          </Router>
         </Fragment>
       )}
       <EuiSpacer size="l" />
