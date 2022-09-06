@@ -77,7 +77,9 @@ const PlaygroundFlyout = ({ onClose }) => {
       onClose={onClose}
       size="313px"
       maxWidth={true}
-      paddingSize="m">
+      paddingSize="m"
+      type="push"
+    >
       <EuiFlyoutHeader hasBorder>
         <EuiFlexItem>
           <EuiTitle size="s">

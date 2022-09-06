@@ -16,7 +16,9 @@ const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
         size="313px"
         maxWidth={true}
         hideCloseButton={true}
-        paddingSize="m">
+        paddingSize="m"
+        type="push"
+      >
         <SearchExperimentsFilters onChange={onChange} />
         <EuiFlyoutFooter className="euiFlyoutFooter">
           <EuiButton onClick={() => onClose(false)} fill>
