@@ -121,7 +121,6 @@ export const SegmentConfigPanel = ({
           options={segmentSelectionOptions}
           onChange={onCustomOrTemplateSelection}
           selectedOptions={!!segmentTemplate ? [segmentTemplate] : []}
-          autoFocus
         />
       </EuiFormRow>
       <EuiSpacer />
