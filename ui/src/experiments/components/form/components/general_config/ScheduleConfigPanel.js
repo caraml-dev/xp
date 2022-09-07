@@ -86,9 +86,6 @@ export const ScheduleConfigPanel = ({
                     aria-label="Start Time"
                     showTimeSelect
                     utcOffset={appConfig.datetime.tzOffsetMinutes}
-                    popperProps={{
-                      positionFixed: true,
-                    }}
                   />
                 }
                 endDateControl={
@@ -101,9 +98,6 @@ export const ScheduleConfigPanel = ({
                     aria-label="End Time"
                     showTimeSelect
                     utcOffset={appConfig.datetime.tzOffsetMinutes}
-                    popperProps={{
-                      positionFixed: true,
-                    }}
                   />
                 }
               />
