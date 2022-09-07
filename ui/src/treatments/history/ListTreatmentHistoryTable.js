@@ -19,8 +19,8 @@ const ListTreatmentHistoryTable = ({
   const pagination = {
     pageIndex: page.index,
     pageSize: page.size,
+    showPerPageOptions: false,
     totalItemCount,
-    hidePerPageOptions: true,
   };
 
   const columns = [
