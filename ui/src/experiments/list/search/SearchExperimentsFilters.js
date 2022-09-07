@@ -83,7 +83,7 @@ const SearchExperimentFilters = ({ onChange }) => {
               <h4>Filters</h4>
             </EuiTitle>
           </EuiFlexItem>
-          <EuiFlexItem>
+          <EuiFlexItem grow={false}>
             <EuiButtonEmpty
               iconSide="right"
               onClick={() => clearAllFilters()}
