@@ -126,19 +126,6 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err = t.SchemaService.ValidateSchema(projectId, filterParams.AdditionalProperties)
-	if err != nil {
-		switch err.(type) {
-		default:
-			ErrorResponse(w, statusCode, err, &requestId)
-			return
-		case *services.ProjectSettingsNotFoundError:
-			statusCode = http.StatusNotFound
-			ErrorResponse(w, statusCode, err, &requestId)
-			return
-		}
-	}
-
 	// Use the S2ID at the max configured level (most granular level) to generate the filter
 	requestFilter, err = t.SchemaService.GetRequestFilter(projectId, filterParams.AdditionalProperties)
 	if err != nil {

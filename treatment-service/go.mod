@@ -5,13 +5,13 @@ go 1.18
 require (
 	cloud.google.com/go/bigquery v1.32.0
 	cloud.google.com/go/pubsub v1.21.1
+	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
+	github.com/caraml-dev/xp/common v0.0.0
 	github.com/confluentinc/confluent-kafka-go v1.8.2
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/getkin/kin-openapi v0.94.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/gojek/mlp v1.5.3
-	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
-	github.com/caraml-dev/xp/common v0.0.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/google/go-cmp v0.5.8

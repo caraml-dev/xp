@@ -225,6 +225,9 @@ func (i *ExperimentIndex) matchSegment(segmentName string, values []*_segmenters
 		}
 	}
 
+	// If values length is 0 (would've happened if the segmenter was skipped in the request)
+	// but the experiment did not define this segmenter to be optional, we will end up with
+	// a no match, as expected.
 	return Match{Strength: matchStrength, Value: nil}
 }
 

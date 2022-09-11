@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -726,13 +725,10 @@ func (suite *TreatmentServiceTestSuite) TestNoExperiment() {
 	suite.Require().Nil(resp.JSON200.Data)
 }
 
-func (suite *TreatmentServiceTestSuite) TestMissingRequestParams() {
+func (suite *TreatmentServiceTestSuite) TestIncorrectRequestParam() {
 	projectId := int64(1)
 	params := treatment.FetchTreatmentParams{PassKey: "test_project_1234"}
-	postBody, _ := json.Marshal(request{
-		Longitude: 103.8998991137485,
-	})
-	requestReader := bytes.NewReader(postBody)
+	requestReader := bytes.NewReader([]byte(`{"latitude": 103.45, "longitude": "*"}`))
 	resp, err := suite.treatmentServiceClient.FetchTreatmentWithBodyWithResponse(
 		suite.ctx,
 		projectId,
@@ -741,8 +737,9 @@ func (suite *TreatmentServiceTestSuite) TestMissingRequestParams() {
 		requestReader,
 	)
 
-	suite.Require().Error(errors.New("required request parameters are not provided"), err)
+	suite.Require().NoError(err)
 	suite.Require().Equal(400, resp.StatusCode())
+	suite.Require().Equal("unable to cast \"*\" of type string to float64", resp.JSON400.Error)
 }
 
 func (suite *TreatmentServiceTestSuite) TestAllFiltersSwitchback() {

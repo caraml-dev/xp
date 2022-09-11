@@ -130,8 +130,6 @@ func (s *S2IDsRunnerTestSuite) TestTransform() {
 		t.Run(data.name, func(t *testing.T) {
 			transformation, err := s.runner.Transform(s.name, data.requestParam, data.experimentVariables)
 			if data.errString == "" {
-				fmt.Println(data.expected)
-				fmt.Println(transformation)
 				s.Suite.Require().NoError(err)
 				s.Suite.Require().Equal(data.expected, transformation)
 			} else {
