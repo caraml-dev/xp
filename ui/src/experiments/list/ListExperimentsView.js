@@ -24,7 +24,12 @@ import ExperimentSearchContext, {
 import SearchExperimentsPanel from "./search/SearchExperimentsPanel";
 
 const ListExperimentsComponent = ({ projectId, props }) => {
-  const { appConfig } = useConfig();
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [results, setResults] = useState({ items: [], totalItemCount: 0 });
   const [page, setPage] = useState({
     index: 0,
@@ -64,10 +69,7 @@ const ListExperimentsComponent = ({ projectId, props }) => {
   const onRowClick = (item) => props.navigate(`./${item.id}/details`);
 
   return (
-    <EuiPageTemplate
-      restrictWidth={appConfig.pageTemplate.restrictWidth}
-      paddingSize={appConfig.pageTemplate.paddingSize}
-    >
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
       <EuiSpacer size="l" />
       {isSearchPanelVisible && (
         <SearchExperimentsPanel

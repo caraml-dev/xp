@@ -22,7 +22,11 @@ import { SegmenterContextProvider } from "providers/segmenters/context";
 import { useConfig } from "../../../config";
 
 const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
-  const { appConfig } = useConfig();
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
 
   const [
     {
@@ -77,10 +81,7 @@ const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
   }, [history, isLoaded]);
 
   return (
-    <EuiPageTemplate
-      restrictWidth={appConfig.pageTemplate.restrictWidth}
-      paddingSize={appConfig.pageTemplate.paddingSize}
-    >
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
       <EuiSpacer size="l" />
       {!isLoaded ? (
         <EuiTextAlign textAlign="center">
