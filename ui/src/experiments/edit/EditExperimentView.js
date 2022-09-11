@@ -9,7 +9,7 @@ import { SegmenterContextProvider } from "providers/segmenters/context";
 import { SettingsContextProvider } from "providers/settings/context";
 import { TreatmentsContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
-import { PageTitle } from "../../components/page/PageTitle";
+import { PageTitle } from "components/page/PageTitle";
 
 const EditExperimentView = ({ projectId, experimentSpec, ...props }) => {
   useEffect(() => {

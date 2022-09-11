@@ -10,7 +10,7 @@ import { PageTitle } from "components/page/PageTitle";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { Settings } from "services/settings/Settings";
 import { CreateSettingsForm } from "settings/components/form/CreateSettingsForm";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const CreateSettingsView = ({ projectId, ...props }) => {
   const {

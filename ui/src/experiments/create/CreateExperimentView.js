@@ -13,7 +13,7 @@ import { SegmenterContextProvider } from "providers/segmenters/context";
 import { SettingsContextProvider } from "providers/settings/context";
 import { TreatmentsContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const CreateExperimentView = ({ projectId, ...props }) => {
   const {

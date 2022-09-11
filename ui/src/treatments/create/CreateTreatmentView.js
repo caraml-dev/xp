@@ -10,7 +10,7 @@ import { PageTitle } from "components/page/PageTitle";
 import { TreatmentsContextProvider } from "providers/treatment/context";
 import { Treatment } from "services/treatment/Treatment";
 import { CreateTreatmentForm } from "treatments/components/form/CreateTreatmentForm";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const CreateTreatmentView = ({ projectId, ...props }) => {
   const {

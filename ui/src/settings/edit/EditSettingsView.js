@@ -6,7 +6,7 @@ import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { Settings } from "services/settings/Settings";
 import { EditSettingsForm } from "settings/components/form/EditSettingsForm";
-import {PageTitle} from "../../components/page/PageTitle";
+import { PageTitle } from "components/page/PageTitle";
 
 const EditSettingsView = ({ projectId, settings, ...props }) => {
   useEffect(() => {

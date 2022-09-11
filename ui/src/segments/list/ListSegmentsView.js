@@ -25,6 +25,7 @@ import ListSegmentsTable from "./ListSegmentsTable";
 const ListSegmentsComponent = ({ projectId, props }) => {
   const {
     appConfig: {
+      pagination: { defaultPageSize },
       pageTemplate: { restrictWidth, paddingSize },
     },
   } = useConfig();
@@ -32,7 +33,7 @@ const ListSegmentsComponent = ({ projectId, props }) => {
   const [results, setResults] = useState({ items: [], totalItemCount: 0 });
   const [page, setPage] = useState({
     index: 0,
-    size: appConfig.pagination.defaultPageSize,
+    size: defaultPageSize,
   });
 
   const { getFilter, getProcessedFilters, setFilter, isFilterSet } =

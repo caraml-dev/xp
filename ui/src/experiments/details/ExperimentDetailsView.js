@@ -19,7 +19,7 @@ import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 
 import { ExperimentConfigView } from "./config/ExperimentConfigView";
 import { ExperimentActions } from "./ExperimentActions";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
   const {

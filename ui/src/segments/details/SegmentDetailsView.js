@@ -17,7 +17,7 @@ import EditSegmentView from "segments/edit/EditSegmentView";
 import ListSegmentHistoryView from "segments/history/ListSegmentHistoryView";
 
 import { SegmentActions } from "./SegmentActions";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
   const {

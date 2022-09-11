@@ -17,7 +17,7 @@ import EditTreatmentView from "treatments/edit/EditTreatmentView";
 import ListTreatmentHistoryView from "treatments/history/ListTreatmentHistoryView";
 
 import { TreatmentActions } from "./TreatmentActions";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
   const {

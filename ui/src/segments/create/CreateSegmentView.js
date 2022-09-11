@@ -11,7 +11,7 @@ import { SegmentsContextProvider } from "providers/segment/context";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { CreateSegmentForm } from "segments/components/form/CreateSegmentForm";
 import { CustomSegment } from "services/segment/CustomSegment";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const CreateSegmentView = ({ projectId, ...props }) => {
   const {

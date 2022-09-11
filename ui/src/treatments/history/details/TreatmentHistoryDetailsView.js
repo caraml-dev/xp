@@ -16,7 +16,7 @@ import { ConfigSection } from "components/config_section/ConfigSection";
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
 import { GeneralInfoConfigSection } from "treatments/components/configuration/GeneralInfoConfigSection";
-import { useConfig } from "../../../config";
+import { useConfig } from "config";
 
 const TreatmentHistoryDetailsView = ({ projectId, treatmentId, version }) => {
   const {

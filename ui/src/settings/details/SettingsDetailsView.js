@@ -22,7 +22,7 @@ import SegmenterDetailsView from "settings/segmenters/details/SegmenterDetailsVi
 import { ListSegmentersView } from "settings/segmenters/list/ListSegmentersView";
 import ValidationView from "settings/validation/ValidationView";
 
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const SettingsDetailsView = ({ projectId, ...props }) => {
   const {

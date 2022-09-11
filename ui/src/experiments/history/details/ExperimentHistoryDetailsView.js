@@ -19,7 +19,7 @@ import { SegmentConfigSection } from "experiments/components/configuration/Segme
 import { TreatmentConfigSection } from "experiments/components/configuration/TreatmentConfigSection";
 import { useXpApi } from "hooks/useXpApi";
 import { SegmenterContextProvider } from "providers/segmenters/context";
-import { useConfig } from "../../../config";
+import { useConfig } from "config";
 
 const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
   const {
