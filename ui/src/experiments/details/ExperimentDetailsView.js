@@ -77,7 +77,7 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
         </EuiCallOut>
       ) : (
         <Fragment>
-          {!(props["*"] === "edit") ? (
+          {!(props["*"] === "edit") && (
             <Fragment>
               <EuiPageTemplate.Header
                 bottomBorder={false}
@@ -105,8 +105,6 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
                 </ExperimentActions>
               </EuiPageTemplate.Header>
             </Fragment>
-          ) : (
-            <></>
           )}
 
           <Router primary={false}>

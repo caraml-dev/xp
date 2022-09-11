@@ -77,7 +77,7 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
       ) : (
         <>
           {!props["*"].includes("edit") &&
-          !props["*"].includes("segmenters/") ? (
+          !props["*"].includes("segmenters/") && (
             <>
               <EuiPageTemplate.Header
                 bottomBorder={false}
@@ -101,8 +101,6 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
                 </SettingsActions>
               </EuiPageTemplate.Header>
             </>
-          ) : (
-            <></>
           )}
 
           <Router primary={false}>

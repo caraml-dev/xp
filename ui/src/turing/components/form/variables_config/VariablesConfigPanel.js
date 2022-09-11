@@ -47,7 +47,7 @@ export const VariablesConfigPanel = ({
           content="Specify how the experiment variables may be parsed from the request."
         />
       }>
-      <></>
+
       <EuiSpacer size="xs" />
       <EuiFlexItem>
         <EuiFlexGroup direction="column" gutterSize="s">

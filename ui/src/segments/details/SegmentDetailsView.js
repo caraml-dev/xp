@@ -75,7 +75,7 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
           </EuiCallOut>
         ) : (
           <Fragment>
-            {!(props["*"] === "edit") ? (
+            {!(props["*"] === "edit") && (
               <Fragment>
                 <EuiPageTemplate.Header
                   bottomBorder={false}
@@ -95,9 +95,8 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
                   </SegmentActions>
                 </EuiPageTemplate.Header>
               </Fragment>
-            ) : (
-              <></>
             )}
+
             <Router primary={false}>
               <Redirect from="/" to="details" noThrow />
               <SegmentConfigView path="details" segment={data.data} />

@@ -58,7 +58,7 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
         </EuiCallOut>
       ) : (
         <Fragment>
-          {!(props["*"] === "edit") ? (
+          {!(props["*"] === "edit") && (
             <Fragment>
               <EuiPageTemplate.Header
                 bottomBorder={false}
@@ -96,8 +96,6 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
               )}
               </EuiPageTemplate.Header>
             </Fragment>
-          ) : (
-            <></>
           )}
 
           <Router primary={false}>

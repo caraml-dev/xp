@@ -75,7 +75,7 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
           </EuiCallOut>
         ) : (
           <Fragment>
-            {!(props["*"] === "edit") ? (
+            {!(props["*"] === "edit") && (
               <Fragment>
                 <EuiPageTemplate.Header
                   bottomBorder={false}
@@ -95,9 +95,8 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
                   </TreatmentActions>
                 </EuiPageTemplate.Header>
               </Fragment>
-            ) : (
-              <></>
             )}
+
             <Router primary={false}>
               <Redirect from="/" to="details" noThrow />
               <TreatmentConfigView path="details" treatment={data.data} />
