@@ -31,7 +31,7 @@ type experimentRunner struct {
 	httpClient *xpclient.ClientWithResponses
 	projectID  int
 	passkey    string
-	parameters []config.RequestParameter
+	parameters []config.Variable
 }
 
 func (er *experimentRunner) GetTreatmentForRequest(
@@ -100,11 +100,15 @@ func (er *experimentRunner) getRequestParams(
 	// Get the request parameters for the current request
 	requestParams := map[string]string{}
 	for _, param := range er.parameters {
-		val, err := request.GetValueFromRequest(reqHeader, body, param.FieldSrc, param.Field)
+		if param.FieldSource == "none" || param.Field == "" {
+			// Parameter not configured
+			continue
+		}
+		val, err := request.GetValueFromRequest(reqHeader, body, request.FieldSource(param.FieldSource), param.Field)
 		if err != nil {
 			logger.Errorf(err.Error())
 		} else {
-			requestParams[param.Parameter] = val
+			requestParams[param.Name] = val
 		}
 	}
 	return requestParams

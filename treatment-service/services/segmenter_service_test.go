@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/caraml-dev/xp/common/api/schema"
@@ -37,7 +36,6 @@ func TestSegmenterService(t *testing.T) {
 }
 
 func (s *SegmenterServiceTestSuite) TestGetTransformation() {
-	errStringFormat := "experiment variable (%s) was not provided for segmenter (%s)"
 	segmenterName := "days_of_week"
 	requiredVariableName := "day_of_week"
 	timezone := "tz"
@@ -50,16 +48,6 @@ func (s *SegmenterServiceTestSuite) TestGetTransformation() {
 		expectedValue        []*_segmenters.SegmenterValue
 		errString            string
 	}{
-		"failure | missing experiment variable": {
-			projectId:            1,
-			segmenterName:        segmenterName,
-			requiredVariableName: requiredVariableName,
-			providedVariables: map[string]interface{}{
-				timezone: "Asia/Singapore",
-			},
-			experimentVariables: []string{requiredVariableName},
-			errString:           fmt.Sprintf(errStringFormat, requiredVariableName, segmenterName),
-		},
 		"failure | invalid proj": {
 			projectId: 99,
 			errString: "project segmenter not found for project id: 99",
@@ -68,6 +56,16 @@ func (s *SegmenterServiceTestSuite) TestGetTransformation() {
 			projectId:     1,
 			segmenterName: "non-existence-segmenter",
 			errString:     "Type mapping not found for Segmenter:non-existence-segmenter",
+		},
+		"success | missing experiment variables": {
+			projectId:            1,
+			segmenterName:        segmenterName,
+			requiredVariableName: requiredVariableName,
+			providedVariables: map[string]interface{}{
+				timezone: "Asia/Singapore",
+			},
+			expectedValue:       []*_segmenters.SegmenterValue{},
+			experimentVariables: []string{requiredVariableName},
 		},
 		"success": {
 			projectId:            1,

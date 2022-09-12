@@ -147,7 +147,8 @@ func (i *ExperimentIndex) MarshalJSON() ([]byte, error) {
 }
 
 func (i *ExperimentIndex) matchFlagSetSegment(segmentName string, value bool) MatchStrength {
-	if len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
+	if _, exists := i.Experiment.Segments[segmentName]; !exists ||
+		len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
 		// Optional segmenter
 		return MatchStrengthWeak
 	}
@@ -201,13 +202,14 @@ func (i *ExperimentIndex) matchRealSetSegment(segmentName string, value float64)
 }
 
 func (i *ExperimentIndex) matchSegment(segmentName string, values []*_segmenters.SegmenterValue) Match {
-	_, exists := i.Experiment.Segments[segmentName]
-	if !exists {
-		// Optional segmenter, first element from segmenter values (cannot be empty)
-		return Match{Strength: MatchStrengthWeak, Value: values[0]}
+	if len(values) == 0 {
+		// We can either have an optional match on the experiment or none.
+		if _, exists := i.Experiment.Segments[segmentName]; !exists ||
+			len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
+			return Match{Strength: MatchStrengthWeak, Value: nil}
+		}
 	}
 
-	// Only care about first match
 	matchStrength := MatchStrengthNone
 	for _, v := range values {
 		switch v.Value.(type) {
@@ -220,7 +222,7 @@ func (i *ExperimentIndex) matchSegment(segmentName string, values []*_segmenters
 		case *_segmenters.SegmenterValue_Real:
 			matchStrength = i.matchRealSetSegment(segmentName, v.GetReal())
 		}
-		if matchStrength == MatchStrengthExact || matchStrength == MatchStrengthWeak {
+		if matchStrength != MatchStrengthNone {
 			return Match{Strength: matchStrength, Value: v}
 		}
 	}

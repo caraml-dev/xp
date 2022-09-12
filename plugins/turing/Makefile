@@ -16,8 +16,12 @@ vendor:
 # Code dependencies recipes
 # ==================================
 
-tidy-plugin:
+tidy:
 	go mod tidy
+
+lint:
+	@echo "Linting Turing Plugin Code..."
+	golangci-lint run
 
 # ==================================
 # Build recipes
@@ -38,7 +42,7 @@ build-image: vendor version
 # Test recipes
 # ==================================
 
-test-plugin: tidy-plugin vendor
+test: tidy vendor
 	@echo "> Running Turing Experiment Engine XP Plugin tests ..."
 	# Set -gcflags=-l to disable inlining for the tests, to have Monkey patching work reliably
 	go test -v ./... -coverpkg ./... -gcflags=-l -race -coverprofile cover.out.tmp -tags unit,integration

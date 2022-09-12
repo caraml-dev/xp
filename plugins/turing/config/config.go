@@ -1,22 +1,23 @@
 package config
 
 import (
+	"fmt"
 	"sync"
 
-	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
 	"github.com/go-playground/validator/v10"
 )
 
-// RequestParameter captures a single parameter's config for parsing the incoming
-// request and extracting values
-type RequestParameter struct {
-	// Parameter specifies the name of the parameter, expected by the XP API
-	Parameter string `json:"parameter" validate:"required"`
-	// Field specifies the name of the field in the incoming request header/payload
-	Field string `json:"field" validate:"required"`
-	// FieldSrc specifies whether the field is located in the request header or payload
-	FieldSrc request.FieldSource `json:"field_source" validate:"required,oneof=header payload"`
-}
+type FieldSource string
+
+const (
+	// PayloadFieldSource is used to represent the request payload
+	PayloadFieldSource FieldSource = "payload"
+	// HeaderFieldSource is used to represent the request header
+	HeaderFieldSource FieldSource = "header"
+	// NoneFieldSource is used to represent that there is no field source,
+	// i.e., the variable has not been configured.
+	NoneFieldSource FieldSource = "none"
+)
 
 type RunnerDefaults struct {
 	Endpoint string `json:"endpoint"` // API host for the experiment runner
@@ -39,17 +40,17 @@ type ExperimentManagerConfig struct {
 
 // ExperimentRunnerConfig is used to parse the XP runner config during initialization
 type ExperimentRunnerConfig struct {
-	Endpoint          string             `json:"endpoint" validate:"required"`
-	ProjectID         int                `json:"project_id" validate:"required"`
-	Passkey           string             `json:"passkey" validate:"required"`
-	Timeout           string             `json:"timeout" validate:"required"`
-	RequestParameters []RequestParameter `json:"request_parameters" validate:"required,dive"`
+	Endpoint          string     `json:"endpoint" validate:"required"`
+	ProjectID         int        `json:"project_id" validate:"required"`
+	Passkey           string     `json:"passkey" validate:"required"`
+	Timeout           string     `json:"timeout" validate:"required"`
+	RequestParameters []Variable `json:"request_parameters" validate:"required,dive"`
 }
 
 type Variable struct {
-	Name        string              `json:"name" validate:"required"`
-	Field       string              `json:"field" validate:"required"`
-	FieldSource request.FieldSource `json:"field_source" validate:"required,oneof=header payload"`
+	Name        string      `json:"name" validate:"required"`
+	Field       string      `json:"field"`
+	FieldSource FieldSource `json:"field_source" validate:"required,oneof=none header payload"`
 }
 
 // ExperimentConfig is the experiment config saved on the Turing DB
@@ -58,6 +59,16 @@ type ExperimentConfig struct {
 	// we need flexibility in the router -> experiment project association.
 	ProjectID int        `json:"project_id"  validate:"required"`
 	Variables []Variable `json:"variables" validate:"dive"`
+}
+
+// Custom validation for the Variable struct
+func validateVariable(sl validator.StructLevel) {
+	field := sl.Current().Interface().(Variable)
+	if field.FieldSource == NoneFieldSource && field.Field != "" {
+		sl.ReportError(field.Field, "Field", "name", "Value must not be set if FieldSource is none", "")
+	} else if (field.FieldSource == HeaderFieldSource || field.FieldSource == PayloadFieldSource) && field.Field == "" {
+		sl.ReportError(field.Field, "Field", "name", "Value must be set if FieldSource is not none", fmt.Sprintf("%v", field.Field))
+	}
 }
 
 // Validate validates the fields in the ExperimentRunnerConfig for expected values
@@ -73,10 +84,14 @@ var expTreatmentValidatorOnce sync.Once
 
 func newExperimentRunnerConfigValidator() *validator.Validate {
 	expTreatmentValidatorOnce.Do(func() {
-		v := validator.New()
 		// Save the validator to the global state
-		experimentRunnerConfigValidator = v
+		experimentRunnerConfigValidator = NewValidator()
 	})
-
 	return experimentRunnerConfigValidator
+}
+
+func NewValidator() *validator.Validate {
+	v := validator.New()
+	v.RegisterStructValidation(validateVariable, Variable{})
+	return v
 }

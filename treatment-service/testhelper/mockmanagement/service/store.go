@@ -167,7 +167,6 @@ func (i *InMemoryStore) GetProjectSettings(projectId int64) (schema.ProjectSetti
 	return schema.ProjectSettings{}, InvalidProjectSettings{projectId: projectId}
 }
 
-//TODO to be implemented in next MR
 func (i *InMemoryStore) ListSegmenters(projectId int64) ([]schema.Segmenter, error) {
 	i.RLock()
 	defer i.RUnlock()

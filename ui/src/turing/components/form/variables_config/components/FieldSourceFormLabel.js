@@ -12,6 +12,10 @@ import "./FieldSourceFormLabel.scss";
 
 const fieldSourceOptions = [
   {
+    value: "none",
+    inputDisplay: "None",
+  },
+  {
     value: "header",
     inputDisplay: "Header",
   },

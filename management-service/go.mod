@@ -6,12 +6,12 @@ require (
 	bou.ke/monkey v1.0.2
 	cloud.google.com/go/pubsub v1.3.1
 	github.com/Masterminds/sprig/v3 v3.2.2
+	github.com/caraml-dev/xp/common v0.0.0
 	github.com/deepmap/oapi-codegen v1.8.2
 	github.com/getkin/kin-openapi v0.75.0
 	github.com/go-chi/chi/v5 v5.0.3
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/gojek/mlp v1.4.9
-	github.com/caraml-dev/xp/common v0.0.0
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551

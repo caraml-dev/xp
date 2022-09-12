@@ -106,25 +106,6 @@ func TestSchemaServiceTestSuite(t *testing.T) {
 	suite.Run(t, new(SchemaServiceTestSuite))
 }
 
-func (suite *SchemaServiceTestSuite) TestValidateSchema() {
-	filterParams := map[string]interface{}{
-		"longitude": 103.8998991137485,
-		"latitude":  1.2537040223936706,
-		"order-id":  "1234",
-		"tz":        "Asia/Singapore",
-	}
-	err := suite.schemaService.ValidateSchema(1, filterParams)
-	suite.Require().Nil(err)
-
-	filterParams = map[string]interface{}{
-		"longitude": 103.8998991137485,
-		"latitude":  1.2537040223936706,
-		"tz":        "Asia/Singapore",
-	}
-	err = suite.schemaService.ValidateSchema(1, filterParams)
-	suite.Require().Equal("required request parameters are not provided: [order-id]", err.Error())
-}
-
 func (suite *SchemaServiceTestSuite) TestGetRandomizationKeyValue() {
 	filterParams := map[string]interface{}{
 		"order-id": "1234",

@@ -3,10 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
-	"sort"
 	"strconv"
-
-	"github.com/golang-collections/collections/set"
 
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 	"github.com/caraml-dev/xp/treatment-service/models"
@@ -25,8 +22,6 @@ type SchemaService interface {
 
 	// ValidatePasskey validates whether required passkey is provided based on projectId
 	ValidatePasskey(projectId models.ProjectId, passkey string) error
-	// ValidateSchema validates whether required request parameters are provided based on projectId
-	ValidateSchema(projectId models.ProjectId, filterParams map[string]interface{}) error
 }
 
 type schemaService struct {
@@ -76,41 +71,6 @@ func (ss *schemaService) ValidatePasskey(projectId models.ProjectId, passkey str
 	return nil
 }
 
-func (ss *schemaService) ValidateSchema(projectId models.ProjectId, filterParams map[string]interface{}) error {
-	receivedRequestParameters := make([]interface{}, len(filterParams))
-	i := 0
-	for k := range filterParams {
-		receivedRequestParameters[i] = k
-		i++
-	}
-
-	requiredRequestParams, err := ss.getRequestParams(projectId)
-	if err != nil {
-		return err
-	}
-
-	// Validate and inform clients missing request parameters (if any)
-	isValid, missingRequestParameters := func() (bool, []string) {
-		hasAllRequiredParams := true
-		receivedRequestParametersSet := set.New(receivedRequestParameters...)
-		missingRequestParameters := []string{}
-		for _, val := range requiredRequestParams {
-			if !receivedRequestParametersSet.Has(val) {
-				hasAllRequiredParams = false
-				missingRequestParameters = append(missingRequestParameters, val)
-			}
-		}
-		// Ensure order is deterministic
-		sort.Strings(missingRequestParameters)
-		return hasAllRequiredParams, missingRequestParameters
-	}()
-	if !isValid {
-		return fmt.Errorf("required request parameters are not provided: %s", missingRequestParameters)
-	}
-
-	return nil
-}
-
 func (ss *schemaService) GetRequestFilter(
 	projectId models.ProjectId,
 	filterParams map[string]interface{},
@@ -120,7 +80,7 @@ func (ss *schemaService) GetRequestFilter(
 	if projectSettings == nil {
 		return nil, ProjectSettingsNotFound(fmt.Sprintf("unable to find project id %d", projectId))
 	}
-	projectSettingsSegmenters := ss.ProjectSettingsStorage.FindProjectSettingsWithId(projectId).Segmenters
+	projectSettingsSegmenters := projectSettings.Segmenters
 
 	allTransformations := map[string][]*_segmenters.SegmenterValue{}
 	for _, k := range projectSettingsSegmenters.Names {
@@ -152,18 +112,4 @@ func (ss *schemaService) GetRandomizationKeyValue(
 	}
 
 	return &randomizationStringValue, nil
-}
-
-func (ss *schemaService) getRequestParams(projectId models.ProjectId) ([]string, error) {
-	settings := ss.ProjectSettingsStorage.FindProjectSettingsWithId(projectId)
-	if settings == nil {
-		return nil, ProjectSettingsNotFound(fmt.Sprintf("unable to find project id %d", projectId))
-	}
-	params := []string{}
-	for _, variables := range settings.Segmenters.Variables {
-		params = append(params, variables.Value...)
-	}
-	// Should contain randomization key
-	params = append(params, settings.RandomizationKey)
-	return params, nil
 }

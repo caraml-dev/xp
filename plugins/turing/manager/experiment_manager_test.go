@@ -9,7 +9,6 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
-	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/caraml-dev/xp/common/api/schema"
@@ -83,12 +82,12 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 				"timeout": "12s",
 				"request_parameters": [
 					{
-						"parameter": "country",
+						"name": "country",
 						"field": "countryID",
 						"field_source": "header"
 					},
 					{
-						"parameter": "geo_area",
+						"name": "geo_area",
 						"field": "gArea",
 						"field_source": "payload"
 					}
@@ -133,7 +132,7 @@ func TestValidateExperimentConfig(t *testing.T) {
 		cfg json.RawMessage
 		err string
 	}{
-		"success": {
+		"success | all values": {
 			cfg: json.RawMessage(`{
 				"project_id": 1,
 				"variables": [
@@ -145,7 +144,31 @@ func TestValidateExperimentConfig(t *testing.T) {
 				]
 			}`),
 		},
-		"failure | missing values": {
+		"success | missing field": {
+			cfg: json.RawMessage(`{
+				"project_id": 1,
+				"variables": [
+					{
+						"name": "var-1",
+						"field_source": "none"
+					}
+				]
+			}`),
+		},
+		"failure | missing field source": {
+			cfg: json.RawMessage(`{
+				"project_id": 1,
+				"variables": [
+					{
+						"name": "var-1"
+					}
+				]
+			}`),
+			err: strings.Join([]string{"Key: 'ExperimentConfig.Variables[0].FieldSource' Error:",
+				"Field validation for 'FieldSource' failed on the 'required' tag",
+			}, ""),
+		},
+		"failure | field is unset when field source is not none": {
 			cfg: json.RawMessage(`{
 				"project_id": 1,
 				"variables": [
@@ -155,15 +178,30 @@ func TestValidateExperimentConfig(t *testing.T) {
 					}
 				]
 			}`),
-			err: strings.Join([]string{"Key: 'ExperimentConfig.Variables[0].Field' Error:",
-				"Field validation for 'Field' failed on the 'required' tag",
+			err: strings.Join([]string{"Key: 'ExperimentConfig.Variables[0].Field' ",
+				"Error:Field validation for 'Field' failed on the 'Value must be set if FieldSource is not none' tag",
+			}, ""),
+		},
+		"failure | field is set when field source is none": {
+			cfg: json.RawMessage(`{
+				"project_id": 1,
+				"variables": [
+					{
+						"name": "var-1",
+						"field": "var1",
+						"field_source": "none"
+					}
+				]
+			}`),
+			err: strings.Join([]string{"Key: 'ExperimentConfig.Variables[0].Field' ",
+				"Error:Field validation for 'Field' failed on the 'Value must not be set if FieldSource is none' tag",
 			}, ""),
 		},
 	}
 
 	for name, data := range tests {
 		t.Run(name, func(t *testing.T) {
-			em := experimentManager{validate: validator.New()}
+			em := experimentManager{validate: config.NewValidator()}
 			err := em.ValidateExperimentConfig(data.cfg)
 			if data.err != "" {
 				assert.EqualError(t, err, data.err)

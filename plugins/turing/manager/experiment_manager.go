@@ -29,6 +29,9 @@ func init() {
 // Default timeout for requests made to the XP API server
 const defaultRequestTimeout = time.Second * 5
 
+// TODO: Move the validation within the microfrontend component instead of exposing the
+// the yup validation config via the API. This also has other limitations - eg:
+// can't conditionally evaluate if `field` has a value when `field_source` is not none.
 const xpExperimentConfigSchema = `[
   ["yup.object"], ["yup.required"],
   [
@@ -37,10 +40,10 @@ const xpExperimentConfigSchema = `[
       "variables": [["yup.array"], ["yup.of", [["yup.object"], ["yup.shape",
         {
           "name": [["yup.string"], ["yup.required"]],
-          "field": [["yup.string"], ["yup.required", "Field name is required"]],
+          "field": ["yup.string"],
           "field_source": [["yup.string"],
             ["yup.required"],
-            ["yup.oneOf", ["header", "payload"], "One of the supported field sources should be selected"]]
+            ["yup.oneOf", ["none", "header", "payload"], "One of the supported field sources should be selected"]]
         }
       ]]],
 	  ["yup.required"]]
@@ -84,16 +87,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
-	// Create request parameter config
-	params := []_config.RequestParameter{}
-	for _, item := range config.Variables {
-		params = append(params, _config.RequestParameter{
-			Parameter: item.Name,
-			Field:     item.Field,
-			FieldSrc:  item.FieldSource,
-		})
-	}
-
 	// Retrieve passkey using the API
 	project, err := em.GetProject(config.ProjectID)
 	if err != nil {
@@ -106,7 +99,7 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		Timeout:           em.RunnerDefaults.Timeout,
 		ProjectID:         config.ProjectID,
 		Passkey:           project.Passkey,
-		RequestParameters: params,
+		RequestParameters: config.Variables,
 	})
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
@@ -168,7 +161,7 @@ func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentM
 	}
 
 	em := &experimentManager{
-		validate:       validator.New(),
+		validate:       _config.NewValidator(),
 		httpClient:     client,
 		RemoteUI:       config.RemoteUI,
 		RunnerDefaults: config.RunnerDefaults,

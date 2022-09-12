@@ -66,7 +66,9 @@ func (svc *segmenterService) GetTransformation(
 ) ([]*_segmenters.SegmenterValue, error) {
 	err := validateAllPresent(segmenter, requestValues, experimentVariables)
 	if err != nil {
-		return nil, err
+		// If not all variables are supplied, we will match for optional segmenters
+		// in the experiments. So we can return an empty list of segmenter values to match.
+		return []*_segmenters.SegmenterValue{}, nil
 	}
 	// Check if segmenter is a global segmenter, else use project segmenters
 	runner, ok := svc.runners[segmenter]

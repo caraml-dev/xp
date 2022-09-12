@@ -22,6 +22,13 @@ export const VariableConfigRow = ({
 }) => {
   // Define onChange handlers
   const { onChange } = useOnChangeHandler(onChangeHandler);
+  const onChangeFieldSource = (newValue) => {
+    onChange("field_source")(newValue);
+    // Clear the field value if field source is none
+    if (newValue === "none") {
+      onChange("field")("");
+    }
+  };
 
   return (
     <EuiFlexGroup
@@ -41,11 +48,12 @@ export const VariableConfigRow = ({
             value={field || ""}
             onChange={(e) => onChange("field")(e.target.value)}
             isInvalid={!!error.field}
+            disabled={fieldSrc === "none"}
             prepend={
               <FieldSourceFormLabel
                 readOnly={false}
                 value={fieldSrc}
-                onChange={onChange("field_source")}
+                onChange={(e) => onChangeFieldSource(e)}
               />
             }
             append={<EuiFormLabel>{name}</EuiFormLabel>}

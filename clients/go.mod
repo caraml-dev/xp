@@ -3,8 +3,8 @@ module github.com/caraml-dev/xp/clients
 go 1.18
 
 require (
-	github.com/deepmap/oapi-codegen v1.8.2
 	github.com/caraml-dev/xp/common v0.0.0
+	github.com/deepmap/oapi-codegen v1.8.2
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 )
