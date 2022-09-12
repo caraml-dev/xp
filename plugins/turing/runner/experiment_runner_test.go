@@ -34,7 +34,7 @@ func TestNewExperimentRunner(t *testing.T) {
 				"timeout": "500ms",
 				"request_parameters": [
 					{
-						"parameter": "country",
+						"name": "country",
 						"field": "countryValue",
 						"field_source": "payload"
 					}
@@ -71,7 +71,7 @@ func TestNewExperimentRunner(t *testing.T) {
 				"timeout": "500ss",
 				"request_parameters": [
 					{
-						"parameter": "country",
+						"name": "country",
 						"field": "countryValue",
 						"field_source": "payload"
 					}
@@ -99,18 +99,18 @@ func TestNewExperimentRunner(t *testing.T) {
 
 func TestMissingRequestValue(t *testing.T) {
 	tests := map[string]struct {
-		parameters []config.RequestParameter
+		parameters []config.Variable
 		payload    string
 		header     http.Header
 		expected   map[string]string
 		err        string
 	}{
 		"failure | field not found in payload": {
-			parameters: []config.RequestParameter{
+			parameters: []config.Variable{
 				{
-					Parameter: "X",
-					Field:     "Y",
-					FieldSrc:  request.PayloadFieldSource,
+					Name:        "X",
+					Field:       "Y",
+					FieldSource: config.FieldSource(request.PayloadFieldSource),
 				},
 			},
 			header:   make(http.Header),
@@ -191,12 +191,12 @@ func TestFetchTreatment(t *testing.T) {
 		httpClient: &mockTreatmentClient,
 		projectID:  1,
 		passkey:    "abc",
-		parameters: []config.RequestParameter{
-			{Parameter: "country", Field: "Country", FieldSrc: "header"},
-			{Parameter: "latitude", Field: "pos.lat", FieldSrc: "payload"},
-			{Parameter: "longitude", Field: "pos.lng", FieldSrc: "payload"},
-			{Parameter: "geo_area", Field: "geo-area", FieldSrc: "payload"},
-			{Parameter: "order_id", Field: "order-id", FieldSrc: "payload"},
+		parameters: []config.Variable{
+			{Name: "country", Field: "Country", FieldSource: "header"},
+			{Name: "latitude", Field: "pos.lat", FieldSource: "payload"},
+			{Name: "longitude", Field: "pos.lng", FieldSource: "payload"},
+			{Name: "geo_area", Field: "geo-area", FieldSource: "payload"},
+			{Name: "order_id", Field: "order-id", FieldSource: "payload"},
 		},
 	}
 
