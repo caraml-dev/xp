@@ -15,7 +15,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 PB_URL="https://github.com/protocolbuffers/protobuf/releases"
-PB_VERSION=3.15.8
+PB_VERSION=3.19.4
 PROTOC_VERSION=1.5.2
 protoc_dir=${PWD}/.protoc
 

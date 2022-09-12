@@ -29,6 +29,9 @@ func init() {
 // Default timeout for requests made to the XP API server
 const defaultRequestTimeout = time.Second * 5
 
+// TODO: Move the validation within the microfrontend component instead of exposing the
+// the yup validation config via the API. This also has other limitations - eg:
+// can't conditionally evaluate if `field` has a value when `field_source` is not none.
 const xpExperimentConfigSchema = `[
   ["yup.object"], ["yup.required"],
   [
