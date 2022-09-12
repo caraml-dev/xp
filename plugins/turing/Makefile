@@ -20,6 +20,7 @@ tidy:
 	go mod tidy
 
 lint:
+	@echo "Linting Turing Plugin Code..."
 	golangci-lint run
 
 # ==================================
