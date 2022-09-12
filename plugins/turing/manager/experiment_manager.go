@@ -37,7 +37,7 @@ const xpExperimentConfigSchema = `[
       "variables": [["yup.array"], ["yup.of", [["yup.object"], ["yup.shape",
         {
           "name": [["yup.string"], ["yup.required"]],
-          "field": [["yup.string"]],
+          "field": ["yup.string"],
           "field_source": [["yup.string"],
             ["yup.required"],
             ["yup.oneOf", ["none", "header", "payload"], "One of the supported field sources should be selected"]]

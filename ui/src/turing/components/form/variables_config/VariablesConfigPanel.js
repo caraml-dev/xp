@@ -28,7 +28,7 @@ export const VariablesConfigPanel = ({
         ...missingVars.map((e) => ({
           name: e,
           field: "",
-          field_source: "header",
+          field_source: "none",
         })),
       ].filter((e) => !extraVars.includes(e.name));
       if (missingVars.length > 0 || extraVars.length > 0) {
