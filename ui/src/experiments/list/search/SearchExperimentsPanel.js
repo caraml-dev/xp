@@ -6,6 +6,8 @@ import { SegmenterContextProvider } from "providers/segmenters/context";
 
 import SearchExperimentsFilters from "./SearchExperimentsFilters";
 
+import "./SearchExperimentsPanel.scss";
+
 const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
   return (
     <SegmenterContextProvider projectId={projectId}>
@@ -13,7 +15,6 @@ const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
         id="experiments-search-panel"
         side="left"
         onClose={onClose}
-        size="313px"
         maxWidth={true}
         hideCloseButton={true}
         paddingSize="m"
