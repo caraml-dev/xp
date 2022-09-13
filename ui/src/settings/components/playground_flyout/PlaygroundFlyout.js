@@ -76,6 +76,7 @@ const PlaygroundFlyout = ({ onClose }) => {
 
   return (
     <EuiFlyout
+      className="euiFlyout--playgroundFlyout"
       onClose={onClose}
       maxWidth={true}
       paddingSize="m"

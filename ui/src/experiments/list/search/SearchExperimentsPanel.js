@@ -13,6 +13,7 @@ const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
     <SegmenterContextProvider projectId={projectId}>
       <EuiFlyout
         id="experiments-search-panel"
+        className="euiFlyout--searchPanel"
         side="left"
         onClose={onClose}
         maxWidth={true}
