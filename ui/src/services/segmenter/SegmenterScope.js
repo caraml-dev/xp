@@ -2,11 +2,11 @@ export const getSegmenterScope = (scope) => {
   const status = {
     project: {
       label: "Project",
-      color: "#07C",
+      color: "primary",
     },
     global: {
       label: "Global",
-      color: "#00BFB3",
+      color: "success",
     },
   };
   return status[scope];
