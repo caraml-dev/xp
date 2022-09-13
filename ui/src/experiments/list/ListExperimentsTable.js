@@ -45,7 +45,7 @@ const ListExperimentsTable = ({
       render: (_, item) => {
         var experimentStatus = getExperimentStatus(item);
         return (
-          <EuiHealth color={experimentStatus.healthColor}>
+          <EuiHealth color={experimentStatus.color}>
             {experimentStatus.label}
           </EuiHealth>
         );
@@ -94,7 +94,8 @@ const ListExperimentsTable = ({
               e.stopPropagation();
             }}
             href={`${props.uri}/${item.id}`}
-            target="_blank"></EuiLink>
+            target="_blank"
+          />
         );
       },
     },

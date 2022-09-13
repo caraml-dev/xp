@@ -34,7 +34,7 @@ export const ListSegmentersTable = ({ items, isLoaded, error, onRowClick }) => {
       render: (_, item) => {
         var segmenterStatus = getSegmenterStatus(item);
         return (
-          <EuiHealth color={segmenterStatus.healthColor}>
+          <EuiHealth color={segmenterStatus.color}>
             {segmenterStatus.label}
           </EuiHealth>
         );

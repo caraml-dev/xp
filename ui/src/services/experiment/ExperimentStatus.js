@@ -13,26 +13,22 @@ export const getExperimentStatus = (experiment) => {
   const statusMapping = {
     Deactivated: {
       label: "Deactivated",
-      color: "#6A717D",
-      healthColor: "subdued",
+      color: "subdued",
       iconType: "cross",
     },
     Completed: {
       label: "Completed",
-      color: "#00BFB3",
-      healthColor: "success",
+      color: "success",
       iconType: "check",
     },
     Scheduled: {
       label: "Scheduled",
-      color: "#FEC514",
-      healthColor: "warning",
+      color: "warning",
       iconType: "calendar",
     },
     Running: {
       label: "Running",
-      color: "#07C",
-      healthColor: "primary",
+      color: "primary",
       iconType: "clock",
     },
   };
