@@ -27,7 +27,7 @@ const ExperimentDateFilter = ({ startTime, endTime, onChange, errors }) => {
             endDate={endTime}
             aria-label="Start Time"
             utcOffset={appConfig.datetime.tzOffsetMinutes}
-            popperPlacement="bottom-start"
+            popoverPlacement="downLeft"
           />
         }
         endDateControl={
@@ -38,7 +38,7 @@ const ExperimentDateFilter = ({ startTime, endTime, onChange, errors }) => {
             endDate={endTime}
             aria-label="End Time"
             utcOffset={appConfig.datetime.tzOffsetMinutes}
-            popperPlacement="bottom-end"
+            popoverPlacement="downRight"
           />
         }
       />

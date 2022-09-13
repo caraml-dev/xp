@@ -1,6 +1,6 @@
 import { Fragment, useEffect } from "react";
 
-import { EuiSpacer } from "@elastic/eui";
+import { EuiSpacer, EuiPageTemplate } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
@@ -12,16 +12,14 @@ const ValidationView = ({ settings }) => {
     title: "External Validation",
     iconType: "symlink",
     children: (
-      <ExternalValidationSection
-        settings={settings}></ExternalValidationSection>
+      <ExternalValidationSection settings={settings} />
     ),
   };
   const treatmentValidationRules = {
     title: "Treatment Validation Rules",
     iconType: "inspect",
     children: (
-      <TreatmentValidationRuleSection
-        settings={settings}></TreatmentValidationRuleSection>
+      <TreatmentValidationRuleSection settings={settings} />
     ),
   };
 
@@ -35,17 +33,20 @@ const ValidationView = ({ settings }) => {
 
   return (
     <Fragment>
-      <ConfigSection
-        title={externalValidation.title}
-        iconType={externalValidation.iconType}>
-        {externalValidation.children}
-      </ConfigSection>
-      <EuiSpacer />
-      <ConfigSection
-        title={treatmentValidationRules.title}
-        iconType={treatmentValidationRules.iconType}>
-        {treatmentValidationRules.children}
-      </ConfigSection>
+      <EuiSpacer size="m" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <ConfigSection
+          title={externalValidation.title}
+          iconType={externalValidation.iconType}>
+          {externalValidation.children}
+        </ConfigSection>
+        <EuiSpacer />
+        <ConfigSection
+          title={treatmentValidationRules.title}
+          iconType={treatmentValidationRules.iconType}>
+          {treatmentValidationRules.children}
+        </ConfigSection>
+      </EuiPageTemplate.Section>
     </Fragment>
   );
 };

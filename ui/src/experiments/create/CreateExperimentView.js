@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -17,8 +13,15 @@ import { SegmenterContextProvider } from "providers/segmenters/context";
 import { SettingsContextProvider } from "providers/settings/context";
 import { TreatmentsContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
+import { useConfig } from "config";
 
 const CreateExperimentView = ({ projectId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: "." },
@@ -27,35 +30,36 @@ const CreateExperimentView = ({ projectId, ...props }) => {
   }, [projectId]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Create Experiment" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiPageContentBody>
-          <TreatmentsContextProvider projectId={projectId}>
-            <FormContextProvider data={new Experiment()}>
-              <SettingsContextProvider projectId={projectId}>
-                <SegmenterContextProvider projectId={projectId} status="active">
-                  <SegmentsContextProvider projectId={projectId}>
-                    <CreateExperimentForm
-                      projectId={projectId}
-                      onCancel={() => window.history.back()}
-                      onSuccess={(experimentId) =>
-                        props.navigate(`../${experimentId}`)
-                      }
-                    />
-                  </SegmentsContextProvider>
-                </SegmenterContextProvider>
-              </SettingsContextProvider>
-            </FormContextProvider>
-          </TreatmentsContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Create Experiment" />}
+      />
+
+      <EuiSpacer size="m" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <TreatmentsContextProvider projectId={projectId}>
+          <FormContextProvider data={new Experiment()}>
+            <SettingsContextProvider projectId={projectId}>
+              <SegmenterContextProvider projectId={projectId} status="active">
+                <SegmentsContextProvider projectId={projectId}>
+                  <CreateExperimentForm
+                    projectId={projectId}
+                    onCancel={() => window.history.back()}
+                    onSuccess={(experimentId) =>
+                      props.navigate(`../${experimentId}`)
+                    }
+                  />
+                </SegmentsContextProvider>
+              </SegmenterContextProvider>
+            </SettingsContextProvider>
+          </FormContextProvider>
+        </TreatmentsContextProvider>
+      </EuiPageTemplate.Section>
+
+      <EuiSpacer size="l" />
+    </EuiPageTemplate>
   );
 };
 

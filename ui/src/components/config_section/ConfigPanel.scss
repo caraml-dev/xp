@@ -1,7 +1,7 @@
 @import "node_modules/@elastic/eui/src/global_styling/mixins/typography";
 
 .euiPanel--detailedConfigSection {
-  .euiDescriptionList.euiDescriptionList--responsiveColumn {
+  .euiDescriptionList {
     > * {
       @include euiTextBreakWord;
 

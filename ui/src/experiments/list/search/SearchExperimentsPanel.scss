@@ -1,3 +1,6 @@
-.euiFlyoutFooter {
-  box-shadow: inset -5px 0 9px -9px rgba(0, 0, 0, 0.4);
+// Required for setting a specific flyout width that is smaller than the default EUI flyout width (medium); overwrites
+// the min-width that corresponds to the default EUI flyout width
+.euiFlyout--searchPanel{
+  width: 313px;
+  min-width: unset;
 }

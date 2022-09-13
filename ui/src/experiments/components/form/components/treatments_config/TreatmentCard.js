@@ -122,7 +122,6 @@ export const TreatmentCard = ({
                 selectedOptions={
                   !!treatment.template ? [treatment.template] : []
                 }
-                autoFocus
               />
             </EuiFormRow>
             <EuiSpacer size="m" />

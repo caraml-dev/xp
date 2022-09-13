@@ -34,7 +34,7 @@ export const BasicTable = ({
       iconType="alert">
       <p>{error.message}</p>
     </EuiCallOut>
-  ) : !!onPaginationChange && !!totalItemCount & !!page ? (
+  ) : !!onPaginationChange && !!totalItemCount && !!page ? (
     <EuiBasicTable
       items={items}
       columns={tableColumns}
@@ -43,8 +43,8 @@ export const BasicTable = ({
       pagination={{
         pageIndex: page.index,
         pageSize: page.size,
+        showPerPageOptions: false,
         totalItemCount,
-        hidePerPageOptions: true,
       }}
       onChange={({ page = {} }) => onPaginationChange(page)}
     />

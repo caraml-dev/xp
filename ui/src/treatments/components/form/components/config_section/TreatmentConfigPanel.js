@@ -73,7 +73,6 @@ export const TreatmentConfigPanel = ({
           options={treatmentSelectionOptions}
           onChange={onCustomOrTemplateSelection}
           selectedOptions={!!treatmentTemplate ? [treatmentTemplate] : []}
-          autoFocus
         />
       </EuiFormRow>
       <EuiSpacer />

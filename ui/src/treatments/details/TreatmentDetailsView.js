@@ -3,10 +3,7 @@ import React, { Fragment, useCallback, useEffect } from "react";
 import {
   EuiCallOut,
   EuiLoadingChart,
-  EuiPage,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
   EuiTextAlign,
 } from "@elastic/eui";
@@ -20,8 +17,15 @@ import EditTreatmentView from "treatments/edit/EditTreatmentView";
 import ListTreatmentHistoryView from "treatments/history/ListTreatmentHistoryView";
 
 import { TreatmentActions } from "./TreatmentActions";
+import { useConfig } from "config";
 
 const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [{ data, isLoaded, error }, fetchTreatmentDetails] = useXpApi(
     `/projects/${projectId}/treatments/${treatmentId}`
   );
@@ -56,8 +60,8 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
   ];
 
   return (
-    <EuiPage>
-      <EuiPageBody>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
         {!isLoaded ? (
           <EuiTextAlign textAlign="center">
             <EuiLoadingChart size="xl" mono />
@@ -71,30 +75,28 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
           </EuiCallOut>
         ) : (
           <Fragment>
-            {!(props["*"] === "edit") ? (
+            {!(props["*"] === "edit") && (
               <Fragment>
-                <EuiPageHeader>
-                  <EuiPageHeaderSection>
-                    <PageTitle title={data.data.name} />
-                  </EuiPageHeaderSection>
-                </EuiPageHeader>
-                <TreatmentActions
-                  onEdit={() => props.navigate("./edit")}
-                  onDeleteSuccess={() => props.navigate("../")}>
-                  {(getActions) => (
-                    <PageNavigation
-                      tabs={tabs}
-                      actions={getActions(data.data)}
-                      selectedTab={props["*"]}
-                      {...props}
-                    />
-                  )}
-                </TreatmentActions>
-                <EuiSpacer size="xl" />
+                <EuiPageTemplate.Header
+                  bottomBorder={false}
+                  pageTitle={<PageTitle title={data.data.name} />}
+                >
+                  <TreatmentActions
+                    onEdit={() => props.navigate("./edit")}
+                    onDeleteSuccess={() => props.navigate("../")}>
+                    {(getActions) => (
+                      <PageNavigation
+                        tabs={tabs}
+                        actions={getActions(data.data)}
+                        selectedTab={props["*"]}
+                        {...props}
+                      />
+                    )}
+                  </TreatmentActions>
+                </EuiPageTemplate.Header>
               </Fragment>
-            ) : (
-              <EuiSpacer />
             )}
+
             <Router primary={false}>
               <Redirect from="/" to="details" noThrow />
               <TreatmentConfigView path="details" treatment={data.data} />
@@ -104,8 +106,8 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
             </Router>
           </Fragment>
         )}
-      </EuiPageBody>
-    </EuiPage>
+      <EuiSpacer size="l" />
+    </EuiPageTemplate>
   );
 };
 

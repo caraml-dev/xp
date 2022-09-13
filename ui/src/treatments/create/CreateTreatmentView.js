@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 
 import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
@@ -14,8 +10,15 @@ import { PageTitle } from "components/page/PageTitle";
 import { TreatmentsContextProvider } from "providers/treatment/context";
 import { Treatment } from "services/treatment/Treatment";
 import { CreateTreatmentForm } from "treatments/components/form/CreateTreatmentForm";
+import { useConfig } from "config";
 
 const CreateTreatmentView = ({ projectId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: ".." },
@@ -25,27 +28,25 @@ const CreateTreatmentView = ({ projectId, ...props }) => {
   }, [projectId]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Create Treatment" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiPageContentBody>
-          <FormContextProvider data={new Treatment()}>
-            <TreatmentsContextProvider projectId={projectId}>
-              <CreateTreatmentForm
-                projectId={projectId}
-                onCancel={() => window.history.back()}
-                onSuccess={(treatmentId) => props.navigate(`../${treatmentId}`)}
-              />
-            </TreatmentsContextProvider>
-          </FormContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Create Treatment" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={new Treatment()}>
+          <TreatmentsContextProvider projectId={projectId}>
+            <CreateTreatmentForm
+              projectId={projectId}
+              onCancel={() => window.history.back()}
+              onSuccess={(treatmentId) => props.navigate(`../${treatmentId}`)}
+            />
+          </TreatmentsContextProvider>
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </EuiPageTemplate>
   );
 };
 

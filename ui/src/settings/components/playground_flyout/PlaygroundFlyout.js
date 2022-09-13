@@ -76,11 +76,12 @@ const PlaygroundFlyout = ({ onClose }) => {
 
   return (
     <EuiFlyout
-      className="playgroundFlyout--right"
+      className="euiFlyout--playgroundFlyout"
       onClose={onClose}
-      size="s"
       maxWidth={true}
-      paddingSize="m">
+      paddingSize="m"
+      type="push"
+    >
       <EuiFlyoutHeader hasBorder>
         <EuiFlexItem>
           <EuiTitle size="s">
@@ -132,7 +133,7 @@ const PlaygroundFlyout = ({ onClose }) => {
           </EuiFlexItem>
         </EuiText>
       </EuiFlyoutBody>
-      <EuiFlyoutFooter className="playgroundFlyoutFooter">
+      <EuiFlyoutFooter>
         <EuiFlexGroup justifyContent="flexEnd">
           <EuiFlexItem grow={false}>
             <EuiButton

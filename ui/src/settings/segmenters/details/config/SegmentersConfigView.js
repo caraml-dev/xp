@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiPageTemplate } from "@elastic/eui";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { SegmentersActivitySection } from "settings/segmenters/details/config/SegmentersActivitySection";
@@ -48,50 +48,52 @@ export const SegmentersConfigView = ({ segmenter }) => {
 
   return (
     <Fragment>
-      <EuiFlexGroup direction="row">
-        <EuiFlexItem grow={2}>
-          <ConfigSection
-            title={generalInfo.title}
-            iconType={generalInfo.iconType}>
-            {generalInfo.children}
-          </ConfigSection>
-        </EuiFlexItem>
-        {segmenter.scope === "project" && (
+      <EuiSpacer size="m" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <EuiFlexGroup direction="row">
+          <EuiFlexItem grow={2}>
+            <ConfigSection
+              title={generalInfo.title}
+              iconType={generalInfo.iconType}>
+              {generalInfo.children}
+            </ConfigSection>
+          </EuiFlexItem>
+          {segmenter.scope === "project" && (
+            <EuiFlexItem grow={1}>
+              <ConfigSection title={activity.title} iconType={activity.iconType}>
+                {activity.children}
+              </ConfigSection>
+            </EuiFlexItem>
+          )}
+        </EuiFlexGroup>
+        <EuiSpacer size="l" />
+
+        <EuiFlexGroup direction="row">
+          <EuiFlexItem grow={2}>
+            <ConfigSection title={options.title} iconType={options.iconType}>
+              {options.children}
+            </ConfigSection>
+          </EuiFlexItem>
           <EuiFlexItem grow={1}>
-            <ConfigSection title={activity.title} iconType={activity.iconType}>
-              {activity.children}
+            <ConfigSection
+              title={treatmentRequest.title}
+              iconType={treatmentRequest.iconType}>
+              {treatmentRequest.children}
+            </ConfigSection>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="l" />
+
+        {!!segmenter.constraints && segmenter.constraints.length > 0 && (
+          <EuiFlexItem grow={1}>
+            <ConfigSection
+              title={constraints.title}
+              iconType={constraints.iconType}>
+              {constraints.children}
             </ConfigSection>
           </EuiFlexItem>
         )}
-      </EuiFlexGroup>
-      <EuiSpacer size="l" />
-
-      <EuiFlexGroup direction="row">
-        <EuiFlexItem grow={2}>
-          <ConfigSection title={options.title} iconType={options.iconType}>
-            {options.children}
-          </ConfigSection>
-        </EuiFlexItem>
-        <EuiFlexItem grow={1}>
-          <ConfigSection
-            title={treatmentRequest.title}
-            iconType={treatmentRequest.iconType}>
-            {treatmentRequest.children}
-          </ConfigSection>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="l" />
-
-      {!!segmenter.constraints && segmenter.constraints.length > 0 && (
-        <EuiFlexItem grow={1}>
-          <ConfigSection
-            title={constraints.title}
-            iconType={constraints.iconType}>
-            {constraints.children}
-          </ConfigSection>
-        </EuiFlexItem>
-      )}
-      <EuiSpacer size="l" />
+      </EuiPageTemplate.Section>
     </Fragment>
   );
 };

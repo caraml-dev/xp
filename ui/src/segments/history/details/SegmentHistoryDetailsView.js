@@ -5,12 +5,9 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiLoadingChart,
-  EuiPage,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
   EuiSpacer,
   EuiTextAlign,
+  EuiPageTemplate,
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
@@ -20,8 +17,15 @@ import { PageTitle } from "components/page/PageTitle";
 import { SegmentConfigSection } from "experiments/components/configuration/SegmentConfigSection";
 import { useXpApi } from "hooks/useXpApi";
 import { SegmenterContextProvider } from "providers/segmenters/context";
+import { useConfig } from "config";
 
 const SegmentHistoryDetailsView = ({ projectId, segmentId, version }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [
     {
       data: { data: history },
@@ -64,21 +68,24 @@ const SegmentHistoryDetailsView = ({ projectId, segmentId, version }) => {
   }, [history, isLoaded]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : (
-          <Fragment>
-            <EuiPageHeader>
-              <EuiPageHeaderSection>
-                <PageTitle
-                  title={`${history.name} - Version ${history.version}`}
-                />
-              </EuiPageHeaderSection>
-            </EuiPageHeader>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : (
+        <Fragment>
+          <EuiPageTemplate.Header
+            bottomBorder={false}
+            pageTitle={
+              <PageTitle
+                title={`${history.name} - Version ${history.version}`}
+              />
+            }
+          />
+          <EuiSpacer size="l" />
+          <EuiPageTemplate.Section color={"transparent"}>
             <EuiFlexGroup>
               <EuiFlexItem>
                 <ConfigSection
@@ -101,10 +108,10 @@ const SegmentHistoryDetailsView = ({ projectId, segmentId, version }) => {
               ))}
               <EuiSpacer size="l" />
             </EuiFlexGroup>
-          </Fragment>
-        )}
-      </EuiPageBody>
-    </EuiPage>
+          </EuiPageTemplate.Section>
+        </Fragment>
+      )}
+    </EuiPageTemplate>
   );
 };
 

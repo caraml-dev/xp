@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import {
   EuiButton,
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
+  EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
-import classNames from "classnames";
 
 import { PageTitle } from "components/page/PageTitle";
 import { Settings } from "services/settings/Settings";
@@ -33,41 +29,37 @@ const EditValidationView = ({
   });
 
   return (
-    <FormContextProvider data={Settings.fromJson(settings)}>
-      <EuiPage
-        paddingSize="none"
-        className={classNames({ pageWithRightSidebar: isFlyoutVisible })}>
-        <EuiPageBody paddingSize="m">
-          <EuiPageHeader>
-            <EuiPageHeaderSection>
-              <PageTitle title="Edit Validation" />
-            </EuiPageHeaderSection>
-            <EuiPageHeaderSection>
-              <EuiButton size="s" onClick={toggleFlyout}>
-                Playground
-              </EuiButton>
-            </EuiPageHeaderSection>
-          </EuiPageHeader>
-
-          <EuiPageContentBody>
-            <EditValidationForm
-              projectId={projectId}
-              onCancel={() => window.history.back()}
-              onSuccess={() => {
-                props.navigate("../", { state: { refresh: true } });
-              }}
-            />
-          </EuiPageContentBody>
-        </EuiPageBody>
-
-        {isFlyoutVisible && (
-          <PlaygroundFlyout
-            isFlyoutVisible={isFlyoutVisible}
-            onClose={toggleFlyout}
+    <Fragment>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Edit Validation" />}
+        rightSideItems={[
+          <EuiButton size="s" onClick={toggleFlyout}>
+            Playground
+          </EuiButton>
+        ]}
+        alignItems={"center"}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={Settings.fromJson(settings)}>
+          <EditValidationForm
+            projectId={projectId}
+            onCancel={() => window.history.back()}
+            onSuccess={() => {
+              props.navigate("../", { state: { refresh: true } });
+            }}
           />
-        )}
-      </EuiPage>
-    </FormContextProvider>
+
+          {isFlyoutVisible && (
+            <PlaygroundFlyout
+              isFlyoutVisible={isFlyoutVisible}
+              onClose={toggleFlyout}
+            />
+          )}
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 

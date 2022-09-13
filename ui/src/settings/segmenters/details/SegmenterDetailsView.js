@@ -3,11 +3,8 @@ import React, { Fragment, useEffect } from "react";
 import {
   EuiCallOut,
   EuiLoadingChart,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
-  EuiSpacer,
   EuiTextAlign,
+  EuiPageTemplate,
 } from "@elastic/eui";
 import { PageNavigation, replaceBreadcrumbs } from "@gojek/mlp-ui";
 import { Redirect, Router } from "@reach/router";
@@ -47,7 +44,7 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
   }, [segmenter]);
 
   return (
-    <EuiPageBody>
+    <Fragment>
       {!isLoaded ? (
         <EuiTextAlign textAlign="center">
           <EuiLoadingChart size="xl" mono />
@@ -61,10 +58,11 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
         </EuiCallOut>
       ) : (
         <Fragment>
-          {!(props["*"] === "edit") ? (
+          {!(props["*"] === "edit") && (
             <Fragment>
-              <EuiPageHeader>
-                <EuiPageHeaderSection>
+              <EuiPageTemplate.Header
+                bottomBorder={false}
+                pageTitle={
                   <PageTitle
                     icon="package"
                     title={segmenter.name}
@@ -72,9 +70,8 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
                       <StatusBadge status={getSegmenterStatus(segmenter)} />
                     }
                   />
-                </EuiPageHeaderSection>
-              </EuiPageHeader>
-              <EuiSpacer size="m" />
+                }
+              >
               {props["*"] === "details" && (
                 <SegmenterActions
                   onEdit={() => props.navigate("./edit")}
@@ -97,10 +94,8 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
                   )}
                 </SegmenterActions>
               )}
-              <EuiSpacer size="xl" />
+              </EuiPageTemplate.Header>
             </Fragment>
-          ) : (
-            <EuiSpacer />
           )}
 
           <Router primary={false}>
@@ -110,7 +105,7 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
           </Router>
         </Fragment>
       )}
-    </EuiPageBody>
+    </Fragment>
   );
 };
 

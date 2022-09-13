@@ -3,16 +3,12 @@ import React, { useEffect } from "react";
 import {
   EuiCallOut,
   EuiLoadingChart,
-  EuiPage,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiPageTemplate,
   EuiSpacer,
   EuiTextAlign,
 } from "@elastic/eui";
 import { PageNavigation, useToggle } from "@gojek/mlp-ui";
 import { Redirect, Router } from "@reach/router";
-import classNames from "classnames";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
@@ -26,9 +22,15 @@ import SegmenterDetailsView from "settings/segmenters/details/SegmenterDetailsVi
 import { ListSegmentersView } from "settings/segmenters/list/ListSegmentersView";
 import ValidationView from "settings/validation/ValidationView";
 
-import "./SettingsDetailsView.scss";
+import { useConfig } from "config";
 
 const SettingsDetailsView = ({ projectId, ...props }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [isFlyoutVisible, toggleFlyout] = useToggle();
   const [{ data, isLoaded, error }, fetchXPSettings] = useXpApi(
     `/projects/${projectId}/settings`
@@ -56,31 +58,31 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
   }, [fetchXPSettings, props.location.state]);
 
   return (
-    <EuiPage
-      paddingSize="none"
-      className={classNames({ pageWithRightSidebar: isFlyoutVisible })}>
-      <EuiPageBody paddingSize="m">
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : error ? (
-          <EuiCallOut
-            title="Sorry, there was an error"
-            color="danger"
-            iconType="alert">
-            <p>{error.message}</p>
-          </EuiCallOut>
-        ) : (
-          <>
-            {!props["*"].includes("edit") &&
-            !props["*"].includes("segmenters/") ? (
-              <>
-                <EuiPageHeader>
-                  <EuiPageHeaderSection>
-                    <PageTitle icon="managementApp" title="Settings" />
-                  </EuiPageHeaderSection>
-                </EuiPageHeader>
+    <EuiPageTemplate
+      restrictWidth={restrictWidth}
+      paddingSize={paddingSize}
+    >
+      <EuiSpacer size="l" />
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : error ? (
+        <EuiCallOut
+          title="Sorry, there was an error"
+          color="danger"
+          iconType="alert">
+          <p>{error.message}</p>
+        </EuiCallOut>
+      ) : (
+        <>
+          {!props["*"].includes("edit") &&
+          !props["*"].includes("segmenters/") && (
+            <>
+              <EuiPageTemplate.Header
+                bottomBorder={false}
+                pageTitle={<PageTitle icon="managementApp" title="Settings" />}
+              >
                 <SettingsActions
                   onEdit={() => props.navigate("./edit")}
                   onValidationEdit={() => props.navigate("./validation/edit")}
@@ -97,31 +99,30 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
                     />
                   )}
                 </SettingsActions>
-                <EuiSpacer size="xl" />
-              </>
-            ) : (
-              <></>
-            )}
-            <Router primary={false}>
-              <Redirect from="/" to="details" noThrow />
-              <SettingsConfigView path="details" settings={data?.data} />
-              <EditSettingsView path="edit" settings={data.data} />
-              <ValidationView path="validation" settings={data.data} />
-              <CreateSettingsView path="create" />
-              <ListSegmentersView path="segmenters" />
-              <CreateSegmenterView path="segmenters/create" />
-              <SegmenterDetailsView path="segmenters/:segmenterName/*" />
-              <EditValidationView
-                path="validation/edit"
-                settings={data.data}
-                isFlyoutVisible={isFlyoutVisible}
-                toggleFlyout={toggleFlyout}
-              />
-            </Router>
-          </>
-        )}
-      </EuiPageBody>
-    </EuiPage>
+              </EuiPageTemplate.Header>
+            </>
+          )}
+
+          <Router primary={false}>
+            <Redirect from="/" to="details" noThrow />
+            <SettingsConfigView path="details" settings={data?.data} />
+            <EditSettingsView path="edit" settings={data.data} />
+            <ValidationView path="validation" settings={data.data} />
+            <CreateSettingsView path="create" />
+            <ListSegmentersView path="segmenters" />
+            <CreateSegmenterView path="segmenters/create" />
+            <SegmenterDetailsView path="segmenters/:segmenterName/*" />
+            <EditValidationView
+              path="validation/edit"
+              settings={data.data}
+              isFlyoutVisible={isFlyoutVisible}
+              toggleFlyout={toggleFlyout}
+            />
+          </Router>
+        </>
+      )}
+      <EuiSpacer size="l" />
+    </EuiPageTemplate>
   );
 };
 

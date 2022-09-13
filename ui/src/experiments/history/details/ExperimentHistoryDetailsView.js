@@ -5,12 +5,9 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiLoadingChart,
-  EuiPage,
-  EuiPageBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
   EuiSpacer,
   EuiTextAlign,
+  EuiPageTemplate,
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
@@ -22,8 +19,15 @@ import { SegmentConfigSection } from "experiments/components/configuration/Segme
 import { TreatmentConfigSection } from "experiments/components/configuration/TreatmentConfigSection";
 import { useXpApi } from "hooks/useXpApi";
 import { SegmenterContextProvider } from "providers/segmenters/context";
+import { useConfig } from "config";
 
 const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
+  const {
+    appConfig: {
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [
     {
       data: { data: history },
@@ -77,56 +81,57 @@ const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
   }, [history, isLoaded]);
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : (
-          <Fragment>
-            <EuiPageHeader>
-              <EuiPageHeaderSection>
-                <PageTitle
-                  title={`${history.name} - Version ${history.version}`}
-                />
-              </EuiPageHeaderSection>
-            </EuiPageHeader>
-            <Fragment>
-              <EuiFlexGroup direction="row">
-                <EuiFlexItem grow={2}>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : (
+        <Fragment>
+          <EuiPageTemplate.Header
+            bottomBorder={false}
+            pageTitle={
+              <PageTitle
+                title={`${history.name} - Version ${history.version}`}
+              />
+            }
+          />
+          <EuiSpacer size="l" />
+          <EuiPageTemplate.Section color={"transparent"}>
+            <EuiFlexGroup direction="row">
+              <EuiFlexItem grow={2}>
+                <ConfigSection
+                  title={generalInfo.title}
+                  iconType={generalInfo.iconType}>
+                  {generalInfo.children}
+                </ConfigSection>
+              </EuiFlexItem>
+              <EuiFlexItem grow={1}>
+                <ConfigSection
+                  title={activity.title}
+                  iconType={activity.iconType}>
+                  {activity.children}
+                </ConfigSection>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiSpacer size="l" />
+            <EuiFlexGroup direction="column">
+              {singleColumnSection.map((section, idx) => (
+                <EuiFlexItem key={`config-section-${idx}`}>
                   <ConfigSection
-                    title={generalInfo.title}
-                    iconType={generalInfo.iconType}>
-                    {generalInfo.children}
+                    title={section.title}
+                    iconType={section.iconType}>
+                    {section.children}
                   </ConfigSection>
                 </EuiFlexItem>
-                <EuiFlexItem grow={1}>
-                  <ConfigSection
-                    title={activity.title}
-                    iconType={activity.iconType}>
-                    {activity.children}
-                  </ConfigSection>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+              ))}
               <EuiSpacer size="l" />
-              <EuiFlexGroup direction="column">
-                {singleColumnSection.map((section, idx) => (
-                  <EuiFlexItem key={`config-section-${idx}`}>
-                    <ConfigSection
-                      title={section.title}
-                      iconType={section.iconType}>
-                      {section.children}
-                    </ConfigSection>
-                  </EuiFlexItem>
-                ))}
-                <EuiSpacer size="l" />
-              </EuiFlexGroup>
-            </Fragment>
-          </Fragment>
-        )}
-      </EuiPageBody>
-    </EuiPage>
+            </EuiFlexGroup>
+          </EuiPageTemplate.Section>
+        </Fragment>
+      )}
+    </EuiPageTemplate>
   );
 };
 

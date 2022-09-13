@@ -13,12 +13,14 @@ const SearchExperimentsPanel = ({ onChange, onClose, projectId }) => {
     <SegmenterContextProvider projectId={projectId}>
       <EuiFlyout
         id="experiments-search-panel"
-        className="searchPanelFlyout--left"
+        className="euiFlyout--searchPanel"
+        side="left"
         onClose={onClose}
-        size="s"
         maxWidth={true}
         hideCloseButton={true}
-        paddingSize="m">
+        paddingSize="m"
+        type="push"
+      >
         <SearchExperimentsFilters onChange={onChange} />
         <EuiFlyoutFooter className="euiFlyoutFooter">
           <EuiButton onClick={() => onClose(false)} fill>

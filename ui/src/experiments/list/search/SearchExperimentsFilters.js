@@ -29,8 +29,6 @@ import ExperimentUpdatedByFilter from "./components/ExperimentUpdatedByFilter";
 import ExperimentSearchContext from "./context";
 import schema from "./validation/schema";
 
-import "./SearchExperimentsFilters.scss";
-
 const SearchExperimentFilters = ({ onChange }) => {
   const { clearFilters, getFilter, getFilters, isFilterSet, setFilter } =
     useContext(ExperimentSearchContext);
@@ -78,14 +76,14 @@ const SearchExperimentFilters = ({ onChange }) => {
 
   return (
     <>
-      <EuiFlyoutHeader hasBorder className="searchPanelFlyoutHeader">
+      <EuiFlyoutHeader hasBorder>
         <EuiFlexGroup alignItems="center">
           <EuiFlexItem>
             <EuiTitle size="s">
               <h4>Filters</h4>
             </EuiTitle>
           </EuiFlexItem>
-          <EuiFlexItem>
+          <EuiFlexItem grow={false}>
             <EuiButtonEmpty
               iconSide="right"
               onClick={() => clearAllFilters()}
@@ -97,9 +95,9 @@ const SearchExperimentFilters = ({ onChange }) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutHeader>
-      <EuiFlyoutBody className="searchPanelFlyoutBody">
-        <EuiFlexGroup direction="row" justifyContent="center">
-          <EuiFlexItem grow={false} style={{ width: "75%" }}>
+      <EuiFlyoutBody>
+        <EuiFlexGroup direction="row">
+          <EuiFlexItem grow={false}>
             <EuiForm>
               <ExperimentTypeOptionsFilter
                 label="Experiment Type"

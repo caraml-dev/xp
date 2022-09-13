@@ -6,7 +6,7 @@ export const getSegmenterScope = (scope) => {
     },
     global: {
       label: "Global",
-      color: "secondary",
+      color: "success",
     },
   };
   return status[scope];

@@ -4,13 +4,11 @@ import {
   EuiBadge,
   EuiButton,
   EuiFlexItem,
-  EuiPage,
-  EuiPageBody,
-  EuiPageContent,
-  EuiPageHeader,
-  EuiPageHeaderSection,
+  EuiFlexGroup,
+  EuiPanel,
   EuiSearchBar,
   EuiSpacer,
+  EuiPageTemplate
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 
@@ -25,11 +23,17 @@ import NameSearchContext, {
 import ListTreatmentsTable from "./ListTreatmentsTable";
 
 const ListTreatmentsComponent = ({ projectId, props }) => {
-  const { appConfig } = useConfig();
+  const {
+    appConfig: {
+      pagination: { defaultPageSize },
+      pageTemplate: { restrictWidth, paddingSize },
+    },
+  } = useConfig();
+
   const [results, setResults] = useState({ items: [], totalItemCount: 0 });
   const [page, setPage] = useState({
     index: 0,
-    size: appConfig.pagination.defaultPageSize,
+    size: defaultPageSize,
   });
 
   const { getFilter, getProcessedFilters, setFilter, isFilterSet } =
@@ -66,39 +70,44 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
   const onRowClick = (item) => props.navigate(`./${item.id}/details`);
 
   return (
-    <EuiPage paddingSize="none">
-      <EuiPageBody paddingSize="m">
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle
-              title="Treatments"
-              postpend={
-                isFilterSet() && <EuiBadge color="primary">Filtered</EuiBadge>
-              }
-            />
-          </EuiPageHeaderSection>
-          <EuiPageHeaderSection>
-            <NavigationMenu curPage={"treatments"} props={props} />
-            &emsp;
-            <EuiButton size="s" onClick={() => props.navigate("./create")} fill>
-              Create Treatment
-            </EuiButton>
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
+    <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={
+          <PageTitle
+            title="Treatments"
+            postpend={
+              isFilterSet() && <EuiBadge color="primary">Filtered</EuiBadge>
+            }
+          />
+        }
+        rightSideItems={[
+          <EuiButton size="s" onClick={() => props.navigate("./create")} fill>
+            Create Treatment
+          </EuiButton>,
+          <NavigationMenu curPage={"treatments"} props={props} />,
+        ]}
+        alignItems={"center"}
+      />
 
-        <EuiPageContent>
-          <EuiFlexItem grow={6}>
-            <EuiSearchBar
-              query={getFilter("search") || ""}
-              box={{
-                placeholder: "Search Treatment name",
-              }}
-              onChange={(text) => {
-                setPage({ ...page, index: 0 });
-                setFilter("search", text.queryText);
-              }}
-            />
-          </EuiFlexItem>
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <EuiPanel>
+          <EuiFlexGroup direction="row" gutterSize="s" alignItems="center">
+            <EuiFlexItem grow={6}>
+              <EuiSearchBar
+                query={getFilter("search") || ""}
+                box={{
+                  placeholder: "Search Treatment name",
+                }}
+                onChange={(text) => {
+                  setPage({ ...page, index: 0 });
+                  setFilter("search", text.queryText);
+                }}
+              />
+            </EuiFlexItem>
+          </EuiFlexGroup>
           <EuiSpacer size="s" />
           <ListTreatmentsTable
             isLoaded={isLoaded}
@@ -109,9 +118,9 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
             onRowClick={onRowClick}
             totalItemCount={results.totalItemCount}
           />
-        </EuiPageContent>
-      </EuiPageBody>
-    </EuiPage>
+        </EuiPanel>
+      </EuiPageTemplate.Section>
+    </EuiPageTemplate>
   );
 };
 

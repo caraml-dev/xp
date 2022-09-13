@@ -1,19 +1,12 @@
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 
-import {
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiPageHeader,
-  EuiPageHeaderSection,
-  EuiSpacer,
-} from "@elastic/eui";
+import { EuiPageTemplate, EuiSpacer } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
-import { PageTitle } from "components/page/PageTitle";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { Settings } from "services/settings/Settings";
 import { EditSettingsForm } from "settings/components/form/EditSettingsForm";
+import { PageTitle } from "components/page/PageTitle";
 
 const EditSettingsView = ({ projectId, settings, ...props }) => {
   useEffect(() => {
@@ -25,30 +18,26 @@ const EditSettingsView = ({ projectId, settings, ...props }) => {
   });
 
   return (
-    <EuiPage>
-      <EuiPageBody>
-        <EuiPageHeader>
-          <EuiPageHeaderSection>
-            <PageTitle title="Edit Settings" />
-          </EuiPageHeaderSection>
-        </EuiPageHeader>
-        <EuiSpacer size="m" />
-        <EuiPageContentBody>
-          <FormContextProvider data={Settings.fromJson(settings)}>
-            <SegmenterContextProvider projectId={projectId}>
-              <EditSettingsForm
-                projectId={projectId}
-                onCancel={() => window.history.back()}
-                onSuccess={() => {
-                  props.navigate("../", { state: { refresh: true } });
-                }}
-              />
-            </SegmenterContextProvider>
-          </FormContextProvider>
-          <EuiSpacer size="l" />
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+    <Fragment>
+      <EuiPageTemplate.Header
+        bottomBorder={false}
+        pageTitle={<PageTitle title="Edit Settings" />}
+      />
+      <EuiSpacer size="l" />
+      <EuiPageTemplate.Section color={"transparent"}>
+        <FormContextProvider data={Settings.fromJson(settings)}>
+          <SegmenterContextProvider projectId={projectId}>
+            <EditSettingsForm
+              projectId={projectId}
+              onCancel={() => window.history.back()}
+              onSuccess={() => {
+                props.navigate("../", { state: { refresh: true } });
+              }}
+            />
+          </SegmenterContextProvider>
+        </FormContextProvider>
+      </EuiPageTemplate.Section>
+    </Fragment>
   );
 };
 
