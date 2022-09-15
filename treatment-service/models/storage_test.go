@@ -23,7 +23,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	managementClient "github.com/caraml-dev/xp/clients/management"
-	"github.com/caraml-dev/xp/clients/testutils/mocks"
+	mocks "github.com/caraml-dev/xp/clients/testutils/mocks/management"
 	"github.com/caraml-dev/xp/common/api/schema"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"

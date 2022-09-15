@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/caraml-dev/xp/clients/testutils/mocks"
+	mocks "github.com/caraml-dev/xp/clients/testutils/mocks/treatment"
 	treatmentClient "github.com/caraml-dev/xp/clients/treatment"
 	"github.com/caraml-dev/xp/plugins/turing/config"
 	"github.com/caraml-dev/xp/plugins/turing/internal/testutils"
@@ -143,9 +143,9 @@ func TestMissingRequestValue(t *testing.T) {
 }
 
 func TestFetchTreatment(t *testing.T) {
-	mockTreatmentClientInterface := mocks.TreatmentClientInterface{}
-	mockTreatmentClient := treatmentClient.ClientWithResponses{ClientInterface: &mockTreatmentClientInterface}
-	mockTreatmentClientInterface.On("FetchTreatmentWithBody",
+	mockClientInterface := mocks.ClientInterface{}
+	mockTreatmentClient := treatmentClient.ClientWithResponses{ClientInterface: &mockClientInterface}
+	mockClientInterface.On("FetchTreatmentWithBody",
 		context.Background(),
 		int64(1),
 		&treatmentClient.FetchTreatmentParams{PassKey: "abc"},
@@ -158,7 +158,7 @@ func TestFetchTreatment(t *testing.T) {
 			Body:       ioutil.NopCloser(bytes.NewBufferString(`{}`)),
 		}, nil)
 
-	mockTreatmentClientInterface.On("FetchTreatmentWithBody",
+	mockClientInterface.On("FetchTreatmentWithBody",
 		context.Background(),
 		int64(2),
 		&treatmentClient.FetchTreatmentParams{PassKey: "abc"},
@@ -236,6 +236,7 @@ func TestFetchTreatment(t *testing.T) {
 				Config: json.RawMessage(`{
 					"experiment_id": 712,
 					"experiment_name": "test_experiment",
+					"experiment_version": 0,
 					"treatment": {
 						"configuration": {"foo":"bar"},
 						"name": "test_experiment-control",

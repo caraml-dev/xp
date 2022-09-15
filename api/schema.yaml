@@ -115,6 +115,7 @@ components:
       required:
         - experiment_id
         - experiment_name
+        - experiment_version
         - treatment
       type: object
       properties:
@@ -123,6 +124,12 @@ components:
           format: int64
         experiment_name:
           type: string
+        experiment_version:
+          type: integer
+          format: int64
+        switchback_window_id:
+          type: integer
+          format: int64
         treatment:
           $ref: '#/components/schemas/SelectedTreatmentData'
     Experiment:
