@@ -256,6 +256,12 @@ func (s *ExperimentServiceTestSuite) TestGetExperiment() {
 			expLookupFilters: makeExperimentLookupFilters(s2.CellID(3592210809859604480), 1, 20, "seg-1", 1, 9001, false),
 			expResponse:      s.LocalStorage.Experiments[5][0].Experiment,
 		},
+		"resolve tiers | no experiment variables": {
+			projectId:        5,
+			reqFilter:        map[string][]*_segmenters.SegmenterValue{},
+			expLookupFilters: makeExperimentLookupFilters(s2.CellID(3592210809859604480), 1, 20, "seg-1", 1, 9001, false),
+			expResponse:      s.LocalStorage.Experiments[5][0].Experiment,
+		},
 		"resolve all hierarchy | optional segmenter": {
 			projectId:        6,
 			reqFilter:        makeRequestFilter(s2.CellID(3592210809859604480), 1, 20, "seg-1", 1, 9001, false),

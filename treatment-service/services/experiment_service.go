@@ -128,38 +128,37 @@ func (es *experimentService) filterByLookupOrder(
 	filtered := matches
 	for _, segmenter := range segmenters {
 		orderedValues := filters[segmenter]
-		if len(orderedValues) == 1 {
-			continue
-		}
-
 		currentFilteredList := []*models.ExperimentMatch{}
 		segmenterType := segmenterTypes[segmenter]
 		for _, transformedValue := range orderedValues {
 			if len(currentFilteredList) == 0 {
-				for _, segmenterMatch := range filtered {
-					segmenterMatchedValue := segmenterMatch.SegmenterMatches[segmenter]
+				for _, experiment := range filtered {
+					segmenterMatchedValue := experiment.SegmenterMatches[segmenter]
 					switch segmenterType {
 					case "string":
 						if transformedValue.GetString_() == segmenterMatchedValue.Value.GetString_() {
-							currentFilteredList = append(currentFilteredList, segmenterMatch)
+							currentFilteredList = append(currentFilteredList, experiment)
 						}
 					case "integer":
 						if transformedValue.GetInteger() == segmenterMatchedValue.Value.GetInteger() {
-							currentFilteredList = append(currentFilteredList, segmenterMatch)
+							currentFilteredList = append(currentFilteredList, experiment)
 						}
 					case "real":
 						if transformedValue.GetReal() == segmenterMatchedValue.Value.GetReal() {
-							currentFilteredList = append(currentFilteredList, segmenterMatch)
+							currentFilteredList = append(currentFilteredList, experiment)
 						}
 					case "bool":
 						if transformedValue.GetBool() == segmenterMatchedValue.Value.GetBool() {
-							currentFilteredList = append(currentFilteredList, segmenterMatch)
+							currentFilteredList = append(currentFilteredList, experiment)
 						}
 					}
 				}
 			}
 		}
-		filtered = currentFilteredList
+		// currentFilteredList could be 0 in case of weak matches
+		if len(currentFilteredList) > 0 {
+			filtered = currentFilteredList
+		}
 	}
 
 	return filtered
