@@ -180,6 +180,10 @@ func TestFetchTreatment(t *testing.T) {
 									},
 									"name": "test_experiment-control",
 									"traffic": 50
+								},
+								"metadata": {
+									"experiment_version": 1,
+									"experiment_type": "a/b"
 								}
 							}
 						}`,
@@ -236,11 +240,14 @@ func TestFetchTreatment(t *testing.T) {
 				Config: json.RawMessage(`{
 					"experiment_id": 712,
 					"experiment_name": "test_experiment",
-					"experiment_version": 0,
 					"treatment": {
 						"configuration": {"foo":"bar"},
 						"name": "test_experiment-control",
 						"traffic": 50
+					},
+					"metadata": {
+						"experiment_version": 1,
+						"experiment_type": "a/b"
 					}
 				}`),
 			},
