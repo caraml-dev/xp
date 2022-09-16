@@ -65,6 +65,7 @@ func (i *InMemoryStore) CreateExperiment(experiment schema.Experiment) (schema.E
 	experiment.Id = int64(len(i.Experiments)) + 1
 	experiment.Status = schema.ExperimentStatusActive
 	experiment.UpdatedAt = time.Now()
+	experiment.Version = 1
 	i.Experiments = append(i.Experiments, experiment)
 
 	err := i.MessageQueue.PublishNewExperiment(experiment, i.SegmentersTypes)
@@ -79,8 +80,9 @@ func (i *InMemoryStore) UpdateExperiment(projectId int64, experimentId int64, ex
 	i.Lock()
 	defer i.Unlock()
 	experiment.UpdatedAt = time.Now()
-	for index, experiment := range i.Experiments {
-		if experiment.ProjectId == projectId && experiment.Id == experimentId {
+	for index, e := range i.Experiments {
+		if experiment.ProjectId == projectId && e.Id == experimentId {
+			experiment.Version = e.Version + 1
 			i.Experiments[index] = experiment
 		}
 	}

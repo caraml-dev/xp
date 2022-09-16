@@ -109,6 +109,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 				EndTime:   time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC),
 				CreatedAt: time.Date(2020, 1, 1, 2, 3, 4, 0, time.UTC),
 				UpdatedAt: time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC),
+				Version:   2,
 			},
 			Expected: &pubsub.Experiment{
 				ProjectId: 1,
@@ -135,6 +136,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 				StartTime: timestamppb.New(time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)),
 				EndTime:   timestamppb.New(time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC)),
 				UpdatedAt: timestamppb.New(time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC)),
+				Version:   2,
 			},
 		},
 		{
@@ -151,6 +153,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 				EndTime:   time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC),
 				CreatedAt: time.Date(2020, 1, 1, 2, 3, 4, 0, time.UTC),
 				UpdatedAt: time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC),
+				Version:   1,
 			},
 			Expected: &pubsub.Experiment{
 				ProjectId:  3,
@@ -165,6 +168,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 				StartTime:  timestamppb.New(time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)),
 				EndTime:    timestamppb.New(time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC)),
 				UpdatedAt:  timestamppb.New(time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC)),
+				Version:    1,
 			},
 		},
 	}
@@ -177,6 +181,28 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 			if data.Error != "" {
 				assert.EqualError(t, err, data.Error)
 			}
+		})
+	}
+}
+
+func TestProtobufExperimentTypeToOpenAPI(t *testing.T) {
+	tests := map[string]struct {
+		Input    pubsub.Experiment_Type
+		Expected schema.ExperimentType
+	}{
+		"a/b": {
+			Input:    pubsub.Experiment_A_B,
+			Expected: schema.ExperimentTypeAB,
+		},
+		"switchback": {
+			Input:    pubsub.Experiment_Switchback,
+			Expected: schema.ExperimentTypeSwitchback,
+		},
+	}
+
+	for name, data := range tests {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, data.Expected, models.ProtobufExperimentTypeToOpenAPI(data.Input))
 		})
 	}
 }

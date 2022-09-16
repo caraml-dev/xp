@@ -67,9 +67,10 @@ func TestTreatmentServiceTestSuite(t *testing.T) {
 }
 
 func (suite *TreatmentSelectionSuite) TestNoExperiments() {
-	resp, err := suite.treatmentService.GetTreatment(nil, nil)
+	resp, windowId, err := suite.treatmentService.GetTreatment(nil, nil)
 
 	suite.Require().NoError(err)
+	suite.Require().Nil(windowId)
 	suite.Require().Equal(&_pubsub.ExperimentTreatment{}, resp)
 }
 
@@ -81,7 +82,7 @@ func (suite *TreatmentSelectionSuite) TestNoRandomizationValue() {
 	},
 	}
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_A_B, treatment, suite.dayStart, suite.hourStart)
-	_, err := suite.treatmentService.GetTreatment(&experiment, nil)
+	_, _, err := suite.treatmentService.GetTreatment(&experiment, nil)
 
 	suite.Require().Error(err, "randomization key's value is nil")
 }
@@ -105,7 +106,7 @@ func (suite *TreatmentSelectionSuite) TestTreatmentConversion() {
 	}
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_A_B, treatment, suite.dayStart, suite.hourStart)
 	randomizationValue := ""
-	resp, _ := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp, windowId, _ := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 
 	var experimentTreatment *models.ExperimentTreatment
 	var traffic int32
@@ -128,6 +129,7 @@ func (suite *TreatmentSelectionSuite) TestTreatmentConversion() {
 	}
 
 	suite.Require().NoError(err)
+	suite.Require().Nil(windowId)
 	suite.Require().Equal(expectedTreatment, convertedResp)
 }
 
@@ -141,7 +143,7 @@ func (suite *TreatmentSelectionSuite) TestSingleAbExperiment() {
 	}
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_A_B, treatment, suite.dayStart, suite.hourStart)
 	randomizationValue := ""
-	resp, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 
 	expectedTreatment := &_pubsub.ExperimentTreatment{
 		Config:  &structpb.Struct{},
@@ -150,6 +152,7 @@ func (suite *TreatmentSelectionSuite) TestSingleAbExperiment() {
 	}
 
 	suite.Require().NoError(err)
+	suite.Require().Nil(windowId)
 	suite.Require().Equal(expectedTreatment, resp)
 }
 
@@ -169,7 +172,7 @@ func (suite *TreatmentSelectionSuite) TestMultipleAbExperiment() {
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_A_B, treatment, suite.dayStart, suite.hourStart)
 	// Should return different treatment based on randomization value
 	randomizationValue := "1234567891"
-	resp1, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp1, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 
 	expectedTreatment1 := &_pubsub.ExperimentTreatment{
 		Config:  &structpb.Struct{},
@@ -177,10 +180,11 @@ func (suite *TreatmentSelectionSuite) TestMultipleAbExperiment() {
 		Traffic: 30,
 	}
 	suite.Require().NoError(err)
+	suite.Require().Nil(windowId)
 	suite.Require().Equal(expectedTreatment1, resp1)
 
 	randomizationValue = "12341"
-	resp2, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp2, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 	expectedTreatment2 := &_pubsub.ExperimentTreatment{
 		Config:  &structpb.Struct{},
 		Name:    "ab-exp2-treatment2",
@@ -188,6 +192,7 @@ func (suite *TreatmentSelectionSuite) TestMultipleAbExperiment() {
 	}
 
 	suite.Require().NoError(err)
+	suite.Require().Nil(windowId)
 	suite.Require().Equal(expectedTreatment2, resp2)
 }
 
@@ -200,14 +205,19 @@ func (suite *TreatmentSelectionSuite) TestSingleCyclicalSbExperiment() {
 	}
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_Switchback, treatment, suite.hourStart, suite.hourEnd)
 	randomizationValue := "1234"
-	resp, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 
+	var expectedWindowId int64 = 0
+	if time.Now().Minute() >= 30 {
+		expectedWindowId = 1
+	}
 	expectedTreatment := &_pubsub.ExperimentTreatment{
 		Config: &structpb.Struct{},
 		Name:   "sb-exp1-treatment1",
 	}
 
 	suite.Require().NoError(err)
+	suite.Require().Equal(expectedWindowId, *windowId)
 	suite.Require().Equal(expectedTreatment, resp)
 }
 
@@ -225,7 +235,7 @@ func (suite *TreatmentSelectionSuite) TestMultiCyclicalSbExperiment() {
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_Switchback, treatment, suite.hourStart, suite.hourEnd)
 
 	randomizationValue := "1234"
-	resp, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 
 	expectedTreatment1 := &_pubsub.ExperimentTreatment{
 		Config: &structpb.Struct{},
@@ -238,10 +248,12 @@ func (suite *TreatmentSelectionSuite) TestMultiCyclicalSbExperiment() {
 
 	suite.Require().NoError(err)
 	// Different treatments based on 30min interval
-	if time.Now().Minute() > 30 {
+	if time.Now().Minute() >= 30 {
 		suite.Require().Equal(expectedTreatment2, resp)
+		suite.Require().Equal(int64(1), *windowId)
 	} else {
 		suite.Require().Equal(expectedTreatment1, resp)
+		suite.Require().Equal(int64(0), *windowId)
 	}
 }
 
@@ -256,8 +268,12 @@ func (suite *TreatmentSelectionSuite) TestSingleRandomSbExperiment() {
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_Switchback, treatment, suite.hourStart, suite.hourEnd)
 
 	randomizationValue := "1234"
-	resp, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 
+	var expectedWindowId int64 = 0
+	if time.Now().Minute() >= 30 {
+		expectedWindowId = 1
+	}
 	expectedTreatment := &_pubsub.ExperimentTreatment{
 		Config:  &structpb.Struct{},
 		Name:    "sb-exp3-treatment1",
@@ -265,6 +281,7 @@ func (suite *TreatmentSelectionSuite) TestSingleRandomSbExperiment() {
 	}
 
 	suite.Require().NoError(err)
+	suite.Require().Equal(expectedWindowId, *windowId)
 	suite.Require().Equal(expectedTreatment, resp)
 }
 
@@ -283,6 +300,11 @@ func (suite *TreatmentSelectionSuite) TestMultiRandomSbExperiment() {
 	}
 	experiment := newTestXPExperiment(1, _pubsub.Experiment_Switchback, treatment, suite.hourStart, suite.hourEnd)
 
+	var expectedWindowId int64 = 0
+	if time.Now().Minute() >= 30 {
+		expectedWindowId = 1
+	}
+
 	expectedTreatment1 := &_pubsub.ExperimentTreatment{
 		Config:  &structpb.Struct{},
 		Name:    "sb-exp4-treatment1",
@@ -290,13 +312,15 @@ func (suite *TreatmentSelectionSuite) TestMultiRandomSbExperiment() {
 	}
 
 	randomizationValue := "1234"
-	resp1, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp1, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 	suite.Require().NoError(err)
+	suite.Require().Equal(expectedWindowId, *windowId)
 	suite.Require().Equal(expectedTreatment1, resp1)
 
 	randomizationValue = "12341"
-	resp2, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
+	resp2, windowId, err := suite.treatmentService.GetTreatment(&experiment, &randomizationValue)
 	suite.Require().NoError(err)
+	suite.Require().Equal(expectedWindowId, *windowId)
 	suite.Require().Equal(expectedTreatment1, resp2)
 }
 

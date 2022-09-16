@@ -94,6 +94,10 @@ def test_experiment_selection(xp_client: XPClient, xp_project):
         "experiment_id": exp_5["id"],
         "experiment_name": exp_5["name"],
         "treatment": exp_5["treatments"][0],
+        "metadata": {
+            "experiment_version": 1,
+            "experiment_type": "A/B",
+        },
     }
 
 

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"net"
 	"net/http"
@@ -219,6 +220,7 @@ func generateExperiments() []schema.Experiment {
 			StartTime:  startTime,
 			Treatments: treatments,
 			Type:       experimentType,
+			Version:    int64(1),
 		}
 		experiments = append(experiments, experiment)
 	}
@@ -437,6 +439,10 @@ func (suite *TreatmentServiceTestSuite) TestAdditionalFilters() {
 			},
 			Traffic: int32Ptr(50),
 		},
+		Metadata: schema.SelectedTreatmentMetadata{
+			ExperimentVersion: int64(1),
+			ExperimentType:    schema.ExperimentTypeAB,
+		},
 	}
 
 	suite.Require().NoError(err)
@@ -511,6 +517,10 @@ func (suite *TreatmentServiceTestSuite) TestTimeFilter() {
 			},
 			Traffic: int32Ptr(40),
 		},
+		Metadata: schema.SelectedTreatmentMetadata{
+			ExperimentVersion: int64(1),
+			ExperimentType:    schema.ExperimentTypeAB,
+		},
 	}
 
 	suite.Require().NoError(err)
@@ -578,6 +588,10 @@ func (suite *TreatmentServiceTestSuite) TestExperimentUpdates() {
 			},
 			Traffic: traffic,
 		},
+		Metadata: schema.SelectedTreatmentMetadata{
+			ExperimentVersion: int64(1),
+			ExperimentType:    schema.ExperimentTypeAB,
+		},
 	}
 
 	suite.Require().NoError(err)
@@ -629,6 +643,10 @@ func (suite *TreatmentServiceTestSuite) TestExperimentUpdates() {
 				"key1": "new-treatment-config",
 			},
 			Traffic: newTraffic,
+		},
+		Metadata: schema.SelectedTreatmentMetadata{
+			ExperimentVersion: int64(2),
+			ExperimentType:    schema.ExperimentTypeAB,
 		},
 	}
 
@@ -761,6 +779,9 @@ func (suite *TreatmentServiceTestSuite) TestAllFiltersSwitchback() {
 		requestReader,
 	)
 
+	// Calculate switchback window id
+	startTime, _ := getStartEndTime()
+	windowId := int64(math.Floor(time.Since(startTime).Minutes() / float64(30)))
 	expectedBody := schema.SelectedTreatment{
 		ExperimentName: "sg-exp-3",
 		ExperimentId:   3,
@@ -770,6 +791,11 @@ func (suite *TreatmentServiceTestSuite) TestAllFiltersSwitchback() {
 				"key1": "default-treatment-config",
 			},
 			Traffic: int32Ptr(70),
+		},
+		Metadata: schema.SelectedTreatmentMetadata{
+			ExperimentVersion:  int64(1),
+			ExperimentType:     schema.ExperimentTypeSwitchback,
+			SwitchbackWindowId: &windowId,
 		},
 	}
 

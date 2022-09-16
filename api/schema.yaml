@@ -21,6 +21,23 @@ components:
         configuration:
           type: object
           description: Custom configuration associated with the given treatment
+    SelectedTreatmentMetadata:
+      required:
+        - experiment_version
+        - experiment_type
+      type: object
+      properties:
+        experiment_version:
+          type: integer
+          format: int64
+        experiment_type:
+          $ref: '#/components/schemas/ExperimentType'
+        switchback_window_id:
+          type: integer
+          format: int64
+          description: |
+            The window id since the beginning of the current version of the Switchback experiment.
+            This field will only be set for Switchback experiments and the window id starts at 0.
     ExperimentTreatment:
       required:
         - configuration
@@ -115,8 +132,8 @@ components:
       required:
         - experiment_id
         - experiment_name
-        - experiment_version
         - treatment
+        - metadata
       type: object
       properties:
         experiment_id:
@@ -124,14 +141,10 @@ components:
           format: int64
         experiment_name:
           type: string
-        experiment_version:
-          type: integer
-          format: int64
-        switchback_window_id:
-          type: integer
-          format: int64
         treatment:
           $ref: '#/components/schemas/SelectedTreatmentData'
+        metadata:
+          $ref: '#/components/schemas/SelectedTreatmentMetadata'
     Experiment:
       required:
         - project_id

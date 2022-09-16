@@ -165,7 +165,8 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	selectedTreatment, err = t.TreatmentService.GetTreatment(filteredExperiment, randomizationKeyValue)
+	var switchbackWindowId *int64
+	selectedTreatment, switchbackWindowId, err = t.TreatmentService.GetTreatment(filteredExperiment, randomizationKeyValue)
 	if err != nil {
 		statusCode = http.StatusInternalServerError
 		ErrorResponse(w, statusCode, err, &requestId)
@@ -179,6 +180,11 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 		ExperimentId:   filteredExperiment.Id,
 		ExperimentName: filteredExperiment.Name,
 		Treatment:      treatmentRepr,
+		Metadata: schema.SelectedTreatmentMetadata{
+			ExperimentVersion:  filteredExperiment.Version,
+			ExperimentType:     models.ProtobufExperimentTypeToOpenAPI(filteredExperiment.Type),
+			SwitchbackWindowId: switchbackWindowId,
+		},
 	}
 	response := api.FetchTreatmentSuccess{
 		Data: &treatment,
