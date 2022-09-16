@@ -20,6 +20,7 @@ import { TreatmentConfigSection } from "experiments/components/configuration/Tre
 import { useXpApi } from "hooks/useXpApi";
 import { SegmenterContextProvider } from "providers/segmenters/context";
 import { useConfig } from "config";
+import { VersionBadge } from "components/version_badge/VersionBadge";
 
 const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
   const {
@@ -93,7 +94,8 @@ const ExperimentHistoryDetailsView = ({ projectId, experimentId, version }) => {
             bottomBorder={false}
             pageTitle={
               <PageTitle
-                title={`${history.name} - Version ${history.version}`}
+                title={history.name}
+                postpend={<VersionBadge version={history.version} />}
               />
             }
           />

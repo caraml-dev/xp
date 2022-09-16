@@ -335,6 +335,7 @@ func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {
 		Tier:        models.ExperimentTierDefault,
 		Type:        models.ExperimentTypeSwitchback,
 		UpdatedBy:   updatedBy,
+		Version:     1,
 	}, *expResponse)
 
 	// Update Experiment
@@ -549,6 +550,7 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 				CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 				UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 			},
+			Version: 1,
 		},
 		{
 			ProjectID:  models.ID(1),
@@ -567,6 +569,7 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 				CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 				UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 			},
+			Version: 1,
 		},
 		{
 			ProjectID:  models.ID(1),
@@ -585,6 +588,7 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 				UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 			},
 			Description: &description,
+			Version:     1,
 		},
 		{
 			ProjectID:  models.ID(2),
@@ -602,6 +606,7 @@ func createTestExperiments(db *gorm.DB) (models.Settings, []*models.Experiment, 
 				CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 				UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 			},
+			Version: 1,
 		},
 	}
 
@@ -742,6 +747,7 @@ func setupMockSegmenterService() services.SegmenterService {
 					Treatments: nil,
 					StartTime:  time.Date(2021, 2, 2, 3, 5, 7, 0, time.UTC),
 					EndTime:    time.Date(2021, 2, 2, 3, 5, 8, 0, time.UTC),
+					Version:    1,
 				},
 			}).
 		Return(nil)

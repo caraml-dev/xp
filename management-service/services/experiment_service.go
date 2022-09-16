@@ -255,6 +255,7 @@ func (svc *experimentService) CreateExperiment(
 		StartTime:   expData.StartTime,
 		EndTime:     expData.EndTime,
 		UpdatedBy:   *expData.UpdatedBy,
+		Version:     1,
 	}
 
 	// Validate the experiment against the project settings' treatment schema and validation url
@@ -357,6 +358,8 @@ func (svc *experimentService) UpdateExperiment(
 		ProjectID: curExperiment.ProjectID,
 		Name:      curExperiment.Name,
 		Type:      curExperiment.Type,
+		// Increment the version
+		Version: curExperiment.Version + 1,
 		// Add the new data
 		Description: expData.Description,
 		Interval:    expData.Interval,

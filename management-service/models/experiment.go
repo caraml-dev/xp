@@ -43,6 +43,9 @@ type Experiment struct {
 	// as retrieved from the MLP API.
 	ProjectID ID `json:"project_id"`
 
+	// Version is the version number of the experiment, starts at 1 for each experiment.
+	Version int64 `json:"version"`
+
 	// Name is the experiment's name
 	Name string `json:"name"`
 	// Description is an optional value that has additional info on the experiment
@@ -86,6 +89,7 @@ func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType)
 		CreatedAt:   e.CreatedAt,
 		UpdatedAt:   e.UpdatedAt,
 		UpdatedBy:   e.UpdatedBy,
+		Version:     e.Version,
 	}
 }
 
@@ -144,5 +148,6 @@ func (e *Experiment) ToProtoSchema(segmentersType map[string]schema.SegmenterTyp
 		Type:       experimentType,
 		StartTime:  startTime,
 		UpdatedAt:  updatedAt,
+		Version:    e.Version,
 	}, nil
 }

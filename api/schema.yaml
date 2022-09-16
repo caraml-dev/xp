@@ -149,6 +149,7 @@ components:
         - created_at
         - updated_at
         - updated_by
+        - version
       type: object
       properties:
         description:
@@ -192,6 +193,9 @@ components:
           nullable: true
         tier:
           $ref: '#/components/schemas/ExperimentTier'
+        version:
+          type: integer
+          format: int64
     ExperimentHistory:
       required:
         - experiment_id

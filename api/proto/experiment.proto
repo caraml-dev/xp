@@ -41,6 +41,7 @@ message Experiment {
   repeated ExperimentTreatment treatments = 11;
 
   google.protobuf.Timestamp updated_at = 12;
+  int64 version = 13; // Experiment version
 }
 
 message ExperimentTreatment {

@@ -10,7 +10,7 @@ import { StatusBadge } from "components/status_badge/StatusBadge";
 import { getSegmenterScope } from "services/segmenter/SegmenterScope";
 
 import "./SegmenterCard.scss";
-import {SegmenterSettings} from "./SegmenterSettings";
+import { SegmenterSettings } from "./SegmenterSettings";
 
 export const SegmenterCard = ({
   id,
@@ -63,6 +63,7 @@ export const SegmenterCard = ({
                 buttonContent={buttonContent}
                 errors={errors}
                 onChangeSelectedVariables={onChangeSelectedVariables}
+                initialIsOpen={variables.length > 1}
               />
             ) : (
               <>
