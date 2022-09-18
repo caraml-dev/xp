@@ -1,12 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { EuiFlexItem, EuiLoadingChart, EuiTextAlign, EuiInMemoryTable, EuiIcon, EuiTextColor } from "@elastic/eui";
+import {
+  EuiFlexItem,
+  EuiLoadingChart,
+  EuiTextAlign,
+  EuiInMemoryTable,
+  EuiIcon,
+  EuiTextColor,
+  EuiToolTip,
+  EuiDescriptionList
+} from "@elastic/eui";
 
 import { Panel } from "components/panel/Panel";
-import { useXpApi } from "../../../../hooks/useXpApi";
+import { useXpApi } from "hooks/useXpApi";
 import moment from "moment";
-import { useConfig } from "../../../../config";
-import { getExperimentStatus } from "../../../../services/experiment/ExperimentStatus";
+import { useConfig } from "config";
+import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 
 export const AffectedRoutesListPanel = ({
   projectId,
@@ -48,7 +57,7 @@ export const AffectedRoutesListPanel = ({
 
   const getRouteName = (config, path) => path.split('.').reduce((obj, key) => obj && obj[key], config);
 
-  // reset loaded experiments if routeNamePath or routes changes
+  // reset loaded routeToExperimentMappings if routeNamePath or routes changes
   useEffect(() => {
     if (isAllExperimentsLoaded) {
       let newRouteToExperimentMappings = initRouteToExperimentMappings;
@@ -110,13 +119,47 @@ export const AffectedRoutesListPanel = ({
       field: "running_experiments",
       width: "35%",
       name: "Running Experiments",
-      render: (_, item) => <EuiTextColor>{routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].running).length : 0}</EuiTextColor>,
+      render: (_, item) => (
+        <EuiToolTip
+          position={"right"}
+          content={
+            routeToExperimentMappings[item.id] &&
+            <EuiDescriptionList
+              gutterSize={"s"}
+              listItems={
+                Object.values(routeToExperimentMappings[item.id].running).map(e => ({description: e.name}))
+              }
+            />
+          }
+        >
+          <EuiTextColor>
+            {routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].running).length : 0}
+          </EuiTextColor>
+        </EuiToolTip>
+      ),
     },
     {
       field: "scheduled_experiments",
       width: "35%",
       name: "Scheduled Experiments",
-      render: (_, item) => <EuiTextColor>{routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].scheduled).length : 0}</EuiTextColor>,
+      render: (_, item) => (
+        <EuiToolTip
+          position={"right"}
+          content={
+            routeToExperimentMappings[item.id] &&
+            <EuiDescriptionList
+              gutterSize={"s"}
+              listItems={
+                Object.values(routeToExperimentMappings[item.id].scheduled).map(e => ({description: e.name}))
+              }
+            />
+          }
+        >
+          <EuiTextColor>
+            {routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].scheduled).length : 0}
+          </EuiTextColor>
+        </EuiToolTip>
+      ),
     },
   ];
 
@@ -124,7 +167,7 @@ export const AffectedRoutesListPanel = ({
     <Panel title={"Affected Routes"}>
       <EuiFlexItem>
         <EuiInMemoryTable
-          items={routes}
+          items={routes.filter((r) => r.id !== "")}
           columns={columns}
           itemId="id"
           isSelectable={false}
