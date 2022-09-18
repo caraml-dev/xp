@@ -17,8 +17,6 @@ export const AffectedRoutesListPanel = ({
 
   const initRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = { running: {}, scheduled: {}}; return m}, {})
 
-  const [routesState, setRoutesState] = useState([])
-  const [routeNamePathState, setRouteNamePathState] = useState("")
   const [isAllExperimentsLoaded, setIsAllExperimentsLoaded] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [allExperiments, setAllExperiments] = useState([]);
@@ -52,7 +50,7 @@ export const AffectedRoutesListPanel = ({
 
   // reset loaded experiments if routeNamePath or routes changes
   useEffect(() => {
-    if (routeNamePath !== routeNamePathState && routes !== routesState && isAllExperimentsLoaded) {
+    if (isAllExperimentsLoaded) {
       let newRouteToExperimentMappings = initRouteToExperimentMappings;
       for (let experiment of allExperiments) {
         for (let treatment of experiment.treatments) {
@@ -63,10 +61,8 @@ export const AffectedRoutesListPanel = ({
         }
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
-      setRouteNamePathState(routeNamePath);
-      setRoutesState(routesState);
     }
-  }, [routeNamePath, routeNamePathState, routes, routesState, isAllExperimentsLoaded, routeToExperimentMappings]);
+  }, [routeNamePath, JSON.stringify(routes), isAllExperimentsLoaded]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -86,8 +82,9 @@ export const AffectedRoutesListPanel = ({
       field: "status",
       width: "5px",
       render: (_, item) => {
-        const isAssigned = Object.keys(routeToExperimentMappings[item.id].running).length +
-          Object.keys(routeToExperimentMappings[item.id].scheduled).length > 0;
+        const isAssigned = routeToExperimentMappings[item.id] ?
+          Object.keys(routeToExperimentMappings[item.id].running).length +
+          Object.keys(routeToExperimentMappings[item.id].scheduled).length > 0 : false;
         return (
           <EuiIcon
             type={isAssigned ? "check" : "cross"}
@@ -103,8 +100,9 @@ export const AffectedRoutesListPanel = ({
       width: "20%",
       name: "Route Name",
       render: (_, item) => {
-        const isAssigned = Object.keys(routeToExperimentMappings[item.id].running).length +
-          Object.keys(routeToExperimentMappings[item.id].scheduled).length > 0;
+        const isAssigned = routeToExperimentMappings[item.id] ?
+          Object.keys(routeToExperimentMappings[item.id].running).length +
+          Object.keys(routeToExperimentMappings[item.id].scheduled).length > 0 : false;
         return (<EuiTextColor color={isAssigned ? "success" : "danger"}>{item.id}</EuiTextColor>);
       },
     },
@@ -112,13 +110,13 @@ export const AffectedRoutesListPanel = ({
       field: "running_experiments",
       width: "35%",
       name: "Running Experiments",
-      render: (_, item) => <EuiTextColor>{Object.keys(routeToExperimentMappings[item.id].running).length}</EuiTextColor>,
+      render: (_, item) => <EuiTextColor>{routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].running).length : 0}</EuiTextColor>,
     },
     {
       field: "scheduled_experiments",
       width: "35%",
       name: "Scheduled Experiments",
-      render: (_, item) => <EuiTextColor>{Object.keys(routeToExperimentMappings[item.id].scheduled).length}</EuiTextColor>,
+      render: (_, item) => <EuiTextColor>{routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].scheduled).length : 0}</EuiTextColor>,
     },
   ];
 
