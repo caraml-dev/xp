@@ -7,25 +7,25 @@ import {
   EuiInMemoryTable,
   EuiIcon,
   EuiTextColor,
-  EuiToolTip,
-  EuiDescriptionList
 } from "@elastic/eui";
 
-import { Panel } from "components/panel/Panel";
 import { useXpApi } from "hooks/useXpApi";
 import moment from "moment";
 import { useConfig } from "config";
 import { getExperimentStatus } from "services/experiment/ExperimentStatus";
+import { AffectedExperimentsContextMenu } from "./AffectedExperimentsContextMenu";
 
-export const AffectedRoutesListPanel = ({
+export const AffectedRoutesTable = ({
   projectId,
   routes,
-  routeNamePath
+  routeNamePath,
 }) => {
   const { appConfig } = useConfig();
 
-  const initRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = { running: {}, scheduled: {}}; return m}, {})
+  const initRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {});
+  const initIsButtonPopoverOpen = routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {});
 
+  const [isButtonPopoverOpen, setIsButtonPopoverOpen] = useState(initIsButtonPopoverOpen);
   const [isAllExperimentsLoaded, setIsAllExperimentsLoaded] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [allExperiments, setAllExperiments] = useState([]);
@@ -70,6 +70,7 @@ export const AffectedRoutesListPanel = ({
         }
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
+      setIsButtonPopoverOpen(initIsButtonPopoverOpen);
     }
   }, [routeNamePath, JSON.stringify(routes), isAllExperimentsLoaded]);
 
@@ -98,7 +99,7 @@ export const AffectedRoutesListPanel = ({
           <EuiIcon
             type={isAssigned ? "check" : "cross"}
             color={isAssigned ? "success" : "danger"}
-            size="m"
+            size={"m"}
             style={{ verticalAlign: "sub" }}
           />
         );
@@ -120,22 +121,14 @@ export const AffectedRoutesListPanel = ({
       width: "35%",
       name: "Running Experiments",
       render: (_, item) => (
-        <EuiToolTip
-          position={"right"}
-          content={
-            routeToExperimentMappings[item.id] &&
-            <EuiDescriptionList
-              gutterSize={"s"}
-              listItems={
-                Object.values(routeToExperimentMappings[item.id].running).map(e => ({title: "", description: e.name}))
-              }
-            />
-          }
-        >
-          <EuiTextColor>
-            {routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].running).length : 0}
-          </EuiTextColor>
-        </EuiToolTip>
+        <AffectedExperimentsContextMenu
+          item={item}
+          projectId={projectId}
+          routeToExperimentMappings={routeToExperimentMappings}
+          isButtonPopoverOpen={isButtonPopoverOpen}
+          setIsButtonPopoverOpen={setIsButtonPopoverOpen}
+          experimentStatus={"running"}
+        />
       ),
     },
     {
@@ -143,40 +136,30 @@ export const AffectedRoutesListPanel = ({
       width: "35%",
       name: "Scheduled Experiments",
       render: (_, item) => (
-        <EuiToolTip
-          position={"right"}
-          content={
-            routeToExperimentMappings[item.id] &&
-            <EuiDescriptionList
-              gutterSize={"s"}
-              listItems={
-                Object.values(routeToExperimentMappings[item.id].scheduled).map(e => ({title: "", description: e.name}))
-              }
-            />
-          }
-        >
-          <EuiTextColor>
-            {routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id].scheduled).length : 0}
-          </EuiTextColor>
-        </EuiToolTip>
-      ),
+        <AffectedExperimentsContextMenu
+          item={item}
+          projectId={projectId}
+          routeToExperimentMappings={routeToExperimentMappings}
+          isButtonPopoverOpen={isButtonPopoverOpen}
+          setIsButtonPopoverOpen={setIsButtonPopoverOpen}
+          experimentStatus={"scheduled"}
+        />
+      )
     },
   ];
 
   return isAllExperimentsLoaded ? (
-    <Panel title={"Affected Routes"}>
-      <EuiFlexItem>
-        <EuiInMemoryTable
-          items={routes.filter((r) => r.id !== "")}
-          columns={columns}
-          itemId="id"
-          isSelectable={false}
-        />
-      </EuiFlexItem>
-    </Panel>
+    <EuiFlexItem>
+      <EuiInMemoryTable
+        items={routes.filter((r) => r.id !== "")}
+        columns={columns}
+        itemId={"id"}
+        isSelectable={false}
+      />
+    </EuiFlexItem>
     ) : (
-      <EuiTextAlign textAlign="center">
-        <EuiLoadingChart size="xl" mono />
+      <EuiTextAlign textAlign={"center"}>
+        <EuiLoadingChart size={"xl"} mono />
       </EuiTextAlign>
     );
 };

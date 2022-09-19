@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from "react";
 
-import { EuiCallOut, EuiFlexItem, EuiLoadingChart, EuiFlexGroup } from "@elastic/eui";
+import { EuiCallOut, EuiFlexItem, EuiLoadingChart, EuiHorizontalRule } from "@elastic/eui";
 import { OverlayMask } from "@gojek/mlp-ui";
 
 import { Panel } from "components/panel/Panel";
@@ -9,8 +9,8 @@ import ProjectContext, {
   ProjectContextProvider,
 } from "providers/project/context";
 import { SettingsContextProvider } from "providers/settings/context";
-import { AffectedRoutesListPanel } from "./AffectedRoutesListPanel";
-import { RouteNamePathPanel } from "./RouteNamePathPanel";
+import { AffectedRoutesTable } from "./AffectedRoutesTable";
+import { RouteNamePathRow } from "./RouteNamePathRow";
 
 const EditStandardEnsemblerConfigComponent = ({
   projectId,
@@ -23,26 +23,27 @@ const EditStandardEnsemblerConfigComponent = ({
   const overlayRef = useRef();
 
   return (
-    <EuiFlexGroup direction="column" gutterSize="m">
+    <EuiFlexItem grow={false}>
       {isLoaded ? (
         isProjectOnboarded(projectId) ? (
           <SettingsContextProvider projectId={projectId}>
-            <EuiFlexItem>
-              <RouteNamePathPanel
-                projectId={projectId}
+            <Panel title={"Route Selection"}>
+              <RouteNamePathRow
                 routeNamePath={routeNamePath}
                 onChange={onChange}
                 errors={errors}
               />
-            </EuiFlexItem>
 
-            <EuiFlexItem>
-              <AffectedRoutesListPanel
+              <EuiHorizontalRule />
+
+              <AffectedRoutesTable
                 projectId={projectId}
                 routes={routes}
                 routeNamePath={routeNamePath}
+                onChange={onChange}
+                errors={errors}
               />
-            </EuiFlexItem>
+            </Panel>
           </SettingsContextProvider>
         ) : (
           <Panel title="Configuration">
@@ -65,7 +66,7 @@ const EditStandardEnsemblerConfigComponent = ({
           </OverlayMask>
         </div>
       )}
-    </EuiFlexGroup>
+    </EuiFlexItem>
   );
 };
 
