@@ -124,7 +124,6 @@ func (es *experimentService) filterByLookupOrder(
 	segmenters []string,
 	segmenterTypes map[string]schema.SegmenterType,
 ) []*models.ExperimentMatch {
-	// Stop search when we have at least 1 match
 	filtered := matches
 	for _, segmenter := range segmenters {
 		orderedValues := filters[segmenter]
@@ -155,7 +154,8 @@ func (es *experimentService) filterByLookupOrder(
 				}
 			}
 		}
-		// currentFilteredList could be 0 in case of weak matches
+		// currentFilteredList could be 0 in case of weak matches, where the segmenter info was
+		// missing in the original request (i.e., where orderedValues is empty for a given segmenter).
 		if len(currentFilteredList) > 0 {
 			filtered = currentFilteredList
 		}
