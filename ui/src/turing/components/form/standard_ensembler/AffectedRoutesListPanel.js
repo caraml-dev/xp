@@ -127,7 +127,7 @@ export const AffectedRoutesListPanel = ({
             <EuiDescriptionList
               gutterSize={"s"}
               listItems={
-                Object.values(routeToExperimentMappings[item.id].running).map(e => ({description: e.name}))
+                Object.values(routeToExperimentMappings[item.id].running).map(e => ({title: "", description: e.name}))
               }
             />
           }
@@ -150,7 +150,7 @@ export const AffectedRoutesListPanel = ({
             <EuiDescriptionList
               gutterSize={"s"}
               listItems={
-                Object.values(routeToExperimentMappings[item.id].scheduled).map(e => ({description: e.name}))
+                Object.values(routeToExperimentMappings[item.id].scheduled).map(e => ({title: "", description: e.name}))
               }
             />
           }
