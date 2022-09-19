@@ -46,11 +46,11 @@ const EditStandardEnsemblerConfigComponent = ({
             </Panel>
           </SettingsContextProvider>
         ) : (
-          <Panel title="Configuration">
+          <Panel title={"Configuration"}>
             <EuiCallOut
-              title="Project not onboarded to Experiments"
-              color="danger"
-              iconType="alert">
+              title={"Project not onboarded to Experiments"}
+              color={"danger"}
+              iconType={"alert"}>
               <p>
                 {
                   "Please complete onboarding to Turing experiments to configure the standard ensembler."
@@ -62,7 +62,7 @@ const EditStandardEnsemblerConfigComponent = ({
       ) : (
         <div ref={overlayRef}>
           <OverlayMask parentRef={overlayRef} opacity={0.4}>
-            <EuiLoadingChart size="xl" mono />
+            <EuiLoadingChart size={"xl"} mono />
           </OverlayMask>
         </div>
       )}
