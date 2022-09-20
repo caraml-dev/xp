@@ -4,6 +4,8 @@ import {
   EuiContextMenu,
   EuiPopover,
   EuiButtonEmpty,
+  EuiTextColor,
+  EuiIcon
 } from "@elastic/eui";
 
 export const AffectedExperimentsContextMenu = ({
@@ -14,7 +16,6 @@ export const AffectedExperimentsContextMenu = ({
   setIsButtonPopoverOpen,
   experimentStatus
 }) => {
-  console.log(isButtonPopoverOpen);
   let numRoutes = routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id][experimentStatus]).length : 0;
 
   const onButtonClick = () => {
@@ -34,7 +35,7 @@ export const AffectedExperimentsContextMenu = ({
       size={"s"}
       iconType={"arrowRight"}
       iconSide={"right"}
-      color={"black"}
+      color={"primary"}
       onClick={onButtonClick}
       isDisabled={numRoutes === 0}
     >
@@ -56,13 +57,20 @@ export const AffectedExperimentsContextMenu = ({
           [
             {
               id: 0,
-              title: `Affected ${experimentStatus[0].toUpperCase() + experimentStatus.slice(1)} Experiments`,
+              title: `Linked ${experimentStatus[0].toUpperCase() + experimentStatus.slice(1)} Experiments`,
               items: Object.values(routeToExperimentMappings[item.id][experimentStatus]).map(e => (
                 {
-                  name: e.name,
-                  icon: "popout",
+                  name: (
+                    <EuiTextColor>
+                      <a href={`/turing/projects/${projectId}/experiments/${e.id}/details`}>
+                        {e.name}
+                      </a>
+                    </EuiTextColor>
+                  ),
+                  icon: <EuiIcon type={"popout"} size={"m"} color={"primary"} />,
                   size: "s",
-                  href: `/turing/projects/${projectId}/experiments/${e.id}/details`
+                  toolTipContent: "Open experiment details page",
+                  toolTipPosition: "right",
                 }
               ))
             }

@@ -5,9 +5,7 @@ import { OverlayMask } from "@gojek/mlp-ui";
 
 import { Panel } from "components/panel/Panel";
 import { ConfigProvider } from "config";
-import ProjectContext, {
-  ProjectContextProvider,
-} from "providers/project/context";
+import ProjectContext, { ProjectContextProvider } from "providers/project/context";
 import { SettingsContextProvider } from "providers/settings/context";
 import { AffectedRoutesTable } from "./AffectedRoutesTable";
 import { RouteNamePathRow } from "./RouteNamePathRow";
