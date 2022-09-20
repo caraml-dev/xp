@@ -345,6 +345,7 @@ func (s *PubSubServiceTestSuite) TestExperimentServiceCreateUpdatePublish() {
 		Type:        models.ExperimentTypeSwitchback,
 		Tier:        models.ExperimentTierDefault,
 		UpdatedBy:   "integration-test",
+		Version:     1,
 	}, *expResponse)
 
 	// Check Published Create message

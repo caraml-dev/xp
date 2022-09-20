@@ -44,6 +44,14 @@ func OpenAPIProjectSettingsSpecToProtobuf(projectSettings schema.ProjectSettings
 	}
 }
 
+func ProtobufExperimentTypeToOpenAPI(experimentType _pubsub.Experiment_Type) schema.ExperimentType {
+	conversionMap := map[_pubsub.Experiment_Type]schema.ExperimentType{
+		_pubsub.Experiment_A_B:        schema.ExperimentTypeAB,
+		_pubsub.Experiment_Switchback: schema.ExperimentTypeSwitchback,
+	}
+	return conversionMap[experimentType]
+}
+
 func OpenAPIExperimentSpecToProtobuf(
 	xpExperiment schema.Experiment,
 	segmentersType map[string]schema.SegmenterType,
@@ -123,6 +131,7 @@ func OpenAPIExperimentSpecToProtobuf(
 		StartTime:  &timestamppb.Timestamp{Seconds: xpExperiment.StartTime.Unix()},
 		EndTime:    &timestamppb.Timestamp{Seconds: xpExperiment.EndTime.Unix()},
 		UpdatedAt:  &timestamppb.Timestamp{Seconds: xpExperiment.UpdatedAt.Unix()},
+		Version:    xpExperiment.Version,
 	}, nil
 }
 

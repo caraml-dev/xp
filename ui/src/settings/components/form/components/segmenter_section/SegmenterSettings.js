@@ -6,7 +6,7 @@ import {
   EuiPanel,
   EuiRadioGroup,
 } from "@elastic/eui";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import isEqual from "lodash/isEqual";
 import sortBy from "lodash/sortBy";
 
@@ -62,8 +62,9 @@ export const SegmenterSettings = ({
   buttonContent,
   errors,
   onChangeSelectedVariables,
+  initialIsOpen,
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(initialIsOpen)
 
   return (
     <EuiAccordion
@@ -74,7 +75,7 @@ export const SegmenterSettings = ({
       buttonContent={buttonContent}
       arrowDisplay="none"
       extraAction={
-        <EuiButtonIcon size="s" iconType={"gear"} color={"text"} onClick={() => setIsOpen(!isOpen)}/>
+        <EuiButtonIcon size="s" iconType={"gear"} color={"text"} onClick={() => setIsOpen(!isOpen)} />
       }
     >
       <EuiHorizontalRule margin="xs" />

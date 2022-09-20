@@ -75,6 +75,10 @@ def test_simple_experiment_creation(xp_client: XPClient, xp_project):
         "experiment_id": experiment["id"],
         "experiment_name": experiment["name"],
         "treatment": experiment["treatments"][0],
+        "metadata": {
+            "experiment_type": "A/B",
+            "experiment_version": 1,
+        },
     }
 
 
@@ -325,6 +329,10 @@ def test_experiment_updating(xp_client: XPClient, xp_project):
             "experiment_id": experiment["id"],
             "experiment_name": experiment["name"],
             "treatment": experiment["treatments"][0],
+            "metadata": {
+                "experiment_type": "A/B",
+                "experiment_version": 2,
+            },
         }
 
     eventually(check)
@@ -377,6 +385,10 @@ def test_all_segmenters(xp_client: XPClient, xp_project):
         "experiment_id": experiment["id"],
         "experiment_name": experiment["name"],
         "treatment": experiment["treatments"][0],
+        "metadata": {
+            "experiment_type": "A/B",
+            "experiment_version": 1,
+        },
     }
 
 
@@ -466,6 +478,10 @@ def test_custom_segmenters(xp_client: XPClient, xp_project):
         "experiment_id": experiment["id"],
         "experiment_name": experiment["name"],
         "treatment": experiment["treatments"][0],
+        "metadata": {
+            "experiment_type": "A/B",
+            "experiment_version": 1,
+        },
     }
 
     # Disable experiments and remove custom segmenter so that it can be deleted

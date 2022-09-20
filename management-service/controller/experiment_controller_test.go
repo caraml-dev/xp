@@ -81,7 +81,8 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			"type": "",
 			"start_time": "0001-01-01T00:00:00Z",
 			"updated_at": "0001-01-01T00:00:00Z",
-			"updated_by": ""
+			"updated_by": "",
+			"version": 0
 		}`,
 		`{
 			"project_id": 2,
@@ -98,7 +99,8 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			"type": "",
 			"start_time": "0001-01-01T00:00:00Z",
 			"updated_at": "0001-01-01T00:00:00Z",
-			"updated_by": ""
+			"updated_by": "",
+			"version": 0
 		}`,
 		`{
 			"project_id": 5,
@@ -115,7 +117,8 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			"type": "",
 			"start_time": "0001-01-01T00:00:00Z",
 			"updated_at": "0001-01-01T00:00:00Z",
-			"updated_by": ""
+			"updated_by": "",
+			"version": 0
 		}`,
 	}
 	s.expectedErrorResponseFormat = `{"code":"%[1]v", "error":%[2]v, "message":%[2]v}`

@@ -44,8 +44,9 @@ var testExperiment = Experiment{
 			Traffic: &testExperimentTraffic,
 		},
 	}),
-	Type: ExperimentTypeSwitchback,
-	Tier: ExperimentTierDefault,
+	Type:    ExperimentTypeSwitchback,
+	Tier:    ExperimentTierDefault,
+	Version: 2,
 }
 
 func TestExperimentToApiSchema(t *testing.T) {
@@ -80,6 +81,7 @@ func TestExperimentToApiSchema(t *testing.T) {
 		Segment: schema.ExperimentSegment{
 			"string_segmenter": []string{"seg-1"},
 		},
+		Version: 2,
 	}, testExperiment.ToApiSchema(segmenterTypes))
 }
 
@@ -108,6 +110,7 @@ func TestExperimentToProtoSchema(t *testing.T) {
 		Segments: map[string]*_segmenters.ListSegmenterValue{
 			"string_segmenter": _utils.StringSliceToListSegmenterValue(&stringSegment),
 		},
-		Tier: _pubsub.Experiment_Default,
+		Tier:    _pubsub.Experiment_Default,
+		Version: 2,
 	}, protoRecord)
 }

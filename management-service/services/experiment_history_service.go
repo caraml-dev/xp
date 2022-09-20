@@ -81,20 +81,12 @@ func (svc *experimentHistoryService) GetExperimentHistory(
 }
 
 func (svc *experimentHistoryService) CreateExperimentHistory(experiment *models.Experiment) (*models.ExperimentHistory, error) {
-	var history []*models.ExperimentHistory
-	var count int64
-	// Begin transaction - so that getting the current count and creating the new record are
-	// done in a single transaction.
-	tx := svc.db.Begin()
-	// Get the count of the existing experiment history records
-	svc.query().Where("experiment_id = ?", experiment.ID).Model(&history).Count(&count)
-	// Create the new history record
-	newHistoryRecord, err := svc.save(&models.ExperimentHistory{
+	return svc.save(&models.ExperimentHistory{
 		Model: models.Model{
 			CreatedAt: experiment.UpdatedAt,
 		},
 		ExperimentID: experiment.ID,
-		Version:      count + 1,
+		Version:      experiment.Version,
 		Description:  experiment.Description,
 		EndTime:      experiment.EndTime,
 		Interval:     experiment.Interval,
@@ -107,10 +99,6 @@ func (svc *experimentHistoryService) CreateExperimentHistory(experiment *models.
 		StartTime:    experiment.StartTime,
 		UpdatedBy:    experiment.UpdatedBy,
 	})
-	if err != nil {
-		return nil, err
-	}
-	return newHistoryRecord, tx.Commit().Error
 }
 
 func (svc *experimentHistoryService) GetDBRecord(
