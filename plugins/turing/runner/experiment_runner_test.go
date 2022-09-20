@@ -183,7 +183,7 @@ func TestFetchTreatment(t *testing.T) {
 								},
 								"metadata": {
 									"experiment_version": 1,
-									"experiment_type": "a/b"
+									"experiment_type": "A/B"
 								}
 							}
 						}`,
@@ -247,7 +247,7 @@ func TestFetchTreatment(t *testing.T) {
 					},
 					"metadata": {
 						"experiment_version": 1,
-						"experiment_type": "a/b"
+						"experiment_type": "A/B"
 					}
 				}`),
 			},

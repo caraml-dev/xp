@@ -119,16 +119,14 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
                 </ExperimentActions>
               </EuiPageTemplate.Header>
             </Fragment>
-          )
-          }
-
+          )}
           <Router primary={false}>
             <Redirect from="/" to="details" noThrow />
             <ExperimentConfigView path="details" experiment={data.data} />
             <ListExperimentHistoryView path="history" experiment={data.data} />
             <EditExperimentView path="edit" experimentSpec={data.data} />
           </Router>
-        </Fragment >
+        </Fragment>
       )}
       <EuiSpacer size="l" />
     </EuiPageTemplate >
