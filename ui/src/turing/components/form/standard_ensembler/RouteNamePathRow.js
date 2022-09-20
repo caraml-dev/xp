@@ -5,6 +5,7 @@ import { FormLabelWithToolTip } from "@gojek/mlp-ui";
 
 export const RouteNamePathRow = ({
   routeNamePath,
+  routeNamePathPrefix,
   onChange,
   errors,
 }) => {
@@ -14,7 +15,7 @@ export const RouteNamePathRow = ({
         fullWidth
         label={
           <FormLabelWithToolTip
-            label="Route Selection *"
+            label="Route Name Path *"
             content="Specify the path in the treatment configuration where the route name for the final response can be found."
           />
         }
@@ -24,11 +25,11 @@ export const RouteNamePathRow = ({
         <EuiFieldText
           fullWidth
           placeholder="policy.route_name"
-          value={routeNamePath}
-          onChange={(e) => onChange(e.target.value)}
+          value={routeNamePath.slice(routeNamePathPrefix.length)}
+          onChange={(e) => onChange(routeNamePathPrefix + e.target.value)}
           isInvalid={!!errors}
           name="route-name-path"
-          prepend={<EuiText size={"s"}>treatment.configuration.</EuiText>}
+          prepend={<EuiText size={"s"}>{routeNamePathPrefix}</EuiText>}
         />
       </EuiFormRow>
     </EuiFlexItem>

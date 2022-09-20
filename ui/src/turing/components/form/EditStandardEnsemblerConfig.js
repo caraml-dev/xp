@@ -4,11 +4,11 @@ import { EuiCallOut, EuiFlexItem, EuiLoadingChart, EuiHorizontalRule } from "@el
 import { OverlayMask } from "@gojek/mlp-ui";
 
 import { Panel } from "components/panel/Panel";
-import { ConfigProvider } from "config";
+import { ConfigProvider, useConfig } from "config";
 import ProjectContext, { ProjectContextProvider } from "providers/project/context";
 import { SettingsContextProvider } from "providers/settings/context";
-import { AffectedRoutesTable } from "./AffectedRoutesTable";
-import { RouteNamePathRow } from "./RouteNamePathRow";
+import { AffectedRoutesTable } from "./standard_ensembler/AffectedRoutesTable";
+import { RouteNamePathRow } from "./standard_ensembler/RouteNamePathRow";
 
 const EditStandardEnsemblerConfigComponent = ({
   projectId,
@@ -17,6 +17,8 @@ const EditStandardEnsemblerConfigComponent = ({
   onChange,
   errors,
 }) => {
+  const { appConfig: { routeNamePathPrefix } } = useConfig();
+
   const { isProjectOnboarded, isLoaded } = useContext(ProjectContext);
   const overlayRef = useRef();
 
@@ -28,6 +30,7 @@ const EditStandardEnsemblerConfigComponent = ({
             <Panel title={"Route Selection"}>
               <RouteNamePathRow
                 routeNamePath={routeNamePath}
+                routeNamePathPrefix={routeNamePathPrefix}
                 onChange={onChange}
                 errors={errors}
               />
@@ -37,9 +40,7 @@ const EditStandardEnsemblerConfigComponent = ({
               <AffectedRoutesTable
                 projectId={projectId}
                 routes={routes}
-                routeNamePath={routeNamePath}
-                onChange={onChange}
-                errors={errors}
+                treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}
               />
             </Panel>
           </SettingsContextProvider>
@@ -50,9 +51,7 @@ const EditStandardEnsemblerConfigComponent = ({
               color={"danger"}
               iconType={"alert"}>
               <p>
-                {
-                  "Please complete onboarding to Turing experiments to configure the standard ensembler."
-                }
+                {"Please complete onboarding to Turing experiments to configure the standard ensembler."}
               </p>
             </EuiCallOut>
           </Panel>
@@ -69,7 +68,6 @@ const EditStandardEnsemblerConfigComponent = ({
 };
 
 const EditStandardEnsemblerConfig = (props) => {
-
   return (
     <ConfigProvider>
       <ProjectContextProvider>

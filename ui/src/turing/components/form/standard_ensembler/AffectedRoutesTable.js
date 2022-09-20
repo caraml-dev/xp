@@ -18,7 +18,7 @@ import { AffectedExperimentsContextMenu } from "./AffectedExperimentsContextMenu
 export const AffectedRoutesTable = ({
   projectId,
   routes,
-  routeNamePath,
+  treatmentConfigRouteNamePath,
 }) => {
   const { appConfig } = useConfig();
 
@@ -57,13 +57,13 @@ export const AffectedRoutesTable = ({
 
   const getRouteName = (config, path) => path.split('.').reduce((obj, key) => obj && obj[key], config);
 
-  // reset loaded routeToExperimentMappings if routeNamePath or routes changes
+  // reset loaded routeToExperimentMappings if treatmentConfigRouteNamePath or routes changes
   useEffect(() => {
     if (isAllExperimentsLoaded) {
       let newRouteToExperimentMappings = initRouteToExperimentMappings;
       for (let experiment of allExperiments) {
         for (let treatment of experiment.treatments) {
-          let configRouteName = getRouteName(treatment.configuration, routeNamePath);
+          let configRouteName = getRouteName(treatment.configuration, treatmentConfigRouteNamePath);
           if (typeof configRouteName === 'string' && configRouteName in newRouteToExperimentMappings) {
             newRouteToExperimentMappings[configRouteName][getExperimentStatus(experiment).label.toLowerCase()][experiment.id] = experiment;
           }
@@ -72,7 +72,7 @@ export const AffectedRoutesTable = ({
       setRouteToExperimentMappings(newRouteToExperimentMappings);
       setIsButtonPopoverOpen(initIsButtonPopoverOpen);
     }
-  }, [routeNamePath, JSON.stringify(routes), isAllExperimentsLoaded]);
+  }, [treatmentConfigRouteNamePath, JSON.stringify(routes), isAllExperimentsLoaded]);
 
   useEffect(() => {
     if (isLoaded) {

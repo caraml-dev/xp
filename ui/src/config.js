@@ -55,6 +55,7 @@ export const appConfig = {
     // Padding of page template
     paddingSize: "none",
   },
+  routeNamePathPrefix: "treatment.configuration."
 };
 
 const sentryConfig = {
