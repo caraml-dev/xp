@@ -129,7 +129,7 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
         </Fragment>
       )}
       <EuiSpacer size="l" />
-    </EuiPageTemplate >
+    </EuiPageTemplate>
   );
 };
 
