@@ -1,10 +1,10 @@
 import React from "react";
-import { ConfigProvider, useConfig } from "../../../config";
+import { ConfigProvider, useConfig } from "config";
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ConfigSectionPanel } from "../../../components/config_section/ConfigSectionPanel";
+import { ConfigSectionPanel } from "components/config_section/ConfigSectionPanel";
 import { AffectedRoutesTable } from "../form/standard_ensembler/AffectedRoutesTable";
 import { RouteNamePathConfigGroup } from "./standard_ensembler_config/RouteNamePathConfigGroup";
-import { ProjectContextProvider } from "../../../providers/project/context";
+import { ProjectContextProvider } from "providers/project/context";
 
 const StandardEnsemblerConfigDetailsComponent = ({ projectId, routes, routeNamePath }) => {
   const { appConfig: { routeNamePathPrefix } } = useConfig();

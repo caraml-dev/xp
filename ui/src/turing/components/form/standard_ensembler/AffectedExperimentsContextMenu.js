@@ -19,13 +19,13 @@ export const AffectedExperimentsContextMenu = ({
   let numRoutes = routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id][experimentStatus]).length : 0;
 
   const onButtonClick = () => {
-    let newIsButtonPopoverOpen = {... isButtonPopoverOpen };
+    let newIsButtonPopoverOpen = { ...isButtonPopoverOpen };
     newIsButtonPopoverOpen[item.id][experimentStatus] = !isButtonPopoverOpen[item.id][experimentStatus];
     setIsButtonPopoverOpen(newIsButtonPopoverOpen);
   };
 
   const closePopover = () => {
-    let newIsButtonPopoverOpen = {... isButtonPopoverOpen };
+    let newIsButtonPopoverOpen = { ...isButtonPopoverOpen };
     newIsButtonPopoverOpen[item.id][experimentStatus] = false;
     setIsButtonPopoverOpen(newIsButtonPopoverOpen);
   };

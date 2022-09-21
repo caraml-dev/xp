@@ -22,14 +22,11 @@ export const AffectedRoutesTable = ({
 }) => {
   const { appConfig } = useConfig();
 
-  const initRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {});
-  const initIsButtonPopoverOpen = routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {});
-
-  const [isButtonPopoverOpen, setIsButtonPopoverOpen] = useState(initIsButtonPopoverOpen);
+  const [isButtonPopoverOpen, setIsButtonPopoverOpen] = useState(routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {}));
   const [isAllExperimentsLoaded, setIsAllExperimentsLoaded] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
   const [allExperiments, setAllExperiments] = useState([]);
-  const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(initRouteToExperimentMappings)
+  const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {}));
 
   const { start_time, end_time } = useMemo(
     () => {
@@ -57,10 +54,14 @@ export const AffectedRoutesTable = ({
 
   const getRouteName = (config, path) => path.split('.').reduce((obj, key) => obj && obj[key], config);
 
+  // this stringified value of routes below allows the React effect below to mimic a deep comparison when changes to the
+  // array routes are made
+  const stringifiedRoutes = JSON.stringify(routes)
+
   // reset loaded routeToExperimentMappings if treatmentConfigRouteNamePath or routes changes
   useEffect(() => {
     if (isAllExperimentsLoaded) {
-      let newRouteToExperimentMappings = initRouteToExperimentMappings;
+      let newRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {});
       for (let experiment of allExperiments) {
         for (let treatment of experiment.treatments) {
           let configRouteName = getRouteName(treatment.configuration, treatmentConfigRouteNamePath);
@@ -70,9 +71,9 @@ export const AffectedRoutesTable = ({
         }
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
-      setIsButtonPopoverOpen(initIsButtonPopoverOpen);
+      setIsButtonPopoverOpen(routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {}));
     }
-  }, [treatmentConfigRouteNamePath, JSON.stringify(routes), isAllExperimentsLoaded]);
+  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isAllExperimentsLoaded, allExperiments]);
 
   useEffect(() => {
     if (isLoaded) {
@@ -85,7 +86,7 @@ export const AffectedRoutesTable = ({
         setIsAllExperimentsLoaded(true);
       }
     }
-  }, [isLoaded, experiments, paging]);
+  }, [isLoaded, experiments, paging, isAllExperimentsLoaded]);
 
   const columns = [
     {
