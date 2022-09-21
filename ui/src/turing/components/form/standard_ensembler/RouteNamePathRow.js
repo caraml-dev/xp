@@ -1,7 +1,8 @@
-import React from "react";
+import React, { Fragment } from "react";
 
-import { EuiFlexItem, EuiText, EuiFormRow, EuiFieldText } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { EuiFlexItem, EuiText, EuiFormRow, EuiFieldText, EuiButtonIcon } from "@elastic/eui";
+import { FormLabelWithToolTip, useToggle } from "@gojek/mlp-ui";
+import RouteNamePathFlyout from "./RouteNamePathFlyout";
 
 export const RouteNamePathRow = ({
   routeNamePath,
@@ -9,29 +10,43 @@ export const RouteNamePathRow = ({
   onChange,
   errors,
 }) => {
+  const [isFlyoutVisible, toggleFlyout] = useToggle();
+
   return (
-    <EuiFlexItem>
-      <EuiFormRow
-        fullWidth
-        label={
-          <FormLabelWithToolTip
-            label="Route Name Path *"
-            content="Specify the path in the treatment configuration where the route name for the final response can be found."
-          />
-        }
-        isInvalid={!!errors}
-        error={errors}
-        display="row">
-        <EuiFieldText
+    <Fragment>
+      <EuiFlexItem>
+        <EuiFormRow
           fullWidth
-          placeholder="policy.route_name"
-          value={routeNamePath.slice(routeNamePathPrefix.length)}
-          onChange={(e) => onChange(routeNamePathPrefix + e.target.value)}
+          label={
+            <FormLabelWithToolTip
+              label="Route Name Path *"
+              content="Specify the path in the treatment configuration where the route name for the final response can be found."
+            />
+          }
           isInvalid={!!errors}
-          name="route-name-path"
-          prepend={<EuiText size={"s"}>{routeNamePathPrefix}</EuiText>}
+          error={errors}
+          display="row">
+          <EuiFieldText
+            fullWidth
+            placeholder="policy.route_name"
+            value={routeNamePath.slice(routeNamePathPrefix.length)}
+            onChange={(e) => onChange(routeNamePathPrefix + e.target.value)}
+            isInvalid={!!errors}
+            name="route-name-path"
+            prepend={[
+              <EuiButtonIcon iconType="questionInCircle" onClick={toggleFlyout}/>,
+              <EuiText size={"s"}>{routeNamePathPrefix}</EuiText>
+            ]}
+          />
+        </EuiFormRow>
+      </EuiFlexItem>
+
+      {isFlyoutVisible && (
+        <RouteNamePathFlyout
+          isFlyoutVisible={isFlyoutVisible}
+          onClose={toggleFlyout}
         />
-      </EuiFormRow>
-    </EuiFlexItem>
+      )}
+    </Fragment>
   );
 };
