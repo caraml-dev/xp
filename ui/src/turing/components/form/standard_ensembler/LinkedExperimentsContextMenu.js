@@ -8,7 +8,7 @@ import {
   EuiIcon
 } from "@elastic/eui";
 
-export const AffectedExperimentsContextMenu = ({
+export const LinkedExperimentsContextMenu = ({
   item,
   projectId,
   routeToExperimentMappings,
@@ -62,7 +62,7 @@ export const AffectedExperimentsContextMenu = ({
                 {
                   name: (
                     <EuiTextColor>
-                      <a href={`/turing/projects/${projectId}/experiments/${e.id}/details`}>
+                      <a href={`/turing/projects/${projectId}/experiments/${e.id}/details`} target={"_blank"}>
                         {e.name}
                       </a>
                     </EuiTextColor>

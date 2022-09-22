@@ -13,9 +13,9 @@ import { useXpApi } from "hooks/useXpApi";
 import moment from "moment";
 import { useConfig } from "config";
 import { getExperimentStatus } from "services/experiment/ExperimentStatus";
-import { AffectedExperimentsContextMenu } from "./AffectedExperimentsContextMenu";
+import { LinkedExperimentsContextMenu } from "./LinkedExperimentsContextMenu";
 
-export const AffectedRoutesTable = ({
+export const LinkedRoutesTable = ({
   projectId,
   routes,
   treatmentConfigRouteNamePath,
@@ -122,7 +122,7 @@ export const AffectedRoutesTable = ({
       width: "35%",
       name: "Running Experiments",
       render: (_, item) => (
-        <AffectedExperimentsContextMenu
+        <LinkedExperimentsContextMenu
           item={item}
           projectId={projectId}
           routeToExperimentMappings={routeToExperimentMappings}
@@ -137,7 +137,7 @@ export const AffectedRoutesTable = ({
       width: "35%",
       name: "Scheduled Experiments",
       render: (_, item) => (
-        <AffectedExperimentsContextMenu
+        <LinkedExperimentsContextMenu
           item={item}
           projectId={projectId}
           routeToExperimentMappings={routeToExperimentMappings}

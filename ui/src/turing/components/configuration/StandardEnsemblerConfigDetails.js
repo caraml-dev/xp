@@ -2,7 +2,7 @@ import React from "react";
 import { ConfigProvider, useConfig } from "config";
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { ConfigSectionPanel } from "components/config_section/ConfigSectionPanel";
-import { AffectedRoutesTable } from "../form/standard_ensembler/AffectedRoutesTable";
+import { LinkedRoutesTable } from "../form/standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathConfigGroup } from "./standard_ensembler_config/RouteNamePathConfigGroup";
 import { ProjectContextProvider } from "providers/project/context";
 
@@ -19,8 +19,8 @@ const StandardEnsemblerConfigDetailsComponent = ({ projectId, routes, routeNameP
         </EuiFlexItem>
 
         <EuiFlexItem grow={2} className="euiFlexItem--smallPanel">
-          <ConfigSectionPanel title="Affected Routes" className="affectedRoutesPanel">
-            <AffectedRoutesTable
+          <ConfigSectionPanel title="Linked Routes" className="linkedRoutesPanel">
+            <LinkedRoutesTable
               projectId={projectId}
               routes={routes}
               treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}

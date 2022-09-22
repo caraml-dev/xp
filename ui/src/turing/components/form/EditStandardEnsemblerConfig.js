@@ -7,7 +7,7 @@ import { Panel } from "components/panel/Panel";
 import { ConfigProvider, useConfig } from "config";
 import ProjectContext, { ProjectContextProvider } from "providers/project/context";
 import { SettingsContextProvider } from "providers/settings/context";
-import { AffectedRoutesTable } from "./standard_ensembler/AffectedRoutesTable";
+import { LinkedRoutesTable } from "./standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathRow } from "./standard_ensembler/RouteNamePathRow";
 
 const EditStandardEnsemblerConfigComponent = ({
@@ -37,7 +37,7 @@ const EditStandardEnsemblerConfigComponent = ({
 
               <EuiHorizontalRule />
 
-              <AffectedRoutesTable
+              <LinkedRoutesTable
                 projectId={projectId}
                 routes={routes}
                 treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}
