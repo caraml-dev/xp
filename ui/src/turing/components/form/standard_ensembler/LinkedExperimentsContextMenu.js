@@ -62,7 +62,11 @@ export const LinkedExperimentsContextMenu = ({
                 {
                   name: (
                     <EuiTextColor>
-                      <a href={`/turing/projects/${projectId}/experiments/${e.id}/details`} target={"_blank"}>
+                      <a
+                        href={`/turing/projects/${projectId}/experiments/${e.id}/details`}
+                        target={"_blank"}
+                        rel="noreferrer"
+                      >
                         {e.name}
                       </a>
                     </EuiTextColor>
