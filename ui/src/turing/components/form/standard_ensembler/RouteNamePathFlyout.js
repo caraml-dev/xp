@@ -36,8 +36,7 @@ const RouteNamePathFlyout = ({ onClose }) => {
 
               <p>
                 This path prefix reflects the nesting of the treatment configuration within
-                the final response payload that the treatment service, and/or subsequently the Turing Experiments
-                plugin, sends back to the client (which in this case is the Turing Router).
+                the final response payload that the Turing Router finally receives.
               </p>
 
               <p>
