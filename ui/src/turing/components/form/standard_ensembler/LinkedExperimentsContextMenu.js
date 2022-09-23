@@ -11,12 +11,12 @@ import {
 export const LinkedExperimentsContextMenu = ({
   item,
   projectId,
-  routeToExperimentMappings,
+  linkedExperiments,
   isButtonPopoverOpen,
   setIsButtonPopoverOpen,
   experimentStatus
 }) => {
-  let numExperiments = routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id][experimentStatus]).length : 0;
+  let numExperiments = linkedExperiments ? Object.keys(linkedExperiments[experimentStatus]).length : 0;
 
   const onButtonClick = () => {
     let newIsButtonPopoverOpen = { ...isButtonPopoverOpen };
@@ -43,7 +43,7 @@ export const LinkedExperimentsContextMenu = ({
     </EuiButtonEmpty>
   );
 
-  return isButtonPopoverOpen[item.id] && (
+  return isButtonPopoverOpen[item.id] ? (
     <EuiPopover
       button={button}
       isOpen={isButtonPopoverOpen[item.id][experimentStatus]}
@@ -58,7 +58,7 @@ export const LinkedExperimentsContextMenu = ({
             {
               id: 0,
               title: `Linked ${experimentStatus[0].toUpperCase() + experimentStatus.slice(1)} Experiments`,
-              items: Object.values(routeToExperimentMappings[item.id][experimentStatus]).map(e => (
+              items: Object.values(linkedExperiments[experimentStatus]).map(e => (
                 {
                   name: (
                     <EuiLink href={`/turing/projects/${projectId}/experiments/${e.id}/details`} external={false} target={"_blank"}>
@@ -76,5 +76,5 @@ export const LinkedExperimentsContextMenu = ({
         }
       />
     </EuiPopover>
-  );
+  ) : null;
 };

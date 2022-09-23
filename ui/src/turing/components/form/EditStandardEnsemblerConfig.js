@@ -6,7 +6,7 @@ import { OverlayMask } from "@gojek/mlp-ui";
 import { Panel } from "components/panel/Panel";
 import { ConfigProvider, useConfig } from "config";
 import ProjectContext, { ProjectContextProvider } from "providers/project/context";
-import { SettingsContextProvider } from "providers/settings/context";
+import { ExperimentContextProvider } from "providers/experiments/context";
 import { LinkedRoutesTable } from "./standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathRow } from "./standard_ensembler/RouteNamePathRow";
 
@@ -26,24 +26,24 @@ const EditStandardEnsemblerConfigComponent = ({
     <EuiFlexItem grow={false}>
       {isLoaded ? (
         isProjectOnboarded(projectId) ? (
-          <SettingsContextProvider projectId={projectId}>
-            <Panel title={"Route Selection"}>
-              <RouteNamePathRow
-                routeNamePath={routeNamePath}
-                routeNamePathPrefix={routeNamePathPrefix}
-                onChange={onChange}
-                errors={errors}
-              />
+          <Panel title={"Route Selection"}>
+            <RouteNamePathRow
+              routeNamePath={routeNamePath}
+              routeNamePathPrefix={routeNamePathPrefix}
+              onChange={onChange}
+              errors={errors}
+            />
 
-              <EuiHorizontalRule />
+            <EuiHorizontalRule />
 
+            <ExperimentContextProvider projectId={projectId}>
               <LinkedRoutesTable
                 projectId={projectId}
                 routes={routes}
                 treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}
               />
-            </Panel>
-          </SettingsContextProvider>
+            </ExperimentContextProvider>
+          </Panel>
         ) : (
           <Panel title={"Configuration"}>
             <EuiCallOut

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import {
   EuiFlexItem,
@@ -9,48 +9,19 @@ import {
   EuiTextColor,
 } from "@elastic/eui";
 
-import { useXpApi } from "hooks/useXpApi";
-import moment from "moment";
-import { useConfig } from "config";
 import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 import { LinkedExperimentsContextMenu } from "./LinkedExperimentsContextMenu";
+import ExperimentContext from "providers/experiments/context";
 
 export const LinkedRoutesTable = ({
   projectId,
   routes,
   treatmentConfigRouteNamePath,
 }) => {
-  const { appConfig } = useConfig();
+  const { allExperiments, isAllExperimentsLoaded } = useContext(ExperimentContext)
 
   const [isButtonPopoverOpen, setIsButtonPopoverOpen] = useState(routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {}));
-  const [isAllExperimentsLoaded, setIsAllExperimentsLoaded] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [allExperiments, setAllExperiments] = useState([]);
   const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {}));
-
-  const { start_time, end_time } = useMemo(
-    () => {
-      let current_time = moment.utc();
-      let start_time = current_time.format(appConfig.datetime.format);
-      let end_time = current_time.add(1000, "y").format(appConfig.datetime.format);
-      return { start_time, end_time };
-      },
-    [appConfig]
-  );
-
-  const [{ data: { data: experiments, paging }, isLoaded }] = useXpApi(
-    `/projects/${projectId}/experiments`,
-    {
-      query: {
-        start_time: start_time,
-        end_time: end_time,
-        page: pageIndex + 1,
-        page_size: appConfig.pagination.defaultPageSize,
-        status: "active"
-      },
-    },
-    { data: [], paging: { total: 0 } }
-  );
 
   const getRouteName = (config, path) => path.split('.').reduce((obj, key) => obj && obj[key], config);
 
@@ -74,19 +45,6 @@ export const LinkedRoutesTable = ({
       setIsButtonPopoverOpen(routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {}));
     }
   }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isAllExperimentsLoaded, allExperiments]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      if (!!experiments && !isAllExperimentsLoaded) {
-        setAllExperiments((curExperiments) => [...curExperiments, ...experiments]);
-      }
-      if (paging.pages > paging.page) {
-        setPageIndex(paging.page);
-      } else {
-        setIsAllExperimentsLoaded(true);
-      }
-    }
-  }, [isLoaded, experiments, paging, isAllExperimentsLoaded]);
 
   const columns = [
     {
@@ -125,7 +83,7 @@ export const LinkedRoutesTable = ({
         <LinkedExperimentsContextMenu
           item={item}
           projectId={projectId}
-          routeToExperimentMappings={routeToExperimentMappings}
+          linkedExperiments={routeToExperimentMappings[item.id]}
           isButtonPopoverOpen={isButtonPopoverOpen}
           setIsButtonPopoverOpen={setIsButtonPopoverOpen}
           experimentStatus={"running"}
@@ -140,7 +98,7 @@ export const LinkedRoutesTable = ({
         <LinkedExperimentsContextMenu
           item={item}
           projectId={projectId}
-          routeToExperimentMappings={routeToExperimentMappings}
+          linkedExperiments={routeToExperimentMappings[item.id]}
           isButtonPopoverOpen={isButtonPopoverOpen}
           setIsButtonPopoverOpen={setIsButtonPopoverOpen}
           experimentStatus={"scheduled"}

@@ -5,6 +5,7 @@ import { ConfigSectionPanel } from "components/config_section/ConfigSectionPanel
 import { LinkedRoutesTable } from "turing/components/form/standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathConfigGroup } from "./standard_ensembler_config/RouteNamePathConfigGroup";
 import { ProjectContextProvider } from "providers/project/context";
+import { ExperimentContextProvider } from "providers/experiments/context";
 
 const StandardEnsemblerConfigDetailsComponent = ({ projectId, routes, routeNamePath }) => {
   const { appConfig: { routeNamePathPrefix } } = useConfig();
@@ -20,11 +21,13 @@ const StandardEnsemblerConfigDetailsComponent = ({ projectId, routes, routeNameP
 
         <EuiFlexItem grow={2} className="euiFlexItem--smallPanel">
           <ConfigSectionPanel title="Linked Routes" className="linkedRoutesPanel">
-            <LinkedRoutesTable
-              projectId={projectId}
-              routes={routes}
-              treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}
-            />
+            <ExperimentContextProvider projectId={projectId}>
+              <LinkedRoutesTable
+                projectId={projectId}
+                routes={routes}
+                treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}
+              />
+            </ExperimentContextProvider>
           </ConfigSectionPanel>
         </EuiFlexItem>
       </EuiFlexGroup>
