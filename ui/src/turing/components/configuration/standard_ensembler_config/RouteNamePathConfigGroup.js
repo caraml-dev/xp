@@ -2,28 +2,25 @@ import React from "react";
 
 import {
   EuiDescriptionList,
-  EuiDescriptionListDescription,
-  EuiDescriptionListTitle,
-  EuiTextColor,
   EuiTitle,
 } from "@elastic/eui";
 
 export const RouteNamePathConfigGroup = ({ routeNamePath }) => {
   return (
     <EuiTitle size="xs">
-      <EuiTextColor>
-        <EuiDescriptionList
-          textStyle="reverse"
-          type="responsiveColumn"
-          compressed>
-          <EuiDescriptionListTitle>
-            Route Name Path
-          </EuiDescriptionListTitle>
-          <EuiDescriptionListDescription>
-            {routeNamePath}
-          </EuiDescriptionListDescription>
-        </EuiDescriptionList>
-      </EuiTextColor>
+      <EuiDescriptionList
+        compressed
+        textStyle="reverse"
+        type="responsiveColumn"
+        listItems={[
+          {
+            title: "Route Name Path",
+            description: routeNamePath,
+          },
+        ]}
+        titleProps={{ style: { width: "30%" } }}
+        descriptionProps={{ style: { width: "70%" } }}
+      />
     </EuiTitle>
   );
 };
