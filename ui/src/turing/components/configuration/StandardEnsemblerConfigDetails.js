@@ -2,7 +2,7 @@ import React from "react";
 import { ConfigProvider, useConfig } from "config";
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { ConfigSectionPanel } from "components/config_section/ConfigSectionPanel";
-import { LinkedRoutesTable } from "../form/standard_ensembler/LinkedRoutesTable";
+import { LinkedRoutesTable } from "turing/components/form/standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathConfigGroup } from "./standard_ensembler_config/RouteNamePathConfigGroup";
 import { ProjectContextProvider } from "providers/project/context";
 
