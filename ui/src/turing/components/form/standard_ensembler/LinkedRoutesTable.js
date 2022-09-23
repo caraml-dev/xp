@@ -46,12 +46,12 @@ export const LinkedRoutesTable = ({
 
   const columns = [
     {
-      field: "status",
+      field: "id",
       width: "5px",
-      render: (_, item) => {
-        const isAssigned = routeToExperimentMappings[item.id] ?
-          Object.keys(routeToExperimentMappings[item.id].running).length +
-          Object.keys(routeToExperimentMappings[item.id].scheduled).length > 0 : false;
+      render: (id) => {
+        const isAssigned = routeToExperimentMappings[id] ?
+          Object.keys(routeToExperimentMappings[id].running).length +
+          Object.keys(routeToExperimentMappings[id].scheduled).length > 0 : false;
         return (
           <EuiIcon
             type={isAssigned ? "check" : "cross"}
@@ -63,36 +63,36 @@ export const LinkedRoutesTable = ({
       },
     },
     {
-      field: "route_name",
+      field: "id",
       width: "20%",
       name: "Route Name",
-      render: (_, item) => {
-        const isAssigned = routeToExperimentMappings[item.id] ?
-          Object.keys(routeToExperimentMappings[item.id].running).length +
-          Object.keys(routeToExperimentMappings[item.id].scheduled).length > 0 : false;
-        return (<EuiTextColor color={isAssigned ? "success" : "danger"}>{item.id}</EuiTextColor>);
+      render: (id) => {
+        const isAssigned = routeToExperimentMappings[id] ?
+          Object.keys(routeToExperimentMappings[id].running).length +
+          Object.keys(routeToExperimentMappings[id].scheduled).length > 0 : false;
+        return (<EuiTextColor color={isAssigned ? "success" : "danger"}>{id}</EuiTextColor>);
       },
     },
     {
-      field: "running_experiments",
+      field: "id",
       width: "35%",
       name: "Running Experiments",
-      render: (_, item) => (
+      render: (id) => (
         <LinkedExperimentsContextMenu
           projectId={projectId}
-          linkedExperiments={routeToExperimentMappings[item.id]}
+          linkedExperiments={routeToExperimentMappings[id]}
           experimentStatus={"running"}
         />
       ),
     },
     {
-      field: "scheduled_experiments",
+      field: "id",
       width: "35%",
       name: "Scheduled Experiments",
-      render: (_, item) => (
+      render: (id) => (
         <LinkedExperimentsContextMenu
           projectId={projectId}
-          linkedExperiments={routeToExperimentMappings[item.id]}
+          linkedExperiments={routeToExperimentMappings[id]}
           experimentStatus={"scheduled"}
         />
       )
