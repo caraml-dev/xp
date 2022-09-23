@@ -27,7 +27,7 @@ export const SegmenterContextProvider = ({ projectId, children, status }) => {
 
   // Map of segmenter name -> [dependent segmenter names]
   const [dependencyMap, setDependencyMap] = useState({});
-  // Contains the information about the segmenter
+  // Contains the information about the segmenters
   const [segmenterConfig, setSegmenterConfig] = useState([]);
   // isSegmenterConfigLoaded indicates if all the internal processing has been completed
   const [isSegmenterConfigLoaded, setIsSegmenterConfigLoaded] = useState(false);

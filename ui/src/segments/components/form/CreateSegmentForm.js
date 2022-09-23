@@ -14,7 +14,7 @@ export const CreateSegmentForm = ({ projectId, onCancel, onSuccess }) => {
   const { data: segment } = useContext(FormContext);
   const { segmenterConfig, getSegmenterOptions } = useContext(SegmenterContext);
 
-  // retrieve name-type mappings for active segmenter specified for this project
+  // retrieve name-type mappings for active segmenters specified for this project
   const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function(
     map,
     obj
