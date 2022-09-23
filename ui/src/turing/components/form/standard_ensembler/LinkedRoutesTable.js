@@ -11,7 +11,7 @@ import {
 
 import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 import { LinkedExperimentsContextMenu } from "./LinkedExperimentsContextMenu";
-import ExperimentContext from "providers/experiments/context";
+import ExperimentContext from "providers/experiment/context";
 
 export const LinkedRoutesTable = ({
   projectId,

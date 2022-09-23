@@ -2,9 +2,9 @@ import React from "react";
 
 import { useXpApi } from "hooks/useXpApi";
 
-const SegmentsContext = React.createContext({});
+const SegmentContext = React.createContext({});
 
-export const SegmentsContextProvider = ({ projectId, children }) => {
+export const SegmentContextProvider = ({ projectId, children }) => {
   const [
     {
       data: { data: segments },
@@ -21,14 +21,14 @@ export const SegmentsContextProvider = ({ projectId, children }) => {
   );
 
   return (
-    <SegmentsContext.Provider
+    <SegmentContext.Provider
       value={{
         segments,
         isLoaded: isLoaded,
       }}>
       {children}
-    </SegmentsContext.Provider>
+    </SegmentContext.Provider>
   );
 };
 
-export default SegmentsContext;
+export default SegmentContext;

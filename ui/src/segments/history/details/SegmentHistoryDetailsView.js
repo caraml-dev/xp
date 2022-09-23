@@ -16,7 +16,7 @@ import { ConfigSection } from "components/config_section/ConfigSection";
 import { PageTitle } from "components/page/PageTitle";
 import { SegmentConfigSection } from "experiments/components/configuration/SegmentConfigSection";
 import { useXpApi } from "hooks/useXpApi";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 import { useConfig } from "config";
 
 const SegmentHistoryDetailsView = ({ projectId, segmentId, version }) => {

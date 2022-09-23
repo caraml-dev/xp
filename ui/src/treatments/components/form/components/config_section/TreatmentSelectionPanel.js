@@ -8,7 +8,7 @@ import {
 } from "@elastic/eui";
 
 import { Panel } from "components/panel/Panel";
-import TreatmentsContext from "providers/treatment/context";
+import TreatmentContext from "providers/treatment/context";
 
 import { TreatmentConfigPanel } from "./TreatmentConfigPanel";
 
@@ -19,7 +19,7 @@ export const TreatmentSelectionPanel = ({
   onChange,
   errors = [],
 }) => {
-  const { isLoaded, treatments } = useContext(TreatmentsContext);
+  const { isLoaded, treatments } = useContext(TreatmentContext);
 
   const treatmentSelectionOptions = treatments.map((treatment) => {
     return {

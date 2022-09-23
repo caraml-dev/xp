@@ -5,7 +5,7 @@ import { ConfigSectionPanel } from "components/config_section/ConfigSectionPanel
 import { LinkedRoutesTable } from "turing/components/form/standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathConfigGroup } from "./standard_ensembler_config/RouteNamePathConfigGroup";
 import { ProjectContextProvider } from "providers/project/context";
-import { ExperimentContextProvider } from "providers/experiments/context";
+import { ExperimentContextProvider } from "providers/experiment/context";
 
 const StandardEnsemblerConfigDetailsComponent = ({ projectId, routes, routeNamePath }) => {
   const { appConfig: { routeNamePathPrefix } } = useConfig();

@@ -4,7 +4,7 @@ import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 import { useXpApi } from "hooks/useXpApi";
-import SegmenterContext from "providers/segmenters/context";
+import SegmenterContext from "providers/segmenter/context";
 
 import { ConfigurationStep } from "./steps/ConfigurationStep";
 import schema from "./validation/schema";
@@ -14,7 +14,7 @@ export const CreateSegmentForm = ({ projectId, onCancel, onSuccess }) => {
   const { data: segment } = useContext(FormContext);
   const { segmenterConfig, getSegmenterOptions } = useContext(SegmenterContext);
 
-  // retrieve name-type mappings for active segmenters specified for this project
+  // retrieve name-type mappings for active segmenter specified for this project
   const segmenterTypes = getSegmenterOptions(segmenterConfig).reduce(function(
     map,
     obj

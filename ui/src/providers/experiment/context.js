@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useState} from "react";
 
 import { useXpApi } from "hooks/useXpApi";
 import moment from "moment";
-import { useConfig } from "../../config";
+import { useConfig } from "config";
 
 const ExperimentContext = React.createContext({});
 

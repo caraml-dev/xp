@@ -6,7 +6,7 @@ import { replaceBreadcrumbs } from "@gojek/mlp-ui";
 import { ActivityConfigSection } from "components/config_section/ActivityConfigSection";
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { SegmentConfigSection } from "experiments/components/configuration/SegmentConfigSection";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 
 export const SegmentConfigView = ({ segment }) => {
   const activity = {

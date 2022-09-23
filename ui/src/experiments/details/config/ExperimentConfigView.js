@@ -8,7 +8,7 @@ import { ConfigSection } from "components/config_section/ConfigSection";
 import { GeneralInfoConfigSection } from "experiments/components/configuration/GeneralInfoConfigSection";
 import { SegmentConfigSection } from "experiments/components/configuration/SegmentConfigSection";
 import { TreatmentConfigSection } from "experiments/components/configuration/TreatmentConfigSection";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 
 export const ExperimentConfigView = ({ experiment }) => {
   const generalInfo = {

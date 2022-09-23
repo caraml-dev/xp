@@ -4,10 +4,10 @@ import { EuiPageTemplate, EuiSpacer } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { EditExperimentForm } from "experiments/components/form/EditExperimentForm";
-import { SegmentsContextProvider } from "providers/segment/context";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmentContextProvider } from "providers/segment/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 import { SettingsContextProvider } from "providers/settings/context";
-import { TreatmentsContextProvider } from "providers/treatment/context";
+import { TreatmentContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
 import { PageTitle } from "components/page/PageTitle";
 
@@ -28,11 +28,11 @@ const EditExperimentView = ({ projectId, experimentSpec, ...props }) => {
       />
       <EuiSpacer size="l" />
       <EuiPageTemplate.Section color={"transparent"}>
-        <TreatmentsContextProvider projectId={projectId}>
+        <TreatmentContextProvider projectId={projectId}>
           <FormContextProvider data={Experiment.fromJson(experimentSpec)}>
             <SettingsContextProvider projectId={projectId}>
               <SegmenterContextProvider projectId={projectId} status="active">
-                <SegmentsContextProvider projectId={projectId}>
+                <SegmentContextProvider projectId={projectId}>
                   <EditExperimentForm
                     projectId={projectId}
                     onCancel={() => window.history.back()}
@@ -40,11 +40,11 @@ const EditExperimentView = ({ projectId, experimentSpec, ...props }) => {
                       props.navigate("../", { state: { refresh: true } })
                     }
                   />
-                </SegmentsContextProvider>
+                </SegmentContextProvider>
               </SegmenterContextProvider>
             </SettingsContextProvider>
           </FormContextProvider>
-        </TreatmentsContextProvider>
+        </TreatmentContextProvider>
       </EuiPageTemplate.Section>
     </Fragment>
   );

@@ -19,7 +19,7 @@ import { FormLabelWithToolTip } from "@gojek/mlp-ui";
 import isEqual from "lodash/isEqual";
 
 import { Panel } from "components/panel/Panel";
-import SegmenterContext from "providers/segmenters/context";
+import SegmenterContext from "providers/segmenter/context";
 import { makeId } from "utils/helpers";
 
 import { SegmenterCard } from "./SegmenterCard";

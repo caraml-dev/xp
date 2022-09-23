@@ -7,7 +7,7 @@ import {
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { PageTitle } from "components/page/PageTitle";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 import { Settings } from "services/settings/Settings";
 import { CreateSettingsForm } from "settings/components/form/CreateSettingsForm";
 import { useConfig } from "config";
