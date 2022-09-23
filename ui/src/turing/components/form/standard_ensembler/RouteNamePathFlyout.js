@@ -42,7 +42,7 @@ const RouteNamePathFlyout = ({ onClose }) => {
               <p>
                 In Turing Experiments' case, if the user-defined treatment configuration is:
               </p>
-              <EuiCodeBlock language="js" fontSize="m" paddingSize="m">
+              <EuiCodeBlock language="json" fontSize="m" paddingSize="m">
                 {`{
     "route_name": "control",
     ...
@@ -53,7 +53,7 @@ const RouteNamePathFlyout = ({ onClose }) => {
               <p>
                 the client response that gets sent back to the Turing Router is actually as follows:
               </p>
-              <EuiCodeBlock language="js" fontSize="m" paddingSize="m">
+              <EuiCodeBlock language="json" fontSize="m" paddingSize="m">
                 {`{
     "treatment": {
         "configuration": {
