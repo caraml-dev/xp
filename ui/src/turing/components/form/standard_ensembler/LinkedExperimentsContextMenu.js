@@ -7,28 +7,16 @@ import {
   EuiLink,
   EuiIcon
 } from "@elastic/eui";
+import { useToggle } from "@gojek/mlp-ui";
 
 export const LinkedExperimentsContextMenu = ({
-  item,
   projectId,
   linkedExperiments,
-  isButtonPopoverOpen,
-  setIsButtonPopoverOpen,
   experimentStatus
 }) => {
+  const [isPopoverOpen, togglePopover] = useToggle();
+
   let numExperiments = linkedExperiments ? Object.keys(linkedExperiments[experimentStatus]).length : 0;
-
-  const onButtonClick = () => {
-    let newIsButtonPopoverOpen = { ...isButtonPopoverOpen };
-    newIsButtonPopoverOpen[item.id][experimentStatus] = !isButtonPopoverOpen[item.id][experimentStatus];
-    setIsButtonPopoverOpen(newIsButtonPopoverOpen);
-  };
-
-  const closePopover = () => {
-    let newIsButtonPopoverOpen = { ...isButtonPopoverOpen };
-    newIsButtonPopoverOpen[item.id][experimentStatus] = false;
-    setIsButtonPopoverOpen(newIsButtonPopoverOpen);
-  };
 
   const button = (
     <EuiButtonEmpty
@@ -36,18 +24,18 @@ export const LinkedExperimentsContextMenu = ({
       iconType={"arrowRight"}
       iconSide={"right"}
       color={"primary"}
-      onClick={onButtonClick}
+      onClick={togglePopover}
       isDisabled={numExperiments === 0}
     >
       {numExperiments}
     </EuiButtonEmpty>
   );
 
-  return isButtonPopoverOpen[item.id] ? (
+  return linkedExperiments ? (
     <EuiPopover
       button={button}
-      isOpen={isButtonPopoverOpen[item.id][experimentStatus]}
-      closePopover={closePopover}
+      isOpen={isPopoverOpen}
+      closePopover={togglePopover}
       panelPaddingSize={"none"}
       anchorPosition={"rightCenter"}
     >

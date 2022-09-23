@@ -20,7 +20,6 @@ export const LinkedRoutesTable = ({
 }) => {
   const { allExperiments, isAllExperimentsLoaded } = useContext(ExperimentContext)
 
-  const [isButtonPopoverOpen, setIsButtonPopoverOpen] = useState(routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {}));
   const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {}));
 
   const getRouteName = (config, path) => path.split('.').reduce((obj, key) => obj && obj[key], config);
@@ -42,7 +41,6 @@ export const LinkedRoutesTable = ({
         }
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
-      setIsButtonPopoverOpen(routes.reduce((m, r) => {m[r.id] = {running: false, scheduled: false}; return m}, {}));
     }
   }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isAllExperimentsLoaded, allExperiments]);
 
@@ -81,11 +79,8 @@ export const LinkedRoutesTable = ({
       name: "Running Experiments",
       render: (_, item) => (
         <LinkedExperimentsContextMenu
-          item={item}
           projectId={projectId}
           linkedExperiments={routeToExperimentMappings[item.id]}
-          isButtonPopoverOpen={isButtonPopoverOpen}
-          setIsButtonPopoverOpen={setIsButtonPopoverOpen}
           experimentStatus={"running"}
         />
       ),
@@ -96,11 +91,8 @@ export const LinkedRoutesTable = ({
       name: "Scheduled Experiments",
       render: (_, item) => (
         <LinkedExperimentsContextMenu
-          item={item}
           projectId={projectId}
           linkedExperiments={routeToExperimentMappings[item.id]}
-          isButtonPopoverOpen={isButtonPopoverOpen}
-          setIsButtonPopoverOpen={setIsButtonPopoverOpen}
           experimentStatus={"scheduled"}
         />
       )
