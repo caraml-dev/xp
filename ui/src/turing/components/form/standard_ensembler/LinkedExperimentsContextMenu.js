@@ -4,7 +4,7 @@ import {
   EuiContextMenu,
   EuiPopover,
   EuiButtonEmpty,
-  EuiTextColor,
+  EuiLink,
   EuiIcon
 } from "@elastic/eui";
 
@@ -16,7 +16,7 @@ export const LinkedExperimentsContextMenu = ({
   setIsButtonPopoverOpen,
   experimentStatus
 }) => {
-  let numRoutes = routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id][experimentStatus]).length : 0;
+  let numExperiments = routeToExperimentMappings[item.id] ? Object.keys(routeToExperimentMappings[item.id][experimentStatus]).length : 0;
 
   const onButtonClick = () => {
     let newIsButtonPopoverOpen = { ...isButtonPopoverOpen };
@@ -37,13 +37,13 @@ export const LinkedExperimentsContextMenu = ({
       iconSide={"right"}
       color={"primary"}
       onClick={onButtonClick}
-      isDisabled={numRoutes === 0}
+      isDisabled={numExperiments === 0}
     >
-      {numRoutes}
+      {numExperiments}
     </EuiButtonEmpty>
   );
 
-  return isButtonPopoverOpen[item.id] ? (
+  return isButtonPopoverOpen[item.id] && (
     <EuiPopover
       button={button}
       isOpen={isButtonPopoverOpen[item.id][experimentStatus]}
@@ -61,15 +61,9 @@ export const LinkedExperimentsContextMenu = ({
               items: Object.values(routeToExperimentMappings[item.id][experimentStatus]).map(e => (
                 {
                   name: (
-                    <EuiTextColor>
-                      <a
-                        href={`/turing/projects/${projectId}/experiments/${e.id}/details`}
-                        target={"_blank"}
-                        rel="noreferrer"
-                      >
-                        {e.name}
-                      </a>
-                    </EuiTextColor>
+                    <EuiLink href={`/turing/projects/${projectId}/experiments/${e.id}/details`} external={false} target={"_blank"}>
+                      {e.name}
+                    </EuiLink>
                   ),
                   icon: <EuiIcon type={"popout"} size={"m"} color={"primary"} />,
                   size: "s",
@@ -82,5 +76,5 @@ export const LinkedExperimentsContextMenu = ({
         }
       />
     </EuiPopover>
-  ) : null;
+  );
 };
