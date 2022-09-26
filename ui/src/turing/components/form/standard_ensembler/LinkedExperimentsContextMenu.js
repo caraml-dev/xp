@@ -16,7 +16,7 @@ export const LinkedExperimentsContextMenu = ({
 }) => {
   const [isPopoverOpen, togglePopover] = useToggle();
 
-  let numExperiments = linkedExperiments ? Object.keys(linkedExperiments[experimentStatus]).length : 0;
+  let numExperiments = Object.keys(linkedExperiments[experimentStatus]).length;
 
   const button = (
     <EuiButtonEmpty
@@ -31,7 +31,7 @@ export const LinkedExperimentsContextMenu = ({
     </EuiButtonEmpty>
   );
 
-  return linkedExperiments ? (
+  return (
     <EuiPopover
       button={button}
       isOpen={isPopoverOpen}
@@ -64,5 +64,5 @@ export const LinkedExperimentsContextMenu = ({
         }
       />
     </EuiPopover>
-  ) : null;
+  );
 };

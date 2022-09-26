@@ -77,7 +77,7 @@ export const LinkedRoutesTable = ({
       field: "id",
       width: "35%",
       name: "Running Experiments",
-      render: (id) => (
+      render: (id) => routeToExperimentMappings[id] && (
         <LinkedExperimentsContextMenu
           projectId={projectId}
           linkedExperiments={routeToExperimentMappings[id]}
@@ -89,7 +89,7 @@ export const LinkedRoutesTable = ({
       field: "id",
       width: "35%",
       name: "Scheduled Experiments",
-      render: (id) => (
+      render: (id) => routeToExperimentMappings[id] && (
         <LinkedExperimentsContextMenu
           projectId={projectId}
           linkedExperiments={routeToExperimentMappings[id]}
