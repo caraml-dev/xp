@@ -7,10 +7,14 @@ import {
   EuiFlyoutHeader,
   EuiText,
   EuiTitle,
+  EuiCode,
   EuiCodeBlock
 } from "@elastic/eui";
+import {useConfig} from "config";
 
 const RouteNamePathFlyout = ({ onClose }) => {
+  const { appConfig: { routeNamePathPrefix } } = useConfig();
+
   return (
     <EuiFlyout
       ownFocus
@@ -68,7 +72,8 @@ const RouteNamePathFlyout = ({ onClose }) => {
               </EuiCodeBlock>
 
               <p>
-                Hence, the path prefix is automatically specified as `treatment.configuration.` (including the final period).
+                Hence, the path prefix is automatically specified as
+                <EuiCode language="json">{routeNamePathPrefix}</EuiCode> (including the final period).
               </p>
             </EuiText>
           </EuiFlexItem>
