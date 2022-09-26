@@ -26,7 +26,7 @@ export const LinkedRoutesTable = ({
 
   // this stringified value of routes below allows the React effect below to mimic a deep comparison when changes to the
   // array routes are made
-  const stringifiedRoutes = JSON.stringify(routes)
+  const stringifiedRoutes = routes.map(e => e.id).join();
 
   // reset loaded routeToExperimentMappings if treatmentConfigRouteNamePath or routes changes
   useEffect(() => {
