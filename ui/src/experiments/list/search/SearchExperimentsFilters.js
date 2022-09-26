@@ -18,7 +18,7 @@ import {
   experimentTypes,
 } from "experiments/components/typeOptions";
 
-import SegmenterContext from "providers/segmenters/context";
+import SegmenterContext from "providers/segmenter/context";
 import { extractErrors } from "utils/helpers";
 
 import ExperimentDateFilter from "./components/ExperimentDateFilter";

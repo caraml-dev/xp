@@ -14,7 +14,7 @@ import {
 } from "@elastic/eui";
 
 import { useXpApi } from "hooks/useXpApi";
-import TreatmentsContext from "providers/treatment/context";
+import TreatmentContext from "providers/treatment/context";
 
 import { TreatmentPanel } from "./TreatmentPanel";
 
@@ -25,7 +25,7 @@ export const TreatmentCard = ({
   projectId,
   errors = {},
 }) => {
-  const { isLoaded, treatments } = useContext(TreatmentsContext);
+  const { isLoaded, treatments } = useContext(TreatmentContext);
   const [treatmentId, setTreatmentId] = useState();
   const [hasNewResponse, setHasNewResponse] = useState(false);
 

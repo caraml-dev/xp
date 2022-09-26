@@ -7,8 +7,8 @@ import {
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { PageTitle } from "components/page/PageTitle";
-import { SegmentsContextProvider } from "providers/segment/context";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmentContextProvider } from "providers/segment/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 import { CreateSegmentForm } from "segments/components/form/CreateSegmentForm";
 import { CustomSegment } from "services/segment/CustomSegment";
 import { useConfig } from "config";
@@ -39,13 +39,13 @@ const CreateSegmentView = ({ projectId, ...props }) => {
       <EuiPageTemplate.Section color={"transparent"}>
         <FormContextProvider data={new CustomSegment()}>
           <SegmenterContextProvider projectId={projectId} status="active">
-            <SegmentsContextProvider projectId={projectId}>
+            <SegmentContextProvider projectId={projectId}>
               <CreateSegmentForm
                 projectId={projectId}
                 onCancel={() => window.history.back()}
                 onSuccess={(segmentId) => props.navigate(`../${segmentId}`)}
               />
-            </SegmentsContextProvider>
+            </SegmentContextProvider>
           </SegmenterContextProvider>
         </FormContextProvider>
         <EuiSpacer size="l" />

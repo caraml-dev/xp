@@ -12,7 +12,7 @@ import { useDimension, useToggle } from "@gojek/mlp-ui";
 import { ConfigPanel } from "components/config_section/ConfigPanel";
 import { ConfigSectionFlyout } from "components/config_section/ConfigSectionFlyout";
 import { ExpandableTableColumn } from "components/table/ExpandableTableColumn";
-import SegmenterContext from "providers/segmenters/context";
+import SegmenterContext from "providers/segmenter/context";
 import { stringifySegmenterValue } from "services/experiment/Segment";
 
 export const SegmentConfigSection = ({ experiment }) => {
@@ -148,5 +148,5 @@ const ExperimentSegmentTable = ({ items, projectSegmenters, buttonAction }) => {
     },
   ];
 
-  return <EuiInMemoryTable items={items} columns={columns}></EuiInMemoryTable>;
+  return <EuiInMemoryTable items={items} columns={columns} />;
 };

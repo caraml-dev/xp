@@ -11,7 +11,7 @@ import {
 import { OverlayMask, get } from "@gojek/mlp-ui";
 
 import { useXpApi } from "hooks/useXpApi";
-import SegmenterContext from "providers/segmenters/context";
+import SegmenterContext from "providers/segmenter/context";
 
 import { SegmenterConfigRow } from "./SegmenterConfigRow";
 

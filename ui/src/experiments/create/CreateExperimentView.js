@@ -8,10 +8,10 @@ import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { PageTitle } from "components/page/PageTitle";
 import { CreateExperimentForm } from "experiments/components/form/CreateExperimentForm";
-import { SegmentsContextProvider } from "providers/segment/context";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmentContextProvider } from "providers/segment/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 import { SettingsContextProvider } from "providers/settings/context";
-import { TreatmentsContextProvider } from "providers/treatment/context";
+import { TreatmentContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
 import { useConfig } from "config";
 
@@ -39,11 +39,11 @@ const CreateExperimentView = ({ projectId, ...props }) => {
 
       <EuiSpacer size="m" />
       <EuiPageTemplate.Section color={"transparent"}>
-        <TreatmentsContextProvider projectId={projectId}>
+        <TreatmentContextProvider projectId={projectId}>
           <FormContextProvider data={new Experiment()}>
             <SettingsContextProvider projectId={projectId}>
               <SegmenterContextProvider projectId={projectId} status="active">
-                <SegmentsContextProvider projectId={projectId}>
+                <SegmentContextProvider projectId={projectId}>
                   <CreateExperimentForm
                     projectId={projectId}
                     onCancel={() => window.history.back()}
@@ -51,11 +51,11 @@ const CreateExperimentView = ({ projectId, ...props }) => {
                       props.navigate(`../${experimentId}`)
                     }
                   />
-                </SegmentsContextProvider>
+                </SegmentContextProvider>
               </SegmenterContextProvider>
             </SettingsContextProvider>
           </FormContextProvider>
-        </TreatmentsContextProvider>
+        </TreatmentContextProvider>
       </EuiPageTemplate.Section>
 
       <EuiSpacer size="l" />

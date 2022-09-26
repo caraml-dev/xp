@@ -13,7 +13,7 @@ export const getExperimentStatus = (experiment) => {
   const statusMapping = {
     Deactivated: {
       label: "Deactivated",
-      color: "subdued",
+      color: "default",
       iconType: "cross",
     },
     Completed: {

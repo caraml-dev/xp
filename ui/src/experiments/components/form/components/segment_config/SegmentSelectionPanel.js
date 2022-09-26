@@ -8,7 +8,7 @@ import {
 } from "@elastic/eui";
 
 import { Panel } from "components/panel/Panel";
-import SegmentsContext from "providers/segment/context";
+import SegmentContext from "providers/segment/context";
 
 import { SegmentConfigPanel } from "./SegmentConfigPanel";
 
@@ -19,7 +19,7 @@ export const SegmentSelectionPanel = ({
   onChange,
   errors = [],
 }) => {
-  const { isLoaded, segments } = useContext(SegmentsContext);
+  const { isLoaded, segments } = useContext(SegmentContext);
 
   const segmentSelectionOptions = segments.map((segment) => {
     return {

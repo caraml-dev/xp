@@ -18,7 +18,7 @@ import { GeneralInfoConfigSection } from "experiments/components/configuration/G
 import { SegmentConfigSection } from "experiments/components/configuration/SegmentConfigSection";
 import { TreatmentConfigSection } from "experiments/components/configuration/TreatmentConfigSection";
 import { useXpApi } from "hooks/useXpApi";
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 import { useConfig } from "config";
 import { VersionBadge } from "components/version_badge/VersionBadge";
 

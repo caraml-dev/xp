@@ -5,7 +5,7 @@ import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
 
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 import { useXpApi } from "hooks/useXpApi";
-import SegmenterContext from "providers/segmenters/context";
+import SegmenterContext from "providers/segmenter/context";
 import SettingsContext from "providers/settings/context";
 
 import { GeneralStep } from "./steps/GeneralStep";

@@ -37,6 +37,8 @@ module.exports = ({ }) => ({
                         "./EditExperimentEngineConfig": "./src/turing/components/form/EditExperimentEngineConfig",
                         "./ExperimentEngineConfigDetails": "./src/turing/components/configuration/ExperimentEngineConfigDetails",
                         "./ExperimentsLandingPage": "./src/experiments/ExperimentsLandingPage",
+                        "./EditStandardEnsemblerConfig": "./src/turing/components/form/EditStandardEnsemblerConfig",
+                        "./StandardEnsemblerConfigDetails": "./src/turing/components/configuration/StandardEnsemblerConfigDetails"
                     },
                     filename: "remoteEntry.js",
                     shared: {

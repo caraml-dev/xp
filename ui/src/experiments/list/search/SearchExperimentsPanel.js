@@ -2,7 +2,7 @@ import React from "react";
 
 import { EuiButton, EuiFlyout, EuiFlyoutFooter } from "@elastic/eui";
 
-import { SegmenterContextProvider } from "providers/segmenters/context";
+import { SegmenterContextProvider } from "providers/segmenter/context";
 
 import SearchExperimentsFilters from "./SearchExperimentsFilters";
 

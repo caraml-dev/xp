@@ -2,9 +2,9 @@ import React from "react";
 
 import { useXpApi } from "hooks/useXpApi";
 
-const TreatmentsContext = React.createContext({});
+const TreatmentContext = React.createContext({});
 
-export const TreatmentsContextProvider = ({ projectId, children }) => {
+export const TreatmentContextProvider = ({ projectId, children }) => {
   const [
     {
       data: { data: treatments },
@@ -21,14 +21,14 @@ export const TreatmentsContextProvider = ({ projectId, children }) => {
   );
 
   return (
-    <TreatmentsContext.Provider
+    <TreatmentContext.Provider
       value={{
         treatments,
         isLoaded: isLoaded,
       }}>
       {children}
-    </TreatmentsContext.Provider>
+    </TreatmentContext.Provider>
   );
 };
 
-export default TreatmentsContext;
+export default TreatmentContext;

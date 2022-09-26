@@ -7,7 +7,7 @@ import {
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { PageTitle } from "components/page/PageTitle";
-import { TreatmentsContextProvider } from "providers/treatment/context";
+import { TreatmentContextProvider } from "providers/treatment/context";
 import { Treatment } from "services/treatment/Treatment";
 import { EditTreatmentForm } from "treatments/components/form/EditTreatmentForm";
 
@@ -30,7 +30,7 @@ const EditTreatmentView = ({ projectId, treatmentSpec, ...props }) => {
       <EuiSpacer size="l" />
       <EuiPageTemplate.Section color={"transparent"}>
         <FormContextProvider data={Treatment.fromJson(treatmentSpec)}>
-          <TreatmentsContextProvider projectId={projectId}>
+          <TreatmentContextProvider projectId={projectId}>
             <EditTreatmentForm
               projectId={projectId}
               onCancel={() => window.history.back()}
@@ -38,7 +38,7 @@ const EditTreatmentView = ({ projectId, treatmentSpec, ...props }) => {
                 props.navigate("../", { state: { refresh: true } });
               }}
             />
-          </TreatmentsContextProvider>
+          </TreatmentContextProvider>
         </FormContextProvider>
       </EuiPageTemplate.Section>
     </Fragment>
