@@ -20,7 +20,7 @@ export const VariablesConfigGroup = ({ variables }) => {
       width: "35%",
       render: (value) => (
         <EuiTitle size="xxs">
-          <EuiTextColor>{value}</EuiTextColor>
+          <EuiTextColor>{value || "-"}</EuiTextColor>
         </EuiTitle>
       ),
     },
