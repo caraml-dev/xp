@@ -25,7 +25,7 @@ Experiments can be created in the 'active' state and disabled later on, or vice 
 
 ## Experiment History
 
-When an experiment is edited or its status is changed, the existing details in the experiment prior to the edit would be saved as a historical version and can be viewed from the **History** tab in the Experiment Details view.
+When an experiment is edited, the existing details in the experiment prior to the edit would be saved as a historical version and can be viewed from the **History** tab in the Experiment Details view. Note that status changes via the Activate / Deactivate action would still create a historical version but would not increment the version number.
 
 ## Deleting Experiments
 
