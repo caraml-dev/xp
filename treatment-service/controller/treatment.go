@@ -95,13 +95,15 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 				RequestID:  requestId,
 				Experiment: filteredExperiment,
 				Treatment:  selectedTreatment,
-				TreatmentMetadata: &monitoring.TreatmentMetadata{
+				Request:    requestJson,
+				Segmenters: requestFilters,
+			}
+			if filteredExperiment != nil {
+				assignedTreatmentLog.TreatmentMetadata = &monitoring.TreatmentMetadata{
 					ExperimentVersion:  filteredExperiment.Version,
 					ExperimentType:     string(models.ProtobufExperimentTypeToOpenAPI(filteredExperiment.Type)),
 					SwitchbackWindowId: switchbackWindowId,
-				},
-				Request:    requestJson,
-				Segmenters: requestFilters,
+				}
 			}
 
 			if errorLog != nil {

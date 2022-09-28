@@ -96,7 +96,7 @@ func TestNewProtobufKafkaLogEntry(t *testing.T) {
 		"segment":           "{\"key\":[\"value\"]}",
 		"treatmentConfig":   "{\"treatment-key\":\"treatment-value\"}",
 		"treatmentName":     "test-treatment",
-		"treatmentMetadata": "{\"experiment_type\":\"Switchback\",\"experiment_version\":2,\"switchback_window_id\": 3}",
+		"treatmentMetadata": "{\"experiment_type\":\"Switchback\",\"experiment_version\":2,\"switchback_window_id\":3}",
 	}
 	expectedValueJSON, err := json.Marshal(assignedTreatmentLogValueJSON)
 	assert.NoError(t, err)
