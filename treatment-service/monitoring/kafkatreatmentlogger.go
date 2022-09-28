@@ -153,6 +153,14 @@ func newProtobufKafkaLogEntry(
 		message.TreatmentConfig = treatmentConfig
 	}
 
+	if log.TreatmentMetadata != nil {
+		treatmentMetadata, err := json.Marshal(log.TreatmentMetadata)
+		if err != nil {
+			return nil, nil, err
+		}
+		message.TreatmentMetadata = string(treatmentMetadata)
+	}
+
 	if log.Error != nil {
 		errorJson, err := json.Marshal(log.Error)
 		if err != nil {

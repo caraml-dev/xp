@@ -15,14 +15,21 @@ type ErrorResponseLog struct {
 	Error string
 }
 
+type TreatmentMetadata struct {
+	ExperimentType     string `json:"experiment_type"`
+	ExperimentVersion  int64  `json:"experiment_version"`
+	SwitchbackWindowId *int64 `json:"switchback_window_id"`
+}
+
 type AssignedTreatmentLog struct {
-	ProjectID  models.ProjectId
-	RequestID  string
-	Experiment *_pubsub.Experiment
-	Treatment  *_pubsub.ExperimentTreatment
-	Request    *Request
-	Segmenters []models.SegmentFilter
-	Error      *ErrorResponseLog
+	ProjectID         models.ProjectId
+	RequestID         string
+	Experiment        *_pubsub.Experiment
+	Treatment         *_pubsub.ExperimentTreatment
+	TreatmentMetadata *TreatmentMetadata
+	Request           *Request
+	Segmenters        []models.SegmentFilter
+	Error             *ErrorResponseLog
 }
 
 type AssignedTreatmentPublisher interface {
