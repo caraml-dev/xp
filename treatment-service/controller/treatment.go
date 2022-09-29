@@ -63,6 +63,7 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 	var selectedTreatment *pubsub.ExperimentTreatment
 	var lookupRequestFilters []models.SegmentFilter
 	var errorLog *monitoring.ErrorResponseLog
+	var switchbackWindowId *int64
 	if t.AppContext.AssignedTreatmentLogger != nil {
 		defer func() {
 			// Capture potential errors from other calls to service layer and prevent it from
@@ -96,6 +97,13 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 				Treatment:  selectedTreatment,
 				Request:    requestJson,
 				Segmenters: requestFilters,
+			}
+			if filteredExperiment != nil {
+				assignedTreatmentLog.TreatmentMetadata = &monitoring.TreatmentMetadata{
+					ExperimentVersion:  filteredExperiment.Version,
+					ExperimentType:     string(models.ProtobufExperimentTypeToOpenAPI(filteredExperiment.Type)),
+					SwitchbackWindowId: switchbackWindowId,
+				}
 			}
 
 			if errorLog != nil {
@@ -165,7 +173,6 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var switchbackWindowId *int64
 	selectedTreatment, switchbackWindowId, err = t.TreatmentService.GetTreatment(filteredExperiment, randomizationKeyValue)
 	if err != nil {
 		statusCode = http.StatusInternalServerError

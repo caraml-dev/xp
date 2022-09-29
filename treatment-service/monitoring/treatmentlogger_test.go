@@ -35,6 +35,7 @@ func TestNewProtobufKafkaLogEntry(t *testing.T) {
 	treatmentCfg, _ := structpb.NewStruct(map[string]interface{}{
 		"treatment-key": "treatment-value",
 	})
+	var windowId int64 = 3
 	assignedTreatmentLog := &AssignedTreatmentLog{
 		ProjectID: 0,
 		RequestID: "1",
@@ -45,6 +46,11 @@ func TestNewProtobufKafkaLogEntry(t *testing.T) {
 		Treatment: &_pubsub.ExperimentTreatment{
 			Name:   "test-treatment",
 			Config: treatmentCfg,
+		},
+		TreatmentMetadata: &TreatmentMetadata{
+			ExperimentType:     "Switchback",
+			ExperimentVersion:  2,
+			SwitchbackWindowId: &windowId,
 		},
 		Request: &Request{},
 		Segmenters: []models.SegmentFilter{
@@ -82,14 +88,15 @@ func TestNewProtobufKafkaLogEntry(t *testing.T) {
 	expectedKeyJSON, err := json.Marshal(assignedTreatmentLogKeyJSON)
 	assert.NoError(t, err)
 	assignedTreatmentLogValueJSON := map[string]interface{}{
-		"eventTimestamp":  decodedResultLogMessage.EventTimestamp.AsTime(),
-		"experimentId":    "1",
-		"experimentName":  "test-exp",
-		"request":         map[string]interface{}{},
-		"requestId":       "1",
-		"segment":         "{\"key\":[\"value\"]}",
-		"treatmentConfig": "{\"treatment-key\":\"treatment-value\"}",
-		"treatmentName":   "test-treatment",
+		"eventTimestamp":    decodedResultLogMessage.EventTimestamp.AsTime(),
+		"experimentId":      "1",
+		"experimentName":    "test-exp",
+		"request":           map[string]interface{}{},
+		"requestId":         "1",
+		"segment":           "{\"key\":[\"value\"]}",
+		"treatmentConfig":   "{\"treatment-key\":\"treatment-value\"}",
+		"treatmentName":     "test-treatment",
+		"treatmentMetadata": "{\"experiment_type\":\"Switchback\",\"experiment_version\":2,\"switchback_window_id\":3}",
 	}
 	expectedValueJSON, err := json.Marshal(assignedTreatmentLogValueJSON)
 	assert.NoError(t, err)

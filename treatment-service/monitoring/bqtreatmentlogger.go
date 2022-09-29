@@ -31,8 +31,9 @@ type BQLogRow struct {
 	ExperimentId   int64  `bigquery:"experiment_id"`
 	ExperimentName string `bigquery:"experiment_name"`
 
-	TreatmentName   string `bigquery:"treatment_name"`
-	TreatmentConfig string `bigquery:"treatment_config"`
+	TreatmentName     string `bigquery:"treatment_name"`
+	TreatmentConfig   string `bigquery:"treatment_config"`
+	TreatmentMetadata string `bigquery:"treatment_metadata"`
 
 	Error string `bigquery:"error"`
 }
@@ -77,6 +78,14 @@ func (p *BQLogPublisher) Publish(logs []*AssignedTreatmentLog) error {
 
 			bqlogRow.TreatmentName = l.Treatment.Name
 			bqlogRow.TreatmentConfig = treatmentConfig
+		}
+
+		if l.TreatmentMetadata != nil {
+			treatmentMetadata, err := json.Marshal(l.TreatmentMetadata)
+			if err != nil {
+				return err
+			}
+			bqlogRow.TreatmentMetadata = string(treatmentMetadata)
 		}
 
 		if l.Error != nil {
