@@ -73,19 +73,6 @@ type Experiment struct {
 // ToApiSchema converts the experiment DB model to a format compatible with the
 // OpenAPI specifications.
 func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType) schema.Experiment {
-	// Calculate the friendly status
-	statusFriendly := schema.ExperimentStatusFriendlyDeactivated
-	if e.Status == ExperimentStatusActive {
-		currentTime := time.Now()
-		if currentTime.Before(e.StartTime) {
-			statusFriendly = schema.ExperimentStatusFriendlyScheduled
-		} else if currentTime.After(e.EndTime) {
-			statusFriendly = schema.ExperimentStatusFriendlyCompleted
-		} else {
-			statusFriendly = schema.ExperimentStatusFriendlyRunning
-		}
-	}
-
 	return schema.Experiment{
 		Description:    e.Description,
 		EndTime:        e.EndTime,
@@ -95,7 +82,7 @@ func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType)
 		ProjectId:      e.ProjectID.ToApiSchema(),
 		Segment:        e.Segment.ToApiSchema(segmentersType),
 		Status:         schema.ExperimentStatus(e.Status),
-		StatusFriendly: statusFriendly,
+		StatusFriendly: getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status),
 		Treatments:     e.Treatments.ToApiSchema(),
 		Type:           schema.ExperimentType(e.Type),
 		Tier:           schema.ExperimentTier(e.Tier),
@@ -164,4 +151,19 @@ func (e *Experiment) ToProtoSchema(segmentersType map[string]schema.SegmenterTyp
 		UpdatedAt:  updatedAt,
 		Version:    e.Version,
 	}, nil
+}
+
+func getExperimentStatusFriendly(startTime time.Time, endTime time.Time, status ExperimentStatus) schema.ExperimentStatusFriendly {
+	statusFriendly := schema.ExperimentStatusFriendlyDeactivated
+	if status == ExperimentStatusActive {
+		currentTime := time.Now()
+		if currentTime.Before(startTime) {
+			statusFriendly = schema.ExperimentStatusFriendlyScheduled
+		} else if currentTime.After(endTime) {
+			statusFriendly = schema.ExperimentStatusFriendlyCompleted
+		} else {
+			statusFriendly = schema.ExperimentStatusFriendlyRunning
+		}
+	}
+	return statusFriendly
 }
