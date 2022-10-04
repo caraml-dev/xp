@@ -272,6 +272,7 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 			EndTime:        &testEndTime,
 		},
 	)
+	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0]}, expResponsesList)
 }
 
