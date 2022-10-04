@@ -296,6 +296,11 @@ func (e ExperimentController) toListExperimentParams(params api.ListExperimentsP
 		val := models.ExperimentStatus(*params.Status)
 		status = &val
 	}
+	var statusFriendly *services.ExperimentStatusFriendly
+	if params.StatusFriendly != nil {
+		val := services.ExperimentStatusFriendly(*params.StatusFriendly)
+		statusFriendly = &val
+	}
 	var expTier *models.ExperimentTier
 	if params.Tier != nil {
 		val := models.ExperimentTier(*params.Tier)
@@ -334,6 +339,7 @@ func (e ExperimentController) toListExperimentParams(params api.ListExperimentsP
 			PageSize: params.PageSize,
 		},
 		Status:           status,
+		StatusFriendly:   statusFriendly,
 		EndTime:          params.EndTime,
 		Tier:             expTier,
 		Type:             expType,

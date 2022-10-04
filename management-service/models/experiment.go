@@ -73,23 +73,37 @@ type Experiment struct {
 // ToApiSchema converts the experiment DB model to a format compatible with the
 // OpenAPI specifications.
 func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType) schema.Experiment {
+	// Calculate the friendly status
+	statusFriendly := schema.ExperimentStatusFriendlyDeactivated
+	if e.Status == ExperimentStatusActive {
+		currentTime := time.Now()
+		if currentTime.Before(e.StartTime) {
+			statusFriendly = schema.ExperimentStatusFriendlyScheduled
+		} else if currentTime.After(e.EndTime) {
+			statusFriendly = schema.ExperimentStatusFriendlyCompleted
+		} else {
+			statusFriendly = schema.ExperimentStatusFriendlyRunning
+		}
+	}
+
 	return schema.Experiment{
-		Description: e.Description,
-		EndTime:     e.EndTime,
-		Id:          e.ID.ToApiSchema(),
-		Interval:    e.Interval,
-		Name:        e.Name,
-		ProjectId:   e.ProjectID.ToApiSchema(),
-		Segment:     e.Segment.ToApiSchema(segmentersType),
-		Status:      schema.ExperimentStatus(e.Status),
-		Treatments:  e.Treatments.ToApiSchema(),
-		Type:        schema.ExperimentType(e.Type),
-		Tier:        schema.ExperimentTier(e.Tier),
-		StartTime:   e.StartTime,
-		CreatedAt:   e.CreatedAt,
-		UpdatedAt:   e.UpdatedAt,
-		UpdatedBy:   e.UpdatedBy,
-		Version:     e.Version,
+		Description:    e.Description,
+		EndTime:        e.EndTime,
+		Id:             e.ID.ToApiSchema(),
+		Interval:       e.Interval,
+		Name:           e.Name,
+		ProjectId:      e.ProjectID.ToApiSchema(),
+		Segment:        e.Segment.ToApiSchema(segmentersType),
+		Status:         schema.ExperimentStatus(e.Status),
+		StatusFriendly: statusFriendly,
+		Treatments:     e.Treatments.ToApiSchema(),
+		Type:           schema.ExperimentType(e.Type),
+		Tier:           schema.ExperimentTier(e.Tier),
+		StartTime:      e.StartTime,
+		CreatedAt:      e.CreatedAt,
+		UpdatedAt:      e.UpdatedAt,
+		UpdatedBy:      e.UpdatedBy,
+		Version:        e.Version,
 	}
 }
 
