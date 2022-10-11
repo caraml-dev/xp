@@ -156,6 +156,7 @@ components:
         - segment
         - start_time
         - status
+        - status_friendly
         - treatments
         - tier
         - type
@@ -195,6 +196,8 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/ExperimentStatus'
+        status_friendly:
+          $ref: '#/components/schemas/ExperimentStatusFriendly'
         segment:
           $ref: '#/components/schemas/ExperimentSegment'
         id:
@@ -396,6 +399,17 @@ components:
       enum:
         - inactive
         - active
+    ExperimentStatusFriendly:
+      type: string
+      description: |
+        The user-friendly classification of experiment statuses. The categories are
+        self-explanatory. Note that the current time plays a role in the definition
+        of some of these statuses.
+      enum:
+        - running
+        - scheduled
+        - completed
+        - deactivated
     ExperimentTier:
       type: string
       enum:

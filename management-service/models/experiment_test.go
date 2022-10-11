@@ -55,19 +55,20 @@ func TestExperimentToApiSchema(t *testing.T) {
 	}
 
 	assert.Equal(t, schema.Experiment{
-		Id:          int64(5),
-		ProjectId:   int64(1),
-		CreatedAt:   time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-		UpdatedAt:   time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-		UpdatedBy:   "admin",
-		EndTime:     time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
-		StartTime:   time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC),
-		Name:        "test-exp",
-		Description: &testExperimentDescription,
-		Interval:    &testExperimentInterval,
-		Status:      schema.ExperimentStatusActive,
-		Type:        schema.ExperimentTypeSwitchback,
-		Tier:        schema.ExperimentTierDefault,
+		Id:             int64(5),
+		ProjectId:      int64(1),
+		CreatedAt:      time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
+		UpdatedAt:      time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
+		UpdatedBy:      "admin",
+		EndTime:        time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
+		StartTime:      time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC),
+		Name:           "test-exp",
+		Description:    &testExperimentDescription,
+		Interval:       &testExperimentInterval,
+		Status:         schema.ExperimentStatusActive,
+		StatusFriendly: schema.ExperimentStatusFriendlyCompleted,
+		Type:           schema.ExperimentTypeSwitchback,
+		Tier:           schema.ExperimentTierDefault,
 		Treatments: []schema.ExperimentTreatment{
 			{
 				Configuration: map[string]interface{}{
@@ -83,6 +84,46 @@ func TestExperimentToApiSchema(t *testing.T) {
 		},
 		Version: 2,
 	}, testExperiment.ToApiSchema(segmenterTypes))
+}
+
+func TestExperimentToApiSchemaStatusFriendly(t *testing.T) {
+	tests := map[string]struct {
+		startTime time.Time
+		endTime   time.Time
+		status    ExperimentStatus
+		expected  schema.ExperimentStatusFriendly
+	}{
+		"deactivated": {
+			startTime: time.Date(2000, 1, 1, 2, 3, 4, 0, time.UTC),
+			endTime:   time.Date(3000, 1, 1, 2, 3, 4, 0, time.UTC),
+			status:    ExperimentStatusInactive,
+			expected:  schema.ExperimentStatusFriendlyDeactivated,
+		},
+		"running": {
+			startTime: time.Date(2000, 1, 1, 2, 3, 4, 0, time.UTC),
+			endTime:   time.Date(3000, 1, 1, 2, 3, 4, 0, time.UTC),
+			status:    ExperimentStatusActive,
+			expected:  schema.ExperimentStatusFriendlyRunning,
+		},
+		"scheduled": {
+			startTime: time.Date(3000, 1, 1, 2, 3, 4, 0, time.UTC),
+			endTime:   time.Date(3000, 1, 1, 2, 3, 4, 0, time.UTC),
+			status:    ExperimentStatusActive,
+			expected:  schema.ExperimentStatusFriendlyScheduled,
+		},
+		"completed": {
+			startTime: time.Date(2000, 1, 1, 2, 3, 4, 0, time.UTC),
+			endTime:   time.Date(2000, 1, 1, 2, 3, 4, 0, time.UTC),
+			status:    ExperimentStatusActive,
+			expected:  schema.ExperimentStatusFriendlyCompleted,
+		},
+	}
+
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, getExperimentStatusFriendly(tt.startTime, tt.endTime, tt.status))
+		})
+	}
 }
 
 func TestExperimentToProtoSchema(t *testing.T) {

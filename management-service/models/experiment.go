@@ -74,22 +74,23 @@ type Experiment struct {
 // OpenAPI specifications.
 func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType) schema.Experiment {
 	return schema.Experiment{
-		Description: e.Description,
-		EndTime:     e.EndTime,
-		Id:          e.ID.ToApiSchema(),
-		Interval:    e.Interval,
-		Name:        e.Name,
-		ProjectId:   e.ProjectID.ToApiSchema(),
-		Segment:     e.Segment.ToApiSchema(segmentersType),
-		Status:      schema.ExperimentStatus(e.Status),
-		Treatments:  e.Treatments.ToApiSchema(),
-		Type:        schema.ExperimentType(e.Type),
-		Tier:        schema.ExperimentTier(e.Tier),
-		StartTime:   e.StartTime,
-		CreatedAt:   e.CreatedAt,
-		UpdatedAt:   e.UpdatedAt,
-		UpdatedBy:   e.UpdatedBy,
-		Version:     e.Version,
+		Description:    e.Description,
+		EndTime:        e.EndTime,
+		Id:             e.ID.ToApiSchema(),
+		Interval:       e.Interval,
+		Name:           e.Name,
+		ProjectId:      e.ProjectID.ToApiSchema(),
+		Segment:        e.Segment.ToApiSchema(segmentersType),
+		Status:         schema.ExperimentStatus(e.Status),
+		StatusFriendly: getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status),
+		Treatments:     e.Treatments.ToApiSchema(),
+		Type:           schema.ExperimentType(e.Type),
+		Tier:           schema.ExperimentTier(e.Tier),
+		StartTime:      e.StartTime,
+		CreatedAt:      e.CreatedAt,
+		UpdatedAt:      e.UpdatedAt,
+		UpdatedBy:      e.UpdatedBy,
+		Version:        e.Version,
 	}
 }
 
@@ -150,4 +151,19 @@ func (e *Experiment) ToProtoSchema(segmentersType map[string]schema.SegmenterTyp
 		UpdatedAt:  updatedAt,
 		Version:    e.Version,
 	}, nil
+}
+
+func getExperimentStatusFriendly(startTime time.Time, endTime time.Time, status ExperimentStatus) schema.ExperimentStatusFriendly {
+	statusFriendly := schema.ExperimentStatusFriendlyDeactivated
+	if status == ExperimentStatusActive {
+		currentTime := time.Now()
+		if currentTime.Before(startTime) {
+			statusFriendly = schema.ExperimentStatusFriendlyScheduled
+		} else if currentTime.After(endTime) {
+			statusFriendly = schema.ExperimentStatusFriendlyCompleted
+		} else {
+			statusFriendly = schema.ExperimentStatusFriendlyRunning
+		}
+	}
+	return statusFriendly
 }

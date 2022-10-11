@@ -13,7 +13,7 @@ import {
 import isEqual from "lodash/isEqual";
 
 import {
-  experimentStatuses,
+  experimentStatusesFriendly,
   experimentTiers,
   experimentTypes,
 } from "experiments/components/typeOptions";
@@ -23,6 +23,7 @@ import { extractErrors } from "utils/helpers";
 
 import ExperimentDateFilter from "./components/ExperimentDateFilter";
 import ExperimentSegmenterFilter from "./components/ExperimentSegmenterFilter";
+import ExperimentStatusFilter from "./components/ExperimentStatusFilter";
 import ExperimentSegmenterMatchOptionsFilter from "./components/ExperimentSegmenterMatchOptionsFilter";
 import ExperimentTypeOptionsFilter from "./components/ExperimentTypeOptionsFilter";
 import ExperimentUpdatedByFilter from "./components/ExperimentUpdatedByFilter";
@@ -47,7 +48,7 @@ const SearchExperimentFilters = ({ onChange }) => {
       // Validate the filters
       schema
         .validate(appliedFilters, { abortEarly: false })
-        .catch(function (err) {
+        .catch(function(err) {
           if (err.errors) {
             // Update filters and errors in the validation state
             setValidationState({
@@ -117,11 +118,10 @@ const SearchExperimentFilters = ({ onChange }) => {
             </EuiForm>
             <EuiSpacer size="m" />
             <EuiForm>
-              <ExperimentTypeOptionsFilter
-                label="Experiment Status"
-                options={experimentStatuses}
-                value={getFilter("status")}
-                onChange={onChangeHandler("status")}
+              <ExperimentStatusFilter
+                options={experimentStatusesFriendly}
+                value={getFilter("status_friendly")}
+                onChange={onChangeHandler("status_friendly")}
               />
             </EuiForm>
             <EuiSpacer size="m" />

@@ -266,6 +266,15 @@ paths:
           in: query
           schema:
             $ref: 'schema.yaml#/components/schemas/ExperimentStatus'
+        - name: status_friendly
+          in: query
+          description: |
+            status_friendly is a combination of the status field, in conjunction with the duration,
+            that produces a user-friendly classification of the experiment statuses. When this parameter
+            is supplied, the status, start_time and end_time filters can also be set. However, the final
+            result would be an intersection of the application of each of these filters.
+          schema:
+            $ref: 'schema.yaml#/components/schemas/ExperimentStatusFriendly'
         - name: end_time
           description: Used together with the start_time, to filter experiments that are at least partially running in the input range.
           in: query
@@ -1371,7 +1380,7 @@ components:
                 items:
                   $ref: 'schema.yaml#/components/schemas/Experiment'
               paging:
-                $ref: "schema.yaml#/components/schemas/Paging"
+                $ref: 'schema.yaml#/components/schemas/Paging'
     CreateExperimentSuccess:
       description: Creates an experiment for the given project
       content:
@@ -1417,9 +1426,9 @@ components:
               data:
                 type: array
                 items:
-                  $ref: "schema.yaml#/components/schemas/ExperimentHistory"
+                  $ref: 'schema.yaml#/components/schemas/ExperimentHistory'
               paging:
-                $ref: "schema.yaml#/components/schemas/Paging"
+                $ref: 'schema.yaml#/components/schemas/Paging'
     GetExperimentHistorySuccess:
       description: Get the specified historical version of an experiment
       content:
@@ -1430,7 +1439,7 @@ components:
             type: object
             properties:
               data:
-                $ref: "schema.yaml#/components/schemas/ExperimentHistory"
+                $ref: 'schema.yaml#/components/schemas/ExperimentHistory'
     ListTreatmentsSuccess:
       description: Returns treatments with the given project_id. If pagination options were used, the results are scoped accordingly and the paging info in the response body is set.
       content:
@@ -1445,7 +1454,7 @@ components:
                 items:
                   $ref: 'schema.yaml#/components/schemas/Treatment'
               paging:
-                $ref: "schema.yaml#/components/schemas/Paging"
+                $ref: 'schema.yaml#/components/schemas/Paging'
     CreateTreatmentSuccess:
       description: Creates a treatment for the given project
       content:
@@ -1500,9 +1509,9 @@ components:
               data:
                 type: array
                 items:
-                  $ref: "schema.yaml#/components/schemas/TreatmentHistory"
+                  $ref: 'schema.yaml#/components/schemas/TreatmentHistory'
               paging:
-                $ref: "schema.yaml#/components/schemas/Paging"
+                $ref: 'schema.yaml#/components/schemas/Paging'
     GetTreatmentHistorySuccess:
       description: Get the specified historical version of a treatment
       content:
@@ -1513,7 +1522,7 @@ components:
             type: object
             properties:
               data:
-                $ref: "schema.yaml#/components/schemas/TreatmentHistory"
+                $ref: 'schema.yaml#/components/schemas/TreatmentHistory'
     ListSegmentsSuccess:
       description: Returns segments with the given project_id. The results are paginated and the paging info in the response body is set.
       content:
@@ -1528,7 +1537,7 @@ components:
                 items:
                   $ref: 'schema.yaml#/components/schemas/Segment'
               paging:
-                $ref: "schema.yaml#/components/schemas/Paging"
+                $ref: 'schema.yaml#/components/schemas/Paging'
     CreateSegmentSuccess:
       description: Creates a segment for the given project
       content:
@@ -1583,9 +1592,9 @@ components:
               data:
                 type: array
                 items:
-                  $ref: "schema.yaml#/components/schemas/SegmentHistory"
+                  $ref: 'schema.yaml#/components/schemas/SegmentHistory'
               paging:
-                $ref: "schema.yaml#/components/schemas/Paging"
+                $ref: 'schema.yaml#/components/schemas/Paging'
     GetSegmentHistorySuccess:
       description: Get the specified historical version of a segment
       content:
@@ -1596,7 +1605,7 @@ components:
             type: object
             properties:
               data:
-                $ref: "schema.yaml#/components/schemas/SegmentHistory"
+                $ref: 'schema.yaml#/components/schemas/SegmentHistory'
   securitySchemes:
     bearerAuth:
       type: http

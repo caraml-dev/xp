@@ -41,7 +41,6 @@ const ExperimentSegmenterFilter = ({
         selectedOptions={selectedOptions}
         onChange={onChangeOpt}
         isClearable={true}
-        data-test-subj={`${name}-segmenter-combo-box`}
         singleSelection={!isMultiValued}
       />
     </EuiFormRow>

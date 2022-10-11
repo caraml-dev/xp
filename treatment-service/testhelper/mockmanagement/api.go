@@ -184,6 +184,12 @@ type UpdateSegmenterRequestBody struct {
 type ListExperimentsParams struct {
 	Status *externalRef0.ExperimentStatus `json:"status,omitempty"`
 
+	// status_friendly is a combination of the status field, in conjunction with the duration,
+	// that produces a user-friendly classification of the experiment statuses. When this parameter
+	// is supplied, the status, start_time and end_time filters can also be set. However, the final
+	// result would be an intersection of the application of each of these filters.
+	StatusFriendly *externalRef0.ExperimentStatusFriendly `json:"status_friendly,omitempty"`
+
 	// Used together with the start_time, to filter experiments that are at least partially running in the input range.
 	EndTime   *time.Time                   `json:"end_time,omitempty"`
 	Tier      *externalRef0.ExperimentTier `json:"tier,omitempty"`
@@ -384,6 +390,17 @@ func (siw *ServerInterfaceWrapper) ListExperiments(w http.ResponseWriter, r *htt
 	err = runtime.BindQueryParameter("form", true, false, "status", r.URL.Query(), &params.Status)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Invalid format for parameter status: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "status_friendly" -------------
+	if paramValue := r.URL.Query().Get("status_friendly"); paramValue != "" {
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "status_friendly", r.URL.Query(), &params.StatusFriendly)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter status_friendly: %s", err), http.StatusBadRequest)
 		return
 	}
 

@@ -15,6 +15,16 @@ import (
 	"github.com/caraml-dev/xp/management-service/pagination"
 )
 
+type ExperimentStatusFriendly string
+
+// Defines values for ExperimentStatusFriendly.
+const (
+	ExperimentStatusFriendlyCompleted   ExperimentStatusFriendly = "completed"
+	ExperimentStatusFriendlyDeactivated ExperimentStatusFriendly = "deactivated"
+	ExperimentStatusFriendlyRunning     ExperimentStatusFriendly = "running"
+	ExperimentStatusFriendlyScheduled   ExperimentStatusFriendly = "scheduled"
+)
+
 type CreateExperimentRequestBody struct {
 	Description *string                     `json:"description"`
 	EndTime     time.Time                   `json:"end_time" validate:"required,gtfield=StartTime"`
@@ -44,16 +54,17 @@ type UpdateExperimentRequestBody struct {
 
 type ListExperimentsParams struct {
 	pagination.PaginationOptions
-	Status           *models.ExperimentStatus `json:"status,omitempty"`
-	EndTime          *time.Time               `json:"end_time,omitempty"`
-	Tier             *models.ExperimentTier   `json:"tier,omitempty"`
-	Type             *models.ExperimentType   `json:"type,omitempty"`
-	Name             *string                  `json:"name,omitempty"`
-	UpdatedBy        *string                  `json:"updated_by,omitempty"`
-	Search           *string                  `json:"search,omitempty"`
-	StartTime        *time.Time               `json:"start_time,omitempty"`
-	Segment          models.ExperimentSegment `json:"segment,omitempty"`
-	IncludeWeakMatch bool                     `json:"include_weak_match"`
+	Status           *models.ExperimentStatus  `json:"status,omitempty"`
+	StatusFriendly   *ExperimentStatusFriendly `json:"status_friendly"`
+	EndTime          *time.Time                `json:"end_time,omitempty"`
+	Tier             *models.ExperimentTier    `json:"tier,omitempty"`
+	Type             *models.ExperimentType    `json:"type,omitempty"`
+	Name             *string                   `json:"name,omitempty"`
+	UpdatedBy        *string                   `json:"updated_by,omitempty"`
+	Search           *string                   `json:"search,omitempty"`
+	StartTime        *time.Time                `json:"start_time,omitempty"`
+	Segment          models.ExperimentSegment  `json:"segment,omitempty"`
+	IncludeWeakMatch bool                      `json:"include_weak_match"`
 }
 
 type ExperimentService interface {
@@ -107,6 +118,23 @@ func (svc *experimentService) ListExperiments(
 	if params.Status != nil {
 		query = query.Where("status = ?", params.Status)
 	}
+	if params.StatusFriendly != nil {
+		if *params.StatusFriendly == ExperimentStatusFriendlyDeactivated {
+			query = query.Where("status = ?", models.ExperimentStatusInactive)
+		} else {
+			query = query.Where("status = ?", models.ExperimentStatusActive)
+			currentTime := time.Now()
+			switch *params.StatusFriendly {
+			case ExperimentStatusFriendlyScheduled:
+				query = query.Where("start_time > ?", currentTime)
+			case ExperimentStatusFriendlyCompleted:
+				query = query.Where("end_time < ?", currentTime)
+			default:
+				// Status Running - current time should be present in the experiment duration.
+				query = query.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", currentTime, currentTime)
+			}
+		}
+	}
 	if params.StartTime != nil && !params.StartTime.IsZero() && (params.EndTime == nil || params.EndTime.IsZero()) {
 		return nil, nil, errors.Newf(errors.BadInput, "end_time parameter must be supplied as well")
 	}
@@ -132,7 +160,6 @@ func (svc *experimentService) ListExperiments(
 			)
 		}
 	}
-
 	if params.Tier != nil {
 		query = query.Where("tier = ?", params.Tier)
 	}

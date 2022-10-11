@@ -252,6 +252,7 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 		[]*models.Experiment{s.Experiments[0], s.Experiments[2]},
 		expResponsesList,
 	)
+
 	// Match name or description
 	testDesc := "-1"
 	expResponsesList, _, err = svc.ListExperiments(1,
@@ -261,6 +262,18 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	)
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[2]}, expResponsesList)
+
+	// Match friendly status + start time
+	statusFriendlyCompleted := services.ExperimentStatusFriendlyCompleted
+	expResponsesList, _, err = svc.ListExperiments(1,
+		services.ListExperimentsParams{
+			StatusFriendly: &statusFriendlyCompleted,
+			StartTime:      &testStartTime,
+			EndTime:        &testEndTime,
+		},
+	)
+	s.Suite.Require().NoError(err)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0]}, expResponsesList)
 }
 
 func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {
