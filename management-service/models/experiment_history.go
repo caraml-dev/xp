@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/caraml-dev/xp/common/api/schema"
+	"gorm.io/gorm"
 )
 
 type ExperimentHistory struct {
@@ -39,6 +40,12 @@ type ExperimentHistory struct {
 // TableName overrides Gorm's default pluralised name: "experiment_histories"
 func (ExperimentHistory) TableName() string {
 	return "experiment_history"
+}
+
+func (e *ExperimentHistory) AfterFind(tx *gorm.DB) error {
+	e.StartTime = e.StartTime.In(utcLoc)
+	e.EndTime = e.EndTime.In(utcLoc)
+	return nil
 }
 
 // ToApiSchema converts the experiment history DB model to a format compatible with the

@@ -7,8 +7,9 @@ import (
 
 	"github.com/caraml-dev/xp/management-service/utils"
 	"github.com/golang-collections/collections/set"
-	"github.com/jinzhu/gorm"
 	"golang.org/x/sync/errgroup"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/caraml-dev/xp/management-service/errors"
 	"github.com/caraml-dev/xp/management-service/models"
@@ -54,17 +55,17 @@ type UpdateExperimentRequestBody struct {
 
 type ListExperimentsParams struct {
 	pagination.PaginationOptions
-	Status           *models.ExperimentStatus  `json:"status,omitempty"`
-	StatusFriendly   *ExperimentStatusFriendly `json:"status_friendly"`
-	EndTime          *time.Time                `json:"end_time,omitempty"`
-	Tier             *models.ExperimentTier    `json:"tier,omitempty"`
-	Type             *models.ExperimentType    `json:"type,omitempty"`
-	Name             *string                   `json:"name,omitempty"`
-	UpdatedBy        *string                   `json:"updated_by,omitempty"`
-	Search           *string                   `json:"search,omitempty"`
-	StartTime        *time.Time                `json:"start_time,omitempty"`
-	Segment          models.ExperimentSegment  `json:"segment,omitempty"`
-	IncludeWeakMatch bool                      `json:"include_weak_match"`
+	Status           *models.ExperimentStatus   `json:"status,omitempty"`
+	StatusFriendly   []ExperimentStatusFriendly `json:"status_friendly"`
+	EndTime          *time.Time                 `json:"end_time,omitempty"`
+	Tier             *models.ExperimentTier     `json:"tier,omitempty"`
+	Type             *models.ExperimentType     `json:"type,omitempty"`
+	Name             *string                    `json:"name,omitempty"`
+	UpdatedBy        *string                    `json:"updated_by,omitempty"`
+	Search           *string                    `json:"search,omitempty"`
+	StartTime        *time.Time                 `json:"start_time,omitempty"`
+	Segment          models.ExperimentSegment   `json:"segment,omitempty"`
+	IncludeWeakMatch bool                       `json:"include_weak_match"`
 }
 
 type ExperimentService interface {
@@ -118,13 +119,13 @@ func (svc *experimentService) ListExperiments(
 	if params.Status != nil {
 		query = query.Where("status = ?", params.Status)
 	}
-	if params.StatusFriendly != nil {
-		if *params.StatusFriendly == ExperimentStatusFriendlyDeactivated {
+	if len(params.StatusFriendly) > 0 {
+		if params.StatusFriendly[0] == ExperimentStatusFriendlyDeactivated {
 			query = query.Where("status = ?", models.ExperimentStatusInactive)
 		} else {
 			query = query.Where("status = ?", models.ExperimentStatusActive)
 			currentTime := time.Now()
-			switch *params.StatusFriendly {
+			switch params.StatusFriendly[0] {
 			case ExperimentStatusFriendlyScheduled:
 				query = query.Where("start_time > ?", currentTime)
 			case ExperimentStatusFriendlyCompleted:
@@ -153,9 +154,9 @@ func (svc *experimentService) ListExperiments(
 			// * the end_time parameter should fall within the experiment's (start and end) times
 			// * the experiment starts and ends within the [start_time and end_time) duration
 			query = query.Where(
-				`tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')
+				`(tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')
 				OR tstzrange(start_time, end_time, '()') @> tstzrange(?, ?, '[]')
-				OR tstzrange(?, ?, '[]') @> tstzrange(start_time, end_time, '[)')`,
+				OR tstzrange(?, ?, '[]') @> tstzrange(start_time, end_time, '[)'))`,
 				params.StartTime, params.StartTime, params.EndTime, params.EndTime, params.StartTime, params.EndTime,
 			)
 		}
@@ -184,7 +185,7 @@ func (svc *experimentService) ListExperiments(
 
 	// Pagination
 	var pagingResponse *pagination.Paging
-	var count int
+	var count int64
 	err := pagination.ValidatePaginationParams(params.Page, params.PageSize)
 	if err != nil {
 		return nil, nil, err
@@ -193,10 +194,10 @@ func (svc *experimentService) ListExperiments(
 	// Count total
 	query.Model(&exps).Count(&count)
 	// Add offset and limit
-	query = query.Offset((*pageOpts.Page - 1) * *pageOpts.PageSize)
-	query = query.Limit(*pageOpts.PageSize)
+	query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
+	query = query.Limit(int(*pageOpts.PageSize))
 	// Format opts into paging response
-	pagingResponse = pagination.ToPaging(pageOpts, count)
+	pagingResponse = pagination.ToPaging(pageOpts, int(count))
 	if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
 		// Invalid query - total pages is less than the requested page
 		return nil, nil, errors.Newf(errors.BadInput,
@@ -556,17 +557,13 @@ func (svc *experimentService) GetDBRecord(projectId models.ID, experimentId mode
 }
 
 func (svc *experimentService) query() *gorm.DB {
-	return svc.db
+	return svc.db.Debug()
 }
 
 func (svc *experimentService) save(exp *models.Experiment) (*models.Experiment, error) {
-	var err error
-	if svc.db.NewRecord(exp) {
-		err = svc.db.Create(exp).Error
-	} else {
-		err = svc.db.Save(exp).Error
-	}
-	if err != nil {
+	if err := svc.query().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(exp).Error; err != nil {
 		return nil, err
 	}
 	return svc.GetDBRecord(exp.ProjectID, exp.ID)

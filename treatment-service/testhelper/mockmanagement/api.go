@@ -188,7 +188,7 @@ type ListExperimentsParams struct {
 	// that produces a user-friendly classification of the experiment statuses. When this parameter
 	// is supplied, the status, start_time and end_time filters can also be set. However, the final
 	// result would be an intersection of the application of each of these filters.
-	StatusFriendly *externalRef0.ExperimentStatusFriendly `json:"status_friendly,omitempty"`
+	StatusFriendly *[]externalRef0.ExperimentStatusFriendly `json:"status_friendly,omitempty"`
 
 	// Used together with the start_time, to filter experiments that are at least partially running in the input range.
 	EndTime   *time.Time                   `json:"end_time,omitempty"`

@@ -8,7 +8,8 @@ import (
 	"github.com/golang-collections/collections/set"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
@@ -838,13 +839,9 @@ func (svc *segmenterService) query() *gorm.DB {
 }
 
 func (svc *segmenterService) save(customSegmenter *models.CustomSegmenter) (*models.CustomSegmenter, error) {
-	var err error
-	if svc.db.NewRecord(customSegmenter) {
-		err = svc.db.Create(customSegmenter).Error
-	} else {
-		err = svc.db.Save(customSegmenter).Error
-	}
-	if err != nil {
+	if err := svc.query().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(customSegmenter).Error; err != nil {
 		return nil, err
 	}
 	return svc.GetDBRecord(customSegmenter.ProjectID, customSegmenter.Name)

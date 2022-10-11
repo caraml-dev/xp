@@ -2,6 +2,8 @@ package models
 
 import "time"
 
+var utcLoc, _ = time.LoadLocation("UTC")
+
 type ID uint
 
 func (id ID) ToApiSchema() int64 {

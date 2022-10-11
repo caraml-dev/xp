@@ -49,12 +49,15 @@ func NewServer(configFiles []string) (*Server, error) {
 	if err != nil {
 		panic(err)
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, errors.Newf(errors.GetType(err), fmt.Sprintf("Failed getting SQL DB: %v", err))
+	}
 	err = database.Migrate(cfg.DbConfig)
 	if err != nil {
 		panic(err)
 	}
-	db.LogMode(false)
-	cleanup = append(cleanup, func() { db.Close() })
+	cleanup = append(cleanup, func() { sqlDB.Close() })
 
 	// Init NewRelic
 	if cfg.NewRelicConfig.Enabled {
@@ -132,8 +135,9 @@ func NewServer(configFiles []string) (*Server, error) {
 	if cfg.SentryConfig.Enabled {
 		apiHandler = sentry.Recoverer(apiHandler)
 	}
+	// Add DB health handler
 	healthHandler := healthcheck.NewHandler()
-	healthHandler.AddReadinessCheck("database", healthcheck.DatabasePingCheck(db.DB(), 1*time.Second))
+	healthHandler.AddReadinessCheck("database", healthcheck.DatabasePingCheck(sqlDB, 1*time.Second))
 
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", http.StripPrefix("/v1", apiHandler))

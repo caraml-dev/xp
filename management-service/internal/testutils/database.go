@@ -7,7 +7,7 @@ import (
 	"time"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/management-service/config"
 	db "github.com/caraml-dev/xp/management-service/database"
@@ -41,8 +41,14 @@ func CreateTestDB() (*gorm.DB, func(), error) {
 		return nil, nil, err
 	}
 
+	// Get underlying sql DB
+	sqlDB, err := testDB.DB()
+	if err != nil {
+		return nil, nil, err
+	}
+
 	cleanup := func() {
-		if err := testDB.Close(); err != nil {
+		if err := sqlDB.Close(); err != nil {
 			log.Fatalf("Failed to close connection to integration test database: \n%s", err)
 		} else if _, err := conn.Exec("DROP DATABASE " + testDBCfg.Database); err != nil {
 			log.Fatalf("Failed to cleanup integration test database: \n%s", err)

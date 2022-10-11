@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
 
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 	"github.com/caraml-dev/xp/management-service/errors"

@@ -274,7 +274,9 @@ paths:
             is supplied, the status, start_time and end_time filters can also be set. However, the final
             result would be an intersection of the application of each of these filters.
           schema:
-            $ref: 'schema.yaml#/components/schemas/ExperimentStatusFriendly'
+            type: array
+            items:
+              $ref: 'schema.yaml#/components/schemas/ExperimentStatusFriendly'
         - name: end_time
           description: Used together with the start_time, to filter experiments that are at least partially running in the input range.
           in: query

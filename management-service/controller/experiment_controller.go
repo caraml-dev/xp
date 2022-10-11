@@ -296,10 +296,11 @@ func (e ExperimentController) toListExperimentParams(params api.ListExperimentsP
 		val := models.ExperimentStatus(*params.Status)
 		status = &val
 	}
-	var statusFriendly *services.ExperimentStatusFriendly
+	statusFriendly := []services.ExperimentStatusFriendly{}
 	if params.StatusFriendly != nil {
-		val := services.ExperimentStatusFriendly(*params.StatusFriendly)
-		statusFriendly = &val
+		for _, val := range *params.StatusFriendly {
+			statusFriendly = append(statusFriendly, services.ExperimentStatusFriendly(val))
+		}
 	}
 	var expTier *models.ExperimentTier
 	if params.Tier != nil {

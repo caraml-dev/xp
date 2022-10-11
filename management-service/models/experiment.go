@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
@@ -68,6 +69,12 @@ type Experiment struct {
 	EndTime time.Time `json:"end_time"`
 	// UpdatedBy holds the details of the last person/job that updated the experiment
 	UpdatedBy string `json:"updated_by"`
+}
+
+func (e *Experiment) AfterFind(tx *gorm.DB) error {
+	e.StartTime = e.StartTime.In(utcLoc)
+	e.EndTime = e.EndTime.In(utcLoc)
+	return nil
 }
 
 // ToApiSchema converts the experiment DB model to a format compatible with the

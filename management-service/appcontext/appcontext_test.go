@@ -4,9 +4,9 @@ import (
 	"testing"
 
 	"bou.ke/monkey"
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/management-service/config"
 	mw "github.com/caraml-dev/xp/management-service/middleware"

@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
@@ -468,7 +468,7 @@ func (s *SegmenterServiceTestSuite) TestValidateRequiredSegmenters() {
 	}{
 		"failure | error retrieving segmenter types for given project id": {
 			projectId: int64(-99999999999999999),
-			errString: "pq: value \"-99999999999999999\" is out of range for type integer",
+			errString: "-99999999999999999 is greater than maximum value for Int4",
 		},
 		"failure | required custom segmenter not chosen": {
 			projectId:          int64(1),

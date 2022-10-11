@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
 
 	tu "github.com/caraml-dev/xp/management-service/internal/testutils"
 	"github.com/caraml-dev/xp/management-service/models"
