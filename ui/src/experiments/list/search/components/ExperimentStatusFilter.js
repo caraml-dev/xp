@@ -21,7 +21,6 @@ const ExperimentStatusFilter = ({
         selectedOptions={selectedOptions}
         onChange={e => onChange(e.length > 0 ? e[0].value : undefined)}
         isClearable={true}
-        data-test-subj={`experiment-status-combo-box`}
         singleSelection={true}
       />
     </EuiFormRow>
