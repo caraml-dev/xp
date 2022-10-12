@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"github.com/caraml-dev/xp/management-service/database"
 	"github.com/caraml-dev/xp/management-service/errors"
 	"github.com/caraml-dev/xp/management-service/models"
 	"github.com/caraml-dev/xp/management-service/pagination"
@@ -557,22 +556,21 @@ func (svc *experimentService) save(exp *models.Experiment) (*models.Experiment, 
 }
 
 func (svc *experimentService) filterExperimentStatusFriendly(query *gorm.DB, statusesFriendly []ExperimentStatusFriendly) *gorm.DB {
-	orPredicates := svc.query().Where("false")
+	orPredicates := svc.query().Where("false") // start with false and build OR query dynamically
 	for _, statusFriendly := range statusesFriendly {
 		predicates := svc.query()
 		if statusFriendly == ExperimentStatusFriendlyDeactivated {
 			predicates = predicates.Where("status = ?", models.ExperimentStatusInactive)
 		} else {
 			predicates = predicates.Where("status = ?", models.ExperimentStatusActive)
-			currentTime := time.Now().In(database.UtcLoc)
 			switch statusFriendly {
 			case ExperimentStatusFriendlyScheduled:
-				predicates = predicates.Where("start_time > ?", currentTime)
+				predicates = predicates.Where("start_time > current_timestamp")
 			case ExperimentStatusFriendlyCompleted:
-				predicates = predicates.Where("end_time < ?", currentTime)
+				predicates = predicates.Where("end_time < current_timestamp")
 			default:
 				// Status Running - current time should be present in the experiment duration.
-				predicates = predicates.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", currentTime, currentTime)
+				predicates = predicates.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(current_timestamp, current_timestamp, '[]')")
 			}
 		}
 		orPredicates = orPredicates.Or(predicates)
