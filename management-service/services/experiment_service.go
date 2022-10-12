@@ -141,10 +141,10 @@ func (svc *experimentService) ListExperiments(
 			// * the end_time parameter should fall within the experiment's (start and end) times
 			// * the experiment starts and ends within the [start_time and end_time) duration
 			query = query.Where(
-				`(tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')
-				OR tstzrange(start_time, end_time, '()') @> tstzrange(?, ?, '[]')
-				OR tstzrange(?, ?, '[]') @> tstzrange(start_time, end_time, '[)'))`,
-				params.StartTime, params.StartTime, params.EndTime, params.EndTime, params.StartTime, params.EndTime,
+				svc.query().
+					Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", params.StartTime, params.StartTime).
+					Or("tstzrange(start_time, end_time, '()') @> tstzrange(?, ?, '[]')", params.EndTime, params.EndTime).
+					Or("tstzrange(?, ?, '[]') @> tstzrange(start_time, end_time, '[)')", params.StartTime, params.EndTime),
 			)
 		}
 	}
@@ -544,7 +544,7 @@ func (svc *experimentService) GetDBRecord(projectId models.ID, experimentId mode
 }
 
 func (svc *experimentService) query() *gorm.DB {
-	return svc.db.Debug()
+	return svc.db
 }
 
 func (svc *experimentService) save(exp *models.Experiment) (*models.Experiment, error) {
@@ -559,7 +559,7 @@ func (svc *experimentService) save(exp *models.Experiment) (*models.Experiment, 
 func (svc *experimentService) filterExperimentStatusFriendly(query *gorm.DB, statusesFriendly []ExperimentStatusFriendly) *gorm.DB {
 	orPredicates := svc.query().Where("false")
 	for _, statusFriendly := range statusesFriendly {
-		predicates := svc.query().Debug()
+		predicates := svc.query()
 		if statusFriendly == ExperimentStatusFriendlyDeactivated {
 			predicates = predicates.Where("status = ?", models.ExperimentStatusInactive)
 		} else {
