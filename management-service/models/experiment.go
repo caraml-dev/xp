@@ -72,6 +72,9 @@ type Experiment struct {
 	UpdatedBy string `json:"updated_by"`
 }
 
+// AfterFind sets the retrieved start and end times to be in UTC as opposed to Local.
+// This is needed for integration tests as the new version of Gorm doesn't respect the
+// timezone info in the connection string anymore.
 func (e *Experiment) AfterFind(tx *gorm.DB) error {
 	e.StartTime = e.StartTime.In(database.UtcLoc)
 	e.EndTime = e.EndTime.In(database.UtcLoc)
