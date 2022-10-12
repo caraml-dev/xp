@@ -3,8 +3,10 @@ package models
 import (
 	"time"
 
-	"github.com/caraml-dev/xp/common/api/schema"
 	"gorm.io/gorm"
+
+	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/management-service/database"
 )
 
 type ExperimentHistory struct {
@@ -43,8 +45,8 @@ func (ExperimentHistory) TableName() string {
 }
 
 func (e *ExperimentHistory) AfterFind(tx *gorm.DB) error {
-	e.StartTime = e.StartTime.In(utcLoc)
-	e.EndTime = e.EndTime.In(utcLoc)
+	e.StartTime = e.StartTime.In(database.UtcLoc)
+	e.EndTime = e.EndTime.In(database.UtcLoc)
 	return nil
 }
 

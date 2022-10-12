@@ -8,6 +8,7 @@ import (
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/management-service/database"
 )
 
 type ExperimentStatus string
@@ -72,8 +73,8 @@ type Experiment struct {
 }
 
 func (e *Experiment) AfterFind(tx *gorm.DB) error {
-	e.StartTime = e.StartTime.In(utcLoc)
-	e.EndTime = e.EndTime.In(utcLoc)
+	e.StartTime = e.StartTime.In(database.UtcLoc)
+	e.EndTime = e.EndTime.In(database.UtcLoc)
 	return nil
 }
 

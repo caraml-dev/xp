@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
+	"github.com/caraml-dev/xp/management-service/database"
 	"github.com/caraml-dev/xp/management-service/errors"
 	"github.com/caraml-dev/xp/management-service/models"
 	"github.com/caraml-dev/xp/management-service/pagination"
@@ -120,21 +121,7 @@ func (svc *experimentService) ListExperiments(
 		query = query.Where("status = ?", params.Status)
 	}
 	if len(params.StatusFriendly) > 0 {
-		if params.StatusFriendly[0] == ExperimentStatusFriendlyDeactivated {
-			query = query.Where("status = ?", models.ExperimentStatusInactive)
-		} else {
-			query = query.Where("status = ?", models.ExperimentStatusActive)
-			currentTime := time.Now()
-			switch params.StatusFriendly[0] {
-			case ExperimentStatusFriendlyScheduled:
-				query = query.Where("start_time > ?", currentTime)
-			case ExperimentStatusFriendlyCompleted:
-				query = query.Where("end_time < ?", currentTime)
-			default:
-				// Status Running - current time should be present in the experiment duration.
-				query = query.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", currentTime, currentTime)
-			}
-		}
+		query = svc.filterExperimentStatusFriendly(query, params.StatusFriendly)
 	}
 	if params.StartTime != nil && !params.StartTime.IsZero() && (params.EndTime == nil || params.EndTime.IsZero()) {
 		return nil, nil, errors.Newf(errors.BadInput, "end_time parameter must be supplied as well")
@@ -567,6 +554,30 @@ func (svc *experimentService) save(exp *models.Experiment) (*models.Experiment, 
 		return nil, err
 	}
 	return svc.GetDBRecord(exp.ProjectID, exp.ID)
+}
+
+func (svc *experimentService) filterExperimentStatusFriendly(query *gorm.DB, statusesFriendly []ExperimentStatusFriendly) *gorm.DB {
+	orPredicates := svc.query().Where("false")
+	for _, statusFriendly := range statusesFriendly {
+		predicates := svc.query().Debug()
+		if statusFriendly == ExperimentStatusFriendlyDeactivated {
+			predicates = predicates.Where("status = ?", models.ExperimentStatusInactive)
+		} else {
+			predicates = predicates.Where("status = ?", models.ExperimentStatusActive)
+			currentTime := time.Now().In(database.UtcLoc)
+			switch statusFriendly {
+			case ExperimentStatusFriendlyScheduled:
+				predicates = predicates.Where("start_time > ?", currentTime)
+			case ExperimentStatusFriendlyCompleted:
+				predicates = predicates.Where("end_time < ?", currentTime)
+			default:
+				// Status Running - current time should be present in the experiment duration.
+				predicates = predicates.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", currentTime, currentTime)
+			}
+		}
+		orPredicates = orPredicates.Or(predicates)
+	}
+	return query.Where(orPredicates)
 }
 
 func (svc *experimentService) filterSegmenterValues(query *gorm.DB, segment models.ExperimentSegment, includeWeakMatch bool) *gorm.DB {

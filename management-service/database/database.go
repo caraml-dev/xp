@@ -3,6 +3,7 @@ package database
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	gomigrate "github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -14,8 +15,10 @@ import (
 	"github.com/caraml-dev/xp/management-service/config"
 )
 
+var UtcLoc, _ = time.LoadLocation("UTC")
+
 func ConnectionString(cfg *config.DatabaseConfig) string {
-	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable timezone=UTC",
+	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable TimeZone=UTC",
 		cfg.Host,
 		cfg.Port,
 		cfg.User,
@@ -24,7 +27,10 @@ func ConnectionString(cfg *config.DatabaseConfig) string {
 }
 
 func Open(cfg *config.DatabaseConfig) (*gorm.DB, error) {
-	return gorm.Open(pg.Open(ConnectionString(cfg)), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
+	return gorm.Open(pg.Open(ConnectionString(cfg)),
+		&gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+		})
 }
 
 func Migrate(cfg *config.DatabaseConfig) error {

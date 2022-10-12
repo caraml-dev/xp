@@ -266,13 +266,16 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	// Match friendly status + start time
 	expResponsesList, _, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
-			StatusFriendly: []services.ExperimentStatusFriendly{services.ExperimentStatusFriendlyCompleted},
-			StartTime:      &testStartTime,
-			EndTime:        &testEndTime,
+			StatusFriendly: []services.ExperimentStatusFriendly{
+				services.ExperimentStatusFriendlyCompleted,
+				services.ExperimentStatusFriendlyDeactivated,
+			},
+			StartTime: &testStartTime,
+			EndTime:   &testEndTime,
 		},
 	)
 	s.Suite.Require().NoError(err)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1]}, expResponsesList)
 }
 
 func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {
