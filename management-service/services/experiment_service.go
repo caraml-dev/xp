@@ -66,6 +66,7 @@ type ListExperimentsParams struct {
 	StartTime        *time.Time                 `json:"start_time,omitempty"`
 	Segment          models.ExperimentSegment   `json:"segment,omitempty"`
 	IncludeWeakMatch bool                       `json:"include_weak_match"`
+	Fields           *[]models.ExperimentField `json:"fields,omitempty"`
 }
 
 type ExperimentService interface {
@@ -110,8 +111,24 @@ func (svc *experimentService) ListExperiments(
 	projectId int64,
 	params ListExperimentsParams,
 ) ([]*models.Experiment, *pagination.Paging, error) {
+	var err error
 	var exps []*models.Experiment
-	query := svc.query().
+
+	query := svc.query()
+	if params.Fields != nil && len(*params.Fields) != 0 {
+		err = validateListExperimentFieldNames(*params.Fields)
+		if err != nil {
+			return nil, nil, err
+		}
+		// query.Select only accepts []string
+		var fieldNames []string
+		for _, field := range *params.Fields {
+			fieldNames = append(fieldNames, string(field))
+		}
+		query = query.Select(fieldNames)
+	}
+
+	query = query.
 		Where("project_id = ?", projectId).
 		Order("updated_at desc")
 
@@ -584,6 +601,17 @@ func (svc *experimentService) filterSegmenterValues(query *gorm.DB, segment mode
 		query = filterSegmenterAnyOfPredicate(query, name, values, includeWeakMatch)
 	}
 	return query
+}
+
+func validateListExperimentFieldNames(fields []models.ExperimentField) error {
+	allowedFieldList := []interface{}{models.ExperimentFieldId, models.ExperimentFieldName}
+	allowedFields := set.New(allowedFieldList...)
+	for _, field := range fields {
+		if !allowedFields.Has(field) {
+			return fmt.Errorf("field %s is not supported, fields should only be name and/or id", field)
+		}
+	}
+	return nil
 }
 
 func (svc *experimentService) validateExperimentOrthogonality(

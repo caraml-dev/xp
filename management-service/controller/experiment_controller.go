@@ -87,8 +87,14 @@ func (e ExperimentController) ListExperiments(w http.ResponseWriter, r *http.Req
 		return
 	}
 	var expsResp []schema.Experiment
+	var fields []models.ExperimentField
+	if params.Fields != nil {
+		for _, field := range *params.Fields {
+			fields = append(fields, models.ExperimentField(field))
+		}
+	}
 	for _, exp := range exps {
-		expsResp = append(expsResp, exp.ToApiSchema(segmenterTypes))
+		expsResp = append(expsResp, exp.ToApiSchema(segmenterTypes, fields...))
 	}
 
 	Ok(w, expsResp, ToPagingSchema(paging))

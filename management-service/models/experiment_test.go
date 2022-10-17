@@ -86,6 +86,44 @@ func TestExperimentToApiSchema(t *testing.T) {
 	}, testExperiment.ToApiSchema(segmenterTypes))
 }
 
+func TestExperimentToApiSchemaWithFields(t *testing.T) {
+	segmenterTypes := map[string]schema.SegmenterType{
+		"string_segmenter": schema.SegmenterTypeString,
+	}
+
+	fields := []ExperimentField{
+		ExperimentFieldId,
+		ExperimentFieldName,
+		ExperimentFieldType,
+		ExperimentFieldStatusFriendly,
+		ExperimentFieldTier,
+		ExperimentFieldStartTime,
+		ExperimentFieldEndTime,
+		ExperimentFieldUpdatedAt,
+		ExperimentFieldTreatments,
+	}
+	assert.Equal(t, schema.Experiment{
+		Id:             int64(5),
+		UpdatedAt:      time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
+		EndTime:        time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
+		StartTime:      time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC),
+		Name:           "test-exp",
+		StatusFriendly: schema.ExperimentStatusFriendlyCompleted,
+		Type:           schema.ExperimentTypeSwitchback,
+		Tier:           schema.ExperimentTierDefault,
+		Treatments: []schema.ExperimentTreatment{
+			{
+				Configuration: map[string]interface{}{
+					"config-1": "value",
+					"config-2": 2,
+				},
+				Name:    "control",
+				Traffic: &testExperimentTraffic,
+			},
+		},
+	}, testExperiment.ToApiSchema(segmenterTypes, fields...))
+}
+
 func TestExperimentToApiSchemaStatusFriendly(t *testing.T) {
 	tests := map[string]struct {
 		startTime time.Time

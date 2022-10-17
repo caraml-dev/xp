@@ -14,6 +14,7 @@ import (
 type ExperimentStatus string
 type ExperimentType string
 type ExperimentTier string
+type ExperimentField string
 
 const (
 	ExperimentStatusActive ExperimentStatus = "active"
@@ -33,6 +34,27 @@ const (
 	ExperimentTierDefault ExperimentTier = "default"
 
 	ExperimentTierOverride ExperimentTier = "override"
+)
+
+// Defines values for ExperimentField.
+const (
+	ExperimentFieldEndTime ExperimentField = "end_time"
+
+	ExperimentFieldId ExperimentField = "id"
+
+	ExperimentFieldName ExperimentField = "name"
+
+	ExperimentFieldStartTime ExperimentField = "start_time"
+
+	ExperimentFieldStatusFriendly ExperimentField = "status_friendly"
+
+	ExperimentFieldTier ExperimentField = "tier"
+
+	ExperimentFieldTreatments ExperimentField = "treatments"
+
+	ExperimentFieldType ExperimentField = "type"
+
+	ExperimentFieldUpdatedAt ExperimentField = "updated_at"
 )
 
 type Experiment struct {
@@ -83,7 +105,35 @@ func (e *Experiment) AfterFind(tx *gorm.DB) error {
 
 // ToApiSchema converts the experiment DB model to a format compatible with the
 // OpenAPI specifications.
-func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType) schema.Experiment {
+func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType, fields ...ExperimentField) schema.Experiment {
+	experiment := schema.Experiment{}
+	// Only return requested fields
+	if fields != nil {
+		for _, field := range fields {
+			switch field {
+			case ExperimentFieldName:
+				experiment.Name = e.Name
+			case ExperimentFieldId:
+				experiment.Id = e.ID.ToApiSchema()
+			case ExperimentFieldType:
+				experiment.Type = schema.ExperimentType(e.Type)
+			case ExperimentFieldStatusFriendly:
+				experiment.StatusFriendly = getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status)
+			case ExperimentFieldTier:
+				experiment.Tier = schema.ExperimentTier(e.Tier)
+			case ExperimentFieldStartTime:
+				experiment.StartTime = e.StartTime
+			case ExperimentFieldEndTime:
+				experiment.EndTime = e.EndTime
+			case ExperimentFieldUpdatedAt:
+				experiment.UpdatedAt = e.UpdatedAt
+			case ExperimentFieldTreatments:
+				experiment.Treatments = e.Treatments.ToApiSchema()
+			}
+		}
+		return experiment
+	}
+
 	return schema.Experiment{
 		Description:    e.Description,
 		EndTime:        e.EndTime,
