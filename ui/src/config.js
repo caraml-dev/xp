@@ -37,6 +37,7 @@ export const appConfig = {
   pagination: {
     defaultPageSize: 10,
   },
+  experimentsTableColumns: ["id", "type", "name", "status", "tier", "start_time", "end_time", "updated_at"],
   tables: {
     defaultTextSize: "s",
     defaultIconSize: "s",

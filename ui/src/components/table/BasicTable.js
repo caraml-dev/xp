@@ -43,7 +43,7 @@ export const BasicTable = ({
       pagination={{
         pageIndex: page.index,
         pageSize: page.size,
-        showPerPageOptions: false,
+        showPerPageOptions: true,
         totalItemCount,
       }}
       onChange={({ page = {} }) => onPaginationChange(page)}
