@@ -2,6 +2,7 @@ import React, { Fragment, useEffect } from "react";
 
 import { EuiPageTemplate, EuiSpacer } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate } from "react-router-dom";
 
 import { EditExperimentForm } from "experiments/components/form/EditExperimentForm";
 import { SegmentContextProvider } from "providers/segment/context";
@@ -11,7 +12,8 @@ import { TreatmentContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
 import { PageTitle } from "components/page/PageTitle";
 
-const EditExperimentView = ({ projectId, experimentSpec, ...props }) => {
+const EditExperimentView = ({ projectId, experimentSpec }) => {
+  const navigate = useNavigate();
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: ".." },
@@ -37,7 +39,7 @@ const EditExperimentView = ({ projectId, experimentSpec, ...props }) => {
                     projectId={projectId}
                     onCancel={() => window.history.back()}
                     onSuccess={() =>
-                      props.navigate("../", { state: { refresh: true } })
+                      navigate("../", { state: { refresh: true } })
                     }
                   />
                 </SegmentContextProvider>

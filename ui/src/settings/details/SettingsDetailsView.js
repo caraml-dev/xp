@@ -8,7 +8,7 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 import { PageNavigation, useToggle } from "@gojek/mlp-ui";
-import { Redirect, Router } from "@reach/router";
+import { Navigate, Routes, Route, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
@@ -24,7 +24,10 @@ import ValidationView from "settings/validation/ValidationView";
 
 import { useConfig } from "config";
 
-const SettingsDetailsView = ({ projectId, ...props }) => {
+const SettingsDetailsView = () => {
+  const { projectId, "*": section } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -52,10 +55,10 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
   ];
 
   useEffect(() => {
-    if ((props.location.state || {}).refresh) {
+    if ((location.state || {}).refresh) {
       fetchXPSettings();
     }
-  }, [fetchXPSettings, props.location.state]);
+  }, [fetchXPSettings, location.state]);
 
   return (
     <EuiPageTemplate
@@ -76,49 +79,52 @@ const SettingsDetailsView = ({ projectId, ...props }) => {
         </EuiCallOut>
       ) : (
         <>
-          {!props["*"].includes("edit") &&
-          !props["*"].includes("segmenters/") && (
-            <>
-              <EuiPageTemplate.Header
-                bottomBorder={false}
-                pageTitle={<PageTitle icon="managementApp" title="Settings" />}
-              >
-                <SettingsActions
-                  onEdit={() => props.navigate("./edit")}
-                  onValidationEdit={() => props.navigate("./validation/edit")}
-                  onCreateSegmenter={() =>
-                    props.navigate("./segmenters/create")
-                  }
-                  selectedTab={props["*"]}>
-                  {(getActions) => (
-                    <PageNavigation
-                      tabs={tabs}
-                      actions={getActions()}
-                      selectedTab={props["*"]}
-                      {...props}
-                    />
-                  )}
-                </SettingsActions>
-              </EuiPageTemplate.Header>
-            </>
-          )}
+          {!section.includes("edit") &&
+            !section.includes("segmenters/") && (
+              <>
+                <EuiPageTemplate.Header
+                  bottomBorder={false}
+                  pageTitle={<PageTitle icon="managementApp" title="Settings" />}
+                >
+                  <SettingsActions
+                    onEdit={() => navigate("./edit")}
+                    onValidationEdit={() => navigate("./validation/edit")}
+                    onCreateSegmenter={() =>
+                      navigate("./segmenters/create")
+                    }
+                    selectedTab={section}>
+                    {(getActions) => (
+                      <PageNavigation
+                        tabs={tabs}
+                        actions={getActions()}
+                        selectedTab={section}
+                      />
+                    )}
+                  </SettingsActions>
+                </EuiPageTemplate.Header>
+              </>
+            )}
 
-          <Router primary={false}>
-            <Redirect from="/" to="details" noThrow />
-            <SettingsConfigView path="details" settings={data?.data} />
-            <EditSettingsView path="edit" settings={data.data} />
-            <ValidationView path="validation" settings={data.data} />
-            <CreateSettingsView path="create" />
-            <ListSegmentersView path="segmenters" />
-            <CreateSegmenterView path="segmenters/create" />
-            <SegmenterDetailsView path="segmenters/:segmenterName/*" />
-            <EditValidationView
-              path="validation/edit"
-              settings={data.data}
-              isFlyoutVisible={isFlyoutVisible}
-              toggleFlyout={toggleFlyout}
-            />
-          </Router>
+          <Routes>
+            {/* DETAILS */}
+            <Route index element={<Navigate to="details" replace={true} />} />
+            <Route path="details" element={<SettingsConfigView settings={data?.data} />} />
+            {/* CREATE */}
+            <Route path="create" element={<CreateSettingsView />} />
+            {/* EDIT */}
+            <Route path="edit" element={<EditSettingsView settings={data.data} />} />
+            {/* VALIDATION */}
+            <Route path="validation">
+              <Route index element={<ValidationView settings={data.data} />} />
+              <Route path="edit" element={<EditValidationView settings={data.data} isFlyoutVisible={isFlyoutVisible} toggleFlyout={toggleFlyout} />} />
+            </Route>
+            {/* SEGMENTER */}
+            <Route path="segmenters">
+              <Route index element={<ListSegmentersView />} />
+              <Route path="create" element={<CreateSegmenterView />} />
+              <Route path=":segmenterName/*" element={<SegmenterDetailsView />} />
+            </Route>
+          </Routes>
         </>
       )}
       <EuiSpacer size="l" />

@@ -6,6 +6,7 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { Settings } from "services/settings/Settings";
@@ -13,12 +14,13 @@ import { EditValidationForm } from "settings/components/form/EditValidationForm"
 import PlaygroundFlyout from "settings/components/playground_flyout/PlaygroundFlyout";
 
 const EditValidationView = ({
-  projectId,
   settings,
   isFlyoutVisible,
   toggleFlyout,
-  ...props
 }) => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: "../.." },
@@ -47,7 +49,7 @@ const EditValidationView = ({
             projectId={projectId}
             onCancel={() => window.history.back()}
             onSuccess={() => {
-              props.navigate("../", { state: { refresh: true } });
+              navigate("../", { state: { refresh: true } });
             }}
           />
 

@@ -5,12 +5,16 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { Segmenter } from "services/segmenter/Segmenter";
 import { CreateSegmenterForm } from "settings/segmenters/components/form/CreateSegmenterForm";
 
-const CreateSegmenterView = ({ projectId, ...props }) => {
+const CreateSegmenterView = () => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Segmenters", href: "../segmenters" },
@@ -22,7 +26,7 @@ const CreateSegmenterView = ({ projectId, ...props }) => {
     <Fragment>
       <EuiPageTemplate.Header
         bottomBorder={false}
-        pageTitle={ <PageTitle title="Create Segmenter" />}
+        pageTitle={<PageTitle title="Create Segmenter" />}
       />
       <EuiSpacer size="l" />
       <EuiPageTemplate.Section color={"transparent"}>
@@ -30,7 +34,7 @@ const CreateSegmenterView = ({ projectId, ...props }) => {
           <CreateSegmenterForm
             projectId={projectId}
             onCancel={() => window.history.back()}
-            onSuccess={() => props.navigate(`../`)}
+            onSuccess={() => navigate(`../`)}
           />
         </FormContextProvider>
       </EuiPageTemplate.Section>

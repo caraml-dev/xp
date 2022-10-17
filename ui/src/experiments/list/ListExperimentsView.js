@@ -11,6 +11,7 @@ import {
   EuiPageTemplate
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate } from "react-router-dom";
 
 import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
@@ -23,7 +24,8 @@ import ExperimentSearchContext, {
 } from "./search/context";
 import SearchExperimentsPanel from "./search/SearchExperimentsPanel";
 
-const ListExperimentsComponent = ({ projectId, props }) => {
+const ListExperimentsComponent = ({ projectId }) => {
+  const navigate = useNavigate();
   const {
     appConfig: {
       pagination: { defaultPageSize },
@@ -67,7 +69,7 @@ const ListExperimentsComponent = ({ projectId, props }) => {
     replaceBreadcrumbs([{ text: "Experiments" }]);
   }, []);
 
-  const onRowClick = (item) => props.navigate(`./${item.id}/details`);
+  const onRowClick = (item) => navigate(`./${item.id}/details`);
 
   return (
     <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
@@ -91,10 +93,10 @@ const ListExperimentsComponent = ({ projectId, props }) => {
           />
         }
         rightSideItems={[
-          <EuiButton size="s" onClick={() => props.navigate("./create")} fill>
+          <EuiButton size="s" onClick={() => navigate("./create")} fill>
             Create Experiment
           </EuiButton>,
-          <NavigationMenu curPage={"experiments"} props={props} />,
+          <NavigationMenu curPage={"experiments"} />,
         ]}
         alignItems={"center"}
       />
@@ -131,7 +133,6 @@ const ListExperimentsComponent = ({ projectId, props }) => {
             onPaginationChange={setPage}
             onRowClick={onRowClick}
             totalItemCount={results.totalItemCount}
-            props={props}
           />
         </EuiPanel>
       </EuiPageTemplate.Section>
@@ -140,9 +141,9 @@ const ListExperimentsComponent = ({ projectId, props }) => {
   );
 };
 
-const ListExperimentsView = ({ projectId, ...props }) => (
+const ListExperimentsView = ({ projectId }) => (
   <ExperimentSearchContextProvider>
-    <ListExperimentsComponent projectId={projectId} props={props} />
+    <ListExperimentsComponent projectId={projectId} />
   </ExperimentSearchContextProvider>
 );
 

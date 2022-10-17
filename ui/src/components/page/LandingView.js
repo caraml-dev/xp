@@ -10,8 +10,11 @@ import {
 } from "@elastic/eui";
 
 import ProjectContext from "providers/project/context";
+import { useNavigate, useParams } from "react-router-dom";
 
-const LandingView = ({ Component, name, projectId, ...props }) => {
+const LandingView = ({ Component, name }) => {
+  const { projectId } = useParams();
+  const { navigate } = useNavigate();
   const { isProjectOnboarded, isLoaded } = useContext(ProjectContext);
 
   return (
@@ -32,18 +35,18 @@ const LandingView = ({ Component, name, projectId, ...props }) => {
               <Fragment>
                 <EuiSpacer />
                 <EuiText>
-                This project has not been set up. Get started{" "}
-                <EuiLink onClick={() => props.navigate("./settings/create")}>
-                here
-                </EuiLink>
-                .
+                  This project has not been set up. Get started{" "}
+                  <EuiLink onClick={() => navigate("./settings/create")}>
+                    here
+                  </EuiLink>
+                  .
                 </EuiText>
               </Fragment>
             }
           />
         </EuiPageTemplate>
       ) : (
-        <Component projectId={projectId} {...props} />
+        <Component projectId={projectId} />
       )}
     </>
   );

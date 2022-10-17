@@ -5,6 +5,7 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { TreatmentContextProvider } from "providers/treatment/context";
@@ -12,7 +13,9 @@ import { Treatment } from "services/treatment/Treatment";
 import { CreateTreatmentForm } from "treatments/components/form/CreateTreatmentForm";
 import { useConfig } from "config";
 
-const CreateTreatmentView = ({ projectId, ...props }) => {
+const CreateTreatmentView = () => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -41,7 +44,7 @@ const CreateTreatmentView = ({ projectId, ...props }) => {
             <CreateTreatmentForm
               projectId={projectId}
               onCancel={() => window.history.back()}
-              onSuccess={(treatmentId) => props.navigate(`../${treatmentId}`)}
+              onSuccess={(treatmentId) => navigate(`../${treatmentId}`)}
             />
           </TreatmentContextProvider>
         </FormContextProvider>

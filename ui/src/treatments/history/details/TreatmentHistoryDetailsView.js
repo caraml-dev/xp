@@ -10,6 +10,7 @@ import {
   EuiPageTemplate,
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useParams } from "react-router-dom";
 
 import { ActivityConfigSection } from "components/config_section/ActivityConfigSection";
 import { ConfigSection } from "components/config_section/ConfigSection";
@@ -18,7 +19,8 @@ import { useXpApi } from "hooks/useXpApi";
 import { GeneralInfoConfigSection } from "treatments/components/configuration/GeneralInfoConfigSection";
 import { useConfig } from "config";
 
-const TreatmentHistoryDetailsView = ({ projectId, treatmentId, version }) => {
+const TreatmentHistoryDetailsView = () => {
+  const { projectId, treatmentId, version } = useParams();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -61,44 +63,44 @@ const TreatmentHistoryDetailsView = ({ projectId, treatmentId, version }) => {
   return (
     <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
       <EuiSpacer size="l" />
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : (
-          <Fragment>
-            <EuiPageTemplate.Header
-              bottomBorder={false}
-              pageTitle={
-                <PageTitle
-                  title={`${history.name} - Version ${history.version}`}
-                />
-              }
-            />
-            <EuiSpacer size="l" />
-            <EuiPageTemplate.Section color={"transparent"}>
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <ConfigSection
-                    title={activity.title}
-                    iconType={activity.iconType}>
-                    {activity.children}
-                  </ConfigSection>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <EuiSpacer size="s" />
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <ConfigSection
-                    title={generalInfo.title}
-                    iconType={generalInfo.iconType}>
-                    {generalInfo.children}
-                  </ConfigSection>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiPageTemplate.Section>
-          </Fragment>
-        )}
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : (
+        <Fragment>
+          <EuiPageTemplate.Header
+            bottomBorder={false}
+            pageTitle={
+              <PageTitle
+                title={`${history.name} - Version ${history.version}`}
+              />
+            }
+          />
+          <EuiSpacer size="l" />
+          <EuiPageTemplate.Section color={"transparent"}>
+            <EuiFlexGroup>
+              <EuiFlexItem>
+                <ConfigSection
+                  title={activity.title}
+                  iconType={activity.iconType}>
+                  {activity.children}
+                </ConfigSection>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiSpacer size="s" />
+            <EuiFlexGroup>
+              <EuiFlexItem>
+                <ConfigSection
+                  title={generalInfo.title}
+                  iconType={generalInfo.iconType}>
+                  {generalInfo.children}
+                </ConfigSection>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiPageTemplate.Section>
+        </Fragment>
+      )}
     </EuiPageTemplate>
   );
 };

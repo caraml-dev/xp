@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
 import { EuiButtonIcon, EuiContextMenu, EuiPopover } from "@elastic/eui";
+import { useNavigate } from "react-router-dom";
 
-export const NavigationMenu = ({ curPage, props }) => {
+export const NavigationMenu = ({ curPage }) => {
+  const navigate = useNavigate();
   const [isPopoverOpen, setPopover] = useState(false);
 
   const onButtonClick = () => {
@@ -17,22 +19,22 @@ export const NavigationMenu = ({ curPage, props }) => {
     {
       name: "Settings",
       icon: "gear",
-      onClick: () => props.navigate("../experiments/settings"),
+      onClick: () => navigate("../experiments/settings"),
     },
     {
       name: "Experiments",
       icon: "apmTrace",
-      onClick: () => props.navigate("../experiments"),
+      onClick: () => navigate("../experiments"),
     },
     {
       name: "Treatments",
       icon: "beaker",
-      onClick: () => props.navigate("../experiments/treatments"),
+      onClick: () => navigate("../experiments/treatments"),
     },
     {
       name: "Segments",
       icon: "package",
-      onClick: () => props.navigate("../experiments/segments"),
+      onClick: () => navigate("../experiments/segments"),
     },
   ];
   const contextRows = allRows.filter((e) => e.name.toLowerCase() !== curPage);

@@ -11,6 +11,7 @@ import {
   EuiPageTemplate
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate } from "react-router-dom";
 
 import { NavigationMenu } from "components/page/NavigationMenu";
 import { PageTitle } from "components/page/PageTitle";
@@ -22,7 +23,8 @@ import NameSearchContext, {
 
 import ListTreatmentsTable from "./ListTreatmentsTable";
 
-const ListTreatmentsComponent = ({ projectId, props }) => {
+const ListTreatmentsComponent = ({ projectId }) => {
+  const navigate = useNavigate();
   const {
     appConfig: {
       pagination: { defaultPageSize },
@@ -67,7 +69,7 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
     ]);
   }, []);
 
-  const onRowClick = (item) => props.navigate(`./${item.id}/details`);
+  const onRowClick = (item) => navigate(`./${item.id}/details`);
 
   return (
     <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
@@ -83,10 +85,10 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
           />
         }
         rightSideItems={[
-          <EuiButton size="s" onClick={() => props.navigate("./create")} fill>
+          <EuiButton size="s" onClick={() => navigate("./create")} fill>
             Create Treatment
           </EuiButton>,
-          <NavigationMenu curPage={"treatments"} props={props} />,
+          <NavigationMenu curPage={"treatments"} />,
         ]}
         alignItems={"center"}
       />
@@ -124,9 +126,9 @@ const ListTreatmentsComponent = ({ projectId, props }) => {
   );
 };
 
-const ListTreatmentsView = ({ projectId, ...props }) => (
+const ListTreatmentsView = ({ projectId }) => (
   <NameSearchContextProvider>
-    <ListTreatmentsComponent projectId={projectId} props={props} />
+    <ListTreatmentsComponent projectId={projectId} />
   </NameSearchContextProvider>
 );
 

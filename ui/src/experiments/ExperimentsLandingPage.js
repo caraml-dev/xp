@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Redirect, Router, useLocation } from "@reach/router";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import LandingView from "components/page/LandingView";
 import { ConfigProvider } from "config";
@@ -21,62 +21,57 @@ import TreatmentDetailsView from "treatments/details/TreatmentDetailsView";
 import TreatmentHistoryDetailsView from "treatments/history/details/TreatmentHistoryDetailsView";
 import ListTreatmentsView from "treatments/list/ListTreatmentsView";
 
-const ExperimentsLandingPage = ({ projectId }) => {
+const ExperimentsLandingPage = () => {
+  const location = useLocation();
   /* Application Routes should be defined here, as ExperimentsLandingPage component is
      being exposed for use via MFE architecture. */
   return (
     <ConfigProvider>
       <ProjectContextProvider>
-        <Router>
-          <CreateSettingsView path="/settings/create" />
-          <SettingsDetailsView path="/settings/*" />
+        <Routes>
+          {/* SETTINGS */}
+          <Route path="settings">
+            <Route path="create" element={<CreateSettingsView />} />
+            <Route path="*" element={<SettingsDetailsView />} />
+          </Route>
 
-          <TreatmentHistoryDetailsView path="/treatments/:treatmentId/history/:version" />
-          <LandingView
-            Component={ListTreatmentsView}
-            name="Treatments"
-            projectId={projectId}
-            path="/treatments"
-          />
-          <CreateTreatmentView path="/treatments/create" />
-          <TreatmentDetailsView path="/treatments/:treatmentId/*" />
+          {/* TREATMENTS */}
+          <Route path="treatments">
+            <Route index element={<LandingView Component={ListTreatmentsView} name="Treatments" />} />
+            <Route path="create" element={<CreateTreatmentView />} />
+            <Route path=":treatmentId">
+              <Route path="history/:version" element={<TreatmentHistoryDetailsView />} />
+              <Route path="*" element={<TreatmentDetailsView />} />
+            </Route>
+          </Route>
 
-          <SegmentHistoryDetailsView path="/segments/:segmentId/history/:version" />
-          <LandingView
-            Component={ListSegmentsView}
-            name="Segments"
-            projectId={projectId}
-            path="/segments"
-          />
-          <CreateSegmentView path="/segments/create" />
-          <SegmentDetailsView path="/segments/:segmentId/*" />
+          {/* SEGMENTS */}
+          <Route path="segments">
+            <Route index element={<LandingView Component={ListSegmentsView} name="Segments" />} />
+            <Route path="create" element={<CreateSegmentView />} />
+            <Route path=":segmentId">
+              <Route path="history/:version" element={<SegmentHistoryDetailsView />} />
+              <Route path="*" element={<SegmentDetailsView />} />
+            </Route>
+          </Route>
 
-          <CreateExperimentView path="/create" />
-          <ExperimentDetailsView path="/:experimentId/*" />
-
-          <ExperimentHistoryDetailsView path="/:experimentId/history/:version" />
-
-          <LandingView
-            Component={ListExperimentsView}
-            name="Experiments"
-            projectId={projectId}
-            path="/"
-          />
+          {/* EXPERIMENTS */}
+          <Route index element={<LandingView Component={ListExperimentsView} name="Experiments" />} />
+          <Route path="create" element={<CreateExperimentView />} />
+          <Route path=":experimentId">
+            <Route path="history/:version" element={<ExperimentHistoryDetailsView />} />
+            <Route path="*" element={<ExperimentDetailsView />} />
+          </Route>
 
           {/* /experiments is the list view as well as a prefix to the other views which are registered without it;
         This redirect ensures that navigation from other views with /experiments prefix will not cause concatenation 
         which results in incorrect /experiments/experiments prefix.
          */}
-          <Redirect
-            from="/experiments/*"
-            to={useLocation().pathname.replace(
-              "/experiments/experiments",
-              "/experiments"
-            )}
-            noThrow
-          />
-          <Redirect from="any" to="/error/404" default noThrow />
-        </Router>
+          <Route
+            path="experiments"
+            element={<Navigate to={location.pathname.replace("/experiments/experiments", "/experiments")}
+              replace={true} />} />
+        </Routes>
       </ProjectContextProvider>
     </ConfigProvider>
   );

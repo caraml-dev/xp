@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 
 import { EuiPanel, EuiSpacer, EuiPageTemplate } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate } from "react-router-dom";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { useConfig } from "config";
@@ -9,7 +10,8 @@ import { useXpApi } from "hooks/useXpApi";
 
 import ListExperimentHistoryTable from "./ListExperimentHistoryTable";
 
-const ListExperimentHistoryView = ({ experiment, ...props }) => {
+const ListExperimentHistoryView = ({ experiment }) => {
+  const navigate = useNavigate();
   const { appConfig } = useConfig();
   const [page, setPage] = useState({
     index: 0,
@@ -27,7 +29,7 @@ const ListExperimentHistoryView = ({ experiment, ...props }) => {
     { data: [], paging: { total: 0 } }
   );
 
-  const onRowClick = (item) => props.navigate(`./${item.version}`);
+  const onRowClick = (item) => navigate(`./${item.version}`);
 
   useEffect(() => {
     replaceBreadcrumbs([

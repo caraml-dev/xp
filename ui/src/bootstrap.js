@@ -2,6 +2,7 @@ import "assets/style.scss";
 
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
 
 import * as Sentry from "@sentry/browser";
 
@@ -22,11 +23,15 @@ const SentryApp = ({ children }) => {
 };
 
 const XPUI = () => (
-  <ConfigProvider>
-    <SentryApp>
-      <App />
-    </SentryApp>
-  </ConfigProvider>
+  <React.StrictMode>
+    <ConfigProvider>
+      <SentryApp>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </SentryApp>
+    </ConfigProvider>
+  </React.StrictMode>
 );
 
 ReactDOM.render(XPUI(), document.getElementById("root"));

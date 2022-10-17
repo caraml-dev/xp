@@ -7,7 +7,7 @@ import {
   EuiPageTemplate,
 } from "@elastic/eui";
 import { PageNavigation, replaceBreadcrumbs } from "@gojek/mlp-ui";
-import { Redirect, Router } from "@reach/router";
+import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { StatusBadge } from "components/status_badge/StatusBadge";
@@ -17,7 +17,10 @@ import { SegmentersConfigView } from "settings/segmenters/details/config/Segment
 import { SegmenterActions } from "settings/segmenters/details/SegmenterActions";
 import EditSegmenterView from "settings/segmenters/edit/EditSegmenterView";
 
-const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
+const SegmenterDetailsView = () => {
+  const { projectId, segmenterName, "*": section } = useParams();
+  const navigate = useNavigate();
+
   const tabs = [
     {
       id: "details",
@@ -58,7 +61,7 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
         </EuiCallOut>
       ) : (
         <Fragment>
-          {!(props["*"] === "edit") && (
+          {!(section === "edit") && (
             <Fragment>
               <EuiPageTemplate.Header
                 bottomBorder={false}
@@ -72,37 +75,37 @@ const SegmenterDetailsView = ({ projectId, segmenterName, ...props }) => {
                   />
                 }
               >
-              {props["*"] === "details" && (
-                <SegmenterActions
-                  onEdit={() => props.navigate("./edit")}
-                  onDeleteSuccess={() => props.navigate("../")}
-                  segmenter={segmenter}>
-                  {(getActions) => (
-                    <PageNavigation
-                      tabs={tabs}
-                      actions={
-                        segmenter.scope === "project"
-                          ? getActions({
-                            name: segmenterName,
-                            projectId: projectId,
-                          })
-                          : null
-                      }
-                      selectedTab={props["*"]}
-                      {...props}
-                    />
-                  )}
-                </SegmenterActions>
-              )}
+                {section === "details" && (
+                  <SegmenterActions
+                    onEdit={() => navigate("./edit")}
+                    onDeleteSuccess={() => navigate("../")}
+                    segmenter={segmenter}>
+                    {(getActions) => (
+                      <PageNavigation
+                        tabs={tabs}
+                        actions={
+                          segmenter.scope === "project"
+                            ? getActions({
+                              name: segmenterName,
+                              projectId: projectId,
+                            })
+                            : null
+                        }
+                        selectedTab={section}
+                        {...props}
+                      />
+                    )}
+                  </SegmenterActions>
+                )}
               </EuiPageTemplate.Header>
             </Fragment>
           )}
 
-          <Router primary={false}>
-            <Redirect from="/" to="details" noThrow />
-            <SegmentersConfigView path="details" segmenter={segmenter} />
-            <EditSegmenterView path="edit" segmenter={segmenter} />
-          </Router>
+          <Routes>
+            <Route index element={<Navigate to="details" replace={true} />} />
+            <Route path="details" element={<SegmentersConfigView segmenter={segmenter} />} />
+            <Route path="edit" element={<EditSegmenterView segmenter={segmenter} />} />
+          </Routes>
         </Fragment>
       )}
     </Fragment>
