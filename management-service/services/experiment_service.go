@@ -115,17 +115,11 @@ func (svc *experimentService) ListExperiments(
 	var exps []*models.Experiment
 
 	query := svc.query()
-	if params.Fields != nil && len(*params.Fields) != 0 {
-		err = validateListExperimentFieldNames(*params.Fields)
-		if err != nil {
-			return nil, nil, err
-		}
-		// query.Select only accepts []string
-		var fieldNames []string
-		for _, field := range *params.Fields {
-			fieldNames = append(fieldNames, string(field))
-		}
-		query = query.Select(fieldNames)
+
+	// Handle Field values
+	query, err = svc.filterFieldValues(query, params)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	query = query.
@@ -136,11 +130,17 @@ func (svc *experimentService) ListExperiments(
 	if params.Status != nil {
 		query = query.Where("status = ?", params.Status)
 	}
-	if len(params.StatusFriendly) > 0 {
-		query = svc.filterExperimentStatusFriendly(query, params.StatusFriendly)
+
+	// Handle StatusFriday values
+	query = svc.filterStatusFriendlyValues(query, params)
+	if err != nil {
+		return nil, nil, err
 	}
-	if params.StartTime != nil && !params.StartTime.IsZero() && (params.EndTime == nil || params.EndTime.IsZero()) {
-		return nil, nil, errors.Newf(errors.BadInput, "end_time parameter must be supplied as well")
+
+	// Handle Start and EndTime values
+	query, err = svc.filterStartEndTimeValues(query, params)
+	if err != nil {
+		return nil, nil, err
 	}
 	if params.EndTime != nil && !params.EndTime.IsZero() && (params.StartTime == nil || params.StartTime.IsZero()) {
 		return nil, nil, errors.Newf(errors.BadInput, "start_time parameter must be supplied as well")
