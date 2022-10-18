@@ -36,8 +36,12 @@ export const appConfig = {
     : [{ href: "https://github.com/caraml-dev/xp", label: "XP User Guide" }],
   pagination: {
     defaultPageSize: 10,
+    experimentContextPageSize: 50,
   },
-  experimentsTableColumns: ["id", "type", "name", "status", "tier", "start_time", "end_time", "updated_at"],
+  listExperimentFields: {
+    experimentTableFields: ["id", "type", "name", "status_friendly", "tier", "start_time", "end_time", "updated_at"],
+    experimentContextFields: ["id", "name","status_friendly", "treatments"],
+  },
   tables: {
     defaultTextSize: "s",
     defaultIconSize: "s",

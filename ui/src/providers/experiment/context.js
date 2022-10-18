@@ -30,8 +30,9 @@ export const ExperimentContextProvider = ({ projectId, children }) => {
         start_time: start_time,
         end_time: end_time,
         page: pageIndex + 1,
-        page_size: appConfig.pagination.defaultPageSize,
-        status: "active"
+        page_size: appConfig.pagination.experimentContextPageSize,
+        fields: appConfig.listExperimentFields.experimentContextFields,
+        status_friendly: ["running", "scheduled"]
       },
     },
     { data: [], paging: { total: 0 } }

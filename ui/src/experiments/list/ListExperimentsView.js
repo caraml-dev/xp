@@ -30,7 +30,7 @@ const ListExperimentsComponent = ({ projectId }) => {
     appConfig: {
       pagination: { defaultPageSize },
       pageTemplate: { restrictWidth, paddingSize },
-      experimentsTableColumns: experimentsTableFields,
+      listExperimentFields: { experimentTableFields },
     },
   } = useConfig();
 
@@ -51,7 +51,7 @@ const ListExperimentsComponent = ({ projectId }) => {
       query: {
         page: page.index + 1,
         page_size: page.size,
-        fields: experimentsTableFields,
+        fields: experimentTableFields,
         ...getProcessedFilters(),
       },
     },

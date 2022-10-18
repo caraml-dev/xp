@@ -9,7 +9,6 @@ import {
   EuiTextColor,
 } from "@elastic/eui";
 
-import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 import { LinkedExperimentsContextMenu } from "./LinkedExperimentsContextMenu";
 import ExperimentContext from "providers/experiment/context";
 
@@ -36,7 +35,7 @@ export const LinkedRoutesTable = ({
         for (let treatment of experiment.treatments) {
           let configRouteName = getRouteName(treatment.configuration, treatmentConfigRouteNamePath);
           if (typeof configRouteName === 'string' && configRouteName in newRouteToExperimentMappings) {
-            newRouteToExperimentMappings[configRouteName][getExperimentStatus(experiment).label.toLowerCase()][experiment.id] = experiment;
+            newRouteToExperimentMappings[configRouteName][experiment.status_friendly][experiment.id] = experiment;
           }
         }
       }
