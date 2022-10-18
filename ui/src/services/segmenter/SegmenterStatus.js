@@ -2,7 +2,7 @@ export const getSegmenterStatus = (segmenter) => {
   const statusMapping = {
     inactive: {
       label: "Inactive",
-      color: "subdued",
+      color: "default",
       iconType: "cross",
     },
     active: {

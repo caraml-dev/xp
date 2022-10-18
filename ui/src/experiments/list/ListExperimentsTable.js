@@ -1,7 +1,6 @@
 import React from "react";
 
 import { EuiHealth, EuiLink, EuiText } from "@elastic/eui";
-import { useLocation } from "react-router-dom";
 
 import { useConfig } from "config";
 import { BasicTable } from "components/table/BasicTable";
@@ -17,7 +16,6 @@ const ListExperimentsTable = ({
   onPaginationChange,
   onRowClick,
 }) => {
-  const location = useLocation();
   const { appConfig } = useConfig();
   const tableColumns = [
     {
@@ -94,7 +92,7 @@ const ListExperimentsTable = ({
             onClick={(e) => {
               e.stopPropagation();
             }}
-            href={`${location.uri}/${item.id}`}
+            href={item.id}
             target="_blank"
           />
         );

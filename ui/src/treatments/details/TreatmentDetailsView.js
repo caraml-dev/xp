@@ -8,7 +8,7 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 import { PageNavigation } from "@gojek/mlp-ui";
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";

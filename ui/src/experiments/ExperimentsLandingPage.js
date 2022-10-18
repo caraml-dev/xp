@@ -31,8 +31,8 @@ const ExperimentsLandingPage = () => {
         <Routes>
           {/* SETTINGS */}
           <Route path="settings">
+            <Route index path="*" element={<SettingsDetailsView />} />
             <Route path="create" element={<CreateSettingsView />} />
-            <Route path="*" element={<SettingsDetailsView />} />
           </Route>
 
           {/* TREATMENTS */}
@@ -41,7 +41,7 @@ const ExperimentsLandingPage = () => {
             <Route path="create" element={<CreateTreatmentView />} />
             <Route path=":treatmentId">
               <Route path="history/:version" element={<TreatmentHistoryDetailsView />} />
-              <Route path="*" element={<TreatmentDetailsView />} />
+              <Route index path="*" element={<TreatmentDetailsView />} />
             </Route>
           </Route>
 
@@ -51,7 +51,7 @@ const ExperimentsLandingPage = () => {
             <Route path="create" element={<CreateSegmentView />} />
             <Route path=":segmentId">
               <Route path="history/:version" element={<SegmentHistoryDetailsView />} />
-              <Route path="*" element={<SegmentDetailsView />} />
+              <Route index path="*" element={<SegmentDetailsView />} />
             </Route>
           </Route>
 
@@ -60,7 +60,7 @@ const ExperimentsLandingPage = () => {
           <Route path="create" element={<CreateExperimentView />} />
           <Route path=":experimentId">
             <Route path="history/:version" element={<ExperimentHistoryDetailsView />} />
-            <Route path="*" element={<ExperimentDetailsView />} />
+            <Route index path="*" element={<ExperimentDetailsView />} />
           </Route>
 
           {/* /experiments is the list view as well as a prefix to the other views which are registered without it;

@@ -10,7 +10,7 @@ import {
   EuiPageTemplate,
 } from "@elastic/eui";
 import { PageNavigation } from "@gojek/mlp-ui";
-import { Navigate, Router, Route, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Navigate, Routes, Route, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { VersionBadge } from "components/version_badge/VersionBadge";
 import { StatusBadge } from "components/status_badge/StatusBadge";
@@ -36,7 +36,7 @@ const ExperimentBadges = ({ version, status }) => (
 );
 
 const ExperimentDetailsView = () => {
-  const { projectId, experimentId } = useParams();
+  const { projectId, experimentId, "*": section } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const {
@@ -94,7 +94,7 @@ const ExperimentDetailsView = () => {
         </EuiCallOut>
       ) : (
         <Fragment>
-          {!(props["*"] === "edit") && (
+          {!(section === "edit") && (
             <Fragment>
               <EuiPageTemplate.Header
                 bottomBorder={false}
@@ -115,8 +115,7 @@ const ExperimentDetailsView = () => {
                     <PageNavigation
                       tabs={tabs}
                       actions={getActions(data.data)}
-                      selectedTab={props["*"]}
-                      {...props}
+                      selectedTab={section}
                     />
                   )}
                 </ExperimentActions>

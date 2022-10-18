@@ -92,7 +92,6 @@ const SegmenterDetailsView = () => {
                             : null
                         }
                         selectedTab={section}
-                        {...props}
                       />
                     )}
                   </SegmenterActions>
