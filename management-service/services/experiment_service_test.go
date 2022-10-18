@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/management-service/errors"
@@ -264,16 +264,18 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[2]}, expResponsesList)
 
 	// Match friendly status + start time
-	statusFriendlyCompleted := services.ExperimentStatusFriendlyCompleted
 	expResponsesList, _, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
-			StatusFriendly: &statusFriendlyCompleted,
-			StartTime:      &testStartTime,
-			EndTime:        &testEndTime,
+			StatusFriendly: []services.ExperimentStatusFriendly{
+				services.ExperimentStatusFriendlyCompleted,
+				services.ExperimentStatusFriendlyDeactivated,
+			},
+			StartTime: &testStartTime,
+			EndTime:   &testEndTime,
 		},
 	)
 	s.Suite.Require().NoError(err)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1]}, expResponsesList)
 }
 
 func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {
@@ -748,11 +750,8 @@ func setupMockSegmenterService() services.SegmenterService {
 					Tier:        models.ExperimentTierOverride,
 					Status:      models.ExperimentStatusActive,
 					Model: models.Model{
-						// time.FixedZone is used to bypass fields defined in Postgres as timestamp with NO timezone,
-						// where offset 0 is treated as UTC
-						// Relevant SO: https://github.com/lib/pq/issues/329
-						CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.FixedZone("", 0)),
-						UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.FixedZone("", 0)),
+						CreatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
+						UpdatedAt: time.Date(2020, 4, 1, 4, 5, 6, 0, time.UTC),
 					},
 					Segment: models.ExperimentSegment{
 						"string_segmenter": stringSegmenter,

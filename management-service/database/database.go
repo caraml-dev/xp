@@ -3,20 +3,22 @@ package database
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	gomigrate "github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jinzhu/gorm"
-
-	// Gorm requires this for interfacing with the postgres DB
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	pg "gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/caraml-dev/xp/management-service/config"
 )
 
+var UtcLoc, _ = time.LoadLocation("UTC")
+
 func ConnectionString(cfg *config.DatabaseConfig) string {
-	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable timezone=UTC",
+	return fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable TimeZone=UTC",
 		cfg.Host,
 		cfg.Port,
 		cfg.User,
@@ -25,7 +27,10 @@ func ConnectionString(cfg *config.DatabaseConfig) string {
 }
 
 func Open(cfg *config.DatabaseConfig) (*gorm.DB, error) {
-	return gorm.Open("postgres", ConnectionString(cfg))
+	return gorm.Open(pg.Open(ConnectionString(cfg)),
+		&gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+		})
 }
 
 func Migrate(cfg *config.DatabaseConfig) error {
@@ -34,7 +39,12 @@ func Migrate(cfg *config.DatabaseConfig) error {
 		return err
 	}
 
-	driver, err := postgres.WithInstance(db.DB(), &postgres.Config{})
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	driver, err := postgres.WithInstance(sqlDB, &postgres.Config{})
 	if err != nil {
 		return err
 	}

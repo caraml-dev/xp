@@ -1,8 +1,8 @@
 package appcontext
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/management-service/config"
 	mw "github.com/caraml-dev/xp/management-service/middleware"

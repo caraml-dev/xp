@@ -4,7 +4,8 @@ import (
 	"time"
 
 	"github.com/golang-collections/collections/set"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/caraml-dev/xp/management-service/errors"
 	"github.com/caraml-dev/xp/management-service/models"
@@ -269,13 +270,9 @@ func (svc *projectSettingsService) query() *gorm.DB {
 }
 
 func (svc *projectSettingsService) save(settings *models.Settings) (*models.Settings, error) {
-	var err error
-	if svc.db.NewRecord(settings) {
-		err = svc.db.Create(settings).Error
-	} else {
-		err = svc.db.Save(settings).Error
-	}
-	if err != nil {
+	if err := svc.query().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(settings).Error; err != nil {
 		return nil, err
 	}
 	return svc.GetDBRecord(settings.ProjectID)

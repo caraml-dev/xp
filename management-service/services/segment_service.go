@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	"github.com/golang-collections/collections/set"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/caraml-dev/xp/management-service/errors"
 	"github.com/caraml-dev/xp/management-service/models"
@@ -93,7 +94,7 @@ func (svc *segmentService) ListSegments(
 
 	// Pagination
 	var pagingResponse *pagination.Paging
-	var count int
+	var count int64
 	if params.Fields == nil || params.Page != nil || params.PageSize != nil {
 		err = pagination.ValidatePaginationParams(params.Page, params.PageSize)
 		if err != nil {
@@ -103,10 +104,10 @@ func (svc *segmentService) ListSegments(
 		// Count total
 		query.Model(&segments).Count(&count)
 		// Add offset and limit
-		query = query.Offset((*pageOpts.Page - 1) * *pageOpts.PageSize)
-		query = query.Limit(*pageOpts.PageSize)
+		query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
+		query = query.Limit(int(*pageOpts.PageSize))
 		// Format opts into paging response
-		pagingResponse = pagination.ToPaging(pageOpts, count)
+		pagingResponse = pagination.ToPaging(pageOpts, int(count))
 		if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
 			// Invalid query - total pages is less than the requested page
 			return nil, nil, errors.Newf(errors.BadInput,
@@ -275,13 +276,9 @@ func (svc *segmentService) query() *gorm.DB {
 }
 
 func (svc *segmentService) save(segment *models.Segment) (*models.Segment, error) {
-	var err error
-	if svc.db.NewRecord(segment) {
-		err = svc.db.Create(segment).Error
-	} else {
-		err = svc.db.Save(segment).Error
-	}
-	if err != nil {
+	if err := svc.query().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(segment).Error; err != nil {
 		return nil, err
 	}
 	return svc.GetDBRecord(segment.ProjectID, segment.ID)

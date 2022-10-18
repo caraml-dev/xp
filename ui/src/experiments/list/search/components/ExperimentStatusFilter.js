@@ -8,7 +8,7 @@ const ExperimentStatusFilter = ({
   onChange,
 }) => {
   const renderOption = o => (<EuiHealth color={o.color}>{o.label}</EuiHealth>);
-  const selectedOptions = options.filter(o => o.value === value);
+  const selectedOptions = options.filter(o => !!value && value.includes(o.value));
   // Filter only fields recognized by the combobox.
   const optionsFiltered = options.map(o => ({ value: o.value, label: o.label, color: o.color }));
 
@@ -19,9 +19,8 @@ const ExperimentStatusFilter = ({
         options={optionsFiltered}
         renderOption={renderOption}
         selectedOptions={selectedOptions}
-        onChange={e => onChange(e.length > 0 ? e[0].value : undefined)}
+        onChange={e => onChange(e.map(item => item.value))}
         isClearable={true}
-        singleSelection={true}
       />
     </EuiFormRow>
   )

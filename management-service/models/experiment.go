@@ -4,9 +4,11 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"gorm.io/gorm"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
+	"github.com/caraml-dev/xp/management-service/database"
 )
 
 type ExperimentStatus string
@@ -68,6 +70,15 @@ type Experiment struct {
 	EndTime time.Time `json:"end_time"`
 	// UpdatedBy holds the details of the last person/job that updated the experiment
 	UpdatedBy string `json:"updated_by"`
+}
+
+// AfterFind sets the retrieved start and end times to be in UTC as opposed to Local.
+// This is needed for integration tests as the new version of Gorm doesn't respect the
+// timezone info in the connection string anymore.
+func (e *Experiment) AfterFind(tx *gorm.DB) error {
+	e.StartTime = e.StartTime.In(database.UtcLoc)
+	e.EndTime = e.EndTime.In(database.UtcLoc)
+	return nil
 }
 
 // ToApiSchema converts the experiment DB model to a format compatible with the

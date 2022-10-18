@@ -1,7 +1,8 @@
 package services
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/caraml-dev/xp/management-service/errors"
 	"github.com/caraml-dev/xp/management-service/models"
@@ -40,7 +41,7 @@ func (svc *experimentHistoryService) ListExperimentHistory(
 
 	// Pagination
 	var pagingResponse *pagination.Paging
-	var count int
+	var count int64
 	err := pagination.ValidatePaginationParams(params.Page, params.PageSize)
 	if err != nil {
 		return nil, nil, err
@@ -49,10 +50,10 @@ func (svc *experimentHistoryService) ListExperimentHistory(
 	// Count total
 	query.Model(&history).Count(&count)
 	// Add offset and limit
-	query = query.Offset((*pageOpts.Page - 1) * *pageOpts.PageSize)
-	query = query.Limit(*pageOpts.PageSize)
+	query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
+	query = query.Limit(int(*pageOpts.PageSize))
 	// Format opts into paging response
-	pagingResponse = pagination.ToPaging(pageOpts, count)
+	pagingResponse = pagination.ToPaging(pageOpts, int(count))
 	if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
 		// Invalid query - total pages is less than the requested page
 		return nil, nil, errors.Newf(errors.BadInput,
@@ -121,13 +122,9 @@ func (svc *experimentHistoryService) query() *gorm.DB {
 }
 
 func (svc *experimentHistoryService) save(history *models.ExperimentHistory) (*models.ExperimentHistory, error) {
-	var err error
-	if svc.db.NewRecord(history) {
-		err = svc.db.Create(history).Error
-	} else {
-		err = svc.db.Save(history).Error
-	}
-	if err != nil {
+	if err := svc.query().Clauses(clause.OnConflict{
+		UpdateAll: true,
+	}).Create(history).Error; err != nil {
 		return nil, err
 	}
 	return svc.GetDBRecord(history.ExperimentID, history.Version)

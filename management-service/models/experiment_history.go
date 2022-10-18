@@ -3,7 +3,10 @@ package models
 import (
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/caraml-dev/xp/common/api/schema"
+	"github.com/caraml-dev/xp/management-service/database"
 )
 
 type ExperimentHistory struct {
@@ -39,6 +42,15 @@ type ExperimentHistory struct {
 // TableName overrides Gorm's default pluralised name: "experiment_histories"
 func (ExperimentHistory) TableName() string {
 	return "experiment_history"
+}
+
+// AfterFind sets the retrieved start and end times to be in UTC as opposed to Local.
+// This is needed for integration tests as the new version of Gorm doesn't respect the
+// timezone info in the connection string anymore.
+func (e *ExperimentHistory) AfterFind(tx *gorm.DB) error {
+	e.StartTime = e.StartTime.In(database.UtcLoc)
+	e.EndTime = e.EndTime.In(database.UtcLoc)
+	return nil
 }
 
 // ToApiSchema converts the experiment history DB model to a format compatible with the
