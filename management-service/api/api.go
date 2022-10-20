@@ -108,9 +108,9 @@ type GetTreatmentHistorySuccess struct {
 	Data externalRef0.TreatmentHistory `json:"data"`
 }
 
-// GetTreatmentServiceConfigSuccess defines model for GetTreatmentServiceConfigSuccess.
-type GetTreatmentServiceConfigSuccess struct {
-	Data externalRef0.TreatmentServiceConfig `json:"data"`
+// GetTreatmentServicePluginConfigSuccess defines model for GetTreatmentServicePluginConfigSuccess.
+type GetTreatmentServicePluginConfigSuccess struct {
+	Data externalRef0.TreatmentServicePluginConfig `json:"data"`
 }
 
 // GetTreatmentSuccess defines model for GetTreatmentSuccess.
@@ -546,8 +546,8 @@ type ServerInterface interface {
 	// (GET /projects/{project_id}/treatments/{treatment_id}/history/{version})
 	GetTreatmentHistory(w http.ResponseWriter, r *http.Request, projectId int64, treatmentId int64, version int64)
 	// retrieves configuration used in the management service that is also used in the treatment service plugin
-	// (GET /treatment-service-config)
-	GetTreatmentServiceConfig(w http.ResponseWriter, r *http.Request)
+	// (GET /treatment-service-plugin-config)
+	GetTreatmentServicePluginConfig(w http.ResponseWriter, r *http.Request)
 	// validates an entity against a given treatment schema or validation url
 	// (POST /validate)
 	ValidateEntity(w http.ResponseWriter, r *http.Request)
@@ -2080,14 +2080,14 @@ func (siw *ServerInterfaceWrapper) GetTreatmentHistory(w http.ResponseWriter, r 
 	handler(w, r.WithContext(ctx))
 }
 
-// GetTreatmentServiceConfig operation middleware
-func (siw *ServerInterfaceWrapper) GetTreatmentServiceConfig(w http.ResponseWriter, r *http.Request) {
+// GetTreatmentServicePluginConfig operation middleware
+func (siw *ServerInterfaceWrapper) GetTreatmentServicePluginConfig(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetTreatmentServiceConfig(w, r)
+		siw.Handler.GetTreatmentServicePluginConfig(w, r)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -2248,7 +2248,7 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 		r.Get(options.BaseURL+"/projects/{project_id}/treatments/{treatment_id}/history/{version}", wrapper.GetTreatmentHistory)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/treatment-service-config", wrapper.GetTreatmentServiceConfig)
+		r.Get(options.BaseURL+"/treatment-service-plugin-config", wrapper.GetTreatmentServicePluginConfig)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/validate", wrapper.ValidateEntity)

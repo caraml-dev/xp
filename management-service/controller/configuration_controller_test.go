@@ -36,7 +36,7 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 	sentryConfigEnabled := false
 	sentryConfigLabels := make(map[string]interface{})
 
-	treatmentServiceConfiguration := schema.TreatmentServiceConfig{
+	treatmentServicePluginConfiguration := schema.TreatmentServicePluginConfig{
 		NewRelicConfig: &schema.NewRelicConfig{
 			AppName: &newRelicAppName,
 			Enabled: &newRelicEnabled,
@@ -59,8 +59,8 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 
 	configurationSvc := &mocks.ConfigurationService{}
 	configurationSvc.
-		On("GetTreatmentServiceConfig").
-		Return(treatmentServiceConfiguration, nil)
+		On("GetTreatmentServicePluginConfig").
+		Return(treatmentServicePluginConfiguration, nil)
 
 	// Create test controller
 	s.ctrl = &ConfigurationController{
@@ -76,9 +76,9 @@ func TestConfigurationController(t *testing.T) {
 	suite.Run(t, new(ConfigurationControllerTestSuite))
 }
 
-func (s *ConfigurationControllerTestSuite) TestGetTreatmentServiceConfig() {
+func (s *ConfigurationControllerTestSuite) TestGetTreatmentServicePluginConfig() {
 	w := httptest.NewRecorder()
-	s.ctrl.GetTreatmentServiceConfig(w, nil)
+	s.ctrl.GetTreatmentServicePluginConfig(w, nil)
 	resp := w.Result()
 	if resp != nil && resp.Body != nil {
 		defer resp.Body.Close()

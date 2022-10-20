@@ -6,11 +6,11 @@ import (
 )
 
 type ConfigurationService interface {
-	GetTreatmentServiceConfig() schema.TreatmentServiceConfig
+	GetTreatmentServicePluginConfig() schema.TreatmentServicePluginConfig
 }
 
 type configurationService struct {
-	treatmentServiceConfig schema.TreatmentServiceConfig
+	treatmentServicePluginConfig schema.TreatmentServicePluginConfig
 }
 
 func NewConfigurationService(cfg *config.Config) ConfigurationService {
@@ -34,7 +34,7 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	}
 
 	return &configurationService{
-		treatmentServiceConfig: schema.TreatmentServiceConfig{
+		treatmentServicePluginConfig: schema.TreatmentServicePluginConfig{
 			NewRelicConfig: &schema.NewRelicConfig{
 				AppName: &cfg.NewRelicConfig.AppName,
 				Enabled: &cfg.NewRelicConfig.Enabled,
@@ -57,6 +57,6 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	}
 }
 
-func (svc configurationService) GetTreatmentServiceConfig() schema.TreatmentServiceConfig {
-	return svc.treatmentServiceConfig
+func (svc configurationService) GetTreatmentServicePluginConfig() schema.TreatmentServicePluginConfig {
+	return svc.treatmentServicePluginConfig
 }

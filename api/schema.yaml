@@ -41,7 +41,7 @@ components:
         max_s2_cell_level:
           type: integer
           description: Max S2 cell level
-    TreatmentServiceConfig:
+    TreatmentServicePluginConfig:
       type: object
       properties:
         pub_sub:

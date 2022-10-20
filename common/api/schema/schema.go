@@ -444,8 +444,8 @@ type TreatmentSchema struct {
 	Rules Rules `json:"rules"`
 }
 
-// TreatmentServiceConfig defines model for TreatmentServiceConfig.
-type TreatmentServiceConfig struct {
+// TreatmentServicePluginConfig defines model for TreatmentServicePluginConfig.
+type TreatmentServicePluginConfig struct {
 	NewRelicConfig  *NewRelicConfig  `json:"new_relic_config,omitempty"`
 	PubSub          *PubSub          `json:"pub_sub,omitempty"`
 	SegmenterConfig *SegmenterConfig `json:"segmenter_config,omitempty"`

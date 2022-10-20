@@ -48,7 +48,7 @@ func TestConfigurationService(t *testing.T) {
 	suite.Run(t, new(ConfigurationServiceTestSuite))
 }
 
-func (s *ConfigurationServiceTestSuite) TestGetTreatmentServiceConfig() {
+func (s *ConfigurationServiceTestSuite) TestGetTreatmentServicePluginConfig() {
 	newRelicAppName := "xp"
 	newRelicEnabled := true
 
@@ -61,7 +61,7 @@ func (s *ConfigurationServiceTestSuite) TestGetTreatmentServiceConfig() {
 	sentryConfigEnabled := false
 	sentryConfigLabels := make(map[string]interface{})
 
-	expectedConfiguration := schema.TreatmentServiceConfig{
+	expectedConfiguration := schema.TreatmentServicePluginConfig{
 		NewRelicConfig: &schema.NewRelicConfig{
 			AppName: &newRelicAppName,
 			Enabled: &newRelicEnabled,
@@ -81,6 +81,6 @@ func (s *ConfigurationServiceTestSuite) TestGetTreatmentServiceConfig() {
 			Labels:  &sentryConfigLabels,
 		},
 	}
-	actualConfiguration := s.ConfigurationService.GetTreatmentServiceConfig()
+	actualConfiguration := s.ConfigurationService.GetTreatmentServicePluginConfig()
 	s.Suite.Assert().Equal(expectedConfiguration, actualConfiguration)
 }

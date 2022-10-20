@@ -14,7 +14,7 @@ func NewConfigurationController(ctx *appcontext.AppContext) *ConfigurationContro
 	return &ConfigurationController{ctx}
 }
 
-func (e ConfigurationController) GetTreatmentServiceConfig(w http.ResponseWriter, r *http.Request) {
-	treatmentServiceConfig := e.Services.ConfigurationService.GetTreatmentServiceConfig()
-	Ok(w, treatmentServiceConfig)
+func (e ConfigurationController) GetTreatmentServicePluginConfig(w http.ResponseWriter, r *http.Request) {
+	treatmentServicePluginConfig := e.Services.ConfigurationService.GetTreatmentServicePluginConfig()
+	Ok(w, treatmentServicePluginConfig)
 }

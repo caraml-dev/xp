@@ -7,15 +7,15 @@ servers:
   - url: /v1
 tags: []
 paths:
-  /treatment-service-config:
+  /treatment-service-plugin-config:
     get:
-      operationId: GetTreatmentServiceConfig
+      operationId: GetTreatmentServicePluginConfig
       tags:
         - configuration
       summary: retrieves configuration used in the management service that is also used in the treatment service plugin
       responses:
         200:
-          $ref: '#/components/responses/GetTreatmentServiceConfigSuccess'
+          $ref: '#/components/responses/GetTreatmentServicePluginConfigSuccess'
         500:
           $ref: '#/components/responses/InternalServerError'
   /validate:
@@ -1274,7 +1274,7 @@ components:
         application/json:
           schema:
             $ref: 'schema.yaml#/components/schemas/Error'
-    GetTreatmentServiceConfigSuccess:
+    GetTreatmentServicePluginConfigSuccess:
       description: Returns configuration used in both the management service and the treatment service plugin
       content:
         application/json:
@@ -1284,7 +1284,7 @@ components:
             type: object
             properties:
               data:
-                $ref: 'schema.yaml#/components/schemas/TreatmentServiceConfig'
+                $ref: 'schema.yaml#/components/schemas/TreatmentServicePluginConfig'
     ListProjectsSuccess:
       description: Returns details of all projects set up for experimentation
       content:
