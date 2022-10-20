@@ -10,6 +10,7 @@ type Wrapper struct {
 	*TreatmentController
 	*TreatmentHistoryController
 	*ValidationController
+	*ConfigurationController
 }
 
 func NewWrapper(
@@ -22,6 +23,7 @@ func NewWrapper(
 	treatment *TreatmentController,
 	treatmentHistory *TreatmentHistoryController,
 	validation *ValidationController,
+	configuration *ConfigurationController,
 ) Wrapper {
 	return Wrapper{
 		ProjectSettingsController:   settings,
@@ -33,5 +35,6 @@ func NewWrapper(
 		TreatmentController:         treatment,
 		TreatmentHistoryController:  treatmentHistory,
 		ValidationController:        validation,
+		ConfigurationController:     configuration,
 	}
 }

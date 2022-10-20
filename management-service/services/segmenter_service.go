@@ -136,7 +136,8 @@ func NewSegmenterService(
 	return &segmenterService{
 		globalSegmenters: globalSegmenters,
 		db:               db,
-		services:         services}, nil
+		services:         services,
+	}, nil
 }
 
 func (svc *segmenterService) GetSegmenter(projectId int64, name string) (*schema.Segmenter, error) {

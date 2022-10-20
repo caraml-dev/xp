@@ -12,6 +12,7 @@ type Services struct {
 	TreatmentHistoryService  TreatmentHistoryService
 	ValidationService        ValidationService
 	PubSubPublisherService   PubSubPublisherService
+	ConfigurationService     ConfigurationService
 }
 
 func NewServices(
@@ -26,6 +27,7 @@ func NewServices(
 	treatmentHistorySvc TreatmentHistoryService,
 	validationSvc ValidationService,
 	pubsubPublisherSvc PubSubPublisherService,
+	configurationService ConfigurationService,
 ) Services {
 	return Services{
 		ExperimentService:        expSvc,
@@ -39,5 +41,6 @@ func NewServices(
 		TreatmentService:         treatmentSvc,
 		TreatmentHistoryService:  treatmentHistorySvc,
 		ValidationService:        validationSvc,
+		ConfigurationService:     configurationService,
 	}
 }

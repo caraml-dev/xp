@@ -1,5 +1,57 @@
 components:
   schemas:
+    PubSub:
+      type: object
+      properties:
+        project:
+          type: string
+          description: Project name of the PubSub subscription
+        topic_name:
+          type: string
+          description: Topic name of the PubSub subscription
+    NewRelicConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Boolean indicating if New Relic is enabled
+        app_name:
+          type: string
+          description: App name of the New Relic app
+    SentryConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Boolean indicating if Sentry is enabled
+        labels:
+          type: object
+          properties:
+    SegmenterConfig:
+      type: object
+      properties:
+        s2_ids:
+          $ref: '#/components/schemas/S2Ids'
+    S2Ids:
+      type: object
+      properties:
+        min_s2_cell_level:
+          type: integer
+          description: Min S2 cell level
+        max_s2_cell_level:
+          type: integer
+          description: Max S2 cell level
+    TreatmentServiceConfig:
+      type: object
+      properties:
+        pub_sub:
+          $ref: '#/components/schemas/PubSub'
+        new_relic_config:
+          $ref: '#/components/schemas/NewRelicConfig'
+        sentry_config:
+          $ref: '#/components/schemas/SentryConfig'
+        segmenter_config:
+          $ref: '#/components/schemas/SegmenterConfig'
     SelectedTreatmentData:
       required:
         - configuration

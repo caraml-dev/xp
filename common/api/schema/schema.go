@@ -203,6 +203,16 @@ type ExperimentTreatment struct {
 // ExperimentType defines model for ExperimentType.
 type ExperimentType string
 
+// NewRelicConfig defines model for NewRelicConfig.
+type NewRelicConfig struct {
+
+	// App name of the New Relic app
+	AppName *string `json:"app_name,omitempty"`
+
+	// Boolean indicating if New Relic is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+}
+
 // Paging defines model for Paging.
 type Paging struct {
 
@@ -263,6 +273,16 @@ type ProjectSettings struct {
 	ValidationUrl   *string          `json:"validation_url,omitempty"`
 }
 
+// PubSub defines model for PubSub.
+type PubSub struct {
+
+	// Project name of the PubSub subscription
+	Project *string `json:"project,omitempty"`
+
+	// Topic name of the PubSub subscription
+	TopicName *string `json:"topic_name,omitempty"`
+}
+
 // A rule that forms part of a definition of a valid treatment schema
 type Rule struct {
 	Name string `json:"name"`
@@ -273,6 +293,16 @@ type Rule struct {
 
 // List of rules that define a valid treatment schema
 type Rules []Rule
+
+// S2Ids defines model for S2Ids.
+type S2Ids struct {
+
+	// Max S2 cell level
+	MaxS2CellLevel *int `json:"max_s2_cell_level,omitempty"`
+
+	// Min S2 cell level
+	MinS2CellLevel *int `json:"min_s2_cell_level,omitempty"`
+}
 
 // Segment defines model for Segment.
 type Segment struct {
@@ -316,6 +346,11 @@ type Segmenter struct {
 	TreatmentRequestFields [][]string    `json:"treatment_request_fields"`
 	Type                   SegmenterType `json:"type"`
 	UpdatedAt              *time.Time    `json:"updated_at,omitempty"`
+}
+
+// SegmenterConfig defines model for SegmenterConfig.
+type SegmenterConfig struct {
+	S2Ids *S2Ids `json:"s2_ids,omitempty"`
 }
 
 // SegmenterOptions defines model for SegmenterOptions.
@@ -368,6 +403,14 @@ type SelectedTreatmentMetadata struct {
 	SwitchbackWindowId *int64 `json:"switchback_window_id,omitempty"`
 }
 
+// SentryConfig defines model for SentryConfig.
+type SentryConfig struct {
+
+	// Boolean indicating if Sentry is enabled
+	Enabled *bool                   `json:"enabled,omitempty"`
+	Labels  *map[string]interface{} `json:"labels,omitempty"`
+}
+
 // Treatment defines model for Treatment.
 type Treatment struct {
 	Configuration *map[string]interface{} `json:"configuration,omitempty"`
@@ -399,6 +442,14 @@ type TreatmentSchema struct {
 
 	// List of rules that define a valid treatment schema
 	Rules Rules `json:"rules"`
+}
+
+// TreatmentServiceConfig defines model for TreatmentServiceConfig.
+type TreatmentServiceConfig struct {
+	NewRelicConfig  *NewRelicConfig  `json:"new_relic_config,omitempty"`
+	PubSub          *PubSub          `json:"pub_sub,omitempty"`
+	SegmenterConfig *SegmenterConfig `json:"segmenter_config,omitempty"`
+	SentryConfig    *SentryConfig    `json:"sentry_config,omitempty"`
 }
 
 // Getter for additional properties for ProjectSegmenters_Variables. Returns the specified
