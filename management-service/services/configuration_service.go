@@ -18,12 +18,12 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	var maxS2CellLevel int
 	var minS2CellLevel int
 	if val, ok := cfg.SegmenterConfig["s2_ids"]; ok {
-		segmenterConfig := val.(map[string]int)
+		segmenterConfig := val.(map[string]interface{})
 		if val, ok := segmenterConfig["maxs2celllevel"]; ok {
-			maxS2CellLevel = val
+			maxS2CellLevel = val.(int)
 		}
 		if val, ok := segmenterConfig["mins2celllevel"]; ok {
-			minS2CellLevel = val
+			minS2CellLevel = val.(int)
 		}
 	}
 
