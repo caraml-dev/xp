@@ -108,6 +108,11 @@ type GetTreatmentHistorySuccess struct {
 	Data externalRef0.TreatmentHistory `json:"data"`
 }
 
+// GetTreatmentServiceConfigSuccess defines model for GetTreatmentServiceConfigSuccess.
+type GetTreatmentServiceConfigSuccess struct {
+	Data externalRef0.TreatmentServiceConfig `json:"data"`
+}
+
 // GetTreatmentSuccess defines model for GetTreatmentSuccess.
 type GetTreatmentSuccess struct {
 	Data externalRef0.Treatment `json:"data"`
@@ -540,6 +545,9 @@ type ServerInterface interface {
 	// List a treatment's historical versions
 	// (GET /projects/{project_id}/treatments/{treatment_id}/history/{version})
 	GetTreatmentHistory(w http.ResponseWriter, r *http.Request, projectId int64, treatmentId int64, version int64)
+	// retrieves configuration used in the management service that is also used in the treatment service plugin
+	// (GET /treatment-service-config)
+	GetTreatmentServiceConfig(w http.ResponseWriter, r *http.Request)
 	// validates an entity against a given treatment schema or validation url
 	// (POST /validate)
 	ValidateEntity(w http.ResponseWriter, r *http.Request)
@@ -2072,6 +2080,23 @@ func (siw *ServerInterfaceWrapper) GetTreatmentHistory(w http.ResponseWriter, r 
 	handler(w, r.WithContext(ctx))
 }
 
+// GetTreatmentServiceConfig operation middleware
+func (siw *ServerInterfaceWrapper) GetTreatmentServiceConfig(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, BearerAuthScopes, []string{""})
+
+	var handler = func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTreatmentServiceConfig(w, r)
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler(w, r.WithContext(ctx))
+}
+
 // ValidateEntity operation middleware
 func (siw *ServerInterfaceWrapper) ValidateEntity(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -2221,6 +2246,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/projects/{project_id}/treatments/{treatment_id}/history/{version}", wrapper.GetTreatmentHistory)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/treatment-service-config", wrapper.GetTreatmentServiceConfig)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/validate", wrapper.ValidateEntity)

@@ -106,6 +106,11 @@ type GetTreatmentHistorySuccess struct {
 	Data externalRef0.TreatmentHistory `json:"data"`
 }
 
+// GetTreatmentServiceConfigSuccess defines model for GetTreatmentServiceConfigSuccess.
+type GetTreatmentServiceConfigSuccess struct {
+	Data externalRef0.TreatmentServiceConfig `json:"data"`
+}
+
 // GetTreatmentSuccess defines model for GetTreatmentSuccess.
 type GetTreatmentSuccess struct {
 	Data externalRef0.Treatment `json:"data"`
@@ -629,6 +634,9 @@ type ClientInterface interface {
 	// GetTreatmentHistory request
 	GetTreatmentHistory(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTreatmentServiceConfig request
+	GetTreatmentServiceConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ValidateEntity request  with any body
 	ValidateEntityWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1129,6 +1137,18 @@ func (c *Client) ListTreatmentHistory(ctx context.Context, projectId int64, trea
 
 func (c *Client) GetTreatmentHistory(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTreatmentHistoryRequest(c.Server, projectId, treatmentId, version)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTreatmentServiceConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTreatmentServiceConfigRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -3084,6 +3104,33 @@ func NewGetTreatmentHistoryRequest(server string, projectId int64, treatmentId i
 	return req, nil
 }
 
+// NewGetTreatmentServiceConfigRequest generates requests for GetTreatmentServiceConfig
+func NewGetTreatmentServiceConfigRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/treatment-service-config")
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewValidateEntityRequest calls the generic ValidateEntity builder with application/json body
 func NewValidateEntityRequest(server string, body ValidateEntityJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -3282,6 +3329,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetTreatmentHistory request
 	GetTreatmentHistoryWithResponse(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*GetTreatmentHistoryResponse, error)
+
+	// GetTreatmentServiceConfig request
+	GetTreatmentServiceConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTreatmentServiceConfigResponse, error)
 
 	// ValidateEntity request  with any body
 	ValidateEntityWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateEntityResponse, error)
@@ -4120,6 +4170,31 @@ func (r GetTreatmentHistoryResponse) StatusCode() int {
 	return 0
 }
 
+type GetTreatmentServiceConfigResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data externalRef0.TreatmentServiceConfig `json:"data"`
+	}
+	JSON500 *externalRef0.Error
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTreatmentServiceConfigResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTreatmentServiceConfigResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ValidateEntityResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4509,6 +4584,15 @@ func (c *ClientWithResponses) GetTreatmentHistoryWithResponse(ctx context.Contex
 		return nil, err
 	}
 	return ParseGetTreatmentHistoryResponse(rsp)
+}
+
+// GetTreatmentServiceConfigWithResponse request returning *GetTreatmentServiceConfigResponse
+func (c *ClientWithResponses) GetTreatmentServiceConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTreatmentServiceConfigResponse, error) {
+	rsp, err := c.GetTreatmentServiceConfig(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTreatmentServiceConfigResponse(rsp)
 }
 
 // ValidateEntityWithBodyWithResponse request with arbitrary body returning *ValidateEntityResponse
@@ -5840,6 +5924,41 @@ func ParseGetTreatmentHistoryResponse(rsp *http.Response) (*GetTreatmentHistoryR
 			return nil, err
 		}
 		response.JSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest externalRef0.Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTreatmentServiceConfigResponse parses an HTTP response from a GetTreatmentServiceConfigWithResponse call
+func ParseGetTreatmentServiceConfigResponse(rsp *http.Response) (*GetTreatmentServiceConfigResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTreatmentServiceConfigResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data externalRef0.TreatmentServiceConfig `json:"data"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
 		var dest externalRef0.Error
