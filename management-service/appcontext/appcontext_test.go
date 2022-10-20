@@ -63,6 +63,7 @@ func TestNewAppContext(t *testing.T) {
 	treatmentHistSvc := services.NewTreatmentHistoryService(db)
 	treatmentSvc := services.NewTreatmentService(&allServices, db)
 	mlpService := &mocks.MLPService{}
+	configurationSvc := services.NewConfigurationService(cfg)
 
 	// Patch functions with pointer members, so the result is deterministic
 	// Patch the openapi middleware function
@@ -116,6 +117,7 @@ func TestNewAppContext(t *testing.T) {
 		TreatmentHistoryService:  treatmentHistSvc,
 		ValidationService:        validationService,
 		PubSubPublisherService:   pubSubPublisherService,
+		ConfigurationService:     configurationSvc,
 	}
 	monkey.Patch(services.NewServices,
 		func(
@@ -130,6 +132,7 @@ func TestNewAppContext(t *testing.T) {
 			treatmentHistoryService services.TreatmentHistoryService,
 			validationService services.ValidationService,
 			publisherService services.PubSubPublisherService,
+			configurationService services.ConfigurationService,
 		) services.Services {
 			return allServices
 		},
