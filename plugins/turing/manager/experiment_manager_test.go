@@ -9,6 +9,7 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
+	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/caraml-dev/xp/common/api/schema"
@@ -91,7 +92,8 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 						"field": "gArea",
 						"field_source": "payload"
 					}
-				]
+				],
+				"treatment_service_config":null
 			}`,
 		},
 	}
@@ -107,6 +109,21 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 				return &schema.ProjectSettings{Passkey: "test-passkey"}, nil
 			}
 			return nil, fmt.Errorf("Unexpected ProjectID: %d", projectId)
+		},
+	)
+	monkey.PatchInstanceMethod(
+		reflect.TypeOf(em),
+		"GetTreatmentServicePluginConfig",
+		func(em *experimentManager) (*schema.TreatmentServicePluginConfig, error) {
+			return nil, nil
+		},
+	)
+	monkey.PatchInstanceMethod(
+		reflect.TypeOf(em),
+		"MakeTreatmentServiceConfig",
+		func(em *experimentManager, treatmentServicePluginConfig *schema.TreatmentServicePluginConfig) (
+			*treatmentconfig.Config, error) {
+			return nil, nil
 		},
 	)
 	defer monkey.UnpatchAll()

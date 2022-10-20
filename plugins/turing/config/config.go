@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sync"
 
+	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -40,11 +41,12 @@ type ExperimentManagerConfig struct {
 
 // ExperimentRunnerConfig is used to parse the XP runner config during initialization
 type ExperimentRunnerConfig struct {
-	Endpoint          string     `json:"endpoint" validate:"required"`
-	ProjectID         int        `json:"project_id" validate:"required"`
-	Passkey           string     `json:"passkey" validate:"required"`
-	Timeout           string     `json:"timeout" validate:"required"`
-	RequestParameters []Variable `json:"request_parameters" validate:"required,dive"`
+	Endpoint               string                  `json:"endpoint" validate:"required"`
+	ProjectID              int                     `json:"project_id" validate:"required"`
+	Passkey                string                  `json:"passkey" validate:"required"`
+	Timeout                string                  `json:"timeout" validate:"required"`
+	RequestParameters      []Variable              `json:"request_parameters" validate:"required,dive"`
+	TreatmentServiceConfig *treatmentconfig.Config `json:"treatment_service_config"`
 }
 
 type Variable struct {

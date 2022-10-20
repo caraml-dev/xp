@@ -9,7 +9,10 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
+	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
+	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"golang.org/x/oauth2/google"
 
 	xpclient "github.com/caraml-dev/xp/clients/management"
@@ -93,13 +96,26 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
+	// Retrieve treatment service configuration (shared with the management service) using the API
+	treatmentServicePluginConfig, err := em.GetTreatmentServicePluginConfig()
+	if err != nil {
+		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
+	}
+
+	// Store configs in the new treatment service config
+	treatmentServiceConfig, err := em.MakeTreatmentServiceConfig(treatmentServicePluginConfig)
+	if err != nil {
+		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
+	}
+
 	// Convert data to json
 	bytes, err := json.Marshal(_config.ExperimentRunnerConfig{
-		Endpoint:          em.RunnerDefaults.Endpoint,
-		Timeout:           em.RunnerDefaults.Timeout,
-		ProjectID:         config.ProjectID,
-		Passkey:           project.Passkey,
-		RequestParameters: config.Variables,
+		Endpoint:               em.RunnerDefaults.Endpoint,
+		Timeout:                em.RunnerDefaults.Timeout,
+		ProjectID:              config.ProjectID,
+		Passkey:                project.Passkey,
+		RequestParameters:      config.Variables,
+		TreatmentServiceConfig: treatmentServiceConfig,
 	})
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
@@ -135,6 +151,57 @@ func (em *experimentManager) GetProject(projectID int) (*schema.ProjectSettings,
 	}
 
 	return &projectResponse.JSON200.Data, nil
+}
+
+func (em *experimentManager) GetTreatmentServicePluginConfig() (*schema.TreatmentServicePluginConfig, error) {
+	treatmentServicePluginConfigErrorTpl := "Error retrieving config: %s"
+
+	treatmentServicePluginConfigResponse, err := em.httpClient.GetTreatmentServicePluginConfigWithResponse(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	// Handle possible errors
+	if treatmentServicePluginConfigResponse.JSON500 != nil {
+		return nil, fmt.Errorf(treatmentServicePluginConfigErrorTpl, treatmentServicePluginConfigResponse.JSON500.Message)
+	}
+	if treatmentServicePluginConfigResponse.JSON200 == nil {
+		return nil, fmt.Errorf(treatmentServicePluginConfigErrorTpl, "empty response body")
+	}
+
+	return &treatmentServicePluginConfigResponse.JSON200.Data, nil
+}
+
+func (em *experimentManager) MakeTreatmentServiceConfig(
+	treatmentServicePluginConfig *schema.TreatmentServicePluginConfig,
+) (*treatmentconfig.Config, error) {
+	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
+	segmenterConfig := make(map[string]interface{})
+	segmenterConfig["s2_ids"] = *treatmentServicePluginConfig.SegmenterConfig
+
+	// Iterates through all Sentry config labels to cast them as the type interface{}
+	sentryConfigLabels := make(map[string]string)
+	for k, v := range *treatmentServicePluginConfig.SentryConfig.Labels {
+		if castedV, ok := v.(string); ok {
+			sentryConfigLabels[k] = castedV
+		}
+	}
+
+	return &treatmentconfig.Config{
+		NewRelicConfig: newrelic.Config{
+			Enabled: *treatmentServicePluginConfig.NewRelicConfig.Enabled,
+			AppName: *treatmentServicePluginConfig.NewRelicConfig.AppName,
+		},
+		PubSub: treatmentconfig.PubSub{
+			Project:   *treatmentServicePluginConfig.PubSub.Project,
+			TopicName: *treatmentServicePluginConfig.PubSub.TopicName,
+		},
+		SegmenterConfig: segmenterConfig,
+		SentryConfig: sentry.Config{
+			Enabled: *treatmentServicePluginConfig.SentryConfig.Enabled,
+			Labels:  sentryConfigLabels,
+		},
+	}, nil
 }
 
 func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentManager, error) {
