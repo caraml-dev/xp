@@ -9,15 +9,14 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
+	xpclient "github.com/caraml-dev/xp/clients/management"
+	"github.com/caraml-dev/xp/common/api/schema"
+	_config "github.com/caraml-dev/xp/plugins/turing/config"
 	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"golang.org/x/oauth2/google"
-
-	xpclient "github.com/caraml-dev/xp/clients/management"
-	"github.com/caraml-dev/xp/common/api/schema"
-	_config "github.com/caraml-dev/xp/plugins/turing/config"
 )
 
 func init() {
@@ -59,10 +58,11 @@ var googleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
 
 // experimentManager implements manager.CustomExperimentManager interface
 type experimentManager struct {
-	validate       *validator.Validate
-	httpClient     *xpclient.ClientWithResponses
-	RemoteUI       _config.RemoteUI       `validate:"required,dive"`
-	RunnerDefaults _config.RunnerDefaults `validate:"required,dive"`
+	validate                     *validator.Validate
+	httpClient                   *xpclient.ClientWithResponses
+	RemoteUI                     _config.RemoteUI                     `validate:"required,dive"`
+	RunnerDefaults               _config.RunnerDefaults               `validate:"required,dive"`
+	TreatmentServicePluginConfig _config.TreatmentServicePluginConfig `validate:"required,dive"`
 }
 
 func (em *experimentManager) GetEngineInfo() (manager.Engine, error) {
@@ -188,6 +188,42 @@ func (em *experimentManager) MakeTreatmentServiceConfig(
 	}
 
 	return &treatmentconfig.Config{
+		Port:       em.TreatmentServicePluginConfig.Port,
+		ProjectIds: em.TreatmentServicePluginConfig.ProjectIds,
+		AssignedTreatmentLogger: treatmentconfig.AssignedTreatmentLoggerConfig{
+			Kind:                 em.TreatmentServicePluginConfig.AssignedTreatmentLogger.Kind,
+			QueueLength:          em.TreatmentServicePluginConfig.AssignedTreatmentLogger.QueueLength,
+			FlushIntervalSeconds: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.FlushIntervalSeconds,
+			BQConfig: &treatmentconfig.BigqueryConfig{
+				Project: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.BQConfig.Project,
+				Dataset: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.BQConfig.Dataset,
+				Table:   em.TreatmentServicePluginConfig.AssignedTreatmentLogger.BQConfig.Table,
+			},
+			KafkaConfig: &treatmentconfig.KafkaConfig{
+				Brokers:          em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.Brokers,
+				Topic:            em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.Topic,
+				MaxMessageBytes:  em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.MaxMessageBytes,
+				CompressionType:  em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.CompressionType,
+				ConnectTimeoutMS: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.ConnectTimeoutMS,
+			},
+		},
+		DeploymentConfig: treatmentconfig.DeploymentConfig{
+			EnvironmentType: em.TreatmentServicePluginConfig.DeploymentConfig.EnvironmentType,
+			MaxGoRoutines:   em.TreatmentServicePluginConfig.DeploymentConfig.MaxGoRoutines,
+		},
+		ManagementService: treatmentconfig.ManagementServiceConfig{
+			URL:                  em.TreatmentServicePluginConfig.ManagementService.URL,
+			AuthorizationEnabled: em.TreatmentServicePluginConfig.ManagementService.AuthorizationEnabled,
+		},
+		MonitoringConfig: treatmentconfig.Monitoring{
+			Kind:         em.TreatmentServicePluginConfig.MonitoringConfig.Kind,
+			MetricLabels: em.TreatmentServicePluginConfig.MonitoringConfig.MetricLabels,
+		},
+		SwaggerConfig: treatmentconfig.SwaggerConfig{
+			Enabled:          em.TreatmentServicePluginConfig.SwaggerConfig.Enabled,
+			AllowedOrigins:   em.TreatmentServicePluginConfig.SwaggerConfig.AllowedOrigins,
+			OpenAPISpecsPath: em.TreatmentServicePluginConfig.SwaggerConfig.OpenAPISpecsPath,
+		},
 		NewRelicConfig: newrelic.Config{
 			Enabled: *treatmentServicePluginConfig.NewRelicConfig.Enabled,
 			AppName: *treatmentServicePluginConfig.NewRelicConfig.AppName,
@@ -228,10 +264,11 @@ func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentM
 	}
 
 	em := &experimentManager{
-		validate:       _config.NewValidator(),
-		httpClient:     client,
-		RemoteUI:       config.RemoteUI,
-		RunnerDefaults: config.RunnerDefaults,
+		validate:                     _config.NewValidator(),
+		httpClient:                   client,
+		RemoteUI:                     config.RemoteUI,
+		RunnerDefaults:               config.RunnerDefaults,
+		TreatmentServicePluginConfig: config.TreatmentServicePluginConfig,
 	}
 
 	err = em.validate.Struct(em)

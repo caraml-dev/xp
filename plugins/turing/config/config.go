@@ -32,11 +32,12 @@ type RemoteUI struct {
 }
 
 type ExperimentManagerConfig struct {
-	Enabled        bool           `json:"enabled"`
-	BaseURL        string         `json:"base_url"`      // Base URL for XP experiment REST API
-	HomePageURL    string         `json:"home_page_url"` // Website URL for end-users to manage experiments
-	RemoteUI       RemoteUI       `json:"remote_ui"`
-	RunnerDefaults RunnerDefaults `json:"runner_defaults"`
+	Enabled                      bool                         `json:"enabled"`
+	BaseURL                      string                       `json:"base_url"`      // Base URL for XP experiment REST API
+	HomePageURL                  string                       `json:"home_page_url"` // Website URL for end-users to manage experiments
+	RemoteUI                     RemoteUI                     `json:"remote_ui"`
+	RunnerDefaults               RunnerDefaults               `json:"runner_defaults"`
+	TreatmentServicePluginConfig TreatmentServicePluginConfig `json:"treatment_service_plugin_config"`
 }
 
 // ExperimentRunnerConfig is used to parse the XP runner config during initialization
@@ -47,6 +48,61 @@ type ExperimentRunnerConfig struct {
 	Timeout                string                  `json:"timeout" validate:"required"`
 	RequestParameters      []Variable              `json:"request_parameters" validate:"required,dive"`
 	TreatmentServiceConfig *treatmentconfig.Config `json:"treatment_service_config"`
+}
+
+type TreatmentServicePluginConfig struct {
+	Port       int      `json:"port" default:"8080"`
+	ProjectIds []string `json:"project_ids" default:""`
+
+	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"project"`
+	DeploymentConfig        DeploymentConfig              `json:"deployment_config"`
+	ManagementService       ManagementServiceConfig       `json:"management_service"`
+	MonitoringConfig        Monitoring                    `json:"monitoring_config"`
+	SwaggerConfig           SwaggerConfig                 `json:"swagger_config"`
+}
+
+type AssignedTreatmentLoggerConfig struct {
+	Kind                 string `json:"kind" default:""`
+	QueueLength          int    `json:"queue_length" default:"100"`
+	FlushIntervalSeconds int    `json:"flush_interval_seconds" default:"1"`
+
+	BQConfig    *BigqueryConfig `json:"bq_config"`
+	KafkaConfig *KafkaConfig    `json:"kafka_config"`
+}
+
+type BigqueryConfig struct {
+	Project string `json:"project"`
+	Dataset string `json:"dataset"`
+	Table   string `json:"table"`
+}
+
+type KafkaConfig struct {
+	Brokers          string `json:"brokers"`
+	Topic            string `json:"topics"`
+	MaxMessageBytes  int    `json:"max_message_bytes" default:"1048588"`
+	CompressionType  string `json:"compression_type" default:"none"`
+	ConnectTimeoutMS int    `json:"connect_timeout_ms" default:"1000"`
+}
+
+type DeploymentConfig struct {
+	EnvironmentType string `json:"environment_type" default:"local"`
+	MaxGoRoutines   int    `json:"max_go_routines" default:"100"`
+}
+
+type ManagementServiceConfig struct {
+	URL                  string `json:"url" default:"http://localhost:3000/v1"`
+	AuthorizationEnabled bool   `json:"authorization_enabled"`
+}
+
+type Monitoring struct {
+	Kind         string   `json:"kind" default:""`
+	MetricLabels []string `json:"metric_labels" default:""`
+}
+
+type SwaggerConfig struct {
+	Enabled          bool     `json:"enabled" validate:"required" default:"false"`
+	AllowedOrigins   []string `json:"allowed_origins" default:"*"`
+	OpenAPISpecsPath string   `json:"open_api_specs_path" default:"."`
 }
 
 type Variable struct {
