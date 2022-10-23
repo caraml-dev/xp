@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 
-	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -47,18 +46,34 @@ type ExperimentRunnerConfig struct {
 	Passkey                string                  `json:"passkey" validate:"required"`
 	Timeout                string                  `json:"timeout" validate:"required"`
 	RequestParameters      []Variable              `json:"request_parameters" validate:"required,dive"`
-	TreatmentServiceConfig *treatmentconfig.Config `json:"treatment_service_config"`
+	TreatmentServiceConfig *TreatmentServiceConfig `json:"treatment_service_config"`
 }
 
 type TreatmentServicePluginConfig struct {
 	Port       int      `json:"port" default:"8080"`
 	ProjectIds []string `json:"project_ids" default:""`
 
-	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"project"`
+	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
 	DeploymentConfig        DeploymentConfig              `json:"deployment_config"`
 	ManagementService       ManagementServiceConfig       `json:"management_service"`
 	MonitoringConfig        Monitoring                    `json:"monitoring_config"`
 	SwaggerConfig           SwaggerConfig                 `json:"swagger_config"`
+}
+
+type TreatmentServiceConfig struct {
+	Port       int      `json:"port" default:"8080"`
+	ProjectIds []string `json:"project_ids" default:""`
+
+	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
+	DebugConfig             DebugConfig                   `json:"debug_config"`
+	NewRelicConfig          NewRelicConfig                `json:"new_relic_config"`
+	SentryConfig            SentryConfig                  `json:"sentry_config"`
+	DeploymentConfig        DeploymentConfig              `json:"deployment_config"`
+	PubSub                  PubSub                        `json:"pub_sub"`
+	ManagementService       ManagementServiceConfig       `json:"management_service"`
+	MonitoringConfig        Monitoring                    `json:"monitoring_config"`
+	SwaggerConfig           SwaggerConfig                 `json:"swagger_config"`
+	SegmenterConfig         map[string]interface{}        `json:"segmenter_config"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
@@ -68,6 +83,35 @@ type AssignedTreatmentLoggerConfig struct {
 
 	BQConfig    *BigqueryConfig `json:"bq_config"`
 	KafkaConfig *KafkaConfig    `json:"kafka_config"`
+}
+
+type DebugConfig struct {
+	OutputPath string `json:"output_path" default:"/tmp"`
+}
+
+type NewRelicConfig struct {
+	Enabled           bool                   `json:"enabled" validate:"required" default:"false"`
+	AppName           string                 `json:"app_name"`
+	License           string                 `json:"license"`
+	Labels            map[string]interface{} `json:"labels"`
+	IgnoreStatusCodes []int                  `json:"ignore_status_codes"`
+}
+
+type SentryConfig struct {
+	Enabled bool              `json:"enabled" validate:"required" default:"false"`
+	DSN     string            `json:"dsn"`
+	Labels  map[string]string `json:"labels"`
+}
+
+type DeploymentConfig struct {
+	EnvironmentType string `json:"environment_type" default:"local"`
+	MaxGoRoutines   int    `json:"max_go_routines" default:"100"`
+}
+
+type PubSub struct {
+	Project              string `json:"project" default:"dev"`
+	TopicName            string `json:"topic_name" default:"xp-update"`
+	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30"`
 }
 
 type BigqueryConfig struct {
@@ -82,11 +126,6 @@ type KafkaConfig struct {
 	MaxMessageBytes  int    `json:"max_message_bytes" default:"1048588"`
 	CompressionType  string `json:"compression_type" default:"none"`
 	ConnectTimeoutMS int    `json:"connect_timeout_ms" default:"1000"`
-}
-
-type DeploymentConfig struct {
-	EnvironmentType string `json:"environment_type" default:"local"`
-	MaxGoRoutines   int    `json:"max_go_routines" default:"100"`
 }
 
 type ManagementServiceConfig struct {

@@ -12,10 +12,7 @@ import (
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
 	_config "github.com/caraml-dev/xp/plugins/turing/config"
-	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
-	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
-	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"golang.org/x/oauth2/google"
 )
 
@@ -174,7 +171,7 @@ func (em *experimentManager) GetTreatmentServicePluginConfig() (*schema.Treatmen
 
 func (em *experimentManager) MakeTreatmentServiceConfig(
 	treatmentServicePluginConfig *schema.TreatmentServicePluginConfig,
-) (*treatmentconfig.Config, error) {
+) (*_config.TreatmentServiceConfig, error) {
 	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
 	segmenterConfig := make(map[string]interface{})
 	segmenterConfig["s2_ids"] = *treatmentServicePluginConfig.SegmenterConfig
@@ -187,53 +184,24 @@ func (em *experimentManager) MakeTreatmentServiceConfig(
 		}
 	}
 
-	return &treatmentconfig.Config{
-		Port:       em.TreatmentServicePluginConfig.Port,
-		ProjectIds: em.TreatmentServicePluginConfig.ProjectIds,
-		AssignedTreatmentLogger: treatmentconfig.AssignedTreatmentLoggerConfig{
-			Kind:                 em.TreatmentServicePluginConfig.AssignedTreatmentLogger.Kind,
-			QueueLength:          em.TreatmentServicePluginConfig.AssignedTreatmentLogger.QueueLength,
-			FlushIntervalSeconds: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.FlushIntervalSeconds,
-			BQConfig: &treatmentconfig.BigqueryConfig{
-				Project: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.BQConfig.Project,
-				Dataset: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.BQConfig.Dataset,
-				Table:   em.TreatmentServicePluginConfig.AssignedTreatmentLogger.BQConfig.Table,
-			},
-			KafkaConfig: &treatmentconfig.KafkaConfig{
-				Brokers:          em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.Brokers,
-				Topic:            em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.Topic,
-				MaxMessageBytes:  em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.MaxMessageBytes,
-				CompressionType:  em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.CompressionType,
-				ConnectTimeoutMS: em.TreatmentServicePluginConfig.AssignedTreatmentLogger.KafkaConfig.ConnectTimeoutMS,
-			},
-		},
-		DeploymentConfig: treatmentconfig.DeploymentConfig{
-			EnvironmentType: em.TreatmentServicePluginConfig.DeploymentConfig.EnvironmentType,
-			MaxGoRoutines:   em.TreatmentServicePluginConfig.DeploymentConfig.MaxGoRoutines,
-		},
-		ManagementService: treatmentconfig.ManagementServiceConfig{
-			URL:                  em.TreatmentServicePluginConfig.ManagementService.URL,
-			AuthorizationEnabled: em.TreatmentServicePluginConfig.ManagementService.AuthorizationEnabled,
-		},
-		MonitoringConfig: treatmentconfig.Monitoring{
-			Kind:         em.TreatmentServicePluginConfig.MonitoringConfig.Kind,
-			MetricLabels: em.TreatmentServicePluginConfig.MonitoringConfig.MetricLabels,
-		},
-		SwaggerConfig: treatmentconfig.SwaggerConfig{
-			Enabled:          em.TreatmentServicePluginConfig.SwaggerConfig.Enabled,
-			AllowedOrigins:   em.TreatmentServicePluginConfig.SwaggerConfig.AllowedOrigins,
-			OpenAPISpecsPath: em.TreatmentServicePluginConfig.SwaggerConfig.OpenAPISpecsPath,
-		},
-		NewRelicConfig: newrelic.Config{
+	return &_config.TreatmentServiceConfig{
+		Port:                    em.TreatmentServicePluginConfig.Port,
+		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
+		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
+		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
+		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
+		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
+		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
+		NewRelicConfig: _config.NewRelicConfig{
 			Enabled: *treatmentServicePluginConfig.NewRelicConfig.Enabled,
 			AppName: *treatmentServicePluginConfig.NewRelicConfig.AppName,
 		},
-		PubSub: treatmentconfig.PubSub{
+		PubSub: _config.PubSub{
 			Project:   *treatmentServicePluginConfig.PubSub.Project,
 			TopicName: *treatmentServicePluginConfig.PubSub.TopicName,
 		},
 		SegmenterConfig: segmenterConfig,
-		SentryConfig: sentry.Config{
+		SentryConfig: _config.SentryConfig{
 			Enabled: *treatmentServicePluginConfig.SentryConfig.Enabled,
 			Labels:  sentryConfigLabels,
 		},

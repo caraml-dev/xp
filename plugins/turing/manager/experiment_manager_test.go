@@ -9,7 +9,6 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
-	treatmentconfig "github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/caraml-dev/xp/common/api/schema"
@@ -122,7 +121,7 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 		reflect.TypeOf(em),
 		"MakeTreatmentServiceConfig",
 		func(em *experimentManager, treatmentServicePluginConfig *schema.TreatmentServicePluginConfig) (
-			*treatmentconfig.Config, error) {
+			*config.TreatmentServiceConfig, error) {
 			return nil, nil
 		},
 	)
