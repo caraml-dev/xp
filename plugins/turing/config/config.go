@@ -90,7 +90,7 @@ type DebugConfig struct {
 }
 
 type NewRelicConfig struct {
-	Enabled           bool                   `json:"enabled" validate:"required" default:"false"`
+	Enabled           bool                   `json:"enabled" default:"false"`
 	AppName           string                 `json:"app_name"`
 	License           string                 `json:"license"`
 	Labels            map[string]interface{} `json:"labels"`
@@ -98,7 +98,7 @@ type NewRelicConfig struct {
 }
 
 type SentryConfig struct {
-	Enabled bool              `json:"enabled" validate:"required" default:"false"`
+	Enabled bool              `json:"enabled" default:"false"`
 	DSN     string            `json:"dsn"`
 	Labels  map[string]string `json:"labels"`
 }
@@ -139,7 +139,7 @@ type Monitoring struct {
 }
 
 type SwaggerConfig struct {
-	Enabled          bool     `json:"enabled" validate:"required" default:"false"`
+	Enabled          bool     `json:"enabled" default:"false"`
 	AllowedOrigins   []string `json:"allowed_origins" default:"*"`
 	OpenAPISpecsPath string   `json:"open_api_specs_path" default:"."`
 }
