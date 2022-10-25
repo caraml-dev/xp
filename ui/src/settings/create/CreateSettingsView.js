@@ -4,6 +4,7 @@ import {
   EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
+import { useNavigate, useParams } from "react-router-dom";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
 
 import { PageTitle } from "components/page/PageTitle";
@@ -12,7 +13,10 @@ import { Settings } from "services/settings/Settings";
 import { CreateSettingsForm } from "settings/components/form/CreateSettingsForm";
 import { useConfig } from "config";
 
-const CreateSettingsView = ({ projectId, ...props }) => {
+const CreateSettingsView = () => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -41,7 +45,7 @@ const CreateSettingsView = ({ projectId, ...props }) => {
             <CreateSettingsForm
               projectId={projectId}
               onCancel={() => window.history.back()}
-              onSuccess={() => props.navigate(`..`)}
+              onSuccess={() => navigate(`..`)}
             />
           </FormContextProvider>
         </SegmenterContextProvider>

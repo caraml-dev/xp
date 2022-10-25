@@ -5,6 +5,7 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { SegmentContextProvider } from "providers/segment/context";
@@ -12,7 +13,10 @@ import { SegmenterContextProvider } from "providers/segmenter/context";
 import { EditSegmentForm } from "segments/components/form/EditSegmentForm";
 import { CustomSegment } from "services/segment/CustomSegment";
 
-const EditSegmentView = ({ projectId, segmentSpec, ...props }) => {
+const EditSegmentView = ({ segmentSpec }) => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: "../.." },
@@ -37,7 +41,7 @@ const EditSegmentView = ({ projectId, segmentSpec, ...props }) => {
                 projectId={projectId}
                 onCancel={() => window.history.back()}
                 onSuccess={() => {
-                  props.navigate("../", { state: { refresh: true } });
+                  navigate("../", { state: { refresh: true } });
                 }}
               />
             </SegmentContextProvider>

@@ -3,34 +3,37 @@ import "PrivateLayout.scss";
 import React from "react";
 
 import {
+  ApplicationsContext,
   ApplicationsContextProvider,
-  CurrentProjectContextProvider,
   Header,
+  PrivateRoute,
   ProjectsContextProvider,
 } from "@gojek/mlp-ui";
-import { navigate } from "@reach/router";
+import urlJoin from "proper-url-join";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import { useConfig } from "config";
 
-export const PrivateLayout = (Component) => {
+export const PrivateLayout = () => {
+  const navigate = useNavigate();
   const { appConfig } = useConfig();
-  return (props) => (
-    <ApplicationsContextProvider>
-      <ProjectsContextProvider>
-        <CurrentProjectContextProvider {...props}>
-          <Header
-            homeUrl={appConfig.homepage}
-            appIcon={appConfig.appIcon}
-            onProjectSelect={(projectId) =>
-              navigate(
-                `${appConfig.homepage}/projects/${projectId}/experiments`
-              )
-            }
-            docLinks={appConfig.docsUrl}
-          />
-          <Component {...props} />
-        </CurrentProjectContextProvider>
-      </ProjectsContextProvider>
-    </ApplicationsContextProvider>
+  return (
+    <PrivateRoute>
+      <ApplicationsContextProvider>
+        <ProjectsContextProvider>
+          <ApplicationsContext.Consumer>
+            {({ currentApp }) => (
+              <Header
+                homepage={appConfig.homepage}
+                onProjectSelect={pId =>
+                  navigate(urlJoin(currentApp?.href, "projects", pId, "experiments"))
+                }
+                docLinks={appConfig.docsUrl}
+              />)}
+          </ApplicationsContext.Consumer>
+          <Outlet />
+        </ProjectsContextProvider>
+      </ApplicationsContextProvider>
+    </PrivateRoute>
   );
 };

@@ -2,6 +2,7 @@ import { Fragment, useContext, useEffect } from "react";
 
 import { EuiSearchBar, EuiSpacer, EuiPanel, EuiPageTemplate } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { ConfigSection } from "components/config_section/ConfigSection";
 import { useXpApi } from "hooks/useXpApi";
@@ -10,7 +11,8 @@ import NameSearchContext, {
 } from "providers/search/NameSearchContextProvider";
 import { ListSegmentersTable } from "settings/segmenters/list/ListSegmentersTable";
 
-const ListSegmentersComponent = ({ projectId, props }) => {
+const ListSegmentersComponent = ({ projectId }) => {
+  const navigate = useNavigate();
   const { getFilter, getProcessedFilters, setFilter } =
     useContext(NameSearchContext);
 
@@ -38,7 +40,7 @@ const ListSegmentersComponent = ({ projectId, props }) => {
     ]);
   });
 
-  const onRowClick = (item) => props.navigate(`./${item.name}/details`);
+  const onRowClick = (item) => navigate(`./${item.name}/details`);
 
   return (
     <Fragment>
@@ -68,8 +70,11 @@ const ListSegmentersComponent = ({ projectId, props }) => {
   );
 };
 
-export const ListSegmentersView = ({ projectId, ...props }) => (
-  <NameSearchContextProvider>
-    <ListSegmentersComponent projectId={projectId} props={props} />
-  </NameSearchContextProvider>
-);
+export const ListSegmentersView = () => {
+  const { projectId } = useParams();
+  return (
+    <NameSearchContextProvider>
+      <ListSegmentersComponent projectId={projectId} />
+    </NameSearchContextProvider>
+  )
+};

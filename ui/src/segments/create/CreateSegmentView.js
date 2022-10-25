@@ -5,6 +5,7 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { SegmentContextProvider } from "providers/segment/context";
@@ -13,7 +14,10 @@ import { CreateSegmentForm } from "segments/components/form/CreateSegmentForm";
 import { CustomSegment } from "services/segment/CustomSegment";
 import { useConfig } from "config";
 
-const CreateSegmentView = ({ projectId, ...props }) => {
+const CreateSegmentView = () => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -43,7 +47,7 @@ const CreateSegmentView = ({ projectId, ...props }) => {
               <CreateSegmentForm
                 projectId={projectId}
                 onCancel={() => window.history.back()}
-                onSuccess={(segmentId) => props.navigate(`../${segmentId}`)}
+                onSuccess={(segmentId) => navigate(`../${segmentId}`)}
               />
             </SegmentContextProvider>
           </SegmenterContextProvider>

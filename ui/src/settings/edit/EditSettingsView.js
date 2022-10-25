@@ -2,13 +2,17 @@ import React, { Fragment, useEffect } from "react";
 
 import { EuiPageTemplate, EuiSpacer } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { SegmenterContextProvider } from "providers/segmenter/context";
 import { Settings } from "services/settings/Settings";
 import { EditSettingsForm } from "settings/components/form/EditSettingsForm";
 import { PageTitle } from "components/page/PageTitle";
 
-const EditSettingsView = ({ projectId, settings, ...props }) => {
+const EditSettingsView = ({ settings }) => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: ".." },
@@ -31,7 +35,7 @@ const EditSettingsView = ({ projectId, settings, ...props }) => {
               projectId={projectId}
               onCancel={() => window.history.back()}
               onSuccess={() => {
-                props.navigate("../", { state: { refresh: true } });
+                navigate("../", { state: { refresh: true } });
               }}
             />
           </SegmenterContextProvider>

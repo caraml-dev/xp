@@ -10,6 +10,7 @@ import {
   EuiPageTemplate,
 } from "@elastic/eui";
 import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useParams } from "react-router-dom";
 
 import { ActivityConfigSection } from "components/config_section/ActivityConfigSection";
 import { ConfigSection } from "components/config_section/ConfigSection";
@@ -19,7 +20,8 @@ import { useXpApi } from "hooks/useXpApi";
 import { SegmenterContextProvider } from "providers/segmenter/context";
 import { useConfig } from "config";
 
-const SegmentHistoryDetailsView = ({ projectId, segmentId, version }) => {
+const SegmentHistoryDetailsView = () => {
+  const { projectId, segmentId, version } = useParams();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },

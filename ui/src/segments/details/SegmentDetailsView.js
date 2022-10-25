@@ -8,7 +8,7 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 import { PageNavigation } from "@gojek/mlp-ui";
-import { Redirect, Router } from "@reach/router";
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
@@ -19,7 +19,10 @@ import ListSegmentHistoryView from "segments/history/ListSegmentHistoryView";
 import { SegmentActions } from "./SegmentActions";
 import { useConfig } from "config";
 
-const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
+const SegmentDetailsView = () => {
+  const { projectId, segmentId, "*": section } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -42,10 +45,10 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
   }, [fetchSegmentDetails, fetchSegmentHistory]);
 
   useEffect(() => {
-    if ((props.location.state || {}).refresh) {
+    if ((location.state || {}).refresh) {
       onSegmentChange();
     }
-  }, [onSegmentChange, props.location.state]);
+  }, [onSegmentChange, location.state]);
 
   const tabs = [
     {
@@ -62,49 +65,48 @@ const SegmentDetailsView = ({ projectId, segmentId, ...props }) => {
   return (
     <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
       <EuiSpacer size="l" />
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : error ? (
-          <EuiCallOut
-            title="Sorry, there was an error"
-            color="danger"
-            iconType="alert">
-            <p>{error.message}</p>
-          </EuiCallOut>
-        ) : (
-          <Fragment>
-            {!(props["*"] === "edit") && (
-              <Fragment>
-                <EuiPageTemplate.Header
-                  bottomBorder={false}
-                  pageTitle={<PageTitle title={data.data.name} />}
-                >
-                  <SegmentActions
-                    onEdit={() => props.navigate("./edit")}
-                    onDeleteSuccess={() => props.navigate("../")}>
-                    {(getActions) => (
-                      <PageNavigation
-                        tabs={tabs}
-                        actions={getActions(data.data)}
-                        selectedTab={props["*"]}
-                        {...props}
-                      />
-                    )}
-                  </SegmentActions>
-                </EuiPageTemplate.Header>
-              </Fragment>
-            )}
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : error ? (
+        <EuiCallOut
+          title="Sorry, there was an error"
+          color="danger"
+          iconType="alert">
+          <p>{error.message}</p>
+        </EuiCallOut>
+      ) : (
+        <Fragment>
+          {!(section === "edit") && (
+            <Fragment>
+              <EuiPageTemplate.Header
+                bottomBorder={false}
+                pageTitle={<PageTitle title={data.data.name} />}
+              >
+                <SegmentActions
+                  onEdit={() => navigate("./edit")}
+                  onDeleteSuccess={() => navigate("../")}>
+                  {(getActions) => (
+                    <PageNavigation
+                      tabs={tabs}
+                      actions={getActions(data.data)}
+                      selectedTab={section}
+                    />
+                  )}
+                </SegmentActions>
+              </EuiPageTemplate.Header>
+            </Fragment>
+          )}
 
-            <Router primary={false}>
-              <Redirect from="/" to="details" noThrow />
-              <SegmentConfigView path="details" segment={data.data} />
-              <ListSegmentHistoryView path="history" segment={data.data} />
-              <EditSegmentView path="edit" segmentSpec={data.data} />
-            </Router>
-          </Fragment>
-        )}
+          <Routes>
+            <Route index element={<Navigate to="details" replace={true} />} />
+            <Route path="details" element={<SegmentConfigView segment={data.data} />} />
+            <Route path="history" element={<ListSegmentHistoryView segment={data.data} />} />
+            <Route path="edit" element={<EditSegmentView segmentSpec={data.data} />} />
+          </Routes>
+        </Fragment>
+      )}
     </EuiPageTemplate>
   );
 };

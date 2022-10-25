@@ -6,19 +6,17 @@ import {
   ErrorBoundary,
   Login,
   MlpApiContextProvider,
-  PrivateRoute,
   Toast,
 } from "@gojek/mlp-ui";
-import { Redirect, Router } from "@reach/router";
+import { Route, Routes } from "react-router-dom";
 
 import { useConfig } from "config";
-import ExperimentsLandingPage from "experiments/ExperimentsLandingPage";
-import Home from "Home";
 import { PrivateLayout } from "PrivateLayout";
 import { EuiProvider } from "@elastic/eui";
+import AppRoutes from "AppRoutes";
 
 const App = () => {
-  const { apiConfig, appConfig, authConfig } = useConfig();
+  const { apiConfig, authConfig } = useConfig();
   return (
     <EuiProvider>
       <ErrorBoundary>
@@ -26,32 +24,13 @@ const App = () => {
           mlpApiUrl={apiConfig.mlpApiUrl}
           timeout={apiConfig.apiTimeout}>
           <AuthProvider clientId={authConfig.oauthClientId}>
-            <Router role="group">
-              <Login path="/login" />
-
-              <Redirect from="/" to={appConfig.homepage} noThrow />
-
-              <Redirect
-                from={`${appConfig.homepage}/projects/:projectId`}
-                to={`${appConfig.homepage}/projects/:projectId/experiments`}
-                noThrow
-              />
-
-              {/* HOME */}
-              <PrivateRoute
-                path={appConfig.homepage}
-                render={PrivateLayout(Home)}
-              />
-
-              {/* EXPERIMENTS */}
-              <PrivateRoute
-                path={`${appConfig.homepage}/projects/:projectId/experiments/*`}
-                render={PrivateLayout(ExperimentsLandingPage)}
-              />
-
-              {/* DEFAULT */}
-              <Page404 default />
-            </Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route element={<PrivateLayout />}>
+                <Route path="/*" element={<AppRoutes />} />
+              </Route>
+              <Route path="/pages/404" element={<Page404 />} />
+            </Routes>
             <Toast />
           </AuthProvider>
         </MlpApiContextProvider>

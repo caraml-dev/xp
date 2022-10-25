@@ -5,6 +5,7 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { CreateExperimentForm } from "experiments/components/form/CreateExperimentForm";
@@ -15,7 +16,9 @@ import { TreatmentContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
 import { useConfig } from "config";
 
-const CreateExperimentView = ({ projectId, ...props }) => {
+const CreateExperimentView = () => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -48,7 +51,7 @@ const CreateExperimentView = ({ projectId, ...props }) => {
                     projectId={projectId}
                     onCancel={() => window.history.back()}
                     onSuccess={(experimentId) =>
-                      props.navigate(`../${experimentId}`)
+                      navigate(`../${experimentId}`)
                     }
                   />
                 </SegmentContextProvider>

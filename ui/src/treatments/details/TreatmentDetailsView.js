@@ -8,7 +8,7 @@ import {
   EuiTextAlign,
 } from "@elastic/eui";
 import { PageNavigation } from "@gojek/mlp-ui";
-import { Redirect, Router } from "@reach/router";
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { useXpApi } from "hooks/useXpApi";
@@ -19,7 +19,10 @@ import ListTreatmentHistoryView from "treatments/history/ListTreatmentHistoryVie
 import { TreatmentActions } from "./TreatmentActions";
 import { useConfig } from "config";
 
-const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
+const TreatmentDetailsView = () => {
+  const { projectId, treatmentId, "*": section } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -42,10 +45,10 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
   }, [fetchTreatmentDetails, fetchTreatmentHistory]);
 
   useEffect(() => {
-    if ((props.location.state || {}).refresh) {
+    if ((location.state || {}).refresh) {
       onTreatmentChange();
     }
-  }, [onTreatmentChange, props.location.state]);
+  }, [onTreatmentChange, location.state]);
 
   const tabs = [
     {
@@ -62,50 +65,48 @@ const TreatmentDetailsView = ({ projectId, treatmentId, ...props }) => {
   return (
     <EuiPageTemplate restrictWidth={restrictWidth} paddingSize={paddingSize}>
       <EuiSpacer size="l" />
-        {!isLoaded ? (
-          <EuiTextAlign textAlign="center">
-            <EuiLoadingChart size="xl" mono />
-          </EuiTextAlign>
-        ) : error ? (
-          <EuiCallOut
-            title="Sorry, there was an error"
-            color="danger"
-            iconType="alert">
-            <p>{error.message}</p>
-          </EuiCallOut>
-        ) : (
-          <Fragment>
-            {!(props["*"] === "edit") && (
-              <Fragment>
-                <EuiPageTemplate.Header
-                  bottomBorder={false}
-                  pageTitle={<PageTitle title={data.data.name} />}
-                >
-                  <TreatmentActions
-                    onEdit={() => props.navigate("./edit")}
-                    onDeleteSuccess={() => props.navigate("../")}>
-                    {(getActions) => (
-                      <PageNavigation
-                        tabs={tabs}
-                        actions={getActions(data.data)}
-                        selectedTab={props["*"]}
-                        {...props}
-                      />
-                    )}
-                  </TreatmentActions>
-                </EuiPageTemplate.Header>
-              </Fragment>
-            )}
+      {!isLoaded ? (
+        <EuiTextAlign textAlign="center">
+          <EuiLoadingChart size="xl" mono />
+        </EuiTextAlign>
+      ) : error ? (
+        <EuiCallOut
+          title="Sorry, there was an error"
+          color="danger"
+          iconType="alert">
+          <p>{error.message}</p>
+        </EuiCallOut>
+      ) : (
+        <Fragment>
+          {!(section === "edit") && (
+            <Fragment>
+              <EuiPageTemplate.Header
+                bottomBorder={false}
+                pageTitle={<PageTitle title={data.data.name} />}
+              >
+                <TreatmentActions
+                  onEdit={() => navigate("./edit")}
+                  onDeleteSuccess={() => navigate("../")}>
+                  {(getActions) => (
+                    <PageNavigation
+                      tabs={tabs}
+                      actions={getActions(data.data)}
+                      selectedTab={section}
+                    />
+                  )}
+                </TreatmentActions>
+              </EuiPageTemplate.Header>
+            </Fragment>
+          )}
 
-            <Router primary={false}>
-              <Redirect from="/" to="details" noThrow />
-              <TreatmentConfigView path="details" treatment={data.data} />
-              <ListTreatmentHistoryView path="history" treatment={data.data} />
-
-              <EditTreatmentView path="edit" treatmentSpec={data.data} />
-            </Router>
-          </Fragment>
-        )}
+          <Routes>
+            <Route index element={<Navigate to="details" replace={true} />} />
+            <Route path="details" element={<TreatmentConfigView treatment={data.data} />} />
+            <Route path="history" element={<ListTreatmentHistoryView treatment={data.data} />} />
+            <Route path="edit" element={<EditTreatmentView treatmentSpec={data.data} />} />
+          </Routes>
+        </Fragment>
+      )}
       <EuiSpacer size="l" />
     </EuiPageTemplate>
   );

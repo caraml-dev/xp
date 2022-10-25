@@ -43,6 +43,10 @@ module.exports = ({ }) => ({
                     filename: "remoteEntry.js",
                     shared: {
                         ...deps,
+                        "@emotion/react": {
+                            singleton: true,
+                            requiredVersion: deps["@emotion/react"]
+                        },
                         react: {
                             shareScope: "default",
                             singleton: true,
@@ -51,6 +55,10 @@ module.exports = ({ }) => ({
                         "react-dom": {
                             singleton: true,
                             requiredVersion: deps["react-dom"],
+                        },
+                        "react-router-dom": {
+                            singleton: true,
+                            requiredVersion: deps["react-router-dom"]
                         },
                         /* 
                         Without singleton declaration, 2 different versions of @gojek/mlp-ui dependency were loaded

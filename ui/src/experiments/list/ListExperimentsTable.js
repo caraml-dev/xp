@@ -15,7 +15,6 @@ const ListExperimentsTable = ({
   totalItemCount,
   onPaginationChange,
   onRowClick,
-  props,
 }) => {
   const { appConfig } = useConfig();
   const tableColumns = [
@@ -93,7 +92,7 @@ const ListExperimentsTable = ({
             onClick={(e) => {
               e.stopPropagation();
             }}
-            href={`${props.uri}/${item.id}`}
+            href={item.id}
             target="_blank"
           />
         );

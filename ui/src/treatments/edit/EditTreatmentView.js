@@ -5,13 +5,17 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";
 import { TreatmentContextProvider } from "providers/treatment/context";
 import { Treatment } from "services/treatment/Treatment";
 import { EditTreatmentForm } from "treatments/components/form/EditTreatmentForm";
 
-const EditTreatmentView = ({ projectId, treatmentSpec, ...props }) => {
+const EditTreatmentView = ({ treatmentSpec }) => {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
     replaceBreadcrumbs([
       { text: "Experiments", href: "../.." },
@@ -35,7 +39,7 @@ const EditTreatmentView = ({ projectId, treatmentSpec, ...props }) => {
               projectId={projectId}
               onCancel={() => window.history.back()}
               onSuccess={() => {
-                props.navigate("../", { state: { refresh: true } });
+                navigate("../", { state: { refresh: true } });
               }}
             />
           </TreatmentContextProvider>

@@ -10,7 +10,7 @@ import {
   EuiPageTemplate,
 } from "@elastic/eui";
 import { PageNavigation } from "@gojek/mlp-ui";
-import { Redirect, Router } from "@reach/router";
+import { Navigate, Routes, Route, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { VersionBadge } from "components/version_badge/VersionBadge";
 import { StatusBadge } from "components/status_badge/StatusBadge";
@@ -35,7 +35,10 @@ const ExperimentBadges = ({ version, status }) => (
   </EuiFlexGroup>
 );
 
-const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
+const ExperimentDetailsView = () => {
+  const { projectId, experimentId, "*": section } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     appConfig: {
       pageTemplate: { restrictWidth, paddingSize },
@@ -58,10 +61,10 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
   }, [fetchExperimentDetails, fetchExperimentHistory]);
 
   useEffect(() => {
-    if ((props.location.state || {}).refresh) {
+    if ((location.state || {}).refresh) {
       onExperimentChange();
     }
-  }, [onExperimentChange, props.location.state]);
+  }, [onExperimentChange, location.state]);
 
   const tabs = [
     {
@@ -91,7 +94,7 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
         </EuiCallOut>
       ) : (
         <Fragment>
-          {!(props["*"] === "edit") && (
+          {!(section === "edit") && (
             <Fragment>
               <EuiPageTemplate.Header
                 bottomBorder={false}
@@ -105,27 +108,26 @@ const ExperimentDetailsView = ({ projectId, experimentId, ...props }) => {
                 }
               >
                 <ExperimentActions
-                  onEdit={() => props.navigate("./edit")}
+                  onEdit={() => navigate("./edit")}
                   onActivateSuccess={onExperimentChange}
                   onDeactivateSuccess={onExperimentChange}>
                   {(getActions) => (
                     <PageNavigation
                       tabs={tabs}
                       actions={getActions(data.data)}
-                      selectedTab={props["*"]}
-                      {...props}
+                      selectedTab={section}
                     />
                   )}
                 </ExperimentActions>
               </EuiPageTemplate.Header>
             </Fragment>
           )}
-          <Router primary={false}>
-            <Redirect from="/" to="details" noThrow />
-            <ExperimentConfigView path="details" experiment={data.data} />
-            <ListExperimentHistoryView path="history" experiment={data.data} />
-            <EditExperimentView path="edit" experimentSpec={data.data} />
-          </Router>
+          <Routes>
+            <Route index element={<Navigate to="details" replace={true} />} />
+            <Route path="details" element={<ExperimentConfigView experiment={data.data} />} />
+            <Route path="history" element={<ListExperimentHistoryView experiment={data.data} />} />
+            <Route path="edit" element={<EditExperimentView experimentSpec={data.data} />} />
+          </Routes>
         </Fragment>
       )}
       <EuiSpacer size="l" />
