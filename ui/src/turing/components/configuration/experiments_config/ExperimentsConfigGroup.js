@@ -32,10 +32,11 @@ export const ExperimentsConfigGroup = ({ projectId }) => {
       query: {
         start_time: timestamp,
         end_time: timestamp,
+        fields: ["id"],
         status: "active",
       },
     },
-    { data: [], paging: { total: 0 } }
+    { data: [] }
   );
 
   const summaryOverlayRef = useRef();
@@ -75,7 +76,7 @@ export const ExperimentsConfigGroup = ({ projectId }) => {
               Active Experiments
             </EuiDescriptionListTitle>
             <EuiDescriptionListDescription>
-              {data.paging.total}
+              {data.length}
             </EuiDescriptionListDescription>
           </EuiDescriptionList>
         )}
