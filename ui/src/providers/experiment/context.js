@@ -9,9 +9,7 @@ const ExperimentContext = React.createContext({});
 export const ExperimentContextProvider = ({ projectId, children }) => {
   const { appConfig } = useConfig();
 
-  const [isAllExperimentsLoaded, setIsAllExperimentsLoaded] = useState(false);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [allExperiments, setAllExperiments] = useState([]);
+  const [results, setResults] = useState([]);
 
   const { start_time, end_time } = useMemo(
     () => {
@@ -23,39 +21,30 @@ export const ExperimentContextProvider = ({ projectId, children }) => {
     [appConfig]
   );
 
-  const [{ data: { data: experiments, paging }, isLoaded }] = useXpApi(
+  const [{ data: { data: experiments }, isLoaded, error }] = useXpApi(
     `/projects/${projectId}/experiments`,
     {
       query: {
         start_time: start_time,
         end_time: end_time,
-        page: pageIndex + 1,
-        page_size: appConfig.pagination.experimentContextPageSize,
         fields: appConfig.listExperimentFields.experimentContextFields,
         status_friendly: ["running", "scheduled"]
       },
     },
-    { data: [], paging: { total: 0 } }
+    { data: [] }
   );
 
   useEffect(() => {
-    if (isLoaded) {
-      if (!!experiments && !isAllExperimentsLoaded) {
-        setAllExperiments((curExperiments) => [...curExperiments, ...experiments]);
-      }
-      if (paging.pages > paging.page) {
-        setPageIndex(paging.page);
-      } else {
-        setIsAllExperimentsLoaded(true);
-      }
+    if (isLoaded && !error) {
+      setResults(experiments);
     }
-  }, [isLoaded, experiments, paging, isAllExperimentsLoaded]);
+  }, [experiments, isLoaded, error]);
 
   return (
     <ExperimentContext.Provider
       value={{
-        allExperiments,
-        isAllExperimentsLoaded,
+        results,
+        isLoaded,
       }}>
       {children}
     </ExperimentContext.Provider>
