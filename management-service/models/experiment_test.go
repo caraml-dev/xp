@@ -66,19 +66,6 @@ func TestExperimentToApiSchema(t *testing.T) {
 	statusFriendly := schema.ExperimentStatusFriendlyCompleted
 	experimentType := schema.ExperimentTypeSwitchback
 	tier := schema.ExperimentTierDefault
-	treatments := []schema.ExperimentTreatment{
-		{
-			Configuration: map[string]interface{}{
-				"config-1": "value",
-				"config-2": 2,
-			},
-			Name:    "control",
-			Traffic: &testExperimentTraffic,
-		},
-	}
-	segment := schema.ExperimentSegment{
-		"string_segmenter": []string{"seg-1"},
-	}
 	version := int64(2)
 
 	assert.Equal(t, schema.Experiment{
@@ -96,9 +83,20 @@ func TestExperimentToApiSchema(t *testing.T) {
 		StatusFriendly: &statusFriendly,
 		Type:           &experimentType,
 		Tier:           &tier,
-		Treatments:     &treatments,
-		Segment:        &segment,
-		Version:        &version,
+		Treatments: &[]schema.ExperimentTreatment{
+			{
+				Configuration: map[string]interface{}{
+					"config-1": "value",
+					"config-2": 2,
+				},
+				Name:    "control",
+				Traffic: &testExperimentTraffic,
+			},
+		},
+		Segment: &schema.ExperimentSegment{
+			"string_segmenter": []string{"seg-1"},
+		},
+		Version: &version,
 	}, testExperiment.ToApiSchema(segmenterTypes))
 }
 
@@ -126,16 +124,6 @@ func TestExperimentToApiSchemaWithFields(t *testing.T) {
 	statusFriendly := schema.ExperimentStatusFriendlyCompleted
 	experimentType := schema.ExperimentTypeSwitchback
 	tier := schema.ExperimentTierDefault
-	treatments := []schema.ExperimentTreatment{
-		{
-			Configuration: map[string]interface{}{
-				"config-1": "value",
-				"config-2": 2,
-			},
-			Name:    "control",
-			Traffic: &testExperimentTraffic,
-		},
-	}
 
 	assert.Equal(t, schema.Experiment{
 		Id:             &id,
@@ -146,7 +134,16 @@ func TestExperimentToApiSchemaWithFields(t *testing.T) {
 		StatusFriendly: &statusFriendly,
 		Type:           &experimentType,
 		Tier:           &tier,
-		Treatments:     &treatments,
+		Treatments: &[]schema.ExperimentTreatment{
+			{
+				Configuration: map[string]interface{}{
+					"config-1": "value",
+					"config-2": 2,
+				},
+				Name:    "control",
+				Traffic: &testExperimentTraffic,
+			},
+		},
 	}, testExperiment.ToApiSchema(segmenterTypes, fields...))
 }
 
