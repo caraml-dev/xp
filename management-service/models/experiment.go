@@ -107,51 +107,66 @@ func (e *Experiment) AfterFind(tx *gorm.DB) error {
 // OpenAPI specifications.
 func (e *Experiment) ToApiSchema(segmentersType map[string]schema.SegmenterType, fields ...ExperimentField) schema.Experiment {
 	experiment := schema.Experiment{}
+
 	// Only return requested fields
 	if fields != nil {
 		for _, field := range fields {
 			switch field {
 			case ExperimentFieldName:
-				experiment.Name = e.Name
+				experiment.Name = &e.Name
 			case ExperimentFieldId:
-				experiment.Id = e.ID.ToApiSchema()
+				id := e.ID.ToApiSchema()
+				experiment.Id = &id
 			case ExperimentFieldType:
-				experiment.Type = schema.ExperimentType(e.Type)
+				experimentType := schema.ExperimentType(e.Type)
+				experiment.Type = &experimentType
 			case ExperimentFieldStatusFriendly:
-				experiment.StatusFriendly = getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status)
+				statusFriendly := getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status)
+				experiment.StatusFriendly = &statusFriendly
 			case ExperimentFieldTier:
-				experiment.Tier = schema.ExperimentTier(e.Tier)
+				tier := schema.ExperimentTier(e.Tier)
+				experiment.Tier = &tier
 			case ExperimentFieldStartTime:
-				experiment.StartTime = e.StartTime
+				experiment.StartTime = &e.StartTime
 			case ExperimentFieldEndTime:
-				experiment.EndTime = e.EndTime
+				experiment.EndTime = &e.EndTime
 			case ExperimentFieldUpdatedAt:
-				experiment.UpdatedAt = e.UpdatedAt
+				experiment.UpdatedAt = &e.UpdatedAt
 			case ExperimentFieldTreatments:
-				experiment.Treatments = e.Treatments.ToApiSchema()
+				treatments := e.Treatments.ToApiSchema()
+				experiment.Treatments = &treatments
 			}
 		}
 		return experiment
 	}
 
+	id := e.ID.ToApiSchema()
+	projectId := e.ProjectID.ToApiSchema()
+	segment := e.Segment.ToApiSchema(segmentersType)
+	status := schema.ExperimentStatus(e.Status)
+	statusFriendly := getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status)
+	treatments := e.Treatments.ToApiSchema()
+	experimentType := schema.ExperimentType(e.Type)
+	tier := schema.ExperimentTier(e.Tier)
+
 	return schema.Experiment{
 		Description:    e.Description,
-		EndTime:        e.EndTime,
-		Id:             e.ID.ToApiSchema(),
+		EndTime:        &e.EndTime,
+		Id:             &id,
 		Interval:       e.Interval,
-		Name:           e.Name,
-		ProjectId:      e.ProjectID.ToApiSchema(),
-		Segment:        e.Segment.ToApiSchema(segmentersType),
-		Status:         schema.ExperimentStatus(e.Status),
-		StatusFriendly: getExperimentStatusFriendly(e.StartTime, e.EndTime, e.Status),
-		Treatments:     e.Treatments.ToApiSchema(),
-		Type:           schema.ExperimentType(e.Type),
-		Tier:           schema.ExperimentTier(e.Tier),
-		StartTime:      e.StartTime,
-		CreatedAt:      e.CreatedAt,
-		UpdatedAt:      e.UpdatedAt,
-		UpdatedBy:      e.UpdatedBy,
-		Version:        e.Version,
+		Name:           &e.Name,
+		ProjectId:      &projectId,
+		Segment:        &segment,
+		Status:         &status,
+		StatusFriendly: &statusFriendly,
+		Treatments:     &treatments,
+		Type:           &experimentType,
+		Tier:           &tier,
+		StartTime:      &e.StartTime,
+		CreatedAt:      &e.CreatedAt,
+		UpdatedAt:      &e.UpdatedAt,
+		UpdatedBy:      &e.UpdatedBy,
+		Version:        &e.Version,
 	}
 }
 

@@ -54,35 +54,51 @@ func TestExperimentToApiSchema(t *testing.T) {
 		"string_segmenter": schema.SegmenterTypeString,
 	}
 
+	id := int64(5)
+	projectId := int64(1)
+	createdAt := time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)
+	updatedAt := time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)
+	updatedBy := "admin"
+	endTime := time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC)
+	startTime := time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC)
+	name := "test-exp"
+	status := schema.ExperimentStatusActive
+	statusFriendly := schema.ExperimentStatusFriendlyCompleted
+	experimentType := schema.ExperimentTypeSwitchback
+	tier := schema.ExperimentTierDefault
+	treatments := []schema.ExperimentTreatment{
+		{
+			Configuration: map[string]interface{}{
+				"config-1": "value",
+				"config-2": 2,
+			},
+			Name:    "control",
+			Traffic: &testExperimentTraffic,
+		},
+	}
+	segment := schema.ExperimentSegment{
+		"string_segmenter": []string{"seg-1"},
+	}
+	version := int64(2)
+
 	assert.Equal(t, schema.Experiment{
-		Id:             int64(5),
-		ProjectId:      int64(1),
-		CreatedAt:      time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-		UpdatedAt:      time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-		UpdatedBy:      "admin",
-		EndTime:        time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
-		StartTime:      time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC),
-		Name:           "test-exp",
+		Id:             &id,
+		ProjectId:      &projectId,
+		CreatedAt:      &createdAt,
+		UpdatedAt:      &updatedAt,
+		UpdatedBy:      &updatedBy,
+		EndTime:        &endTime,
+		StartTime:      &startTime,
+		Name:           &name,
 		Description:    &testExperimentDescription,
 		Interval:       &testExperimentInterval,
-		Status:         schema.ExperimentStatusActive,
-		StatusFriendly: schema.ExperimentStatusFriendlyCompleted,
-		Type:           schema.ExperimentTypeSwitchback,
-		Tier:           schema.ExperimentTierDefault,
-		Treatments: []schema.ExperimentTreatment{
-			{
-				Configuration: map[string]interface{}{
-					"config-1": "value",
-					"config-2": 2,
-				},
-				Name:    "control",
-				Traffic: &testExperimentTraffic,
-			},
-		},
-		Segment: schema.ExperimentSegment{
-			"string_segmenter": []string{"seg-1"},
-		},
-		Version: 2,
+		Status:         &status,
+		StatusFriendly: &statusFriendly,
+		Type:           &experimentType,
+		Tier:           &tier,
+		Treatments:     &treatments,
+		Segment:        &segment,
+		Version:        &version,
 	}, testExperiment.ToApiSchema(segmenterTypes))
 }
 
@@ -102,25 +118,35 @@ func TestExperimentToApiSchemaWithFields(t *testing.T) {
 		ExperimentFieldUpdatedAt,
 		ExperimentFieldTreatments,
 	}
-	assert.Equal(t, schema.Experiment{
-		Id:             int64(5),
-		UpdatedAt:      time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-		EndTime:        time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC),
-		StartTime:      time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC),
-		Name:           "test-exp",
-		StatusFriendly: schema.ExperimentStatusFriendlyCompleted,
-		Type:           schema.ExperimentTypeSwitchback,
-		Tier:           schema.ExperimentTierDefault,
-		Treatments: []schema.ExperimentTreatment{
-			{
-				Configuration: map[string]interface{}{
-					"config-1": "value",
-					"config-2": 2,
-				},
-				Name:    "control",
-				Traffic: &testExperimentTraffic,
+	id := int64(5)
+	updatedAt := time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)
+	endTime := time.Date(2022, 1, 1, 1, 1, 1, 1, time.UTC)
+	startTime := time.Date(2022, 2, 2, 1, 1, 1, 1, time.UTC)
+	name := "test-exp"
+	statusFriendly := schema.ExperimentStatusFriendlyCompleted
+	experimentType := schema.ExperimentTypeSwitchback
+	tier := schema.ExperimentTierDefault
+	treatments := []schema.ExperimentTreatment{
+		{
+			Configuration: map[string]interface{}{
+				"config-1": "value",
+				"config-2": 2,
 			},
+			Name:    "control",
+			Traffic: &testExperimentTraffic,
 		},
+	}
+
+	assert.Equal(t, schema.Experiment{
+		Id:             &id,
+		UpdatedAt:      &updatedAt,
+		EndTime:        &endTime,
+		StartTime:      &startTime,
+		Name:           &name,
+		StatusFriendly: &statusFriendly,
+		Type:           &experimentType,
+		Tier:           &tier,
+		Treatments:     &treatments,
 	}, testExperiment.ToApiSchema(segmenterTypes, fields...))
 }
 
