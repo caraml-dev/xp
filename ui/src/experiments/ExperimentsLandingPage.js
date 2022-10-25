@@ -40,8 +40,8 @@ const ExperimentsLandingPage = () => {
             <Route index element={<LandingView Component={ListTreatmentsView} name="Treatments" />} />
             <Route path="create" element={<CreateTreatmentView />} />
             <Route path=":treatmentId">
-              <Route path="history/:version" element={<TreatmentHistoryDetailsView />} />
               <Route index path="*" element={<TreatmentDetailsView />} />
+              <Route path="history/:version" element={<TreatmentHistoryDetailsView />} />
             </Route>
           </Route>
 
@@ -50,8 +50,8 @@ const ExperimentsLandingPage = () => {
             <Route index element={<LandingView Component={ListSegmentsView} name="Segments" />} />
             <Route path="create" element={<CreateSegmentView />} />
             <Route path=":segmentId">
-              <Route path="history/:version" element={<SegmentHistoryDetailsView />} />
               <Route index path="*" element={<SegmentDetailsView />} />
+              <Route path="history/:version" element={<SegmentHistoryDetailsView />} />
             </Route>
           </Route>
 
@@ -59,8 +59,8 @@ const ExperimentsLandingPage = () => {
           <Route index element={<LandingView Component={ListExperimentsView} name="Experiments" />} />
           <Route path="create" element={<CreateExperimentView />} />
           <Route path=":experimentId">
-            <Route path="history/:version" element={<ExperimentHistoryDetailsView />} />
             <Route index path="*" element={<ExperimentDetailsView />} />
+            <Route path="history/:version" element={<ExperimentHistoryDetailsView />} />
           </Route>
 
           {/* /experiments is the list view as well as a prefix to the other views which are registered without it;
