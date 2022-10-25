@@ -87,14 +87,8 @@ func (e ExperimentController) ListExperiments(w http.ResponseWriter, r *http.Req
 		return
 	}
 	var expsResp []schema.Experiment
-	var fields []models.ExperimentField
-	if params.Fields != nil {
-		for _, field := range *params.Fields {
-			fields = append(fields, models.ExperimentField(field))
-		}
-	}
 	for _, exp := range exps {
-		expsResp = append(expsResp, exp.ToApiSchema(segmenterTypes, fields...))
+		expsResp = append(expsResp, exp.ToApiSchema(segmenterTypes, *listExperimentParams.Fields...))
 	}
 
 	Ok(w, expsResp, ToPagingSchema(paging))
@@ -340,6 +334,13 @@ func (e ExperimentController) toListExperimentParams(params api.ListExperimentsP
 		}
 	}
 
+	var fields []models.ExperimentField
+	if params.Fields != nil {
+		for _, field := range *params.Fields {
+			fields = append(fields, models.ExperimentField(field))
+		}
+	}
+
 	return &services.ListExperimentsParams{
 		PaginationOptions: pagination.PaginationOptions{
 			Page:     params.Page,
@@ -356,5 +357,6 @@ func (e ExperimentController) toListExperimentParams(params api.ListExperimentsP
 		StartTime:        params.StartTime,
 		Segment:          validSegmentParam,
 		IncludeWeakMatch: params.IncludeWeakMatch != nil && *params.IncludeWeakMatch,
+		Fields:           &fields,
 	}, nil
 }

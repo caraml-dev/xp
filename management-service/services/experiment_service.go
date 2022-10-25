@@ -560,7 +560,12 @@ func (svc *experimentService) filterFieldValues(query *gorm.DB, params ListExper
 		// query.Select only accepts []string
 		var fieldNames []string
 		for _, field := range *params.Fields {
-			fieldNames = append(fieldNames, string(field))
+			fieldName := field
+			// Add ExperimentFieldStatus to the query because status_friendly does not exist in the db as a column
+			if field == models.ExperimentFieldStatusFriendly {
+				fieldName = models.ExperimentFieldStatus
+			}
+			fieldNames = append(fieldNames, string(fieldName))
 		}
 		query = query.Select(fieldNames)
 	}
@@ -628,7 +633,17 @@ func (svc *experimentService) filterSegmenterValues(query *gorm.DB, segment mode
 }
 
 func validateListExperimentFieldNames(fields []models.ExperimentField) error {
-	allowedFieldList := []interface{}{models.ExperimentFieldId, models.ExperimentFieldName}
+	allowedFieldList := []interface{}{
+		models.ExperimentFieldId,
+		models.ExperimentFieldName,
+		models.ExperimentFieldStartTime,
+		models.ExperimentFieldEndTime,
+		models.ExperimentFieldTier,
+		models.ExperimentFieldType,
+		models.ExperimentFieldStatusFriendly,
+		models.ExperimentFieldUpdatedAt,
+		models.ExperimentFieldTreatments,
+	}
 	allowedFields := set.New(allowedFieldList...)
 	for _, field := range fields {
 		if !allowedFields.Has(field) {

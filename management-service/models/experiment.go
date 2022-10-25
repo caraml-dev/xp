@@ -48,6 +48,9 @@ const (
 
 	ExperimentFieldStatusFriendly ExperimentField = "status_friendly"
 
+	// ExperimentFieldStatus is only used for querying the db because status_friendly does not exist as a column
+	ExperimentFieldStatus ExperimentField = "status"
+
 	ExperimentFieldTier ExperimentField = "tier"
 
 	ExperimentFieldTreatments ExperimentField = "treatments"
