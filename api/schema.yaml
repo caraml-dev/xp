@@ -158,24 +158,6 @@ components:
         - updated_at
         - treatments
     Experiment:
-      required:
-        - project_id
-        - description
-        - end_time
-        - id
-        - interval
-        - name
-        - segment
-        - start_time
-        - status
-        - status_friendly
-        - treatments
-        - tier
-        - type
-        - created_at
-        - updated_at
-        - updated_by
-        - version
       type: object
       properties:
         description:

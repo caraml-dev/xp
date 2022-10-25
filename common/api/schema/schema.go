@@ -126,27 +126,27 @@ type Error struct {
 
 // Experiment defines model for Experiment.
 type Experiment struct {
-	CreatedAt   time.Time         `json:"created_at"`
-	Description *string           `json:"description"`
-	EndTime     time.Time         `json:"end_time"`
-	Id          int64             `json:"id"`
-	Interval    *int32            `json:"interval"`
-	Name        string            `json:"name"`
-	ProjectId   int64             `json:"project_id"`
-	Segment     ExperimentSegment `json:"segment"`
-	StartTime   time.Time         `json:"start_time"`
-	Status      ExperimentStatus  `json:"status"`
+	CreatedAt   *time.Time         `json:"created_at,omitempty"`
+	Description *string            `json:"description"`
+	EndTime     *time.Time         `json:"end_time,omitempty"`
+	Id          *int64             `json:"id,omitempty"`
+	Interval    *int32             `json:"interval"`
+	Name        *string            `json:"name,omitempty"`
+	ProjectId   *int64             `json:"project_id,omitempty"`
+	Segment     *ExperimentSegment `json:"segment,omitempty"`
+	StartTime   *time.Time         `json:"start_time,omitempty"`
+	Status      *ExperimentStatus  `json:"status,omitempty"`
 
 	// The user-friendly classification of experiment statuses. The categories are
 	// self-explanatory. Note that the current time plays a role in the definition
 	// of some of these statuses.
-	StatusFriendly ExperimentStatusFriendly `json:"status_friendly"`
-	Tier           ExperimentTier           `json:"tier"`
-	Treatments     []ExperimentTreatment    `json:"treatments"`
-	Type           ExperimentType           `json:"type"`
-	UpdatedAt      time.Time                `json:"updated_at"`
-	UpdatedBy      string                   `json:"updated_by"`
-	Version        int64                    `json:"version"`
+	StatusFriendly *ExperimentStatusFriendly `json:"status_friendly,omitempty"`
+	Tier           *ExperimentTier           `json:"tier,omitempty"`
+	Treatments     *[]ExperimentTreatment    `json:"treatments,omitempty"`
+	Type           *ExperimentType           `json:"type,omitempty"`
+	UpdatedAt      *time.Time                `json:"updated_at,omitempty"`
+	UpdatedBy      *string                   `json:"updated_by,omitempty"`
+	Version        *int64                    `json:"version,omitempty"`
 }
 
 // ExperimentField defines model for ExperimentField.
@@ -510,38 +510,38 @@ func (a SegmenterOptions) MarshalJSON() ([]byte, error) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"H4sIAAAAAAAC/+xaX5PbuA3/Khy1fVN2O9dOH/x2vfbah95t5nYnfchmPLQI2UwoUgEpO27G373DP/pP",
+	"S7LjyWVn8hStBYAAfgAIQPmcZKoolQRpdLL6nOhsBwV1jz8pqQ1SLo39q0RVAhoO7h0VQh2ArfdUVP4X",
+	"bqBwD39EyJNV8of7VvB9kHr/CNsCpAF84/lOaWKOJSSrhCLSo/1blYYruVzSQ6A/pUmJsEb4WHHNzQVK",
+	"vUb4reYaa3RKEycTgSWrt8Mz0qEn3jX8avMeMmMF/hNR4diHmWJg/w302iCXW0sPNf3oTQFa022Ma6Cm",
+	"k93S1zKj2n0qAbl1ZkRFBGqAral7lyss7FPCqIFXhhdW8EhHBjpD7lCxTLISgm4EJCuDFUToQbK1k7X4",
+	"BM56tFyav/21pePSwBbQEdoA2VMxJP/LD0l6TrEOu6RFHKASlfXeerEi2kfrXCS2UITwdryGornQQ9pQ",
+	"U+kLjvP0Dec6Rw6SieOlIn6u+WweccDl/E/cu8rYkCvqcrQogTtCauZYZfF/LxZlqU9pUpXs4hSoeTbH",
+	"aPjsAXXIjtnYOU1m7M8chItBkFVh856zJMRt4BsjGoDpBVYnC3sW9+B4F7G0VeXfXBuFx5dSQ6BRfHkW",
+	"/+515+WUke+5f5vc797p/ZBtRfXTpZfKjq6JxqYy1HE0qAEB7qZAdOBoqkknmweVomP4dJvx2EbxFFUT",
+	"e01tkzQzfG+1CA/TFWlwI60+98tK8rQDUmnAV3VpJJmgWvOcZ9SSEJWT1ufEewf0HbGMGTWwVchBE4rw",
+	"LDWI/BV8KgWV1NbBO/KrMkDMjhpiLH2FaKVYV5NS0KMmlKASQLh0BAxyLrk991mqnGhVgFXA7EBDe/az",
+	"B9g7BCsprdWp69pZJcDCbSNbgHHPDJynLC4zznoKCcsgp5VwUR6e2vPaX9QeEDmbQ6BNyUjzK3O+rZDW",
+	"Nb6PzU/d14RqrTJurSAHbnbOX1u+B0maEE0iIVfX0b7oX2nj2Rh7a4dBmuc8G0v47w48Zp3o4JoU1FgY",
+	"UvfqTySwE6PIBgjjCJk1wKj+yXfP0o8wVJBcIXk8cJPtNjT7QFpHBuBHd8lMxeg7OThkOjmfQqGsMf/x",
+	"/u9JmrRKRRF/Tbf2aQRyGWaVAQBVsQGsIagTo/RzyqyJqZOqI+msDBVENsI92SKJxrLOS0TQlTABaC63",
+	"Tv+PFeCRZMgNIKdXgOQP92YltXUxkHpz6sjXuh6I13PtA+DNx/aBSQNdIifH7XNT1W06yMW9GlLJVMH/",
+	"53Jk/QGO067rO21cMwZ9x1UdhAY8g+HAz+56n7iRa0ExK3s2TcDx2LO8D4wVHsnE/3BtbL60BxBL6Wo3",
+	"lyQITu3NVyJXyM2RKGSAd7ZbWezbPUVuG2m/kGKM+yr6uqdiXLOG1epw2PHM3ykahC/Sjea2rtsqX5du",
+	"W8kB+R4YyVEVF+nbV+UXWpa2hnT9VF8Odd0G1r1iWntHaA3iwuPS9dAkwMZwudW3yTuQ9sC1/oGzdSYq",
+	"bauivxoC6UYpAVT6Qq71uYS7eMVyTR5PbwWH4d8dUNaebE5I0wA9evLbVwQLsuDMW12hmC8aHc8uLB41",
+	"TrNl5Cz8sfD7rRKR5uBHgpUIfbN1jiYlRZeztNMi+7+d5W0nRQImaaRKnYkxYLbXj6rxL0UMFKWgxvV5",
+	"CNoOW16xotKGIJgKJaEkRDRxV9sYvkhuJt2zz/lmonxZF2mvivMJTDlj0Q3vwIjUrM6s9hXv5G9j8Xrz",
+	"6T+2ywvnTSzyYg134Lrpzu3L0fmi9ZR/XI7st7Wb6agfti7tdma0dLl6h9JcRtF5OnysW97Wdz7wRVL/",
+	"Bnvb8ferShjuZwAW7wnOBtcXfBdsgYqdqDM1vxtsxD466sW70ZavXY02PYTVC7RZ5zb5p7vVo20VM1Vs",
+	"uGx2U9Emlut+85pROdW0xg+MNZ0pOexAkkoDs+dlSr6vZGYZ0+EhfS0u6pGv2ds2Pr5+bRu/o8PKs468",
+	"QfhOIJn20rEjezKpH9oIj08zve8FEQGPdSTXl8hWqI3fLYTReuIuaUK0w9/sW5vV66SA4e4okKQu28Ii",
+	"eusCAoGKaVlvmg2FkvCQJ6u34+iJZHPzk9/aJKd3Tqgf6ybWkdd8DurwnK1aBRjKqKHzMTxQ8ZeasVsx",
+	"LpbyDydh5jvC0I7ugR0L4rEbO/DiZW+ljSpIdoud78VdzPfl8Nxy+HxsTqXRdV/cOgIu6cbSRDeeWR+4",
+	"ZOoQ8nj8yce/JpwRzWUGzuEb2HL3LWW4lQ5K1D93/N9qevcsn+yN54o/OXAhiJLiaIHVYIa4tXyaUMmc",
+	"2I5KhqJ9Ycifx6he+JGw7UCHsMRQvuRbzYj5hUyDX2Wiaxx54UzX8J2f6r5RHNo+6IVObz0DuqNb97/T",
+	"DOvl1VPccCk4qlIPjtTeh4ZyV5W49Ca5DZRasPTpBw7W66S5FZAeucazjs04uf/mkqtkJSshbJMMkpY8",
+	"WSVuYWh22r85/T8AAP//DYlTE2EqAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
