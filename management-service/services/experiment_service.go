@@ -166,22 +166,24 @@ func (svc *experimentService) ListExperiments(
 	// Pagination
 	var pagingResponse *pagination.Paging
 	var count int64
-	err = pagination.ValidatePaginationParams(params.Page, params.PageSize)
-	if err != nil {
-		return nil, nil, err
-	}
-	pageOpts := pagination.NewPaginationOptions(params.Page, params.PageSize)
-	// Count total
-	query.Model(&exps).Count(&count)
-	// Add offset and limit
-	query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
-	query = query.Limit(int(*pageOpts.PageSize))
-	// Format opts into paging response
-	pagingResponse = pagination.ToPaging(pageOpts, int(count))
-	if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
-		// Invalid query - total pages is less than the requested page
-		return nil, nil, errors.Newf(errors.BadInput,
-			"Requested page number %d exceeds total pages: %d.", pagingResponse.Page, pagingResponse.Pages)
+	if params.Fields == nil || params.Page != nil || params.PageSize != nil {
+		err = pagination.ValidatePaginationParams(params.Page, params.PageSize)
+		if err != nil {
+			return nil, nil, err
+		}
+		pageOpts := pagination.NewPaginationOptions(params.Page, params.PageSize)
+		// Count total
+		query.Model(&exps).Count(&count)
+		// Add offset and limit
+		query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
+		query = query.Limit(int(*pageOpts.PageSize))
+		// Format opts into paging response
+		pagingResponse = pagination.ToPaging(pageOpts, int(count))
+		if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
+			// Invalid query - total pages is less than the requested page
+			return nil, nil, errors.Newf(errors.BadInput,
+				"Requested page number %d exceeds total pages: %d.", pagingResponse.Page, pagingResponse.Pages)
+		}
 	}
 
 	// Filter experiments
