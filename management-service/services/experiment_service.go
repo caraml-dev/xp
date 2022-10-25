@@ -166,7 +166,7 @@ func (svc *experimentService) ListExperiments(
 	// Pagination
 	var pagingResponse *pagination.Paging
 	var count int64
-	if params.Fields == nil || params.Page != nil || params.PageSize != nil {
+	if params.Fields == nil {
 		err = pagination.ValidatePaginationParams(params.Page, params.PageSize)
 		if err != nil {
 			return nil, nil, err
