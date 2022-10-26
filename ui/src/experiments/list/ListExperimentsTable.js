@@ -1,6 +1,8 @@
 import React from "react";
 
 import { EuiHealth, EuiLink, EuiText } from "@elastic/eui";
+import { useLocation } from "react-router-dom";
+import urlJoin from "proper-url-join";
 
 import { useConfig } from "config";
 import { BasicTable } from "components/table/BasicTable";
@@ -17,6 +19,7 @@ const ListExperimentsTable = ({
   onRowClick,
 }) => {
   const { appConfig } = useConfig();
+  const location = useLocation();
   const tableColumns = [
     {
       field: "id",
@@ -88,11 +91,12 @@ const ListExperimentsTable = ({
       width: "5%",
       render: (item) => {
         return (
+          // We need to do urlJoin to correctly handle trailing slash when used as a remote component
           <EuiLink
             onClick={(e) => {
               e.stopPropagation();
             }}
-            href={item.id}
+            href={urlJoin(location.pathname, item.id)}
             target="_blank"
           />
         );
