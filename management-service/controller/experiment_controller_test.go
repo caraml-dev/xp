@@ -137,14 +137,12 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 	var emptyStatus *models.ExperimentStatus
 	var emptyType *models.ExperimentType
 	updatedBy := "test-user"
-	var emptyFieldsList []models.ExperimentField
 	expSvc.
 		On("ListExperiments", int64(3), services.ListExperimentsParams{
 			Status:         emptyStatus,
 			StatusFriendly: []services.ExperimentStatusFriendly{},
 			Type:           emptyType,
 			Segment:        models.ExperimentSegment{},
-			Fields:         &emptyFieldsList,
 		}).Return(nil, nil, fmt.Errorf("unexpected error"))
 	expSvc.
 		On("ListExperiments", int64(2), services.ListExperimentsParams{
@@ -152,7 +150,6 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			StatusFriendly: []services.ExperimentStatusFriendly{},
 			Type:           emptyType,
 			Segment:        models.ExperimentSegment{"days_of_week": []string{"1"}},
-			Fields:         &emptyFieldsList,
 		}).Return([]*models.Experiment{testExperiment}, nil, nil)
 	expSvc.
 		On("ListExperiments", int64(2), services.ListExperimentsParams{
@@ -160,7 +157,6 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			StatusFriendly: []services.ExperimentStatusFriendly{},
 			Type:           emptyType,
 			Segment:        models.ExperimentSegment{},
-			Fields:         &emptyFieldsList,
 		}).Return([]*models.Experiment{testExperiment}, nil, nil)
 	expSvc.
 		On("CreateExperiment",
