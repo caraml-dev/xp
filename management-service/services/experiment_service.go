@@ -557,15 +557,28 @@ func (svc *experimentService) filterFieldValues(query *gorm.DB, params ListExper
 		if err != nil {
 			return nil, err
 		}
-		// query.Select only accepts []string
-		var fieldNames []string
+
+		// Stores a map of unique field names which are unique column names to be selected in the db query
+		fieldNamesSet := make(map[string]struct{})
 		for _, field := range *params.Fields {
 			fieldName := field
 			// Add ExperimentFieldStatus to the query because status_friendly does not exist in the db as a column
 			if field == models.ExperimentFieldStatusFriendly {
+				// Add ExperimentFieldStartTime and ExperimentFieldEndTime to the query as they are required for
+				// determining the statusFriendly field; these two fields may or may not be returned depending on
+				// what is actually specified in params.Fields
+				fieldNamesSet[string(models.ExperimentFieldStartTime)] = struct{}{}
+				fieldNamesSet[string(models.ExperimentFieldEndTime)] = struct{}{}
+
 				fieldName = models.ExperimentFieldStatus
 			}
-			fieldNames = append(fieldNames, string(fieldName))
+			fieldNamesSet[string(fieldName)] = struct{}{}
+		}
+
+		// Retrieve a slice of unique strings from fieldNamesSet; query.Select only accepts []string
+		var fieldNames []string
+		for k := range fieldNamesSet {
+			fieldNames = append(fieldNames, k)
 		}
 		query = query.Select(fieldNames)
 	}
