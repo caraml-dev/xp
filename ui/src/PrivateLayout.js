@@ -24,7 +24,6 @@ export const PrivateLayout = () => {
           <ApplicationsContext.Consumer>
             {() => (
               <Header
-                homepage={appConfig.homepage}
                 onProjectSelect={pId =>
                   navigate(urlJoin("projects", pId))
                 }
