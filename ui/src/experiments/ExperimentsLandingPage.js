@@ -68,7 +68,7 @@ const ExperimentsLandingPage = () => {
         which results in incorrect /experiments/experiments prefix.
          */}
           <Route
-            path="experiments"
+            path="experiments/*"
             element={<Navigate to={location.pathname.replace("/experiments/experiments", "/experiments")}
               replace={true} />} />
         </Routes>

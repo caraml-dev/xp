@@ -22,14 +22,15 @@ export const PrivateLayout = () => {
       <ApplicationsContextProvider>
         <ProjectsContextProvider>
           <ApplicationsContext.Consumer>
-            {({ currentApp }) => (
+            {() => (
               <Header
                 homepage={appConfig.homepage}
                 onProjectSelect={pId =>
-                  navigate(urlJoin(currentApp?.href, "projects", pId, "experiments"))
+                  navigate(urlJoin("projects", pId))
                 }
                 docLinks={appConfig.docsUrl}
-              />)}
+              />
+            )}
           </ApplicationsContext.Consumer>
           <Outlet />
         </ProjectsContextProvider>
