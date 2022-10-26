@@ -76,7 +76,7 @@ export const ExperimentsConfigGroup = ({ projectId }) => {
               Active Experiments
             </EuiDescriptionListTitle>
             <EuiDescriptionListDescription>
-              {data.length}
+              {data.data.length}
             </EuiDescriptionListDescription>
           </EuiDescriptionList>
         )}

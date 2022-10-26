@@ -17,7 +17,7 @@ export const LinkedRoutesTable = ({
   routes,
   treatmentConfigRouteNamePath,
 }) => {
-  const { allExperiments, isAllExperimentsLoaded } = useContext(ExperimentContext)
+  const { experiments, isLoaded } = useContext(ExperimentContext)
 
   const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {}));
 
@@ -29,9 +29,9 @@ export const LinkedRoutesTable = ({
 
   // reset loaded routeToExperimentMappings if treatmentConfigRouteNamePath or routes changes
   useEffect(() => {
-    if (isAllExperimentsLoaded) {
+    if (isLoaded) {
       let newRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {});
-      for (let experiment of allExperiments) {
+      for (let experiment of experiments) {
         for (let treatment of experiment.treatments) {
           let configRouteName = getRouteName(treatment.configuration, treatmentConfigRouteNamePath);
           if (typeof configRouteName === 'string' && configRouteName in newRouteToExperimentMappings) {
@@ -41,7 +41,7 @@ export const LinkedRoutesTable = ({
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
     }
-  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isAllExperimentsLoaded, allExperiments]);
+  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isLoaded, experiments]);
 
   const columns = [
     {
@@ -98,7 +98,7 @@ export const LinkedRoutesTable = ({
     },
   ];
 
-  return isAllExperimentsLoaded ? (
+  return isLoaded ? (
     <EuiFlexItem>
       <EuiInMemoryTable
         items={routes.filter((r) => r.id !== "")}

@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, { useMemo } from "react";
 
 import { useXpApi } from "hooks/useXpApi";
 import moment from "moment";
@@ -8,8 +8,6 @@ const ExperimentContext = React.createContext({});
 
 export const ExperimentContextProvider = ({ projectId, children }) => {
   const { appConfig } = useConfig();
-
-  const [results, setResults] = useState([]);
 
   const { start_time, end_time } = useMemo(
     () => {
@@ -21,7 +19,7 @@ export const ExperimentContextProvider = ({ projectId, children }) => {
     [appConfig]
   );
 
-  const [{ data: { data: experiments }, isLoaded, error }] = useXpApi(
+  const [{ data: { data: experiments }, isLoaded }] = useXpApi(
     `/projects/${projectId}/experiments`,
     {
       query: {
@@ -34,16 +32,10 @@ export const ExperimentContextProvider = ({ projectId, children }) => {
     { data: [] }
   );
 
-  useEffect(() => {
-    if (isLoaded && !error) {
-      setResults(experiments);
-    }
-  }, [experiments, isLoaded, error]);
-
   return (
     <ExperimentContext.Provider
       value={{
-        results,
+        experiments,
         isLoaded,
       }}>
       {children}
