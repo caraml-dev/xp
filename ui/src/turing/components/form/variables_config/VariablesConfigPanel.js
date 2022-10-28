@@ -10,6 +10,7 @@ import { VariableConfigRow } from "./VariableConfigRow";
 
 export const VariablesConfigPanel = ({
   variables = [],
+  protocol,
   onChangeHandler,
   errors = {},
 }) => {
@@ -46,8 +47,8 @@ export const VariablesConfigPanel = ({
           size="m"
           content="Specify how the experiment variables may be parsed from the request."
         />
-      }>
-
+      }
+    >
       <EuiSpacer size="xs" />
       <EuiFlexItem>
         <EuiFlexGroup direction="column" gutterSize="s">
@@ -55,6 +56,7 @@ export const VariablesConfigPanel = ({
             <EuiFlexItem key={`experiment-variable-${variable.name}`}>
               <VariableConfigRow
                 name={variable.name}
+                protocol={protocol}
                 field={variable.field}
                 fieldSrc={variable.field_source}
                 onChangeHandler={onChange(`${idx}`)}

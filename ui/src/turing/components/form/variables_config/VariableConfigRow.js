@@ -17,6 +17,7 @@ export const VariableConfigRow = ({
   name,
   field,
   fieldSrc,
+  protocol,
   onChangeHandler,
   error = {},
 }) => {
@@ -35,12 +36,14 @@ export const VariableConfigRow = ({
       direction="row"
       gutterSize="m"
       alignItems="center"
-      className="euiFlexGroup--experimentVariableRow">
+      className="euiFlexGroup--experimentVariableRow"
+    >
       <EuiFlexItem grow={true} className="eui-textTruncate">
         <EuiFormRow
           fullWidth
           isInvalid={!!error.field}
-          error={error.field || ""}>
+          error={error.field || ""}
+        >
           <EuiFieldText
             fullWidth
             compressed
@@ -52,6 +55,7 @@ export const VariableConfigRow = ({
             prepend={
               <FieldSourceFormLabel
                 readOnly={false}
+                protocol={protocol}
                 value={fieldSrc}
                 onChange={(e) => onChangeFieldSource(e)}
               />

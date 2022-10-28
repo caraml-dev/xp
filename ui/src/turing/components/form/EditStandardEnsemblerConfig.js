@@ -1,12 +1,20 @@
 import React, { useContext, useRef } from "react";
 
-import { EuiCallOut, EuiFlexItem, EuiLoadingChart, EuiHorizontalRule } from "@elastic/eui";
+import {
+  EuiCallOut,
+  EuiFlexItem,
+  EuiHorizontalRule,
+  EuiLoadingChart,
+} from "@elastic/eui";
 import { OverlayMask } from "@gojek/mlp-ui";
 
 import { Panel } from "components/panel/Panel";
 import { ConfigProvider, useConfig } from "config";
-import ProjectContext, { ProjectContextProvider } from "providers/project/context";
 import { ExperimentContextProvider } from "providers/experiment/context";
+import ProjectContext, {
+  ProjectContextProvider,
+} from "providers/project/context";
+
 import { LinkedRoutesTable } from "./standard_ensembler/LinkedRoutesTable";
 import { RouteNamePathRow } from "./standard_ensembler/RouteNamePathRow";
 
@@ -17,7 +25,9 @@ const EditStandardEnsemblerConfigComponent = ({
   onChange,
   errors,
 }) => {
-  const { appConfig: { routeNamePathPrefix } } = useConfig();
+  const {
+    appConfig: { routeNamePathPrefix },
+  } = useConfig();
 
   const { isProjectOnboarded, isLoaded } = useContext(ProjectContext);
   const overlayRef = useRef();
@@ -40,7 +50,9 @@ const EditStandardEnsemblerConfigComponent = ({
               <LinkedRoutesTable
                 projectId={projectId}
                 routes={routes}
-                treatmentConfigRouteNamePath={routeNamePath.slice(routeNamePathPrefix.length)}
+                treatmentConfigRouteNamePath={routeNamePath.slice(
+                  routeNamePathPrefix.length
+                )}
               />
             </ExperimentContextProvider>
           </Panel>
@@ -49,9 +61,12 @@ const EditStandardEnsemblerConfigComponent = ({
             <EuiCallOut
               title={"Project not onboarded to Experiments"}
               color={"danger"}
-              iconType={"alert"}>
+              iconType={"alert"}
+            >
               <p>
-                {"Please complete onboarding to Turing experiments to configure the standard ensembler."}
+                {
+                  "Please complete onboarding to Turing experiments to configure the standard ensembler."
+                }
               </p>
             </EuiCallOut>
           </Panel>
@@ -74,7 +89,7 @@ const EditStandardEnsemblerConfig = (props) => {
         <EditStandardEnsemblerConfigComponent {...props} />
       </ProjectContextProvider>
     </ConfigProvider>
-  )
+  );
 };
 
 export default EditStandardEnsemblerConfig;

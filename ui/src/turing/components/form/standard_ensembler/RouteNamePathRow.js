@@ -1,7 +1,14 @@
 import React, { Fragment } from "react";
 
-import { EuiFlexItem, EuiText, EuiFormRow, EuiFieldText, EuiButtonIcon } from "@elastic/eui";
+import {
+  EuiButtonIcon,
+  EuiFieldText,
+  EuiFlexItem,
+  EuiFormRow,
+  EuiText,
+} from "@elastic/eui";
 import { FormLabelWithToolTip, useToggle } from "@gojek/mlp-ui";
+
 import RouteNamePathFlyout from "./RouteNamePathFlyout";
 
 export const RouteNamePathRow = ({
@@ -25,7 +32,8 @@ export const RouteNamePathRow = ({
           }
           isInvalid={!!errors}
           error={errors}
-          display="row">
+          display="row"
+        >
           <EuiFieldText
             fullWidth
             placeholder="policy.route_name"
@@ -34,8 +42,11 @@ export const RouteNamePathRow = ({
             isInvalid={!!errors}
             name="route-name-path"
             prepend={[
-              <EuiButtonIcon iconType="questionInCircle" onClick={toggleFlyout}/>,
-              <EuiText size={"s"}>{routeNamePathPrefix}</EuiText>
+              <EuiButtonIcon
+                iconType="questionInCircle"
+                onClick={toggleFlyout}
+              />,
+              <EuiText size={"s"}>{routeNamePathPrefix}</EuiText>,
             ]}
           />
         </EuiFormRow>

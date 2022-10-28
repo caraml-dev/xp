@@ -10,23 +10,30 @@ import { flattenPanelTree, useToggle } from "@gojek/mlp-ui";
 
 import "./FieldSourceFormLabel.scss";
 
-const fieldSourceOptions = [
-  {
-    value: "none",
-    inputDisplay: "None",
-  },
-  {
-    value: "header",
-    inputDisplay: "Header",
-  },
-  {
-    value: "payload",
-    inputDisplay: "Payload",
-  },
-];
-
-export const FieldSourceFormLabel = ({ value, onChange, readOnly }) => {
+export const FieldSourceFormLabel = ({
+  value,
+  protocol,
+  onChange,
+  readOnly,
+}) => {
   const [isOpen, togglePopover] = useToggle();
+
+  const fieldSourceOptions = [
+    {
+      value: "none",
+      inputDisplay: "None",
+    },
+    {
+      value: "header",
+      inputDisplay: "Header",
+    },
+    {
+      value: "payload",
+      // Display is change to Prediction Context to be consistent with Turing Traffic rule
+      // backend value stays the same as payload, because XP is not supporting gRPC
+      inputDisplay: protocol === "UPI_V1" ? "Prediction Context" : "Payload",
+    },
+  ];
 
   const panels = flattenPanelTree({
     id: 0,
@@ -57,13 +64,15 @@ export const FieldSourceFormLabel = ({ value, onChange, readOnly }) => {
           iconType="arrowDown"
           iconSide="right"
           className="fieldSourceLabel"
-          onClick={togglePopover}>
+          onClick={togglePopover}
+        >
           {selectedOption.inputDisplay}
         </EuiButtonEmpty>
       }
       isOpen={isOpen}
       closePopover={togglePopover}
-      panelPaddingSize="s">
+      panelPaddingSize="s"
+    >
       <EuiContextMenu
         className="fieldSourceDropdown"
         initialPanelId={0}
