@@ -38,10 +38,6 @@ export const appConfig = {
     defaultPageSize: 10,
     experimentContextPageSize: 50,
   },
-  listExperimentFields: {
-    experimentTableFields: ["id", "type", "name", "status_friendly", "tier", "start_time", "end_time", "updated_at"],
-    experimentContextFields: ["id", "name","status_friendly", "treatments"],
-  },
   tables: {
     defaultTextSize: "s",
     defaultIconSize: "s",

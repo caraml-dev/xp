@@ -19,13 +19,13 @@ export const ExperimentContextProvider = ({ projectId, children }) => {
     [appConfig]
   );
 
-  const [{ data: { data: experiments }, isLoaded }] = useXpApi(
+  const [{ data: { data: scheduledAndRunningExperiments }, isLoaded }] = useXpApi(
     `/projects/${projectId}/experiments`,
     {
       query: {
         start_time: start_time,
         end_time: end_time,
-        fields: appConfig.listExperimentFields.experimentContextFields,
+        fields: ["id", "name","status_friendly", "treatments"],
         status_friendly: ["running", "scheduled"]
       },
     },
@@ -35,7 +35,7 @@ export const ExperimentContextProvider = ({ projectId, children }) => {
   return (
     <ExperimentContext.Provider
       value={{
-        experiments,
+        scheduledAndRunningExperiments,
         isLoaded,
       }}>
       {children}

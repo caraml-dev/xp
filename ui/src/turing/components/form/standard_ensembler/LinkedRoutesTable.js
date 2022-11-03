@@ -17,7 +17,7 @@ export const LinkedRoutesTable = ({
   routes,
   treatmentConfigRouteNamePath,
 }) => {
-  const { experiments, isLoaded } = useContext(ExperimentContext)
+  const { scheduledAndRunningExperiments, isLoaded } = useContext(ExperimentContext)
 
   const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {}));
 
@@ -31,7 +31,7 @@ export const LinkedRoutesTable = ({
   useEffect(() => {
     if (isLoaded) {
       let newRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {});
-      for (let experiment of experiments) {
+      for (let experiment of scheduledAndRunningExperiments) {
         for (let treatment of experiment.treatments) {
           let configRouteName = getRouteName(treatment.configuration, treatmentConfigRouteNamePath);
           if (typeof configRouteName === 'string' && configRouteName in newRouteToExperimentMappings) {
@@ -41,7 +41,7 @@ export const LinkedRoutesTable = ({
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
     }
-  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isLoaded, experiments]);
+  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isLoaded, scheduledAndRunningExperiments]);
 
   const columns = [
     {
