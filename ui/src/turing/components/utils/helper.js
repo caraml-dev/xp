@@ -5,7 +5,3 @@ export const mapProtocolLabel = (protocol, value) => {
 
   return value;
 };
-
-export const capitalizeFirstLetter = (string) => {
-  return string.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase());
-};

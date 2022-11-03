@@ -7,11 +7,9 @@ import {
   EuiPopover,
 } from "@elastic/eui";
 import { flattenPanelTree, useToggle } from "@gojek/mlp-ui";
+import startCase from "lodash/startCase";
 
-import {
-  capitalizeFirstLetter,
-  mapProtocolLabel,
-} from "turing/components/utils/helper";
+import { mapProtocolLabel } from "turing/components/utils/helper";
 
 import "./FieldSourceFormLabel.scss";
 
@@ -37,9 +35,7 @@ export const FieldSourceFormLabel = ({
         value: "payload",
         // Display is change to Prediction Context to be consistent with Turing Traffic rule
         // backend value stays the same as payload, because XP is not supporting gRPC
-        inputDisplay: capitalizeFirstLetter(
-          mapProtocolLabel(protocol, "payload")
-        ),
+        inputDisplay: startCase(mapProtocolLabel(protocol, "payload")),
       },
     ],
     [protocol]
