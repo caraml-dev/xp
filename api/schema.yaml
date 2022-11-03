@@ -145,25 +145,19 @@ components:
           $ref: '#/components/schemas/SelectedTreatmentData'
         metadata:
           $ref: '#/components/schemas/SelectedTreatmentMetadata'
-    Experiment:
-      required:
-        - project_id
-        - description
-        - end_time
+    ExperimentField:
+      type: string
+      enum:
         - id
-        - interval
         - name
-        - segment
-        - start_time
-        - status
-        - status_friendly
-        - treatments
-        - tier
         - type
-        - created_at
+        - status_friendly
+        - tier
+        - start_time
+        - end_time
         - updated_at
-        - updated_by
-        - version
+        - treatments
+    Experiment:
       type: object
       properties:
         description:

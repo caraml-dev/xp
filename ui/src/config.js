@@ -36,6 +36,7 @@ export const appConfig = {
     : [{ href: "https://github.com/caraml-dev/xp", label: "XP User Guide" }],
   pagination: {
     defaultPageSize: 10,
+    experimentContextPageSize: 50,
   },
   tables: {
     defaultTextSize: "s",

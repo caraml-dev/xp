@@ -2,6 +2,7 @@ package models
 
 import (
 	"reflect"
+	"time"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
@@ -66,72 +67,112 @@ func OpenAPIExperimentSpecToProtobuf(
 		"default": _pubsub.Experiment_Default, "override": _pubsub.Experiment_Override,
 	}
 
+	var status _pubsub.Experiment_Status
+	if xpExperiment.Status != nil {
+		status = statusConverter[*xpExperiment.Status]
+	}
+
+	var experimentType _pubsub.Experiment_Type
+	if xpExperiment.Type != nil {
+		experimentType = typeConverter[*xpExperiment.Type]
+	}
+
+	var tier _pubsub.Experiment_Tier
+	if xpExperiment.Tier != nil {
+		tier = tierConverter[*xpExperiment.Tier]
+	}
+
 	segments := make(map[string]*_segmenters.ListSegmenterValue)
-	for key, val := range xpExperiment.Segment {
-		vals := val.([]interface{})
-		switch segmentersType[key] {
-		case "string":
-			stringVals := []string{}
-			for _, val := range vals {
-				stringVals = append(stringVals, val.(string))
-			}
-			segments[key] = _utils.StringSliceToListSegmenterValue(&stringVals)
-		case "integer":
-			intVals := []int64{}
-			for _, val := range vals {
-				reflectedVal := reflect.ValueOf(val)
-				switch reflectedVal.Kind() {
-				case reflect.Float32, reflect.Float64:
-					intVals = append(intVals, int64(reflectedVal.Float()))
-				case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-					intVals = append(intVals, reflectedVal.Int())
+
+	if xpExperiment.Segment != nil {
+		for key, val := range *xpExperiment.Segment {
+			vals := val.([]interface{})
+			switch segmentersType[key] {
+			case "string":
+				stringVals := []string{}
+				for _, val := range vals {
+					stringVals = append(stringVals, val.(string))
 				}
+				segments[key] = _utils.StringSliceToListSegmenterValue(&stringVals)
+			case "integer":
+				intVals := []int64{}
+				for _, val := range vals {
+					reflectedVal := reflect.ValueOf(val)
+					switch reflectedVal.Kind() {
+					case reflect.Float32, reflect.Float64:
+						intVals = append(intVals, int64(reflectedVal.Float()))
+					case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+						intVals = append(intVals, reflectedVal.Int())
+					}
+				}
+				segments[key] = _utils.Int64ListToListSegmenterValue(&intVals)
+			case "real":
+				floatVals := []float64{}
+				for _, val := range vals {
+					floatVals = append(floatVals, val.(float64))
+				}
+				segments[key] = _utils.FloatListToListSegmenterValue(&floatVals)
+			case "bool":
+				boolVals := []bool{}
+				for _, val := range vals {
+					boolVals = append(boolVals, val.(bool))
+				}
+				segments[key] = _utils.BoolSliceToListSegmenterValue(&boolVals)
+			default:
+				segments[key] = nil
 			}
-			segments[key] = _utils.Int64ListToListSegmenterValue(&intVals)
-		case "real":
-			floatVals := []float64{}
-			for _, val := range vals {
-				floatVals = append(floatVals, val.(float64))
-			}
-			segments[key] = _utils.FloatListToListSegmenterValue(&floatVals)
-		case "bool":
-			boolVals := []bool{}
-			for _, val := range vals {
-				boolVals = append(boolVals, val.(bool))
-			}
-			segments[key] = _utils.BoolSliceToListSegmenterValue(&boolVals)
-		default:
-			segments[key] = nil
 		}
 	}
 
 	treatments := make([]*_pubsub.ExperimentTreatment, 0)
-	for _, t := range xpExperiment.Treatments {
-		treatment, err := openAPIExperimentTreatmentSpecToProtobuf(t)
-		if err != nil {
-			return nil, err
+	if xpExperiment.Treatments != nil {
+		for _, t := range *xpExperiment.Treatments {
+			treatment, err := openAPIExperimentTreatmentSpecToProtobuf(t)
+			if err != nil {
+				return nil, err
+			}
+			treatments = append(treatments, treatment)
 		}
-		treatments = append(treatments, treatment)
 	}
 	interval := int32(0)
 	if xpExperiment.Interval != nil {
 		interval = *xpExperiment.Interval
 	}
 
+	var version int64
+	if xpExperiment.Version != nil {
+		version = *xpExperiment.Version
+	}
+
+	var startTime time.Time
+	if xpExperiment.StartTime != nil {
+		startTime = *xpExperiment.StartTime
+	}
+
+	var endTime time.Time
+	if xpExperiment.EndTime != nil {
+		endTime = *xpExperiment.EndTime
+	}
+
+	var updatedAt time.Time
+	if xpExperiment.UpdatedAt != nil {
+		updatedAt = *xpExperiment.UpdatedAt
+	}
+
 	return &_pubsub.Experiment{
-		Id:         xpExperiment.Id,
-		ProjectId:  xpExperiment.ProjectId,
-		Status:     statusConverter[xpExperiment.Status],
-		Name:       xpExperiment.Name,
-		Type:       typeConverter[xpExperiment.Type],
-		Tier:       tierConverter[xpExperiment.Tier],
+		Id:         *xpExperiment.Id,
+		ProjectId:  *xpExperiment.ProjectId,
+		Status:     status,
+		Name:       *xpExperiment.Name,
+		Type:       experimentType,
+		Tier:       tier,
 		Interval:   interval,
 		Segments:   segments,
 		Treatments: treatments,
-		StartTime:  &timestamppb.Timestamp{Seconds: xpExperiment.StartTime.Unix()},
-		EndTime:    &timestamppb.Timestamp{Seconds: xpExperiment.EndTime.Unix()},
-		UpdatedAt:  &timestamppb.Timestamp{Seconds: xpExperiment.UpdatedAt.Unix()},
-		Version:    xpExperiment.Version,
+		StartTime:  &timestamppb.Timestamp{Seconds: startTime.Unix()},
+		EndTime:    &timestamppb.Timestamp{Seconds: endTime.Unix()},
+		UpdatedAt:  &timestamppb.Timestamp{Seconds: updatedAt.Unix()},
+		Version:    version,
 	}, nil
 }
 

@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"net/http"
 	"os"
@@ -51,18 +51,25 @@ func newTestXPExperiment(
 		{Configuration: make(map[string]interface{}), Name: "default", Traffic: &traffic},
 	}
 
+	id := int64(rand.Intn(100))
+	nameString := name.String()
+	status := schema.ExperimentStatusActive
+	experimentType := schema.ExperimentTypeAB
+	updatedAt := time.Time{}
+	updatedBy := ""
+
 	return schema.Experiment{
-		ProjectId:  projectId,
-		Id:         int64(rand.Intn(100)),
-		StartTime:  startTime,
-		EndTime:    endTime,
-		Name:       name.String(),
-		Status:     "active",
-		Segment:    segment,
-		Treatments: treatments,
-		Type:       "A/B",
-		UpdatedAt:  time.Time{},
-		UpdatedBy:  "",
+		ProjectId:  &projectId,
+		Id:         &id,
+		StartTime:  &startTime,
+		EndTime:    &endTime,
+		Name:       &nameString,
+		Status:     &status,
+		Segment:    &segment,
+		Treatments: &treatments,
+		Type:       &experimentType,
+		UpdatedAt:  &updatedAt,
+		UpdatedBy:  &updatedBy,
 		Interval:   &interval,
 	}
 }
@@ -110,7 +117,7 @@ func (suite *LocalStorageLookupSuite) SetupTest() {
 		Return(&http.Response{
 			StatusCode: 200,
 			Header:     map[string][]string{"Content-Type": {"json"}},
-			Body:       ioutil.NopCloser(bytes.NewBufferString(`{"data" : []}`)),
+			Body:       io.NopCloser(bytes.NewBufferString(`{"data" : []}`)),
 		}, nil)
 
 	suite.storage = LocalStorage{

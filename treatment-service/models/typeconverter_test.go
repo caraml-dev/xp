@@ -70,6 +70,20 @@ func TestOpenAPIProjectSettingsSpecToProtobuf(t *testing.T) {
 }
 
 func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
+	projectId := int64(1)
+	id := int64(2)
+	name := "experiment-1"
+	statusActive := schema.ExperimentStatusActive
+	statusInactive := schema.ExperimentStatusInactive
+	tierDefault := schema.ExperimentTierDefault
+	tierOverride := schema.ExperimentTierOverride
+	typeAB := schema.ExperimentTypeAB
+	typeSwitchback := schema.ExperimentTypeSwitchback
+	version := int64(2)
+	startTime := time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)
+	endTime := time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC)
+	createdAt := time.Date(2020, 1, 1, 2, 3, 4, 0, time.UTC)
+	updatedAt := time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC)
 	traffic100 := int32(100)
 	interval := int32(60)
 	segmentersType := map[string]schema.SegmenterType{
@@ -78,6 +92,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 	pubsubCfg, _ := structpb.NewStruct(map[string]interface{}{
 		"key": "value",
 	})
+
 	tests := []struct {
 		Name       string
 		Experiment schema.Experiment
@@ -87,14 +102,14 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 		{
 			Name: "active default a/b experiment",
 			Experiment: schema.Experiment{
-				ProjectId: 1,
-				Id:        2,
-				Name:      "experiment-1",
-				Segment: schema.ExperimentSegment{
+				ProjectId: &projectId,
+				Id:        &id,
+				Name:      &name,
+				Segment: &schema.ExperimentSegment{
 					"string_segmenter": []interface{}{"ID"},
 				},
-				Status: schema.ExperimentStatusActive,
-				Treatments: []schema.ExperimentTreatment{
+				Status: &statusActive,
+				Treatments: &[]schema.ExperimentTreatment{
 					{
 						Name: "default",
 						Configuration: map[string]interface{}{
@@ -103,13 +118,13 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 						Traffic: &traffic100,
 					},
 				},
-				Tier:      schema.ExperimentTierDefault,
-				Type:      schema.ExperimentTypeAB,
-				StartTime: time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-				EndTime:   time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC),
-				CreatedAt: time.Date(2020, 1, 1, 2, 3, 4, 0, time.UTC),
-				UpdatedAt: time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC),
-				Version:   2,
+				Tier:      &tierDefault,
+				Type:      &typeAB,
+				StartTime: &startTime,
+				EndTime:   &endTime,
+				CreatedAt: &createdAt,
+				UpdatedAt: &updatedAt,
+				Version:   &version,
 			},
 			Expected: &pubsub.Experiment{
 				ProjectId: 1,
@@ -142,24 +157,24 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 		{
 			Name: "inactive override switchback experiment",
 			Experiment: schema.Experiment{
-				ProjectId: 3,
-				Id:        4,
+				ProjectId: &projectId,
+				Id:        &id,
 				Interval:  &interval,
-				Name:      "experiment-2",
-				Status:    schema.ExperimentStatusInactive,
-				Tier:      schema.ExperimentTierOverride,
-				Type:      schema.ExperimentTypeSwitchback,
-				StartTime: time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC),
-				EndTime:   time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC),
-				CreatedAt: time.Date(2020, 1, 1, 2, 3, 4, 0, time.UTC),
-				UpdatedAt: time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC),
-				Version:   1,
+				Name:      &name,
+				Status:    &statusInactive,
+				Tier:      &tierOverride,
+				Type:      &typeSwitchback,
+				StartTime: &startTime,
+				EndTime:   &endTime,
+				CreatedAt: &createdAt,
+				UpdatedAt: &updatedAt,
+				Version:   &version,
 			},
 			Expected: &pubsub.Experiment{
-				ProjectId:  3,
-				Id:         4,
+				ProjectId:  1,
+				Id:         2,
 				Interval:   60,
-				Name:       "experiment-2",
+				Name:       "experiment-1",
 				Segments:   map[string]*_segmenters.ListSegmenterValue{},
 				Status:     pubsub.Experiment_Inactive,
 				Treatments: []*pubsub.ExperimentTreatment{},
@@ -168,7 +183,7 @@ func TestOpenAPIExperimentSpecToProtobuf(t *testing.T) {
 				StartTime:  timestamppb.New(time.Date(2021, 1, 1, 2, 3, 4, 0, time.UTC)),
 				EndTime:    timestamppb.New(time.Date(2022, 1, 1, 2, 3, 4, 0, time.UTC)),
 				UpdatedAt:  timestamppb.New(time.Date(2020, 2, 1, 2, 3, 4, 0, time.UTC)),
-				Version:    1,
+				Version:    2,
 			},
 		},
 	}

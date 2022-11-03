@@ -37,7 +37,7 @@ func (i *InMemoryStore) GetExperiment(projectId int64, experimentId int64) (sche
 	i.RLock()
 	defer i.RUnlock()
 	for _, experiment := range i.Experiments {
-		if experiment.ProjectId == projectId && experiment.Id == experimentId {
+		if *experiment.ProjectId == projectId && *experiment.Id == experimentId {
 			return experiment, nil
 		}
 	}
@@ -52,7 +52,7 @@ func (i *InMemoryStore) ListExperiments(projectId int64, params api.ListExperime
 	defer i.RUnlock()
 	projectExperiments := make([]schema.Experiment, 0)
 	for _, experiment := range i.Experiments {
-		if experiment.ProjectId == projectId {
+		if *experiment.ProjectId == projectId {
 			projectExperiments = append(projectExperiments, experiment)
 		}
 	}
@@ -62,10 +62,15 @@ func (i *InMemoryStore) ListExperiments(projectId int64, params api.ListExperime
 func (i *InMemoryStore) CreateExperiment(experiment schema.Experiment) (schema.Experiment, error) {
 	i.Lock()
 	defer i.Unlock()
-	experiment.Id = int64(len(i.Experiments)) + 1
-	experiment.Status = schema.ExperimentStatusActive
-	experiment.UpdatedAt = time.Now()
-	experiment.Version = 1
+	id := int64(len(i.Experiments)) + 1
+	status := schema.ExperimentStatusActive
+	updatedAt := time.Now()
+	version := int64(1)
+
+	experiment.Id = &id
+	experiment.Status = &status
+	experiment.UpdatedAt = &updatedAt
+	experiment.Version = &version
 	i.Experiments = append(i.Experiments, experiment)
 
 	err := i.MessageQueue.PublishNewExperiment(experiment, i.SegmentersTypes)
@@ -79,10 +84,17 @@ func (i *InMemoryStore) CreateExperiment(experiment schema.Experiment) (schema.E
 func (i *InMemoryStore) UpdateExperiment(projectId int64, experimentId int64, experiment schema.Experiment) (schema.Experiment, error) {
 	i.Lock()
 	defer i.Unlock()
-	experiment.UpdatedAt = time.Now()
+	updatedAt := time.Now()
+
+	experiment.UpdatedAt = &updatedAt
 	for index, e := range i.Experiments {
-		if experiment.ProjectId == projectId && e.Id == experimentId {
-			experiment.Version = e.Version + 1
+		if experiment.ProjectId != nil && e.Id != nil && *experiment.ProjectId == projectId && *e.Id == experimentId {
+			var version int64
+			if e.Version != nil {
+				version = *e.Version
+			}
+			version = version + 1
+			experiment.Version = &version
 			i.Experiments[index] = experiment
 		}
 	}

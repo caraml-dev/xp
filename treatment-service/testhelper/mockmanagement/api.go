@@ -212,6 +212,10 @@ type ListExperimentsParams struct {
 
 	// controls whether or not weak segmenter matches (experiments where the segmenter is optional) should be returned
 	IncludeWeakMatch *bool `json:"include_weak_match,omitempty"`
+
+	// A selector to restrict the list of returned objects by their fields. If unset, all the fields will be returned.
+	// Paginated responses will be returned if both or either of `page` and `page_size` parameters are provided.
+	Fields *[]externalRef0.ExperimentField `json:"fields,omitempty"`
 }
 
 // ListExperimentHistoryParams defines parameters for ListExperimentHistory.
@@ -522,6 +526,17 @@ func (siw *ServerInterfaceWrapper) ListExperiments(w http.ResponseWriter, r *htt
 	err = runtime.BindQueryParameter("form", true, false, "include_weak_match", r.URL.Query(), &params.IncludeWeakMatch)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Invalid format for parameter include_weak_match: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "fields" -------------
+	if paramValue := r.URL.Query().Get("fields"); paramValue != "" {
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "fields", r.URL.Query(), &params.Fields)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Invalid format for parameter fields: %s", err), http.StatusBadRequest)
 		return
 	}
 

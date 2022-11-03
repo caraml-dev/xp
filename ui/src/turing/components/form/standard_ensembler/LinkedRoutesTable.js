@@ -9,7 +9,6 @@ import {
   EuiTextColor,
 } from "@elastic/eui";
 
-import { getExperimentStatus } from "services/experiment/ExperimentStatus";
 import { LinkedExperimentsContextMenu } from "./LinkedExperimentsContextMenu";
 import ExperimentContext from "providers/experiment/context";
 
@@ -18,7 +17,7 @@ export const LinkedRoutesTable = ({
   routes,
   treatmentConfigRouteNamePath,
 }) => {
-  const { allExperiments, isAllExperimentsLoaded } = useContext(ExperimentContext)
+  const { scheduledAndRunningExperiments, isLoaded } = useContext(ExperimentContext)
 
   const [routeToExperimentMappings, setRouteToExperimentMappings] = useState(routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {}));
 
@@ -30,19 +29,19 @@ export const LinkedRoutesTable = ({
 
   // reset loaded routeToExperimentMappings if treatmentConfigRouteNamePath or routes changes
   useEffect(() => {
-    if (isAllExperimentsLoaded) {
+    if (isLoaded) {
       let newRouteToExperimentMappings = routes.reduce((m, r) => {m[r.id] = {running: {}, scheduled: {}}; return m}, {});
-      for (let experiment of allExperiments) {
+      for (let experiment of scheduledAndRunningExperiments) {
         for (let treatment of experiment.treatments) {
           let configRouteName = getRouteName(treatment.configuration, treatmentConfigRouteNamePath);
           if (typeof configRouteName === 'string' && configRouteName in newRouteToExperimentMappings) {
-            newRouteToExperimentMappings[configRouteName][getExperimentStatus(experiment).label.toLowerCase()][experiment.id] = experiment;
+            newRouteToExperimentMappings[configRouteName][experiment.status_friendly][experiment.id] = experiment;
           }
         }
       }
       setRouteToExperimentMappings(newRouteToExperimentMappings);
     }
-  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isAllExperimentsLoaded, allExperiments]);
+  }, [treatmentConfigRouteNamePath, stringifiedRoutes, routes, isLoaded, scheduledAndRunningExperiments]);
 
   const columns = [
     {
@@ -99,7 +98,7 @@ export const LinkedRoutesTable = ({
     },
   ];
 
-  return isAllExperimentsLoaded ? (
+  return isLoaded ? (
     <EuiFlexItem>
       <EuiInMemoryTable
         items={routes.filter((r) => r.id !== "")}

@@ -326,6 +326,10 @@ type ListExperimentsParams struct {
 
 	// controls whether or not weak segmenter matches (experiments where the segmenter is optional) should be returned
 	IncludeWeakMatch *bool `json:"include_weak_match,omitempty"`
+
+	// A selector to restrict the list of returned objects by their fields. If unset, all the fields will be returned.
+	// Paginated responses will be returned if both or either of `page` and `page_size` parameters are provided.
+	Fields *[]externalRef0.ExperimentField `json:"fields,omitempty"`
 }
 
 // ListExperimentHistoryParams defines parameters for ListExperimentHistory.
@@ -1443,6 +1447,22 @@ func NewListExperimentsRequest(server string, projectId int64, params *ListExper
 	if params.IncludeWeakMatch != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "include_weak_match", runtime.ParamLocationQuery, *params.IncludeWeakMatch); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Fields != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "fields", runtime.ParamLocationQuery, *params.Fields); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
