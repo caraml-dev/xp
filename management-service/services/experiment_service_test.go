@@ -163,28 +163,30 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	stringSegmenter := []string{"seg-1"}
 	boolSegmenter := []string{"true"}
 
+	var nilPagingResponse *pagination.Paging
+
 	// All experiments under a settings
-	expResponsesList, pagingResponse, err := svc.ListExperiments(1, services.ListExperimentsParams{})
+	actualResponsesList, pagingResponse, err := svc.ListExperiments(1, services.ListExperimentsParams{})
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 1, Total: 3}, pagingResponse)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1], s.Experiments[2]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1], s.Experiments[2]}, actualResponsesList)
 
 	// No experiments filtered
-	expResponsesList, pagingResponse, err = svc.ListExperiments(3, services.ListExperimentsParams{})
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(3, services.ListExperimentsParams{})
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 0, Total: 0}, pagingResponse)
-	tu.AssertEqualValues(t, []*models.Experiment{}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{}, actualResponsesList)
 
 	// Filter by a single parameter
-	expResponsesList, pagingResponse, err = svc.ListExperiments(1,
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{Status: &testStatus},
 	)
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 1, Total: 2}, pagingResponse)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[2]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[2]}, actualResponsesList)
 
 	// Filter by all parameters
-	expResponsesList, pagingResponse, err = svc.ListExperiments(1, services.ListExperimentsParams{
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(1, services.ListExperimentsParams{
 		Type:      &testExpType,
 		Status:    &testStatus,
 		StartTime: &testStartTime,
@@ -208,11 +210,11 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 		Pages: 1,
 		Total: 1,
 	}, pagingResponse)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0]}, actualResponsesList)
 
 	// Use the same start and end times
 	testExactTimestamp := time.Date(2021, 2, 2, 3, 5, 7, 0, time.UTC)
-	expResponsesList, pagingResponse, err = svc.ListExperiments(1,
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
 			StartTime: &testExactTimestamp,
 			EndTime:   &testExactTimestamp,
@@ -220,10 +222,10 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	)
 	s.Suite.Require().NoError(err)
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 1, Total: 1}, pagingResponse)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[2]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[2]}, actualResponsesList)
 
 	// Partial match of segmenter on multiple experiments
-	expResponsesList, pagingResponse, err = svc.ListExperiments(1,
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
 			Segment: models.ExperimentSegment{
 				"float_segmenter": float2Segmenter,
@@ -234,11 +236,11 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 1, Total: 2}, pagingResponse)
 	tu.AssertEqualValues(t,
 		[]*models.Experiment{s.Experiments[0], s.Experiments[1]},
-		expResponsesList,
+		actualResponsesList,
 	)
 
 	// Weak match of segmenters
-	expResponsesList, pagingResponse, err = svc.ListExperiments(1,
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
 			Segment: models.ExperimentSegment{
 				"float_segmenter": floatSegmenter,
@@ -250,21 +252,21 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 	tu.AssertEqualValues(t, &pagination.Paging{Page: 1, Pages: 1, Total: 2}, pagingResponse)
 	tu.AssertEqualValues(t,
 		[]*models.Experiment{s.Experiments[0], s.Experiments[2]},
-		expResponsesList,
+		actualResponsesList,
 	)
 
 	// Match name or description
 	testDesc := "-1"
-	expResponsesList, _, err = svc.ListExperiments(1,
+	actualResponsesList, _, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
 			Search: &testDesc,
 		},
 	)
 	s.Suite.Require().NoError(err)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[2]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[2]}, actualResponsesList)
 
 	// Match friendly status + start time
-	expResponsesList, _, err = svc.ListExperiments(1,
+	actualResponsesList, _, err = svc.ListExperiments(1,
 		services.ListExperimentsParams{
 			StatusFriendly: []services.ExperimentStatusFriendly{
 				services.ExperimentStatusFriendlyCompleted,
@@ -275,7 +277,23 @@ func testListExperiments(s *ExperimentServiceTestSuite) {
 		},
 	)
 	s.Suite.Require().NoError(err)
-	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1]}, expResponsesList)
+	tu.AssertEqualValues(t, []*models.Experiment{s.Experiments[0], s.Experiments[1]}, actualResponsesList)
+
+	// Specify selected fields in ListExperimentsParams
+	actualResponsesList, pagingResponse, err = svc.ListExperiments(1,
+		services.ListExperimentsParams{
+			Fields: &[]models.ExperimentField{
+				models.ExperimentFieldName,
+			},
+		},
+	)
+	s.Suite.Require().NoError(err)
+	tu.AssertEqualValues(t, nilPagingResponse, pagingResponse)
+	tu.AssertEqualValues(t, []*models.Experiment{
+		{Name: s.Experiments[0].Name},
+		{Name: s.Experiments[1].Name},
+		{Name: s.Experiments[2].Name},
+	}, actualResponsesList)
 }
 
 func testCreateUpdateExperiment(s *ExperimentServiceTestSuite) {

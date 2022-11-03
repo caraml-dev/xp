@@ -331,6 +331,15 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: fields
+          description: |
+            A selector to restrict the list of returned objects by their fields. If unset, all the fields will be returned.
+            Paginated responses will be returned if both or either of `page` and `page_size` parameters are provided.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: 'schema.yaml#/components/schemas/ExperimentField'
       responses:
         200:
           $ref: '#/components/responses/ListExperimentsSuccess'

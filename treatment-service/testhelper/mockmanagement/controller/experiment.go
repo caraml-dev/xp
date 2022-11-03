@@ -39,17 +39,17 @@ func (e Experiment) CreateExperiment(w http.ResponseWriter, r *http.Request, pro
 		return
 	}
 	experiment := schema.Experiment{
-		ProjectId:   projectId,
+		ProjectId:   &projectId,
 		Description: requestBody.Description,
-		EndTime:     requestBody.EndTime,
+		EndTime:     &requestBody.EndTime,
 		Interval:    requestBody.Interval,
-		Name:        requestBody.Name,
-		Segment:     requestBody.Segment,
-		StartTime:   requestBody.StartTime,
-		Status:      requestBody.Status,
-		Treatments:  requestBody.Treatments,
-		Type:        requestBody.Type,
-		UpdatedBy:   *requestBody.UpdatedBy,
+		Name:        &requestBody.Name,
+		Segment:     &requestBody.Segment,
+		StartTime:   &requestBody.StartTime,
+		Status:      &requestBody.Status,
+		Treatments:  &requestBody.Treatments,
+		Type:        &requestBody.Type,
+		UpdatedBy:   requestBody.UpdatedBy,
 	}
 	createdExperiment, err := e.ExperimentStore.CreateExperiment(experiment)
 	if err != nil {
@@ -86,7 +86,8 @@ func (e Experiment) EnableExperiment(w http.ResponseWriter, r *http.Request, pro
 		NotFound(w, err)
 		return
 	}
-	experiment.Status = schema.ExperimentStatusActive
+	status := schema.ExperimentStatusActive
+	experiment.Status = &status
 	updatedExperiment, err := e.ExperimentStore.UpdateExperiment(projectId, experimentId, experiment)
 	if err != nil {
 		BadRequest(w, err)
@@ -102,7 +103,8 @@ func (e Experiment) DisableExperiment(w http.ResponseWriter, r *http.Request, pr
 		NotFound(w, err)
 		return
 	}
-	experiment.Status = schema.ExperimentStatusInactive
+	status := schema.ExperimentStatusInactive
+	experiment.Status = &status
 	updatedExperiment, err := e.ExperimentStore.UpdateExperiment(projectId, experimentId, experiment)
 	if err != nil {
 		BadRequest(w, err)

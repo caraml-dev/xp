@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	MaxPageSize     int32 = 10
+	MaxPageSize     int32 = 50
 	DefaultPageSize int32 = 10
 	DefaultPage     int32 = 1
 )

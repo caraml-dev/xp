@@ -152,13 +152,12 @@ func (s *ExperimentControllerTestSuite) SetupSuite() {
 			Segment:        models.ExperimentSegment{"days_of_week": []string{"1"}},
 		}).Return([]*models.Experiment{testExperiment}, nil, nil)
 	expSvc.
-		On("ListExperiments", int64(2),
-			services.ListExperimentsParams{
-				Status:         emptyStatus,
-				StatusFriendly: []services.ExperimentStatusFriendly{},
-				Type:           emptyType,
-				Segment:        models.ExperimentSegment{}}).
-		Return([]*models.Experiment{testExperiment}, nil, nil)
+		On("ListExperiments", int64(2), services.ListExperimentsParams{
+			Status:         emptyStatus,
+			StatusFriendly: []services.ExperimentStatusFriendly{},
+			Type:           emptyType,
+			Segment:        models.ExperimentSegment{},
+		}).Return([]*models.Experiment{testExperiment}, nil, nil)
 	expSvc.
 		On("CreateExperiment",
 			models.Settings{ProjectID: models.ID(2)},

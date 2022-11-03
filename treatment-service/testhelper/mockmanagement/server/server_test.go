@@ -77,24 +77,28 @@ func newRandomProjectSettingsOfSize(size int) []schema.ProjectSettings {
 
 func newRandomExperiment(projectId int64) schema.Experiment {
 	description := randomString()
+	endTime := time.Now().Add(time.Duration(24) * time.Hour)
 	interval := int32(rand.Int())
+	name := randomString()
+	startTime := time.Now()
 	daysOfWeek := []interface{}{int64(rand.Intn(7))}
 	hoursOfDay := []interface{}{int64(rand.Intn(24))}
 	s2Ids := []interface{}{int64(rand.Int())}
 	traffic := int32(rand.Int())
+	experimentType := newRandomExperimentType()
 	return schema.Experiment{
-		ProjectId:   projectId,
+		ProjectId:   &projectId,
 		Description: &description,
-		EndTime:     time.Now().Add(time.Duration(24) * time.Hour),
+		EndTime:     &endTime,
 		Interval:    &interval,
-		Name:        randomString(),
-		Segment: schema.ExperimentSegment{
+		Name:        &name,
+		Segment: &schema.ExperimentSegment{
 			"days_of_week": daysOfWeek,
 			"hours_of_day": hoursOfDay,
 			"s2_ids":       s2Ids,
 		},
-		StartTime: time.Now(),
-		Treatments: []schema.ExperimentTreatment{
+		StartTime: &startTime,
+		Treatments: &[]schema.ExperimentTreatment{
 			{
 				Configuration: map[string]interface{}{
 					"config": randomBool(),
@@ -103,7 +107,7 @@ func newRandomExperiment(projectId int64) schema.Experiment {
 				Traffic: &traffic,
 			},
 		},
-		Type: newRandomExperimentType(),
+		Type: &experimentType,
 	}
 }
 
@@ -220,13 +224,13 @@ func (suite *ManagementServiceTestSuite) TestExperimentCreation() {
 	updater := randomString()
 	body := management.CreateExperimentJSONRequestBody{
 		Description: expectedExperiment.Description,
-		EndTime:     expectedExperiment.EndTime,
+		EndTime:     *expectedExperiment.EndTime,
 		Interval:    expectedExperiment.Interval,
-		Name:        expectedExperiment.Name,
-		Segment:     expectedExperiment.Segment,
-		StartTime:   expectedExperiment.StartTime,
-		Treatments:  expectedExperiment.Treatments,
-		Type:        expectedExperiment.Type,
+		Name:        *expectedExperiment.Name,
+		Segment:     *expectedExperiment.Segment,
+		StartTime:   *expectedExperiment.StartTime,
+		Treatments:  *expectedExperiment.Treatments,
+		Type:        *expectedExperiment.Type,
 		UpdatedBy:   &updater,
 	}
 	response, err := suite.client.CreateExperimentWithResponse(suite.ctx, 1, body)
@@ -236,14 +240,14 @@ func (suite *ManagementServiceTestSuite) TestExperimentCreation() {
 	suite.Require().Equal(expectedExperiment.Name, createdExperiment.Name)
 	suite.Require().Len(suite.store.Experiments, 1)
 	suite.Require().Equal(suite.store.Experiments[0].Name, createdExperiment.Name)
-	suite.Require().Equal(schema.ExperimentStatusActive, createdExperiment.Status)
+	suite.Require().Equal(schema.ExperimentStatusActive, *createdExperiment.Status)
 	suite.Require().Equal(expectedExperiment.Treatments, createdExperiment.Treatments)
-	suite.Require().Equal(updater, createdExperiment.UpdatedBy)
+	suite.Require().Equal(updater, *createdExperiment.UpdatedBy)
 
 	publishedUpdate, err := getLastPublishedUpdate(suite.ctx, 1*time.Second, suite.subscription)
 	suite.Require().NoError(err)
 	suite.Require().NotNil(publishedUpdate.Update)
-	suite.Require().Equal(expectedExperiment.Name, publishedUpdate.GetExperimentCreated().GetExperiment().Name)
+	suite.Require().Equal(*expectedExperiment.Name, publishedUpdate.GetExperimentCreated().GetExperiment().Name)
 }
 
 func (suite *ManagementServiceTestSuite) TestListExperiment() {
@@ -259,9 +263,10 @@ func (suite *ManagementServiceTestSuite) TestListExperiment() {
 func (suite *ManagementServiceTestSuite) TestGetExperiment() {
 	projectId := suite.projectSettings[0].ProjectId
 	experiment := newRandomExperiment(projectId)
-	experiment.Id = int64(rand.Int())
+	id := int64(rand.Int())
+	experiment.Id = &id
 	suite.store.Experiments = []schema.Experiment{experiment}
-	response, err := suite.client.GetExperimentWithResponse(suite.ctx, projectId, experiment.Id)
+	response, err := suite.client.GetExperimentWithResponse(suite.ctx, projectId, *experiment.Id)
 	suite.Require().NoError(err)
 	suite.Require().Equal(experiment.Treatments, response.JSON200.Data.Treatments)
 }
@@ -269,13 +274,14 @@ func (suite *ManagementServiceTestSuite) TestGetExperiment() {
 func (suite *ManagementServiceTestSuite) TestExperimentUpdate() {
 	projectId := suite.projectSettings[0].ProjectId
 	experiment := newRandomExperiment(projectId)
-	experiment.Id = int64(rand.Int())
+	id := int64(rand.Int())
+	experiment.Id = &id
 	suite.store.Experiments = []schema.Experiment{experiment}
 	newDescription := "updated"
 	params := management.UpdateExperimentJSONRequestBody{
 		Description: &newDescription,
 	}
-	response, err := suite.client.UpdateExperimentWithResponse(suite.ctx, projectId, experiment.Id, params)
+	response, err := suite.client.UpdateExperimentWithResponse(suite.ctx, projectId, *experiment.Id, params)
 	suite.Require().NoError(err)
 	suite.Require().Equal(params.Description, response.JSON200.Data.Description)
 }
@@ -309,34 +315,38 @@ func (suite *ManagementServiceTestSuite) TestUpdateProjectSettings() {
 func (suite *ManagementServiceTestSuite) TestEnableExperiment() {
 	projectId := suite.projectSettings[0].ProjectId
 	experiment := newRandomExperiment(projectId)
-	experiment.Id = int64(rand.Int())
-	experiment.Status = schema.ExperimentStatusInactive
+	id := int64(rand.Int())
+	experiment.Id = &id
+	status := schema.ExperimentStatusInactive
+	experiment.Status = &status
 	suite.store.Experiments = []schema.Experiment{experiment}
-	response, err := suite.client.EnableExperimentWithResponse(suite.ctx, projectId, experiment.Id)
+	response, err := suite.client.EnableExperimentWithResponse(suite.ctx, projectId, *experiment.Id)
 	suite.Require().NoError(err)
 	suite.Require().Equal(http.StatusOK, response.StatusCode())
 
 	publishedUpdate, err := getLastPublishedUpdate(suite.ctx, 1*time.Second, suite.subscription)
 	suite.Require().NoError(err)
 	suite.Require().NotNil(publishedUpdate.Update)
-	suite.Require().Equal(experiment.Id, publishedUpdate.GetExperimentUpdated().GetExperiment().Id)
+	suite.Require().Equal(*experiment.Id, publishedUpdate.GetExperimentUpdated().GetExperiment().Id)
 	suite.Require().Equal(_pubsub.Experiment_Active, publishedUpdate.GetExperimentUpdated().GetExperiment().Status)
 }
 
 func (suite *ManagementServiceTestSuite) TestDisableExperiment() {
 	projectId := suite.projectSettings[0].ProjectId
 	experiment := newRandomExperiment(projectId)
-	experiment.Id = int64(rand.Int())
-	experiment.Status = schema.ExperimentStatusActive
+	id := int64(rand.Int())
+	experiment.Id = &id
+	status := schema.ExperimentStatusActive
+	experiment.Status = &status
 	suite.store.Experiments = []schema.Experiment{experiment}
-	response, err := suite.client.DisableExperimentWithResponse(suite.ctx, projectId, experiment.Id)
+	response, err := suite.client.DisableExperimentWithResponse(suite.ctx, projectId, *experiment.Id)
 	suite.Require().NoError(err)
 	suite.Require().Equal(http.StatusOK, response.StatusCode())
 
 	publishedUpdate, err := getLastPublishedUpdate(suite.ctx, 1*time.Second, suite.subscription)
 	suite.Require().NoError(err)
 	suite.Require().NotNil(publishedUpdate.Update)
-	suite.Require().Equal(experiment.Id, publishedUpdate.GetExperimentUpdated().GetExperiment().Id)
+	suite.Require().Equal(*experiment.Id, publishedUpdate.GetExperimentUpdated().GetExperiment().Id)
 	suite.Require().Equal(_pubsub.Experiment_Inactive, publishedUpdate.GetExperimentUpdated().GetExperiment().Status)
 }
 

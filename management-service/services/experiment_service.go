@@ -66,6 +66,7 @@ type ListExperimentsParams struct {
 	StartTime        *time.Time                 `json:"start_time,omitempty"`
 	Segment          models.ExperimentSegment   `json:"segment,omitempty"`
 	IncludeWeakMatch bool                       `json:"include_weak_match"`
+	Fields           *[]models.ExperimentField  `json:"fields,omitempty"`
 }
 
 type ExperimentService interface {
@@ -110,8 +111,18 @@ func (svc *experimentService) ListExperiments(
 	projectId int64,
 	params ListExperimentsParams,
 ) ([]*models.Experiment, *pagination.Paging, error) {
+	var err error
 	var exps []*models.Experiment
-	query := svc.query().
+
+	query := svc.query()
+
+	// Handle Field values
+	query, err = svc.filterFieldValues(query, params)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	query = query.
 		Where("project_id = ?", projectId).
 		Order("updated_at desc")
 
@@ -119,34 +130,17 @@ func (svc *experimentService) ListExperiments(
 	if params.Status != nil {
 		query = query.Where("status = ?", params.Status)
 	}
+	// Handle StatusFriendly values
 	if len(params.StatusFriendly) > 0 {
 		query = svc.filterExperimentStatusFriendly(query, params.StatusFriendly)
 	}
-	if params.StartTime != nil && !params.StartTime.IsZero() && (params.EndTime == nil || params.EndTime.IsZero()) {
-		return nil, nil, errors.Newf(errors.BadInput, "end_time parameter must be supplied as well")
+
+	// Handle Start and EndTime values
+	query, err = svc.filterStartEndTimeValues(query, params)
+	if err != nil {
+		return nil, nil, err
 	}
-	if params.EndTime != nil && !params.EndTime.IsZero() && (params.StartTime == nil || params.StartTime.IsZero()) {
-		return nil, nil, errors.Newf(errors.BadInput, "start_time parameter must be supplied as well")
-	}
-	if params.StartTime != nil && !params.StartTime.IsZero() && params.EndTime != nil && !params.EndTime.IsZero() {
-		// Find experiments that are at least partially running in this window.
-		if params.StartTime.Equal(*params.EndTime) {
-			// To filter active experiments at a given timestamp (such as current timestamp),
-			// it needs to be passed in for both the start and end time.
-			query = query.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", params.StartTime, params.EndTime)
-		} else {
-			// One of the following should match:
-			// * the start_time parameter should fall within the experiment's [start and end) times
-			// * the end_time parameter should fall within the experiment's (start and end) times
-			// * the experiment starts and ends within the [start_time and end_time) duration
-			query = query.Where(
-				svc.query().
-					Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", params.StartTime, params.StartTime).
-					Or("tstzrange(start_time, end_time, '()') @> tstzrange(?, ?, '[]')", params.EndTime, params.EndTime).
-					Or("tstzrange(?, ?, '[]') @> tstzrange(start_time, end_time, '[)')", params.StartTime, params.EndTime),
-			)
-		}
-	}
+
 	if params.Tier != nil {
 		query = query.Where("tier = ?", params.Tier)
 	}
@@ -172,22 +166,24 @@ func (svc *experimentService) ListExperiments(
 	// Pagination
 	var pagingResponse *pagination.Paging
 	var count int64
-	err := pagination.ValidatePaginationParams(params.Page, params.PageSize)
-	if err != nil {
-		return nil, nil, err
-	}
-	pageOpts := pagination.NewPaginationOptions(params.Page, params.PageSize)
-	// Count total
-	query.Model(&exps).Count(&count)
-	// Add offset and limit
-	query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
-	query = query.Limit(int(*pageOpts.PageSize))
-	// Format opts into paging response
-	pagingResponse = pagination.ToPaging(pageOpts, int(count))
-	if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
-		// Invalid query - total pages is less than the requested page
-		return nil, nil, errors.Newf(errors.BadInput,
-			"Requested page number %d exceeds total pages: %d.", pagingResponse.Page, pagingResponse.Pages)
+	if params.Fields == nil || params.Page != nil || params.PageSize != nil {
+		err = pagination.ValidatePaginationParams(params.Page, params.PageSize)
+		if err != nil {
+			return nil, nil, err
+		}
+		pageOpts := pagination.NewPaginationOptions(params.Page, params.PageSize)
+		// Count total
+		query.Model(&exps).Count(&count)
+		// Add offset and limit
+		query = query.Offset(int((*pageOpts.Page - 1) * *pageOpts.PageSize))
+		query = query.Limit(int(*pageOpts.PageSize))
+		// Format opts into paging response
+		pagingResponse = pagination.ToPaging(pageOpts, int(count))
+		if pagingResponse.Page > 1 && pagingResponse.Pages < pagingResponse.Page {
+			// Invalid query - total pages is less than the requested page
+			return nil, nil, errors.Newf(errors.BadInput,
+				"Requested page number %d exceeds total pages: %d.", pagingResponse.Page, pagingResponse.Pages)
+		}
 	}
 
 	// Filter experiments
@@ -555,6 +551,42 @@ func (svc *experimentService) save(exp *models.Experiment) (*models.Experiment, 
 	return svc.GetDBRecord(exp.ProjectID, exp.ID)
 }
 
+func (svc *experimentService) filterFieldValues(query *gorm.DB, params ListExperimentsParams) (*gorm.DB, error) {
+	if params.Fields != nil && len(*params.Fields) != 0 {
+		err := validateListExperimentFieldNames(*params.Fields)
+		if err != nil {
+			return nil, err
+		}
+
+		// Stores a set of unique field names which are unique column names to be selected in the db query
+		fieldNamesSet := set.New()
+		for _, field := range *params.Fields {
+			fieldName := field
+			// Add ExperimentFieldStatus to the query because status_friendly does not exist in the db as a column
+			if field == models.ExperimentFieldStatusFriendly {
+				// Add ExperimentFieldStartTime and ExperimentFieldEndTime to the query as they are required for
+				// determining the statusFriendly field; these two fields may or may not be returned depending on
+				// what is actually specified in params.Fields
+				fieldNamesSet.Insert(string(models.ExperimentFieldStartTime))
+				fieldNamesSet.Insert(string(models.ExperimentFieldEndTime))
+
+				fieldName = models.ExperimentFieldStatus
+			}
+			//fieldNamesSet[string(fieldName)] = struct{}{}
+			fieldNamesSet.Insert(string(fieldName))
+		}
+
+		// Retrieve a slice of unique strings from fieldNamesSet; query.Select only accepts []string
+		var fieldNames []string
+		fieldNamesSet.Do(func(fieldName interface{}) {
+			fieldNames = append(fieldNames, fmt.Sprint(fieldName))
+		})
+
+		query = query.Select(fieldNames)
+	}
+	return query, nil
+}
+
 func (svc *experimentService) filterExperimentStatusFriendly(query *gorm.DB, statusesFriendly []ExperimentStatusFriendly) *gorm.DB {
 	orPredicates := svc.query().Where("false") // start with false and build OR query dynamically
 	for _, statusFriendly := range statusesFriendly {
@@ -578,12 +610,62 @@ func (svc *experimentService) filterExperimentStatusFriendly(query *gorm.DB, sta
 	return query.Where(orPredicates)
 }
 
+func (svc *experimentService) filterStartEndTimeValues(query *gorm.DB, params ListExperimentsParams) (*gorm.DB, error) {
+	if params.StartTime != nil && !params.StartTime.IsZero() && (params.EndTime == nil || params.EndTime.IsZero()) {
+		return nil, errors.Newf(errors.BadInput, "end_time parameter must be supplied as well")
+	}
+	if params.EndTime != nil && !params.EndTime.IsZero() && (params.StartTime == nil || params.StartTime.IsZero()) {
+		return nil, errors.Newf(errors.BadInput, "start_time parameter must be supplied as well")
+	}
+	if params.StartTime != nil && !params.StartTime.IsZero() && params.EndTime != nil && !params.EndTime.IsZero() {
+		// Find experiments that are at least partially running in this window.
+		if params.StartTime.Equal(*params.EndTime) {
+			// To filter active experiments at a given timestamp (such as current timestamp),
+			// it needs to be passed in for both the start and end time.
+			query = query.Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", params.StartTime, params.EndTime)
+		} else {
+			// One of the following should match:
+			// * the start_time parameter should fall within the experiment's [start and end) times
+			// * the end_time parameter should fall within the experiment's (start and end) times
+			// * the experiment starts and ends within the [start_time and end_time) duration
+			query = query.Where(
+				svc.query().
+					Where("tstzrange(start_time, end_time, '[)') @> tstzrange(?, ?, '[]')", params.StartTime, params.StartTime).
+					Or("tstzrange(start_time, end_time, '()') @> tstzrange(?, ?, '[]')", params.EndTime, params.EndTime).
+					Or("tstzrange(?, ?, '[]') @> tstzrange(start_time, end_time, '[)')", params.StartTime, params.EndTime),
+			)
+		}
+	}
+	return query, nil
+}
+
 func (svc *experimentService) filterSegmenterValues(query *gorm.DB, segment models.ExperimentSegment, includeWeakMatch bool) *gorm.DB {
 	// No need to format the segmenter values according to their types since we're storing all values in string
 	for name, values := range segment {
 		query = filterSegmenterAnyOfPredicate(query, name, values, includeWeakMatch)
 	}
 	return query
+}
+
+func validateListExperimentFieldNames(fields []models.ExperimentField) error {
+	allowedFieldList := []interface{}{
+		models.ExperimentFieldId,
+		models.ExperimentFieldName,
+		models.ExperimentFieldStartTime,
+		models.ExperimentFieldEndTime,
+		models.ExperimentFieldTier,
+		models.ExperimentFieldType,
+		models.ExperimentFieldStatusFriendly,
+		models.ExperimentFieldUpdatedAt,
+		models.ExperimentFieldTreatments,
+	}
+	allowedFields := set.New(allowedFieldList...)
+	for _, field := range fields {
+		if !allowedFields.Has(field) {
+			return fmt.Errorf("field %s is not supported, fields should only be name and/or id", field)
+		}
+	}
+	return nil
 }
 
 func (svc *experimentService) validateExperimentOrthogonality(

@@ -204,23 +204,24 @@ func generateExperiments() []schema.Experiment {
 		experimentType := val["type"].(schema.ExperimentType)
 		startTime := val["start-time"].(time.Time)
 		endTime := val["end-time"].(time.Time)
+		version := int64(1)
 
 		experiment := schema.Experiment{
-			Id:          id,
-			ProjectId:   projectId,
+			Id:          &id,
+			ProjectId:   &projectId,
 			Description: &description,
-			EndTime:     endTime,
+			EndTime:     &endTime,
 			Interval:    &interval,
-			Name:        name,
-			Segment: schema.ExperimentSegment{
+			Name:        &name,
+			Segment: &schema.ExperimentSegment{
 				"days_of_week": &daysOfWeek,
 				"hours_of_day": &hoursOfDay,
 				"s2_ids":       &s2Ids,
 			},
-			StartTime:  startTime,
-			Treatments: treatments,
-			Type:       experimentType,
-			Version:    int64(1),
+			StartTime:  &startTime,
+			Treatments: &treatments,
+			Type:       &experimentType,
+			Version:    &version,
 		}
 		experiments = append(experiments, experiment)
 	}
@@ -811,5 +812,5 @@ func (suite *TreatmentServiceTestSuite) TestLocalStorage() {
 
 	resp, err := suite.managementServiceClient.GetExperimentWithResponse(suite.ctx, 1, 1)
 	suite.Require().NoError(err)
-	suite.Require().Equal(resp.JSON200.Data.Name, storage.Experiments[1][0].Experiment.Name)
+	suite.Require().Equal(storage.Experiments[1][0].Experiment.Name, *resp.JSON200.Data.Name)
 }
