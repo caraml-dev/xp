@@ -75,7 +75,12 @@ export const SegmenterSettings = ({
       buttonContent={buttonContent}
       arrowDisplay="none"
       extraAction={
-        <EuiButtonIcon size="s" iconType={"gear"} color={"text"} onClick={() => setIsOpen(!isOpen)} />
+        <EuiButtonIcon
+          size="s" iconType={"gear"}
+          color={"text"}
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="segmenter-settings"
+        />
       }
     >
       <EuiHorizontalRule margin="xs" />
