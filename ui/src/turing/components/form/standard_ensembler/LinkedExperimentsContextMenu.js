@@ -1,18 +1,18 @@
 import React from "react";
 
 import {
-  EuiContextMenu,
-  EuiPopover,
   EuiButtonEmpty,
+  EuiContextMenu,
+  EuiIcon,
   EuiLink,
-  EuiIcon
+  EuiPopover,
 } from "@elastic/eui";
 import { useToggle } from "@gojek/mlp-ui";
 
 export const LinkedExperimentsContextMenu = ({
   projectId,
   linkedExperiments,
-  experimentStatus
+  experimentStatus,
 }) => {
   const [isPopoverOpen, togglePopover] = useToggle();
 
@@ -41,27 +41,31 @@ export const LinkedExperimentsContextMenu = ({
     >
       <EuiContextMenu
         initialPanelId={0}
-        panels={
-          [
-            {
-              id: 0,
-              title: `Linked ${experimentStatus[0].toUpperCase() + experimentStatus.slice(1)} Experiments`,
-              items: Object.values(linkedExperiments[experimentStatus]).map(e => (
-                {
-                  name: (
-                    <EuiLink href={`/turing/projects/${projectId}/experiments/${e.id}/details`} external={false} target={"_blank"}>
-                      {e.name}
-                    </EuiLink>
-                  ),
-                  icon: <EuiIcon type={"popout"} size={"m"} color={"primary"} />,
-                  size: "s",
-                  toolTipContent: "Open experiment details page",
-                  toolTipPosition: "right",
-                }
-              ))
-            }
-          ]
-        }
+        panels={[
+          {
+            id: 0,
+            title: `Linked ${
+              experimentStatus[0].toUpperCase() + experimentStatus.slice(1)
+            } Experiments`,
+            items: Object.values(linkedExperiments[experimentStatus]).map(
+              (e) => ({
+                name: (
+                  <EuiLink
+                    href={`/turing/projects/${projectId}/experiments/${e.id}/details`}
+                    external={false}
+                    target={"_blank"}
+                  >
+                    {e.name}
+                  </EuiLink>
+                ),
+                icon: <EuiIcon type={"popout"} size={"m"} color={"primary"} />,
+                size: "s",
+                toolTipContent: "Open experiment details page",
+                toolTipPosition: "right",
+              })
+            ),
+          },
+        ]}
       />
     </EuiPopover>
   );

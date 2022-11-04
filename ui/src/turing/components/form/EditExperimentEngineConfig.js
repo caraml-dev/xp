@@ -14,6 +14,7 @@ import { VariablesConfigPanel } from "./variables_config/VariablesConfigPanel";
 
 const EditExperimentEngineConfigComponent = ({
   projectId,
+  protocol,
   config = {},
   onChangeHandler,
   errors = {},
@@ -41,6 +42,7 @@ const EditExperimentEngineConfigComponent = ({
             <VariablesConfigPanel
               projectId={projectId}
               variables={config.variables}
+              protocol={protocol}
               onChangeHandler={onChange("variables")}
               errors={get(errors, "variables")}
             />
@@ -50,7 +52,8 @@ const EditExperimentEngineConfigComponent = ({
             <EuiCallOut
               title="Project not onboarded to Experiments"
               color="danger"
-              iconType="alert">
+              iconType="alert"
+            >
               <p>
                 {
                   "Please complete onboarding to Turing experiments to configure the router."

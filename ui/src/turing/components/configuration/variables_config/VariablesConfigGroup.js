@@ -1,8 +1,10 @@
 import React from "react";
 
-import { EuiBasicTable, EuiTextColor, EuiTitle } from "@elastic/eui";
+import { EuiBasicTable, EuiText, EuiTextColor, EuiTitle } from "@elastic/eui";
 
-export const VariablesConfigGroup = ({ variables }) => {
+import { mapProtocolLabel } from "turing/components/utils/helper";
+
+export const VariablesConfigGroup = ({ variables, protocol }) => {
   const columns = [
     {
       field: "name",
@@ -28,6 +30,9 @@ export const VariablesConfigGroup = ({ variables }) => {
       field: "field_source",
       name: "Source",
       width: "30%",
+      render: (value) => (
+        <EuiText size="s">{mapProtocolLabel(protocol, value)}</EuiText>
+      ),
     },
   ];
 
