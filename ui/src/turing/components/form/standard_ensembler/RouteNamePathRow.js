@@ -45,6 +45,7 @@ export const RouteNamePathRow = ({
               <EuiButtonIcon
                 iconType="questionInCircle"
                 onClick={toggleFlyout}
+                aria-label="route-name-path-help"
               />,
               <EuiText size={"s"}>{routeNamePathPrefix}</EuiText>,
             ]}

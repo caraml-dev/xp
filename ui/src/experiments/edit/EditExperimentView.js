@@ -12,7 +12,8 @@ import { TreatmentContextProvider } from "providers/treatment/context";
 import { Experiment } from "services/experiment/Experiment";
 import { PageTitle } from "components/page/PageTitle";
 
-const EditExperimentView = ({ projectId, experimentSpec }) => {
+const EditExperimentView = ({ experimentSpec }) => {
+  const projectId = experimentSpec.project_id;
   const navigate = useNavigate();
   useEffect(() => {
     replaceBreadcrumbs([
