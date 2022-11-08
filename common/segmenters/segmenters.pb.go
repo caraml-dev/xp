@@ -246,6 +246,7 @@ type SegmenterValue struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Value:
+	//
 	//	*SegmenterValue_String_
 	//	*SegmenterValue_Bool
 	//	*SegmenterValue_Integer

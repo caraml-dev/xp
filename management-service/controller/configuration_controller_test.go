@@ -30,13 +30,10 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 	pubSubConfigProject := "dev"
 	pubSubConfigTopicName := "xp-update"
 
-	maxS2CellLevel := 15
-	minS2CellLevel := 14
-
 	sentryConfigEnabled := false
 	sentryConfigLabels := make(map[string]interface{})
 
-	treatmentServicePluginConfiguration := schema.TreatmentServicePluginConfig{
+	treatmentServicePluginConfiguration := schema.TreatmentServiceConfig{
 		NewRelicConfig: &schema.NewRelicConfig{
 			AppName: &newRelicAppName,
 			Enabled: &newRelicEnabled,
@@ -46,9 +43,9 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 			TopicName: &pubSubConfigTopicName,
 		},
 		SegmenterConfig: &schema.SegmenterConfig{
-			S2Ids: &schema.S2Ids{
-				MaxS2CellLevel: &maxS2CellLevel,
-				MinS2CellLevel: &minS2CellLevel,
+			"s2_ids": map[string]interface{}{
+				"min_s2_cell_level": 14,
+				"max_s2_cell_level": 15,
 			},
 		},
 		SentryConfig: &schema.SentryConfig{
@@ -59,7 +56,7 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 
 	configurationSvc := &mocks.ConfigurationService{}
 	configurationSvc.
-		On("GetTreatmentServicePluginConfig").
+		On("GetTreatmentServiceConfig").
 		Return(treatmentServicePluginConfiguration, nil)
 
 	// Create test controller
@@ -78,7 +75,7 @@ func TestConfigurationController(t *testing.T) {
 
 func (s *ConfigurationControllerTestSuite) TestGetTreatmentServicePluginConfig() {
 	w := httptest.NewRecorder()
-	s.ctrl.GetTreatmentServicePluginConfig(w, nil)
+	s.ctrl.GetTreatmentServiceConfig(w, nil)
 	resp := w.Result()
 	if resp != nil && resp.Body != nil {
 		defer resp.Body.Close()

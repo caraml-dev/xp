@@ -55,13 +55,10 @@ func (s *ConfigurationServiceTestSuite) TestGetTreatmentServicePluginConfig() {
 	pubSubConfigProject := "dev"
 	pubSubConfigTopicName := "xp-update"
 
-	maxS2CellLevel := 15
-	minS2CellLevel := 14
-
 	sentryConfigEnabled := false
 	sentryConfigLabels := make(map[string]interface{})
 
-	expectedConfiguration := schema.TreatmentServicePluginConfig{
+	expectedConfiguration := schema.TreatmentServiceConfig{
 		NewRelicConfig: &schema.NewRelicConfig{
 			AppName: &newRelicAppName,
 			Enabled: &newRelicEnabled,
@@ -71,9 +68,9 @@ func (s *ConfigurationServiceTestSuite) TestGetTreatmentServicePluginConfig() {
 			TopicName: &pubSubConfigTopicName,
 		},
 		SegmenterConfig: &schema.SegmenterConfig{
-			S2Ids: &schema.S2Ids{
-				MaxS2CellLevel: &maxS2CellLevel,
-				MinS2CellLevel: &minS2CellLevel,
+			"s2_ids": map[string]interface{}{
+				"mins2celllevel": 14,
+				"maxs2celllevel": 15,
 			},
 		},
 		SentryConfig: &schema.SentryConfig{
@@ -81,6 +78,6 @@ func (s *ConfigurationServiceTestSuite) TestGetTreatmentServicePluginConfig() {
 			Labels:  &sentryConfigLabels,
 		},
 	}
-	actualConfiguration := s.ConfigurationService.GetTreatmentServicePluginConfig()
+	actualConfiguration := s.ConfigurationService.GetTreatmentServiceConfig()
 	s.Suite.Assert().Equal(expectedConfiguration, actualConfiguration)
 }

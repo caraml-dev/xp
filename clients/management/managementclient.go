@@ -106,9 +106,9 @@ type GetTreatmentHistorySuccess struct {
 	Data externalRef0.TreatmentHistory `json:"data"`
 }
 
-// GetTreatmentServicePluginConfigSuccess defines model for GetTreatmentServicePluginConfigSuccess.
-type GetTreatmentServicePluginConfigSuccess struct {
-	Data externalRef0.TreatmentServicePluginConfig `json:"data"`
+// GetTreatmentServiceConfigSuccess defines model for GetTreatmentServiceConfigSuccess.
+type GetTreatmentServiceConfigSuccess struct {
+	Data externalRef0.TreatmentServiceConfig `json:"data"`
 }
 
 // GetTreatmentSuccess defines model for GetTreatmentSuccess.
@@ -634,8 +634,8 @@ type ClientInterface interface {
 	// GetTreatmentHistory request
 	GetTreatmentHistory(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetTreatmentServicePluginConfig request
-	GetTreatmentServicePluginConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetTreatmentServiceConfig request
+	GetTreatmentServiceConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ValidateEntity request  with any body
 	ValidateEntityWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1147,8 +1147,8 @@ func (c *Client) GetTreatmentHistory(ctx context.Context, projectId int64, treat
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetTreatmentServicePluginConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetTreatmentServicePluginConfigRequest(c.Server)
+func (c *Client) GetTreatmentServiceConfig(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTreatmentServiceConfigRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -3104,8 +3104,8 @@ func NewGetTreatmentHistoryRequest(server string, projectId int64, treatmentId i
 	return req, nil
 }
 
-// NewGetTreatmentServicePluginConfigRequest generates requests for GetTreatmentServicePluginConfig
-func NewGetTreatmentServicePluginConfigRequest(server string) (*http.Request, error) {
+// NewGetTreatmentServiceConfigRequest generates requests for GetTreatmentServiceConfig
+func NewGetTreatmentServiceConfigRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3113,7 +3113,7 @@ func NewGetTreatmentServicePluginConfigRequest(server string) (*http.Request, er
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/treatment-service-plugin-config")
+	operationPath := fmt.Sprintf("/treatment-service-config")
 	if operationPath[0] == '/' {
 		operationPath = operationPath[1:]
 	}
@@ -3330,8 +3330,8 @@ type ClientWithResponsesInterface interface {
 	// GetTreatmentHistory request
 	GetTreatmentHistoryWithResponse(ctx context.Context, projectId int64, treatmentId int64, version int64, reqEditors ...RequestEditorFn) (*GetTreatmentHistoryResponse, error)
 
-	// GetTreatmentServicePluginConfig request
-	GetTreatmentServicePluginConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTreatmentServicePluginConfigResponse, error)
+	// GetTreatmentServiceConfig request
+	GetTreatmentServiceConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTreatmentServiceConfigResponse, error)
 
 	// ValidateEntity request  with any body
 	ValidateEntityWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateEntityResponse, error)
@@ -4170,17 +4170,17 @@ func (r GetTreatmentHistoryResponse) StatusCode() int {
 	return 0
 }
 
-type GetTreatmentServicePluginConfigResponse struct {
+type GetTreatmentServiceConfigResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Data externalRef0.TreatmentServicePluginConfig `json:"data"`
+		Data externalRef0.TreatmentServiceConfig `json:"data"`
 	}
 	JSON500 *externalRef0.Error
 }
 
 // Status returns HTTPResponse.Status
-func (r GetTreatmentServicePluginConfigResponse) Status() string {
+func (r GetTreatmentServiceConfigResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -4188,7 +4188,7 @@ func (r GetTreatmentServicePluginConfigResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetTreatmentServicePluginConfigResponse) StatusCode() int {
+func (r GetTreatmentServiceConfigResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4586,13 +4586,13 @@ func (c *ClientWithResponses) GetTreatmentHistoryWithResponse(ctx context.Contex
 	return ParseGetTreatmentHistoryResponse(rsp)
 }
 
-// GetTreatmentServicePluginConfigWithResponse request returning *GetTreatmentServicePluginConfigResponse
-func (c *ClientWithResponses) GetTreatmentServicePluginConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTreatmentServicePluginConfigResponse, error) {
-	rsp, err := c.GetTreatmentServicePluginConfig(ctx, reqEditors...)
+// GetTreatmentServiceConfigWithResponse request returning *GetTreatmentServiceConfigResponse
+func (c *ClientWithResponses) GetTreatmentServiceConfigWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTreatmentServiceConfigResponse, error) {
+	rsp, err := c.GetTreatmentServiceConfig(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetTreatmentServicePluginConfigResponse(rsp)
+	return ParseGetTreatmentServiceConfigResponse(rsp)
 }
 
 // ValidateEntityWithBodyWithResponse request with arbitrary body returning *ValidateEntityResponse
@@ -5937,15 +5937,15 @@ func ParseGetTreatmentHistoryResponse(rsp *http.Response) (*GetTreatmentHistoryR
 	return response, nil
 }
 
-// ParseGetTreatmentServicePluginConfigResponse parses an HTTP response from a GetTreatmentServicePluginConfigWithResponse call
-func ParseGetTreatmentServicePluginConfigResponse(rsp *http.Response) (*GetTreatmentServicePluginConfigResponse, error) {
+// ParseGetTreatmentServiceConfigResponse parses an HTTP response from a GetTreatmentServiceConfigWithResponse call
+func ParseGetTreatmentServiceConfigResponse(rsp *http.Response) (*GetTreatmentServiceConfigResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer rsp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetTreatmentServicePluginConfigResponse{
+	response := &GetTreatmentServiceConfigResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5953,7 +5953,7 @@ func ParseGetTreatmentServicePluginConfigResponse(rsp *http.Response) (*GetTreat
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Data externalRef0.TreatmentServicePluginConfig `json:"data"`
+			Data externalRef0.TreatmentServiceConfig `json:"data"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err

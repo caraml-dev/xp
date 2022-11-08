@@ -29,9 +29,6 @@ components:
           properties:
     SegmenterConfig:
       type: object
-      properties:
-        s2_ids:
-          $ref: '#/components/schemas/S2Ids'
     S2Ids:
       type: object
       properties:
@@ -41,7 +38,7 @@ components:
         max_s2_cell_level:
           type: integer
           description: Max S2 cell level
-    TreatmentServicePluginConfig:
+    TreatmentServiceConfig:
       type: object
       properties:
         pub_sub:

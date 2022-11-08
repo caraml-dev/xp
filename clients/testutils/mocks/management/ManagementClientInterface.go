@@ -738,8 +738,8 @@ func (_m *ClientInterface) GetTreatmentHistory(ctx context.Context, projectId in
 	return r0, r1
 }
 
-// GetTreatmentServicePluginConfig provides a mock function with given fields: ctx, reqEditors
-func (_m *ClientInterface) GetTreatmentServicePluginConfig(ctx context.Context, reqEditors ...management.RequestEditorFn) (*http.Response, error) {
+// GetTreatmentServiceConfig provides a mock function with given fields: ctx, reqEditors
+func (_m *ClientInterface) GetTreatmentServiceConfig(ctx context.Context, reqEditors ...management.RequestEditorFn) (*http.Response, error) {
 	_va := make([]interface{}, len(reqEditors))
 	for _i := range reqEditors {
 		_va[_i] = reqEditors[_i]

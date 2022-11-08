@@ -1175,7 +1175,7 @@ func NewCountrySegmenter(_ json.RawMessage) (segmenters.Segmenter, error) {
 	return segmenters.NewBaseSegmenter(countryConfig), nil
 }
 
-func NewAreaSegmenter(_ json.RawMessage) (segmenters.Segmenter, error) {
+func NewAreaSegmenter(configData json.RawMessage) (segmenters.Segmenter, error) {
 	segmenterName := "area"
 	areaConfig := _segmenters.SegmenterConfiguration{
 		Name:        segmenterName,

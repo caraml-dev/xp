@@ -349,9 +349,7 @@ type Segmenter struct {
 }
 
 // SegmenterConfig defines model for SegmenterConfig.
-type SegmenterConfig struct {
-	S2Ids *S2Ids `json:"s2_ids,omitempty"`
-}
+type SegmenterConfig map[string]interface{}
 
 // SegmenterOptions defines model for SegmenterOptions.
 type SegmenterOptions struct {
@@ -444,8 +442,8 @@ type TreatmentSchema struct {
 	Rules Rules `json:"rules"`
 }
 
-// TreatmentServicePluginConfig defines model for TreatmentServicePluginConfig.
-type TreatmentServicePluginConfig struct {
+// TreatmentServiceConfig defines model for TreatmentServiceConfig.
+type TreatmentServiceConfig struct {
 	NewRelicConfig  *NewRelicConfig  `json:"new_relic_config,omitempty"`
 	PubSub          *PubSub          `json:"pub_sub,omitempty"`
 	SegmenterConfig *SegmenterConfig `json:"segmenter_config,omitempty"`
@@ -588,15 +586,15 @@ var swaggerSpec = []string{
 	"C0QlikVCKBYJxewrGAf8ihXSlzHbv/mAaUbAM7PiWE/XYN10rPv52vmsCah/XK/ZL2v8F7DfDPb6AeBk",
 	"rnf1mK4rDaIjm2YfvL7JCnbIkah1g9XAdEVac4O+I2PxCu2scX3G6rlXVOxEncvl8XNHduOgV4/fe7x+",
 	"+t5VdJYv0CYrrPPP9w4nW7jnstyi6Maf0ZYC9bCVyKmYayHiB8ZagJQc9yBIrYHZ83IpfqpFbhHT8SFD",
-	"Li7qWK5ZDXQyvn4zEC8vmql6a3kj853RZDpwx4D2rFOfG9Dp+wzZsqW5ImMux/Q+cbZ7HSy9IgQ2ra+0",
-	"aWrH5dbPkpoaeiZbdU4Q4HdLg25/MEtgPABtQFLnz802ZedMTgHl87R+6CZSUsC7Inn4cWqfkXjRvfJT",
-	"uuTloyPq2/iZmfo1O80A52xcLMFQRg1d9pIRi29axDAmXUzl747CwjJsfI/wwOAGce+IHXjxxqLWRpYk",
-	"v8Xi4uI66fcNx9KG47xtzrnRdWvjgMAl9V6a6E4y2REFk8fGj6d7S/+ZICMaRQ5O4FvYoVsIjrcQDRPt",
-	"60D+Pad3T+LR5lSXXsgROSdS8JNVrAYz1luPpwkVzJENWDJU2Q+G/Hmq1Qs33X2NO1ZLXMvCqNO5LHfh",
-	"7sgTm18cpQmnW+A6ssyOpclLFqIT5K+kH/5VetpOkBd2tR3e+b72C9VDXwl+pf3r4AJh8xr+z9o4nl/d",
-	"x46H1BOff+dAbb42FF3UROGv5MaHcsXEbmg4qp0FLs3v9EQ0HnX+GqAOmMN7Xu9QnAtwAo6ZAo55lncQ",
-	"c9yM9vbW2+ttpv0Ae3aP4Mfcg/XruiPHrYgjYePsavwgwkdCw4v797tCJg+i5tx2ViBohclD4mb+Zq/9",
-	"l5f/BwAA//9W3c04+S4AAA==",
+	"Li7qWK5ZDXQyvn4zEC8vmql6a3kj853RZDpwx4D2rFP3A7rzMO96L4j3n4O1VYTAprX2NtHsuNz6aVBT",
+	"Bc/km86MA/xu7N9tAGYJjEeYDUjqPLLZh+yc0SigfJ7WD91MSQp4VyQPP04tLOLx3Ss/Z0tePjqivhGf",
+	"mYpfs5UMcM5GthIMZdTQZTsfsfimRQyjysVU/u4oLKyzxvcIDwxuELfv2IEX7xxqbWRJ8lusHi6udH7f",
+	"USztKM7b5pwbXbf4DQhcUrGlie4kkx1RMHls/Hi6efSfCTKiUeTgBL6FHbqV3niP0DDRvg7k33N69yQe",
+	"bVZ0CYIckXMiBT9ZxWowY731eJpQwRzZgCVDlf1gyJ+nWr1wV91XqWO1xLUsjDqdWyRduP3xxOZXP2nC",
+	"6Ra4jiTFWDN1yUpzgvyVdLS/SlfaCfLCvrTDO9+ZfqF66Gu5r7QDHVwgbD/D/zobx/OrO9HxmHni8+8c",
+	"qM3XhqKLmij8ldwAUK6YuQ0NR7XTvKUJnJ6IxqPOXwPUAXM4F9oEHDMFHPMs7yDm+Bjt3K2f19tM++Hz",
+	"7A7Aj6gHq9N1R47bCEfCRtjV+EFsjwSFF/evc4VMHkTNue2KQNAKk4fEzevNXvsvL/8PAAD//woT5oy1",
+	"LgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

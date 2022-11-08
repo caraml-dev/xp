@@ -12,15 +12,15 @@ type ConfigurationService struct {
 	mock.Mock
 }
 
-// GetTreatmentServicePluginConfig provides a mock function with given fields:
-func (_m *ConfigurationService) GetTreatmentServicePluginConfig() schema.TreatmentServicePluginConfig {
+// GetTreatmentServiceConfig provides a mock function with given fields:
+func (_m *ConfigurationService) GetTreatmentServiceConfig() schema.TreatmentServiceConfig {
 	ret := _m.Called()
 
-	var r0 schema.TreatmentServicePluginConfig
-	if rf, ok := ret.Get(0).(func() schema.TreatmentServicePluginConfig); ok {
+	var r0 schema.TreatmentServiceConfig
+	if rf, ok := ret.Get(0).(func() schema.TreatmentServiceConfig); ok {
 		r0 = rf()
 	} else {
-		r0 = ret.Get(0).(schema.TreatmentServicePluginConfig)
+		r0 = ret.Get(0).(schema.TreatmentServiceConfig)
 	}
 
 	return r0

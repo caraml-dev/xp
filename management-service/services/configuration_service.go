@@ -6,26 +6,16 @@ import (
 )
 
 type ConfigurationService interface {
-	GetTreatmentServicePluginConfig() schema.TreatmentServicePluginConfig
+	GetTreatmentServiceConfig() schema.TreatmentServiceConfig
 }
 
 type configurationService struct {
-	treatmentServicePluginConfig schema.TreatmentServicePluginConfig
+	treatmentServiceConfig schema.TreatmentServiceConfig
 }
 
 func NewConfigurationService(cfg *config.Config) ConfigurationService {
-	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
-	var maxS2CellLevel int
-	var minS2CellLevel int
-	if val, ok := cfg.SegmenterConfig["s2_ids"]; ok {
-		segmenterConfig := val.(map[string]interface{})
-		if val, ok := segmenterConfig["maxs2celllevel"]; ok {
-			maxS2CellLevel = val.(int)
-		}
-		if val, ok := segmenterConfig["mins2celllevel"]; ok {
-			minS2CellLevel = val.(int)
-		}
-	}
+	var segmenterConfig schema.SegmenterConfig
+	segmenterConfig = cfg.SegmenterConfig
 
 	// Iterates through all Sentry config labels to cast them as the type interface{}
 	sentryConfigLabels := make(map[string]interface{})
@@ -34,7 +24,7 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	}
 
 	return &configurationService{
-		treatmentServicePluginConfig: schema.TreatmentServicePluginConfig{
+		treatmentServiceConfig: schema.TreatmentServiceConfig{
 			NewRelicConfig: &schema.NewRelicConfig{
 				AppName: &cfg.NewRelicConfig.AppName,
 				Enabled: &cfg.NewRelicConfig.Enabled,
@@ -43,12 +33,7 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 				Project:   &cfg.PubSubConfig.Project,
 				TopicName: &cfg.PubSubConfig.TopicName,
 			},
-			SegmenterConfig: &schema.SegmenterConfig{
-				S2Ids: &schema.S2Ids{
-					MaxS2CellLevel: &maxS2CellLevel,
-					MinS2CellLevel: &minS2CellLevel,
-				},
-			},
+			SegmenterConfig: &segmenterConfig,
 			SentryConfig: &schema.SentryConfig{
 				Enabled: &cfg.SentryConfig.Enabled,
 				Labels:  &sentryConfigLabels,
@@ -57,6 +42,6 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	}
 }
 
-func (svc configurationService) GetTreatmentServicePluginConfig() schema.TreatmentServicePluginConfig {
-	return svc.treatmentServicePluginConfig
+func (svc configurationService) GetTreatmentServiceConfig() schema.TreatmentServiceConfig {
+	return svc.treatmentServiceConfig
 }
