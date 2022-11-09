@@ -11,15 +11,6 @@ components:
           description: Topic name of the PubSub subscription
     SegmenterConfig:
       type: object
-    S2Ids:
-      type: object
-      properties:
-        min_s2_cell_level:
-          type: integer
-          description: Min S2 cell level
-        max_s2_cell_level:
-          type: integer
-          description: Max S2 cell level
     TreatmentServiceConfig:
       type: object
       properties:
