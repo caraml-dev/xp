@@ -25,19 +25,11 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 
 	return &configurationService{
 		treatmentServiceConfig: schema.TreatmentServiceConfig{
-			NewRelicConfig: &schema.NewRelicConfig{
-				AppName: &cfg.NewRelicConfig.AppName,
-				Enabled: &cfg.NewRelicConfig.Enabled,
-			},
 			PubSub: &schema.PubSub{
 				Project:   &cfg.PubSubConfig.Project,
 				TopicName: &cfg.PubSubConfig.TopicName,
 			},
 			SegmenterConfig: &segmenterConfig,
-			SentryConfig: &schema.SentryConfig{
-				Enabled: &cfg.SentryConfig.Enabled,
-				Labels:  &sentryConfigLabels,
-			},
 		},
 	}
 }

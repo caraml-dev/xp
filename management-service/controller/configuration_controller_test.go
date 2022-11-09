@@ -15,29 +15,15 @@ import (
 type ConfigurationControllerTestSuite struct {
 	suite.Suite
 	ctrl *ConfigurationController
-
-	expectedConfigurationResponse string
 }
 
 func (s *ConfigurationControllerTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ConfigurationControllerTestSuite")
 
-	s.expectedConfigurationResponse = "FDSAFS"
-
-	newRelicAppName := "xp"
-	newRelicEnabled := true
-
 	pubSubConfigProject := "dev"
 	pubSubConfigTopicName := "xp-update"
 
-	sentryConfigEnabled := false
-	sentryConfigLabels := make(map[string]interface{})
-
 	treatmentServicePluginConfiguration := schema.TreatmentServiceConfig{
-		NewRelicConfig: &schema.NewRelicConfig{
-			AppName: &newRelicAppName,
-			Enabled: &newRelicEnabled,
-		},
 		PubSub: &schema.PubSub{
 			Project:   &pubSubConfigProject,
 			TopicName: &pubSubConfigTopicName,
@@ -47,10 +33,6 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 				"min_s2_cell_level": 14,
 				"max_s2_cell_level": 15,
 			},
-		},
-		SentryConfig: &schema.SentryConfig{
-			Enabled: &sentryConfigEnabled,
-			Labels:  &sentryConfigLabels,
 		},
 	}
 
@@ -83,10 +65,6 @@ func (s *ConfigurationControllerTestSuite) TestGetTreatmentServicePluginConfig()
 	body, err := io.ReadAll(resp.Body)
 	s.Suite.Require().NoError(err)
 	s.Suite.Assert().JSONEq(`{"data":{
-		"new_relic_config":{
-			"app_name":"xp",
-			"enabled":true
-		},
 		"pub_sub":{
 			"project":"dev",
 			"topic_name":"xp-update"
@@ -96,10 +74,6 @@ func (s *ConfigurationControllerTestSuite) TestGetTreatmentServicePluginConfig()
 				"max_s2_cell_level":15,
 				"min_s2_cell_level":14
 			}	
-		},
-		"sentry_config":{
-			"enabled":false,
-			"labels":{}
 		}
 	}}`, string(body))
 }
