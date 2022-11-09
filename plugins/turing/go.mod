@@ -9,6 +9,7 @@ require (
 	github.com/caraml-dev/xp/common v0.0.0
 	github.com/caraml-dev/xp/treatment-service v0.0.0
 	github.com/go-playground/validator/v10 v10.11.0
+	github.com/gojek/mlp v1.5.3
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.21.0
@@ -47,7 +48,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/gojek/mlp v1.5.3 // indirect
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect

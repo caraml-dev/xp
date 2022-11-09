@@ -15,9 +15,6 @@ import (
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/oauth2/google"
-
-	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
-	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 )
 
 func init() {
@@ -180,14 +177,6 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	segmenterConfig := make(map[string]interface{})
 	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
 
-	// Iterates through all Sentry config labels to cast them as the type interface{}
-	sentryConfigLabels := make(map[string]string)
-	for k, v := range *treatmentServiceConfig.SentryConfig.Labels {
-		if castedV, ok := v.(string); ok {
-			sentryConfigLabels[k] = castedV
-		}
-	}
-
 	return &config.Config{
 		Port:                    em.TreatmentServicePluginConfig.Port,
 		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
@@ -196,19 +185,13 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
 		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
 		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
-		NewRelicConfig: newrelic.Config{
-			Enabled: *treatmentServiceConfig.NewRelicConfig.Enabled,
-			AppName: *treatmentServiceConfig.NewRelicConfig.AppName,
-		},
+		NewRelicConfig:          em.TreatmentServicePluginConfig.NewRelicConfig,
+		SentryConfig:            em.TreatmentServicePluginConfig.SentryConfig,
 		PubSub: config.PubSub{
 			Project:   *treatmentServiceConfig.PubSub.Project,
 			TopicName: *treatmentServiceConfig.PubSub.TopicName,
 		},
 		SegmenterConfig: segmenterConfig,
-		SentryConfig: sentry.Config{
-			Enabled: *treatmentServiceConfig.SentryConfig.Enabled,
-			Labels:  sentryConfigLabels,
-		},
 	}, nil
 }
 

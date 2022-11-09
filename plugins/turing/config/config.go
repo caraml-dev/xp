@@ -6,6 +6,8 @@ import (
 
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
+	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 )
 
 type FieldSource string
@@ -59,6 +61,8 @@ type TreatmentServicePluginConfig struct {
 	ManagementService       config.ManagementServiceConfig       `json:"management_service"`
 	MonitoringConfig        config.Monitoring                    `json:"monitoring_config"`
 	SwaggerConfig           config.SwaggerConfig                 `json:"swagger_config"`
+	NewRelicConfig          newrelic.Config                      `json:"new_relic_config"`
+	SentryConfig            sentry.Config                        `json:"sentry_config"`
 }
 
 type Variable struct {
