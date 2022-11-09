@@ -93,14 +93,14 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
-	// Retrieve treatment service configuration (shared with the management service) using the API
-	treatmentServicePluginConfig, err := em.GetTreatmentServicePluginConfig()
+	// Retrieve treatment service configuration (driven by the management service) using the API
+	treatmentServiceConfig, err := em.GetTreatmentServiceConfig()
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
 	// Store configs in the new treatment service config
-	treatmentServiceConfig, err := em.MakeTreatmentServiceConfig(treatmentServicePluginConfig)
+	treatmentServicePluginConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServiceConfig)
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
@@ -112,7 +112,7 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		ProjectID:              config.ProjectID,
 		Passkey:                project.Passkey,
 		RequestParameters:      config.Variables,
-		TreatmentServiceConfig: treatmentServiceConfig,
+		TreatmentServiceConfig: treatmentServicePluginConfig,
 	})
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
@@ -150,35 +150,35 @@ func (em *experimentManager) GetProject(projectID int) (*schema.ProjectSettings,
 	return &projectResponse.JSON200.Data, nil
 }
 
-func (em *experimentManager) GetTreatmentServicePluginConfig() (*schema.TreatmentServicePluginConfig, error) {
-	treatmentServicePluginConfigErrorTpl := "Error retrieving config: %s"
+func (em *experimentManager) GetTreatmentServiceConfig() (*schema.TreatmentServiceConfig, error) {
+	treatmentServiceConfigErrorTpl := "Error retrieving config: %s"
 
-	treatmentServicePluginConfigResponse, err := em.httpClient.GetTreatmentServicePluginConfigWithResponse(context.Background())
+	treatmentServiceConfigResponse, err := em.httpClient.GetTreatmentServiceConfigWithResponse(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
 	// Handle possible errors
-	if treatmentServicePluginConfigResponse.JSON500 != nil {
-		return nil, fmt.Errorf(treatmentServicePluginConfigErrorTpl, treatmentServicePluginConfigResponse.JSON500.Message)
+	if treatmentServiceConfigResponse.JSON500 != nil {
+		return nil, fmt.Errorf(treatmentServiceConfigErrorTpl, treatmentServiceConfigResponse.JSON500.Message)
 	}
-	if treatmentServicePluginConfigResponse.JSON200 == nil {
-		return nil, fmt.Errorf(treatmentServicePluginConfigErrorTpl, "empty response body")
+	if treatmentServiceConfigResponse.JSON200 == nil {
+		return nil, fmt.Errorf(treatmentServiceConfigErrorTpl, "empty response body")
 	}
 
-	return &treatmentServicePluginConfigResponse.JSON200.Data, nil
+	return &treatmentServiceConfigResponse.JSON200.Data, nil
 }
 
-func (em *experimentManager) MakeTreatmentServiceConfig(
-	treatmentServicePluginConfig *schema.TreatmentServicePluginConfig,
+func (em *experimentManager) MakeTreatmentServicePluginConfig(
+	treatmentServiceConfig *schema.TreatmentServiceConfig,
 ) (*_config.TreatmentServiceConfig, error) {
 	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
 	segmenterConfig := make(map[string]interface{})
-	segmenterConfig["s2_ids"] = *treatmentServicePluginConfig.SegmenterConfig
+	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
 
 	// Iterates through all Sentry config labels to cast them as the type interface{}
 	sentryConfigLabels := make(map[string]string)
-	for k, v := range *treatmentServicePluginConfig.SentryConfig.Labels {
+	for k, v := range *treatmentServiceConfig.SentryConfig.Labels {
 		if castedV, ok := v.(string); ok {
 			sentryConfigLabels[k] = castedV
 		}
@@ -193,16 +193,16 @@ func (em *experimentManager) MakeTreatmentServiceConfig(
 		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
 		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
 		NewRelicConfig: _config.NewRelicConfig{
-			Enabled: *treatmentServicePluginConfig.NewRelicConfig.Enabled,
-			AppName: *treatmentServicePluginConfig.NewRelicConfig.AppName,
+			Enabled: *treatmentServiceConfig.NewRelicConfig.Enabled,
+			AppName: *treatmentServiceConfig.NewRelicConfig.AppName,
 		},
 		PubSub: _config.PubSub{
-			Project:   *treatmentServicePluginConfig.PubSub.Project,
-			TopicName: *treatmentServicePluginConfig.PubSub.TopicName,
+			Project:   *treatmentServiceConfig.PubSub.Project,
+			TopicName: *treatmentServiceConfig.PubSub.TopicName,
 		},
 		SegmenterConfig: segmenterConfig,
 		SentryConfig: _config.SentryConfig{
-			Enabled: *treatmentServicePluginConfig.SentryConfig.Enabled,
+			Enabled: *treatmentServiceConfig.SentryConfig.Enabled,
 			Labels:  sentryConfigLabels,
 		},
 	}, nil

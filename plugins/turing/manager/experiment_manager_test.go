@@ -189,15 +189,15 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 	)
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
-		"GetTreatmentServicePluginConfig",
-		func(em *experimentManager) (*schema.TreatmentServicePluginConfig, error) {
+		"GetTreatmentServiceConfig",
+		func(em *experimentManager) (*schema.TreatmentServiceConfig, error) {
 			return nil, nil
 		},
 	)
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
-		"MakeTreatmentServiceConfig",
-		func(em *experimentManager, treatmentServicePluginConfig *schema.TreatmentServicePluginConfig) (
+		"MakeTreatmentServicePluginConfig",
+		func(em *experimentManager, treatmentServicePluginConfig *schema.TreatmentServiceConfig) (
 			*config.TreatmentServiceConfig, error) {
 			return nil, nil
 		},
