@@ -12,8 +12,12 @@ import (
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
 	_config "github.com/caraml-dev/xp/plugins/turing/config"
+	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/oauth2/google"
+
+	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 )
 
 func init() {
@@ -94,13 +98,13 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 	}
 
 	// Retrieve treatment service configuration (driven by the management service) using the API
-	treatmentServiceConfig, err := em.GetTreatmentServiceConfig()
+	treatmentServicePluginConfig, err := em.GetTreatmentServiceConfigFromManagementService()
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
 	// Store configs in the new treatment service config
-	treatmentServicePluginConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServiceConfig)
+	treatmentServiceConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServicePluginConfig)
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
@@ -112,7 +116,7 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		ProjectID:              config.ProjectID,
 		Passkey:                project.Passkey,
 		RequestParameters:      config.Variables,
-		TreatmentServiceConfig: treatmentServicePluginConfig,
+		TreatmentServiceConfig: treatmentServiceConfig,
 	})
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
@@ -150,7 +154,7 @@ func (em *experimentManager) GetProject(projectID int) (*schema.ProjectSettings,
 	return &projectResponse.JSON200.Data, nil
 }
 
-func (em *experimentManager) GetTreatmentServiceConfig() (*schema.TreatmentServiceConfig, error) {
+func (em *experimentManager) GetTreatmentServiceConfigFromManagementService() (*schema.TreatmentServiceConfig, error) {
 	treatmentServiceConfigErrorTpl := "Error retrieving config: %s"
 
 	treatmentServiceConfigResponse, err := em.httpClient.GetTreatmentServiceConfigWithResponse(context.Background())
@@ -171,7 +175,7 @@ func (em *experimentManager) GetTreatmentServiceConfig() (*schema.TreatmentServi
 
 func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	treatmentServiceConfig *schema.TreatmentServiceConfig,
-) (*_config.TreatmentServiceConfig, error) {
+) (*config.Config, error) {
 	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
 	segmenterConfig := make(map[string]interface{})
 	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
@@ -184,7 +188,7 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 		}
 	}
 
-	return &_config.TreatmentServiceConfig{
+	return &config.Config{
 		Port:                    em.TreatmentServicePluginConfig.Port,
 		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
 		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
@@ -192,16 +196,16 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
 		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
 		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
-		NewRelicConfig: _config.NewRelicConfig{
+		NewRelicConfig: newrelic.Config{
 			Enabled: *treatmentServiceConfig.NewRelicConfig.Enabled,
 			AppName: *treatmentServiceConfig.NewRelicConfig.AppName,
 		},
-		PubSub: _config.PubSub{
+		PubSub: config.PubSub{
 			Project:   *treatmentServiceConfig.PubSub.Project,
 			TopicName: *treatmentServiceConfig.PubSub.TopicName,
 		},
 		SegmenterConfig: segmenterConfig,
-		SentryConfig: _config.SentryConfig{
+		SentryConfig: sentry.Config{
 			Enabled: *treatmentServiceConfig.SentryConfig.Enabled,
 			Labels:  sentryConfigLabels,
 		},

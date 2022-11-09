@@ -9,11 +9,12 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
+	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/testutils"
-	"github.com/caraml-dev/xp/plugins/turing/config"
+	_config "github.com/caraml-dev/xp/plugins/turing/config"
 )
 
 func TestNewExperimentManagerImplementsCustomExperimentManagerInterface(t *testing.T) {
@@ -100,7 +101,7 @@ func TestNewExperimentManager(t *testing.T) {
 
 func TestGetEngineInfo(t *testing.T) {
 	em := &experimentManager{
-		RemoteUI: config.RemoteUI{
+		RemoteUI: _config.RemoteUI{
 			Name:   "xp",
 			URL:    "http://example.com",
 			Config: "http://example.com/app.config.js",
@@ -176,7 +177,7 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 
 	// Patch method to get passkey
 	// TODO: Generate mock client and use it here instead of patching
-	em := &experimentManager{RunnerDefaults: config.RunnerDefaults{Endpoint: "test-endpoint", Timeout: "12s"}}
+	em := &experimentManager{RunnerDefaults: _config.RunnerDefaults{Endpoint: "test-endpoint", Timeout: "12s"}}
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
 		"GetProject",
@@ -189,7 +190,7 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 	)
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
-		"GetTreatmentServiceConfig",
+		"GetTreatmentServiceConfigFromManagementService",
 		func(em *experimentManager) (*schema.TreatmentServiceConfig, error) {
 			return nil, nil
 		},
@@ -198,7 +199,7 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 		reflect.TypeOf(em),
 		"MakeTreatmentServicePluginConfig",
 		func(em *experimentManager, treatmentServicePluginConfig *schema.TreatmentServiceConfig) (
-			*config.TreatmentServiceConfig, error) {
+			*config.Config, error) {
 			return nil, nil
 		},
 	)
@@ -294,7 +295,7 @@ func TestValidateExperimentConfig(t *testing.T) {
 
 	for name, data := range tests {
 		t.Run(name, func(t *testing.T) {
-			em := experimentManager{validate: config.NewValidator()}
+			em := experimentManager{validate: _config.NewValidator()}
 			err := em.ValidateExperimentConfig(data.cfg)
 			if data.err != "" {
 				assert.EqualError(t, err, data.err)
