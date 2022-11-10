@@ -17,12 +17,6 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	var segmenterConfig schema.SegmenterConfig
 	segmenterConfig = cfg.SegmenterConfig
 
-	// Iterates through all Sentry config labels to cast them as the type interface{}
-	sentryConfigLabels := make(map[string]interface{})
-	for k, v := range cfg.SentryConfig.Labels {
-		sentryConfigLabels[k] = v
-	}
-
 	return &configurationService{
 		treatmentServiceConfig: schema.TreatmentServiceConfig{
 			PubSub: &schema.PubSub{
