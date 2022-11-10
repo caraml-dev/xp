@@ -53,7 +53,6 @@ func (er *experimentRunner) GetTreatmentForRequest(
 
 	// Initialize metric / log variables
 	begin := time.Now()
-	treatment := schema.SelectedTreatment{}
 
 	var requestFilter map[string][]*_segmenters.SegmenterValue
 
@@ -96,7 +95,7 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	treatmentRepr := models.ExperimentTreatmentToOpenAPITreatment(selectedTreatment)
 
 	// Marshal and return response
-	treatment = schema.SelectedTreatment{
+	treatment := schema.SelectedTreatment{
 		ExperimentId:   filteredExperiment.Id,
 		ExperimentName: filteredExperiment.Name,
 		Treatment:      treatmentRepr,
