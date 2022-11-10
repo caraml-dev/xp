@@ -49,7 +49,7 @@ type ExperimentRunnerConfig struct {
 	Passkey                string         `json:"passkey" validate:"required"`
 	Timeout                string         `json:"timeout" validate:"required"`
 	RequestParameters      []Variable     `json:"request_parameters" validate:"required,dive"`
-	TreatmentServiceConfig *config.Config `json:"treatment_service_config"`
+	TreatmentServiceConfig *config.Config `json:"treatment_service_config" validate:"required,dive"`
 }
 
 type TreatmentServicePluginConfig struct {

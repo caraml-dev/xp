@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -38,7 +38,45 @@ func TestNewExperimentRunner(t *testing.T) {
 						"field": "countryValue",
 						"field_source": "payload"
 					}
-				]
+				],
+				"treatment_service_config": {
+					"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"pub_sub": {
+						"project": "dev",
+						"topic_name": "xp-update",
+						"pub_sub_timeout_seconds": 30
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"port": 8080,
+					"swagger_config": {
+						"enabled": false
+					}
+				}
 			}`),
 		},
 		"failure | bad config": {
@@ -60,7 +98,9 @@ func TestNewExperimentRunner(t *testing.T) {
 				"Key: 'ExperimentRunnerConfig.Timeout' Error:",
 				"Field validation for 'Timeout' failed on the 'required' tag\n",
 				"Key: 'ExperimentRunnerConfig.RequestParameters' Error:",
-				"Field validation for 'RequestParameters' failed on the 'required' tag",
+				"Field validation for 'RequestParameters' failed on the 'required' tag\n",
+				"Key: 'ExperimentRunnerConfig.TreatmentServiceConfig' Error:",
+				"Field validation for 'TreatmentServiceConfig' failed on the 'required' tag",
 			),
 		},
 		"failure | bad timeout": {
@@ -75,9 +115,101 @@ func TestNewExperimentRunner(t *testing.T) {
 						"field": "countryValue",
 						"field_source": "payload"
 					}
-				]
+				],
+				"treatment_service_config": {
+										"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"pub_sub": {
+						"project": "dev",
+						"topic_name": "xp-update",
+						"pub_sub_timeout_seconds": 30
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"port": 8080,
+					"swagger_config": {
+						"enabled": false
+					}
+				}
 			}`),
 			err: "XP runner timeout 500ss is invalid",
+		},
+		"failure | bad treatment service config": {
+			props: json.RawMessage(`{
+				"endpoint": "http://test-endpoint",
+				"project_id": 10,
+				"passkey": "abc",
+				"timeout": "500ss",
+				"request_parameters": [
+					{
+						"name": "country",
+						"field": "countryValue",
+						"field_source": "payload"
+					}
+				],
+				"treatment_service_config": {
+										"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"pub_sub": {
+						"project": "dev",
+						"topic_name": "xp-update",
+						"pub_sub_timeout_seconds": 30
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"swagger_config": {
+						"enabled": false
+					}
+				}
+			}`),
+			err: "Key: 'ExperimentRunnerConfig.TreatmentServiceConfig.Port' Error:" +
+				"Field validation for 'Port' failed on the 'required' tag",
 		},
 	}
 
@@ -155,7 +287,7 @@ func TestFetchTreatment(t *testing.T) {
 		&http.Response{
 			StatusCode: 200,
 			Header:     map[string][]string{"Content-Type": {"json"}},
-			Body:       ioutil.NopCloser(bytes.NewBufferString(`{}`)),
+			Body:       io.NopCloser(bytes.NewBufferString(`{}`)),
 		}, nil)
 
 	mockClientInterface.On("FetchTreatmentWithBody",
@@ -168,7 +300,7 @@ func TestFetchTreatment(t *testing.T) {
 		&http.Response{
 			StatusCode: 200,
 			Header:     map[string][]string{"Content-Type": {"json"}},
-			Body: ioutil.NopCloser(
+			Body: io.NopCloser(
 				bytes.NewBufferString(
 					`{
 							"data" : {

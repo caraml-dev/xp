@@ -20,18 +20,18 @@ const (
 )
 
 type Config struct {
-	Port       int      `json:"port" default:"8080"`
+	Port       int      `json:"port" default:"8080" validate:"required"`
 	ProjectIds []string `json:"project_ids" default:""`
 
 	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
-	DebugConfig             DebugConfig                   `json:"debug_config"`
+	DebugConfig             DebugConfig                   `json:"debug_config" validate:"required,dive"`
 	NewRelicConfig          newrelic.Config               `json:"new_relic_config"`
 	SentryConfig            sentry.Config                 `json:"sentry_config"`
-	DeploymentConfig        DeploymentConfig              `json:"deployment_config"`
-	PubSub                  PubSub                        `json:"pub_sub"`
-	ManagementService       ManagementServiceConfig       `json:"management_service"`
+	DeploymentConfig        DeploymentConfig              `json:"deployment_config" validate:"required,dive"`
+	PubSub                  PubSub                        `json:"pub_sub" validate:"required,dive"`
+	ManagementService       ManagementServiceConfig       `json:"management_service" validate:"required,dive"`
 	MonitoringConfig        Monitoring                    `json:"monitoring_config"`
-	SwaggerConfig           SwaggerConfig                 `json:"swagger_config"`
+	SwaggerConfig           SwaggerConfig                 `json:"swagger_config" validate:"required,dive"`
 	SegmenterConfig         map[string]interface{}        `json:"segmenter_config"`
 }
 
@@ -59,7 +59,7 @@ type KafkaConfig struct {
 }
 
 type DebugConfig struct {
-	OutputPath string `json:"output_path" default:"/tmp"`
+	OutputPath string `json:"output_path" default:"/tmp" validate:"required"`
 }
 
 type SwaggerConfig struct {
@@ -70,8 +70,8 @@ type SwaggerConfig struct {
 
 // DeploymentConfig captures the config related to the deployment of Treatment Service
 type DeploymentConfig struct {
-	EnvironmentType string `json:"environment_type" default:"local"`
-	MaxGoRoutines   int    `json:"max_go_routines" default:"100"`
+	EnvironmentType string `json:"environment_type" default:"local" validate:"required"`
+	MaxGoRoutines   int    `json:"max_go_routines" default:"100" validate:"required"`
 }
 
 type MetricSinkKind = string
@@ -87,13 +87,13 @@ type Monitoring struct {
 }
 
 type PubSub struct {
-	Project              string `json:"project" default:"dev"`
-	TopicName            string `json:"topic_name" default:"xp-update"`
-	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30"`
+	Project              string `json:"project" default:"dev" validate:"required"`
+	TopicName            string `json:"topic_name" default:"xp-update" validate:"required"`
+	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30" validate:"required"`
 }
 
 type ManagementServiceConfig struct {
-	URL                  string `json:"url" default:"http://localhost:3000/v1"`
+	URL                  string `json:"url" default:"http://localhost:3000/v1" validate:"required"`
 	AuthorizationEnabled bool   `json:"authorization_enabled"`
 }
 
