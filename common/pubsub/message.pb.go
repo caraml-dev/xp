@@ -27,6 +27,7 @@ type MessagePublishState struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Types that are assignable to Update:
+	//
 	//	*MessagePublishState_ExperimentCreated
 	//	*MessagePublishState_ExperimentUpdated
 	//	*MessagePublishState_ProjectSettingsCreated

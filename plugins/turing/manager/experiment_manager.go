@@ -9,12 +9,12 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
-	"github.com/go-playground/validator/v10"
-	"golang.org/x/oauth2/google"
-
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
 	_config "github.com/caraml-dev/xp/plugins/turing/config"
+	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/go-playground/validator/v10"
+	"golang.org/x/oauth2/google"
 )
 
 func init() {
@@ -56,10 +56,11 @@ var googleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
 
 // experimentManager implements manager.CustomExperimentManager interface
 type experimentManager struct {
-	validate       *validator.Validate
-	httpClient     *xpclient.ClientWithResponses
-	RemoteUI       _config.RemoteUI       `validate:"required,dive"`
-	RunnerDefaults _config.RunnerDefaults `validate:"required,dive"`
+	validate                     *validator.Validate
+	httpClient                   *xpclient.ClientWithResponses
+	RemoteUI                     _config.RemoteUI                     `validate:"required,dive"`
+	RunnerDefaults               _config.RunnerDefaults               `validate:"required,dive"`
+	TreatmentServicePluginConfig _config.TreatmentServicePluginConfig `validate:"required,dive"`
 }
 
 func (em *experimentManager) GetEngineInfo() (manager.Engine, error) {
@@ -93,13 +94,26 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
+	// Retrieve treatment service configuration (driven by the management service) using the API
+	treatmentServicePluginConfig, err := em.GetTreatmentServiceConfigFromManagementService()
+	if err != nil {
+		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
+	}
+
+	// Store configs in the new treatment service config
+	treatmentServiceConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServicePluginConfig)
+	if err != nil {
+		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
+	}
+
 	// Convert data to json
 	bytes, err := json.Marshal(_config.ExperimentRunnerConfig{
-		Endpoint:          em.RunnerDefaults.Endpoint,
-		Timeout:           em.RunnerDefaults.Timeout,
-		ProjectID:         config.ProjectID,
-		Passkey:           project.Passkey,
-		RequestParameters: config.Variables,
+		Endpoint:               em.RunnerDefaults.Endpoint,
+		Timeout:                em.RunnerDefaults.Timeout,
+		ProjectID:              config.ProjectID,
+		Passkey:                project.Passkey,
+		RequestParameters:      config.Variables,
+		TreatmentServiceConfig: treatmentServiceConfig,
 	})
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
@@ -137,6 +151,52 @@ func (em *experimentManager) GetProject(projectID int) (*schema.ProjectSettings,
 	return &projectResponse.JSON200.Data, nil
 }
 
+func (em *experimentManager) GetTreatmentServiceConfigFromManagementService() (*schema.TreatmentServiceConfig, error) {
+	treatmentServiceConfigErrorTpl := "Error retrieving config: %s"
+
+	treatmentServiceConfigResponse, err := em.httpClient.GetTreatmentServiceConfigWithResponse(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	// Handle possible errors
+	if treatmentServiceConfigResponse.JSON500 != nil {
+		return nil, fmt.Errorf(treatmentServiceConfigErrorTpl, treatmentServiceConfigResponse.JSON500.Message)
+	}
+	if treatmentServiceConfigResponse.JSON200 == nil {
+		return nil, fmt.Errorf(treatmentServiceConfigErrorTpl, "empty response body")
+	}
+
+	return &treatmentServiceConfigResponse.JSON200.Data, nil
+}
+
+func (em *experimentManager) MakeTreatmentServicePluginConfig(
+	treatmentServiceConfig *schema.TreatmentServiceConfig,
+) (*config.Config, error) {
+	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
+	segmenterConfig := make(map[string]interface{})
+	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
+
+	return &config.Config{
+		Port:                    em.TreatmentServicePluginConfig.Port,
+		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
+		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
+		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
+		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
+		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
+		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
+		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
+		NewRelicConfig:          em.TreatmentServicePluginConfig.NewRelicConfig,
+		SentryConfig:            em.TreatmentServicePluginConfig.SentryConfig,
+		PubSub: config.PubSub{
+			Project:              *treatmentServiceConfig.PubSub.Project,
+			TopicName:            *treatmentServiceConfig.PubSub.TopicName,
+			PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
+		},
+		SegmenterConfig: segmenterConfig,
+	}, nil
+}
+
 func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentManager, error) {
 	var config _config.ExperimentManagerConfig
 
@@ -161,10 +221,11 @@ func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentM
 	}
 
 	em := &experimentManager{
-		validate:       _config.NewValidator(),
-		httpClient:     client,
-		RemoteUI:       config.RemoteUI,
-		RunnerDefaults: config.RunnerDefaults,
+		validate:                     _config.NewValidator(),
+		httpClient:                   client,
+		RemoteUI:                     config.RemoteUI,
+		RunnerDefaults:               config.RunnerDefaults,
+		TreatmentServicePluginConfig: config.TreatmentServicePluginConfig,
 	}
 
 	err = em.validate.Struct(em)

@@ -738,6 +738,36 @@ func (_m *ClientInterface) GetTreatmentHistory(ctx context.Context, projectId in
 	return r0, r1
 }
 
+// GetTreatmentServiceConfig provides a mock function with given fields: ctx, reqEditors
+func (_m *ClientInterface) GetTreatmentServiceConfig(ctx context.Context, reqEditors ...management.RequestEditorFn) (*http.Response, error) {
+	_va := make([]interface{}, len(reqEditors))
+	for _i := range reqEditors {
+		_va[_i] = reqEditors[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	var r0 *http.Response
+	if rf, ok := ret.Get(0).(func(context.Context, ...management.RequestEditorFn) *http.Response); ok {
+		r0 = rf(ctx, reqEditors...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*http.Response)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, ...management.RequestEditorFn) error); ok {
+		r1 = rf(ctx, reqEditors...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ListExperimentHistory provides a mock function with given fields: ctx, projectId, experimentId, params, reqEditors
 func (_m *ClientInterface) ListExperimentHistory(ctx context.Context, projectId int64, experimentId int64, params *management.ListExperimentHistoryParams, reqEditors ...management.RequestEditorFn) (*http.Response, error) {
 	_va := make([]interface{}, len(reqEditors))

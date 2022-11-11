@@ -7,6 +7,17 @@ servers:
   - url: /v1
 tags: []
 paths:
+  /treatment-service-config:
+    get:
+      operationId: GetTreatmentServiceConfig
+      tags:
+        - configuration
+      summary: retrieves treatment service configuration driven by the management service
+      responses:
+        200:
+          $ref: '#/components/responses/GetTreatmentServiceConfigSuccess'
+        500:
+          $ref: '#/components/responses/InternalServerError'
   /validate:
     post:
       operationId: ValidateEntity
@@ -1263,6 +1274,17 @@ components:
         application/json:
           schema:
             $ref: 'schema.yaml#/components/schemas/Error'
+    GetTreatmentServiceConfigSuccess:
+      description: Returns treatment service configuration driven by the management service
+      content:
+        application/json:
+          schema:
+            required:
+              - data
+            type: object
+            properties:
+              data:
+                $ref: 'schema.yaml#/components/schemas/TreatmentServiceConfig'
     ListProjectsSuccess:
       description: Returns details of all projects set up for experimentation
       content:

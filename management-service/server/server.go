@@ -128,6 +128,7 @@ func NewServer(configFiles []string) (*Server, error) {
 			controller.NewTreatmentController(appCtx, cfg.DeploymentConfig.EnvironmentType),
 			controller.NewTreatmentHistoryController(appCtx),
 			controller.NewValidationController(appCtx),
+			controller.NewConfigurationController(appCtx),
 		),
 		router,
 	)

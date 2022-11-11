@@ -9,21 +9,103 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
+	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/caraml-dev/xp/common/api/schema"
-	"github.com/caraml-dev/xp/plugins/turing/config"
+	"github.com/caraml-dev/xp/common/testutils"
+	_config "github.com/caraml-dev/xp/plugins/turing/config"
 )
 
-func TestNewExperimentManager(t *testing.T) {
+func TestNewExperimentManagerImplementsCustomExperimentManagerInterface(t *testing.T) {
 	em := &experimentManager{}
 	// Test that the custom experiment manager interface is satisfied
 	assert.Implements(t, (*manager.CustomExperimentManager)(nil), em)
 }
 
+func TestNewExperimentManager(t *testing.T) {
+	reset := testutils.TestSetupEnvForGoogleCredentials(t)
+	defer reset()
+
+	// Define test cases
+	tests := map[string]struct {
+		input json.RawMessage
+		err   string
+	}{
+		"failure | bad data": {
+			input: json.RawMessage(`[1, 2]`),
+			err: strings.Join([]string{"failed to create XP experiment manager:",
+				"json: cannot unmarshal array into Go value of type config.ExperimentManagerConfig"}, " "),
+		},
+		"success": {
+			input: json.RawMessage(`{
+				"base_url": "http://xp-management:8080/v1",
+				"home_page_url": "/turing/projects/{{projectId}}/experiments",
+				"remote_ui": {
+					"config": "/xp/app.config.js",
+					"name": "xp",
+					"url": "/xp/remoteEntry.js"
+				},
+				"runner_defaults": {
+					"endpoint": "http://xp-treatment.global.io/v1",
+					"timeout": "5s"
+				},
+				"treatment_service_plugin_config": {
+					"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"pub_sub_timeout_seconds": 30,
+					"port": 8080,
+					"swagger_config": {
+						"enabled": false
+					}
+				}
+			}`),
+		},
+	}
+
+	// Run tests
+	for name, data := range tests {
+		t.Run(name, func(t *testing.T) {
+			_, err := NewExperimentManager(data.input)
+
+			// Validate
+			if data.err != "" {
+				assert.EqualError(t, err, data.err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
 func TestGetEngineInfo(t *testing.T) {
 	em := &experimentManager{
-		RemoteUI: config.RemoteUI{
+		RemoteUI: _config.RemoteUI{
 			Name:   "xp",
 			URL:    "http://example.com",
 			Config: "http://example.com/app.config.js",
@@ -91,14 +173,15 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 						"field": "gArea",
 						"field_source": "payload"
 					}
-				]
+				],
+				"treatment_service_config":null
 			}`,
 		},
 	}
 
 	// Patch method to get passkey
 	// TODO: Generate mock client and use it here instead of patching
-	em := &experimentManager{RunnerDefaults: config.RunnerDefaults{Endpoint: "test-endpoint", Timeout: "12s"}}
+	em := &experimentManager{RunnerDefaults: _config.RunnerDefaults{Endpoint: "test-endpoint", Timeout: "12s"}}
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
 		"GetProject",
@@ -107,6 +190,21 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 				return &schema.ProjectSettings{Passkey: "test-passkey"}, nil
 			}
 			return nil, fmt.Errorf("Unexpected ProjectID: %d", projectId)
+		},
+	)
+	monkey.PatchInstanceMethod(
+		reflect.TypeOf(em),
+		"GetTreatmentServiceConfigFromManagementService",
+		func(em *experimentManager) (*schema.TreatmentServiceConfig, error) {
+			return nil, nil
+		},
+	)
+	monkey.PatchInstanceMethod(
+		reflect.TypeOf(em),
+		"MakeTreatmentServicePluginConfig",
+		func(em *experimentManager, treatmentServicePluginConfig *schema.TreatmentServiceConfig) (
+			*config.Config, error) {
+			return nil, nil
 		},
 	)
 	defer monkey.UnpatchAll()
@@ -201,7 +299,7 @@ func TestValidateExperimentConfig(t *testing.T) {
 
 	for name, data := range tests {
 		t.Run(name, func(t *testing.T) {
-			em := experimentManager{validate: config.NewValidator()}
+			em := experimentManager{validate: _config.NewValidator()}
 			err := em.ValidateExperimentConfig(data.cfg)
 			if data.err != "" {
 				assert.EqualError(t, err, data.err)

@@ -1,5 +1,23 @@
 components:
   schemas:
+    PubSub:
+      type: object
+      properties:
+        project:
+          type: string
+          description: Project name of the PubSub subscription
+        topic_name:
+          type: string
+          description: Topic name of the PubSub subscription
+    SegmenterConfig:
+      type: object
+    TreatmentServiceConfig:
+      type: object
+      properties:
+        pub_sub:
+          $ref: '#/components/schemas/PubSub'
+        segmenter_config:
+          $ref: '#/components/schemas/SegmenterConfig'
     SelectedTreatmentData:
       required:
         - configuration

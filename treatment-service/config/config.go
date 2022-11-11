@@ -20,58 +20,58 @@ const (
 )
 
 type Config struct {
-	Port       int      `default:"8080"`
-	ProjectIds []string `default:""`
+	Port       int      `json:"port" default:"8080" validate:"required"`
+	ProjectIds []string `json:"project_ids" default:""`
 
-	AssignedTreatmentLogger AssignedTreatmentLoggerConfig
-	DebugConfig             DebugConfig
-	NewRelicConfig          newrelic.Config
-	SentryConfig            sentry.Config
-	DeploymentConfig        DeploymentConfig
-	PubSub                  PubSub
-	ManagementService       ManagementServiceConfig
-	MonitoringConfig        Monitoring
-	SwaggerConfig           SwaggerConfig
-	SegmenterConfig         map[string]interface{}
+	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
+	DebugConfig             DebugConfig                   `json:"debug_config" validate:"required,dive"`
+	NewRelicConfig          newrelic.Config               `json:"new_relic_config"`
+	SentryConfig            sentry.Config                 `json:"sentry_config"`
+	DeploymentConfig        DeploymentConfig              `json:"deployment_config" validate:"required,dive"`
+	PubSub                  PubSub                        `json:"pub_sub" validate:"required,dive"`
+	ManagementService       ManagementServiceConfig       `json:"management_service" validate:"required,dive"`
+	MonitoringConfig        Monitoring                    `json:"monitoring_config"`
+	SwaggerConfig           SwaggerConfig                 `json:"swagger_config" validate:"required,dive"`
+	SegmenterConfig         map[string]interface{}        `json:"segmenter_config"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
-	Kind                 AssignedTreatmentLoggerKind `default:""`
-	QueueLength          int                         `default:"100"`
-	FlushIntervalSeconds int                         `default:"1"`
+	Kind                 AssignedTreatmentLoggerKind `json:"kind" default:""`
+	QueueLength          int                         `json:"queue_length" default:"100"`
+	FlushIntervalSeconds int                         `json:"flush_interval_seconds" default:"1"`
 
-	BQConfig    *BigqueryConfig
-	KafkaConfig *KafkaConfig
+	BQConfig    *BigqueryConfig `json:"bq_config"`
+	KafkaConfig *KafkaConfig    `json:"kafka_config"`
 }
 
 type BigqueryConfig struct {
-	Project string
-	Dataset string
-	Table   string
+	Project string `json:"project"`
+	Dataset string `json:"dataset"`
+	Table   string `json:"table"`
 }
 
 type KafkaConfig struct {
-	Brokers          string
-	Topic            string
-	MaxMessageBytes  int    `default:"1048588"`
-	CompressionType  string `default:"none"`
-	ConnectTimeoutMS int    `default:"1000"`
+	Brokers          string `json:"brokers"`
+	Topic            string `json:"topics"`
+	MaxMessageBytes  int    `json:"max_message_bytes" default:"1048588"`
+	CompressionType  string `json:"compression_type" default:"none"`
+	ConnectTimeoutMS int    `json:"connect_timeout_ms" default:"1000"`
 }
 
 type DebugConfig struct {
-	OutputPath string `default:"/tmp"`
+	OutputPath string `json:"output_path" default:"/tmp" validate:"required"`
 }
 
 type SwaggerConfig struct {
-	Enabled          bool     `default:"false"`
-	AllowedOrigins   []string `default:"*"`
-	OpenAPISpecsPath string   `default:"."`
+	Enabled          bool     `json:"enabled" default:"false"`
+	AllowedOrigins   []string `json:"allowed_origins" default:"*"`
+	OpenAPISpecsPath string   `json:"open_api_specs_path" default:"."`
 }
 
 // DeploymentConfig captures the config related to the deployment of Treatment Service
 type DeploymentConfig struct {
-	EnvironmentType string `default:"local"`
-	MaxGoRoutines   int    `default:"100"`
+	EnvironmentType string `json:"environment_type" default:"local" validate:"required"`
+	MaxGoRoutines   int    `json:"max_go_routines" default:"100" validate:"required"`
 }
 
 type MetricSinkKind = string
@@ -87,14 +87,14 @@ type Monitoring struct {
 }
 
 type PubSub struct {
-	Project              string `default:"dev"`
-	TopicName            string `default:"xp-update"`
-	PubSubTimeoutSeconds int    `default:"30"`
+	Project              string `json:"project" default:"dev" validate:"required"`
+	TopicName            string `json:"topic_name" default:"xp-update" validate:"required"`
+	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30" validate:"required"`
 }
 
 type ManagementServiceConfig struct {
-	URL                  string `default:"http://localhost:3000/v1"`
-	AuthorizationEnabled bool
+	URL                  string `json:"url" default:"http://localhost:3000/v1" validate:"required"`
+	AuthorizationEnabled bool   `json:"authorization_enabled"`
 }
 
 func (c *Config) GetProjectIds() []models.ProjectId {

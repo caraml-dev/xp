@@ -854,7 +854,6 @@ func (s *SegmenterServiceTestSuite) TestCreateSegmenter() {
 	// create again and expect error
 	_, err = s.SegmenterService.CreateCustomSegmenter(int64(projectId), validTestRequest)
 	s.Suite.Assert().EqualError(err, "a segmenter with the name test-create-segmenter-1 already exists")
-
 }
 
 // Requires test-custom-segmenter-for-update to be registered

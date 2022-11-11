@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
+	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 )
 
 type FieldSource string
@@ -31,20 +34,37 @@ type RemoteUI struct {
 }
 
 type ExperimentManagerConfig struct {
-	Enabled        bool           `json:"enabled"`
-	BaseURL        string         `json:"base_url"`      // Base URL for XP experiment REST API
-	HomePageURL    string         `json:"home_page_url"` // Website URL for end-users to manage experiments
-	RemoteUI       RemoteUI       `json:"remote_ui"`
-	RunnerDefaults RunnerDefaults `json:"runner_defaults"`
+	Enabled                      bool                         `json:"enabled"`
+	BaseURL                      string                       `json:"base_url"`      // Base URL for XP experiment REST API
+	HomePageURL                  string                       `json:"home_page_url"` // Website URL for end-users to manage experiments
+	RemoteUI                     RemoteUI                     `json:"remote_ui"`
+	RunnerDefaults               RunnerDefaults               `json:"runner_defaults"`
+	TreatmentServicePluginConfig TreatmentServicePluginConfig `json:"treatment_service_plugin_config"`
 }
 
 // ExperimentRunnerConfig is used to parse the XP runner config during initialization
 type ExperimentRunnerConfig struct {
-	Endpoint          string     `json:"endpoint" validate:"required"`
-	ProjectID         int        `json:"project_id" validate:"required"`
-	Passkey           string     `json:"passkey" validate:"required"`
-	Timeout           string     `json:"timeout" validate:"required"`
-	RequestParameters []Variable `json:"request_parameters" validate:"required,dive"`
+	Endpoint               string         `json:"endpoint" validate:"required"`
+	ProjectID              int            `json:"project_id" validate:"required"`
+	Passkey                string         `json:"passkey" validate:"required"`
+	Timeout                string         `json:"timeout" validate:"required"`
+	RequestParameters      []Variable     `json:"request_parameters" validate:"required,dive"`
+	TreatmentServiceConfig *config.Config `json:"treatment_service_config" validate:"required,dive"`
+}
+
+type TreatmentServicePluginConfig struct {
+	Port                 int      `json:"port" default:"8080"`
+	ProjectIds           []string `json:"project_ids" default:""`
+	PubSubTimeoutSeconds int      `json:"pub_sub_timeout_seconds" validate:"required"`
+
+	AssignedTreatmentLogger config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
+	DebugConfig             config.DebugConfig                   `json:"debug_config"`
+	DeploymentConfig        config.DeploymentConfig              `json:"deployment_config"`
+	ManagementService       config.ManagementServiceConfig       `json:"management_service"`
+	MonitoringConfig        config.Monitoring                    `json:"monitoring_config"`
+	SwaggerConfig           config.SwaggerConfig                 `json:"swagger_config"`
+	NewRelicConfig          newrelic.Config                      `json:"new_relic_config"`
+	SentryConfig            sentry.Config                        `json:"sentry_config"`
 }
 
 type Variable struct {

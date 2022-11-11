@@ -63,6 +63,8 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 		return nil, errors.Wrapf(err, "Failed initializing MLP Service")
 	}
 
+	configurationSvc := services.NewConfigurationService(cfg)
+
 	allServices = services.NewServices(
 		experimentSvc,
 		experimentHistorySvc,
@@ -75,6 +77,7 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 		treatmentHistorySvc,
 		validationService,
 		pubSubPublisherService,
+		configurationSvc,
 	)
 
 	appContext := &AppContext{
