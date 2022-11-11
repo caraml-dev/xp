@@ -75,6 +75,7 @@ func TestNewExperimentManager(t *testing.T) {
 							"service"
 						]
 					},
+					"pub_sub_timeout_seconds": 30,
 					"port": 8080,
 					"swagger_config": {
 						"enabled": false

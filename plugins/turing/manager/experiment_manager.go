@@ -188,8 +188,9 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 		NewRelicConfig:          em.TreatmentServicePluginConfig.NewRelicConfig,
 		SentryConfig:            em.TreatmentServicePluginConfig.SentryConfig,
 		PubSub: config.PubSub{
-			Project:   *treatmentServiceConfig.PubSub.Project,
-			TopicName: *treatmentServiceConfig.PubSub.TopicName,
+			Project:              *treatmentServiceConfig.PubSub.Project,
+			TopicName:            *treatmentServiceConfig.PubSub.TopicName,
+			PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
 		},
 		SegmenterConfig: segmenterConfig,
 	}, nil

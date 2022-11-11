@@ -53,8 +53,9 @@ type ExperimentRunnerConfig struct {
 }
 
 type TreatmentServicePluginConfig struct {
-	Port       int      `json:"port" default:"8080"`
-	ProjectIds []string `json:"project_ids" default:""`
+	Port                 int      `json:"port" default:"8080"`
+	ProjectIds           []string `json:"project_ids" default:""`
+	PubSubTimeoutSeconds int      `json:"pub_sub_timeout_seconds" validate:"required"`
 
 	AssignedTreatmentLogger config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
 	DeploymentConfig        config.DeploymentConfig              `json:"deployment_config"`
