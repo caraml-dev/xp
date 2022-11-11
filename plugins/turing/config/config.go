@@ -58,6 +58,7 @@ type TreatmentServicePluginConfig struct {
 	PubSubTimeoutSeconds int      `json:"pub_sub_timeout_seconds" validate:"required"`
 
 	AssignedTreatmentLogger config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
+	DebugConfig             config.DebugConfig                   `json:"debug_config"`
 	DeploymentConfig        config.DeploymentConfig              `json:"deployment_config"`
 	ManagementService       config.ManagementServiceConfig       `json:"management_service"`
 	MonitoringConfig        config.Monitoring                    `json:"monitoring_config"`

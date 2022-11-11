@@ -60,6 +60,9 @@ func TestNewExperimentManager(t *testing.T) {
 						"kind": "bq",
 						"queue_length": 100000
 					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
 					"deployment_config": {
 						"environment_type": "dev",
 						"max_go_routines": 200

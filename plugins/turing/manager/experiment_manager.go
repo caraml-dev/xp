@@ -181,6 +181,7 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 		Port:                    em.TreatmentServicePluginConfig.Port,
 		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
 		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
+		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
 		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
 		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
 		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
