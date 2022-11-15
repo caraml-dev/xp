@@ -1,5 +1,7 @@
 FROM golang:1.18-alpine as plugin-builder
 
+RUN apk update && apk add gcc
+
 WORKDIR /app
 COPY . .
 
