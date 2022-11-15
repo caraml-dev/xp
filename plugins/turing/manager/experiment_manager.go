@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/caraml-dev/turing/engines/experiment/log"
@@ -101,7 +102,7 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 	}
 
 	// Store configs in the new treatment service config
-	treatmentServiceConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServicePluginConfig)
+	treatmentServiceConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServicePluginConfig, config.ProjectID)
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
@@ -172,14 +173,17 @@ func (em *experimentManager) GetTreatmentServiceConfigFromManagementService() (*
 
 func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	treatmentServiceConfig *schema.TreatmentServiceConfig,
+	projectID int,
 ) (*config.Config, error) {
 	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
 	segmenterConfig := make(map[string]interface{})
 	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
 
+	projectIds := []string{strconv.Itoa(projectID)}
+
 	return &config.Config{
 		Port:                    em.TreatmentServicePluginConfig.Port,
-		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
+		ProjectIds:              projectIds,
 		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
 		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
 		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
