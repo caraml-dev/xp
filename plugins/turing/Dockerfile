@@ -1,6 +1,6 @@
 FROM golang:1.18-alpine as plugin-builder
 
-RUN apk update && apk add gcc
+RUN apk update && apk add git make bash unzip libtool gcc musl-dev ca-certificates dumb-init tzdata
 
 WORKDIR /app
 COPY . .
@@ -9,7 +9,7 @@ ENV GOOS=linux \
     GOARCH=amd64 \
     CGO_ENABLED=1
 
-RUN go build -mod=vendor -o ./bin/plugin
+RUN go build -mod=vendor -o ./bin/plugin -tags musl
 
 FROM alpine:3.15
 
