@@ -9,6 +9,7 @@ import (
 	"cloud.google.com/go/bigquery"
 	"go.einride.tech/protobuf-bigquery/encoding/protobq"
 	"google.golang.org/api/googleapi"
+	"google.golang.org/api/option"
 
 	_utils "github.com/caraml-dev/xp/common/utils"
 	"github.com/caraml-dev/xp/treatment-service/models"
@@ -162,7 +163,7 @@ func setupBQTable(
 
 func NewBQLogPublisher(project string, dataset string, tableName string) (*BQLogPublisher, error) {
 	ctx := context.Background()
-	client, err := bigquery.NewClient(ctx, project)
+	client, err := bigquery.NewClient(ctx, project, option.WithCredentialsFile(models.ExpGoogleApplicationCredentials))
 	if err != nil {
 		return nil, fmt.Errorf("bigquery.NewClient: %v", err)
 	}
