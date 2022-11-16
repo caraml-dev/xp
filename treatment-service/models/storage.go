@@ -462,33 +462,18 @@ func (s *LocalStorage) DumpExperiments(filepath string) error {
 func (s *LocalStorage) init() error {
 	s.Lock()
 	defer s.Unlock()
-	log.Println("retrieving projects...")
-	listProjectsResponse, err := s.managementClient.ListProjectsWithResponse(context.Background())
+
+	var subscribedProjectSettings []*pubsub.ProjectSettings
+	var err error
+	if len(s.subscribedProjectIds) > 0 {
+		subscribedProjectSettings, err = s.getProjectSettings(s.subscribedProjectIds)
+	} else {
+		subscribedProjectSettings, err = s.getAllProjects()
+	}
 	if err != nil {
 		return err
 	}
-	if listProjectsResponse.StatusCode() != http.StatusOK {
-		errMessage := ""
-		if listProjectsResponse.JSON500 != nil {
-			errMessage = listProjectsResponse.JSON500.Message
-		}
-		return fmt.Errorf("error retrieving projectSettings from xp (%d): %s", listProjectsResponse.StatusCode(), errMessage)
-	}
-	subscribedProjectSettings := make([]*pubsub.ProjectSettings, 0)
-	log.Println("retrieving project settings...")
-	for _, project := range listProjectsResponse.JSON200.Data {
-		// Get the full settings details of each individual project
-		projectSettingsResponse, err := s.managementClient.GetProjectSettingsWithResponse(context.Background(), project.Id)
-		if err != nil {
-			return err
-		}
-		if ContainsProjectId(s.subscribedProjectIds, ProjectId(project.Id)) {
-			subscribedProjectSettings = append(
-				subscribedProjectSettings,
-				OpenAPIProjectSettingsSpecToProtobuf(projectSettingsResponse.JSON200.Data),
-			)
-		}
-	}
+
 	if len(s.subscribedProjectIds) > 0 && len(subscribedProjectSettings) != len(s.subscribedProjectIds) {
 		return errors.New("not all subscribed project ids are found")
 	}
@@ -505,6 +490,45 @@ func (s *LocalStorage) init() error {
 	}
 
 	return nil
+}
+
+func (s *LocalStorage) getProjectSettings(projectIds []ProjectId) ([]*pubsub.ProjectSettings, error) {
+	subscribedProjectSettings := make([]*pubsub.ProjectSettings, 0)
+	log.Println("retrieving project settings...")
+	for _, projectId := range projectIds {
+		// Get the full settings details of each individual project
+		projectSettingsResponse, err := s.managementClient.GetProjectSettingsWithResponse(context.Background(), int64(projectId))
+		if err != nil {
+			return nil, err
+		}
+		subscribedProjectSettings = append(
+			subscribedProjectSettings,
+			OpenAPIProjectSettingsSpecToProtobuf(projectSettingsResponse.JSON200.Data),
+		)
+	}
+	return subscribedProjectSettings, nil
+}
+
+func (s *LocalStorage) getAllProjects() ([]*pubsub.ProjectSettings, error) {
+	log.Println("retrieving projects...")
+	listProjectsResponse, err := s.managementClient.ListProjectsWithResponse(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	if listProjectsResponse.StatusCode() != http.StatusOK {
+		errMessage := ""
+		if listProjectsResponse.JSON500 != nil {
+			errMessage = listProjectsResponse.JSON500.Message
+		}
+		return nil, fmt.Errorf("error retrieving projectSettings from xp (%d): %s", listProjectsResponse.StatusCode(),
+			errMessage)
+	}
+
+	projectIds := make([]ProjectId, 0)
+	for _, project := range listProjectsResponse.JSON200.Data {
+		projectIds = append(projectIds, ProjectId(project.Id))
+	}
+	return s.getProjectSettings(projectIds)
 }
 
 func NewLocalStorage(projectIds []ProjectId, xpServer string, authzEnabled bool) (*LocalStorage, error) {
