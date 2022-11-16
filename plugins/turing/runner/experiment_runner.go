@@ -79,7 +79,9 @@ func (er *experimentRunner) GetTreatmentForRequest(
 
 	// Fetch treatment
 	if filteredExperiment == nil {
-		return nil, nil
+		return &runner.Treatment{
+			Config: nil,
+		}, nil
 	}
 
 	randomizationKeyValue, err := er.appContext.SchemaService.GetRandomizationKeyValue(projectId, requestParams)
