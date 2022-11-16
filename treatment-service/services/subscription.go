@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/google/uuid"
@@ -42,7 +43,14 @@ func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic str
 }
 
 func NewPubsubSubscriber(ctx context.Context, storage *models.LocalStorage, config PubsubSubscriberConfig) (*PubsubSubscriber, error) {
-	client, err := pubsub.NewClient(ctx, config.Project, option.WithCredentialsFile(models.ExpGoogleApplicationCredentials))
+	var client *pubsub.Client
+	var err error
+	if filepath := os.Getenv(models.ExpGoogleApplicationCredentials); filepath != "" {
+		client, err = pubsub.NewClient(ctx, config.Project, option.WithCredentialsFile(filepath))
+	} else {
+		client, err = pubsub.NewClient(ctx, config.Project)
+	}
+
 	if err != nil {
 		return nil, err
 	}

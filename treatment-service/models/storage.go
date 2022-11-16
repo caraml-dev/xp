@@ -12,14 +12,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang-collections/collections/set"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-
 	managementClient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/golang-collections/collections/set"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 const ExpGoogleApplicationCredentials = "EXP_GOOGLE_APPLICATION_CREDENTIALS"
@@ -512,16 +511,25 @@ func NewLocalStorage(projectIds []ProjectId, xpServer string, authzEnabled bool)
 	// Set up Request Modifiers
 	clientOptions := []managementClient.ClientOption{}
 	if authzEnabled {
+		var googleClient *http.Client
 		// Init Google client for Authz. XP Server must be behind MLP Auth proxy, for authorization to work.
-		data, err := os.ReadFile(os.Getenv(ExpGoogleApplicationCredentials))
-		if err != nil {
-			return nil, err
+		if filepath := os.Getenv(ExpGoogleApplicationCredentials); filepath != "" {
+			data, err := os.ReadFile(filepath)
+			if err != nil {
+				return nil, err
+			}
+			creds, err := google.CredentialsFromJSON(context.Background(), data, GoogleOAuthScope)
+			if err != nil {
+				return nil, err
+			}
+			googleClient = oauth2.NewClient(context.Background(), creds.TokenSource)
+		} else {
+			var err error
+			googleClient, err = google.DefaultClient(context.Background(), GoogleOAuthScope)
+			if err != nil {
+				return nil, err
+			}
 		}
-		creds, err := google.CredentialsFromJSON(context.Background(), data, GoogleOAuthScope)
-		if err != nil {
-			return nil, err
-		}
-		googleClient := oauth2.NewClient(context.Background(), creds.TokenSource)
 
 		clientOptions = append(
 			clientOptions,
