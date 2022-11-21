@@ -101,10 +101,6 @@ jobs:
         with:
           fetch-depth: 0
 
-#      - name: Build Turing Experiment Engine XP plugin binary
-#        working-directory: plugins/turing
-#        run: make build
-
       - name: Log in to the Container registry
         uses: docker/login-action@v1
         with:

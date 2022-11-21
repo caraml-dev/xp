@@ -1,27 +1,32 @@
 package runner
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"testing"
 
+	"bou.ke/monkey"
 	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
-	"github.com/caraml-dev/turing/engines/experiment/runner"
+	"github.com/caraml-dev/xp/treatment-service/appcontext"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	mocks "github.com/caraml-dev/xp/clients/testutils/mocks/treatment"
-	treatmentClient "github.com/caraml-dev/xp/clients/treatment"
 	"github.com/caraml-dev/xp/plugins/turing/config"
 	"github.com/caraml-dev/xp/plugins/turing/internal/testutils"
+
+	_config "github.com/caraml-dev/xp/treatment-service/config"
 )
 
 func TestNewExperimentRunner(t *testing.T) {
+	dummyAppCtx := appcontext.AppContext{}
+	// Patch appcontext
+	monkey.Patch(appcontext.NewAppContext,
+		func(treatmentServiceConfig *_config.Config) (*appcontext.AppContext, error) {
+			return &dummyAppCtx, nil
+		},
+	)
+
 	tests := map[string]struct {
 		props json.RawMessage
 		err   string
@@ -30,7 +35,6 @@ func TestNewExperimentRunner(t *testing.T) {
 			props: json.RawMessage(`{
 				"endpoint": "http://test-endpoint",
 				"project_id": 10,
-				"passkey": "abc",
 				"timeout": "500ms",
 				"request_parameters": [
 					{
@@ -93,8 +97,6 @@ func TestNewExperimentRunner(t *testing.T) {
 				"Field validation for 'Endpoint' failed on the 'required' tag\n",
 				"Key: 'ExperimentRunnerConfig.ProjectID' Error:",
 				"Field validation for 'ProjectID' failed on the 'required' tag\n",
-				"Key: 'ExperimentRunnerConfig.Passkey' Error:",
-				"Field validation for 'Passkey' failed on the 'required' tag\n",
 				"Key: 'ExperimentRunnerConfig.Timeout' Error:",
 				"Field validation for 'Timeout' failed on the 'required' tag\n",
 				"Key: 'ExperimentRunnerConfig.RequestParameters' Error:",
@@ -107,7 +109,6 @@ func TestNewExperimentRunner(t *testing.T) {
 			props: json.RawMessage(`{
 				"endpoint": "http://test-endpoint",
 				"project_id": 10,
-				"passkey": "abc",
 				"timeout": "500ss",
 				"request_parameters": [
 					{
@@ -161,7 +162,6 @@ func TestNewExperimentRunner(t *testing.T) {
 			props: json.RawMessage(`{
 				"endpoint": "http://test-endpoint",
 				"project_id": 10,
-				"passkey": "abc",
 				"timeout": "500ss",
 				"request_parameters": [
 					{
@@ -234,7 +234,7 @@ func TestMissingRequestValue(t *testing.T) {
 		parameters []config.Variable
 		payload    string
 		header     http.Header
-		expected   map[string]string
+		expected   map[string]interface{}
 		err        string
 	}{
 		"failure | field not found in payload": {
@@ -246,7 +246,7 @@ func TestMissingRequestValue(t *testing.T) {
 				},
 			},
 			header:   make(http.Header),
-			expected: make(map[string]string),
+			expected: make(map[string]interface{}),
 			err:      "Field Y not found in the request payload: Key path not found",
 		},
 	}
@@ -270,137 +270,6 @@ func TestMissingRequestValue(t *testing.T) {
 				require.NoError(t, err)
 				assert.Equal(t, test.err, logObj.Msg)
 			}
-		})
-	}
-}
-
-func TestFetchTreatment(t *testing.T) {
-	mockClientInterface := mocks.ClientInterface{}
-	mockTreatmentClient := treatmentClient.ClientWithResponses{ClientInterface: &mockClientInterface}
-	mockClientInterface.On("FetchTreatmentWithBody",
-		context.Background(),
-		int64(1),
-		&treatmentClient.FetchTreatmentParams{PassKey: "abc"},
-		"application/json",
-		mock.Anything,
-	).Return(
-		&http.Response{
-			StatusCode: 200,
-			Header:     map[string][]string{"Content-Type": {"json"}},
-			Body:       io.NopCloser(bytes.NewBufferString(`{}`)),
-		}, nil)
-
-	mockClientInterface.On("FetchTreatmentWithBody",
-		context.Background(),
-		int64(2),
-		&treatmentClient.FetchTreatmentParams{PassKey: "abc"},
-		"application/json",
-		mock.Anything,
-	).Return(
-		&http.Response{
-			StatusCode: 200,
-			Header:     map[string][]string{"Content-Type": {"json"}},
-			Body: io.NopCloser(
-				bytes.NewBufferString(
-					`{
-							"data" : {
-								"experiment_id": 712,
-								"experiment_name": "test_experiment",
-								"treatment": {
-									"configuration": {
-										"foo": "bar"
-									},
-									"name": "test_experiment-control",
-									"traffic": 50
-								},
-								"metadata": {
-									"experiment_version": 1,
-									"experiment_type": "A/B"
-								}
-							}
-						}`,
-				),
-			),
-		}, nil)
-
-	expRunner := experimentRunner{
-		httpClient: &mockTreatmentClient,
-		projectID:  1,
-		passkey:    "abc",
-		parameters: []config.Variable{
-			{Name: "country", Field: "Country", FieldSource: "header"},
-			{Name: "latitude", Field: "pos.lat", FieldSource: "payload"},
-			{Name: "longitude", Field: "pos.lng", FieldSource: "payload"},
-			{Name: "geo_area", Field: "geo-area", FieldSource: "payload"},
-			{Name: "order_id", Field: "order-id", FieldSource: "payload"},
-		},
-	}
-
-	// Define tests
-	testHeader := http.Header{
-		http.CanonicalHeaderKey("Country"): []string{"SG"},
-	}
-	tests := map[string]struct {
-		projectId int
-		payload   string
-		expected  *runner.Treatment
-	}{
-		"nil experiment": {
-			projectId: 1,
-			payload: `{
-				"geo-area": "100",
-				"pos": {
-					"lat": "1.234",
-					"lng": "103.5678"
-				},
-				"order-id": "12345"
-			}`,
-			expected: &runner.Treatment{
-				Config: json.RawMessage("null"),
-			},
-		},
-		"success": {
-			projectId: 2,
-			payload: `{
-				"pos": {"lat": "1.2485558597961544", "lng": "103.54947567634105"},
-				"geo-area": "50",
-				"order-id": "12345"
-			}`,
-			expected: &runner.Treatment{
-				ExperimentName: "test_experiment",
-				Name:           "test_experiment-control",
-				Config: json.RawMessage(`{
-					"experiment_id": 712,
-					"experiment_name": "test_experiment",
-					"treatment": {
-						"configuration": {"foo":"bar"},
-						"name": "test_experiment-control",
-						"traffic": 50
-					},
-					"metadata": {
-						"experiment_version": 1,
-						"experiment_type": "A/B"
-					}
-				}`),
-			},
-		},
-	}
-
-	// Run tests
-	for name, data := range tests {
-		t.Run(name, func(t *testing.T) {
-			// Run experiment
-			expRunner.projectID = data.projectId
-			actual, err := expRunner.GetTreatmentForRequest(
-				testHeader,
-				[]byte(data.payload),
-				runner.GetTreatmentOptions{})
-			require.NoError(t, err)
-
-			// Validate
-			assert.Equal(t, data.expected.ExperimentName, actual.ExperimentName)
-			assert.Equal(t, data.expected.Name, actual.Name)
-			assert.JSONEq(t, string(data.expected.Config), string(actual.Config))
 		})
 	}
 }
