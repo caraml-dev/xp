@@ -159,7 +159,6 @@ func NewExperimentRunner(jsonCfg json.RawMessage) (runner.ExperimentRunner, erro
 	}
 
 	// Init AppContext
-	log.Debug(fmt.Sprint(config.TreatmentServiceConfig))
 	appCtx, err := appcontext.NewAppContext(config.TreatmentServiceConfig)
 	if err != nil {
 		log.Panicf("Failed initializing application appcontext: %v", err)
