@@ -175,15 +175,9 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	treatmentServiceConfig *schema.TreatmentServiceConfig,
 	projectID int,
 ) (*config.Config, error) {
-	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
-	segmenterConfig := make(map[string]interface{})
-	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
-
-	projectIds := []string{strconv.Itoa(projectID)}
-
 	return &config.Config{
 		Port:                    em.TreatmentServicePluginConfig.Port,
-		ProjectIds:              projectIds,
+		ProjectIds:              []string{strconv.Itoa(projectID)},
 		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
 		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
 		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
@@ -197,7 +191,7 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 			TopicName:            *treatmentServiceConfig.PubSub.TopicName,
 			PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
 		},
-		SegmenterConfig: segmenterConfig,
+		SegmenterConfig: *treatmentServiceConfig.SegmenterConfig,
 	}, nil
 }
 
