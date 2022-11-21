@@ -34,7 +34,6 @@ func init() {
 type experimentRunner struct {
 	httpClient *xpclient.ClientWithResponses
 	projectID  int
-	passkey    string
 	parameters []config.Variable
 	appContext *appcontext.AppContext
 }
@@ -60,13 +59,8 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	var selectedTreatment *pubsub.ExperimentTreatment
 	var switchbackWindowId *int64
 
-	err := er.appContext.SchemaService.ValidatePasskey(projectId, er.passkey)
-	if err != nil {
-		return nil, err
-	}
-
 	// Use the S2ID at the max configured level (most granular level) to generate the filter
-	requestFilter, err = er.appContext.SchemaService.GetRequestFilter(projectId, requestParams)
+	requestFilter, err := er.appContext.SchemaService.GetRequestFilter(projectId, requestParams)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +178,6 @@ func NewExperimentRunner(jsonCfg json.RawMessage) (runner.ExperimentRunner, erro
 	r := &experimentRunner{
 		httpClient: client,
 		projectID:  config.ProjectID,
-		passkey:    config.Passkey,
 		parameters: config.RequestParameters,
 		appContext: appCtx,
 	}

@@ -89,12 +89,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
-	// Retrieve passkey using the API
-	project, err := em.GetProject(config.ProjectID)
-	if err != nil {
-		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
-	}
-
 	// Retrieve treatment service configuration (driven by the management service) using the API
 	treatmentServicePluginConfig, err := em.GetTreatmentServiceConfigFromManagementService()
 	if err != nil {
@@ -112,7 +106,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		Endpoint:               em.RunnerDefaults.Endpoint,
 		Timeout:                em.RunnerDefaults.Timeout,
 		ProjectID:              config.ProjectID,
-		Passkey:                project.Passkey,
 		RequestParameters:      config.Variables,
 		TreatmentServiceConfig: treatmentServiceConfig,
 	})

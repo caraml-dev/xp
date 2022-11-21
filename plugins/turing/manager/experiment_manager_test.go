@@ -2,7 +2,6 @@ package manager
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -160,7 +159,6 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 			expected: `{
 				"endpoint": "test-endpoint",
 				"project_id": 10,
-				"passkey": "test-passkey",
 				"timeout": "12s",
 				"request_parameters": [
 					{
@@ -179,19 +177,9 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 		},
 	}
 
-	// Patch method to get passkey
+	// Patch method to get treatment service config
 	// TODO: Generate mock client and use it here instead of patching
 	em := &experimentManager{RunnerDefaults: _config.RunnerDefaults{Endpoint: "test-endpoint", Timeout: "12s"}}
-	monkey.PatchInstanceMethod(
-		reflect.TypeOf(em),
-		"GetProject",
-		func(em *experimentManager, projectId int) (*schema.ProjectSettings, error) {
-			if projectId == 10 {
-				return &schema.ProjectSettings{Passkey: "test-passkey"}, nil
-			}
-			return nil, fmt.Errorf("Unexpected ProjectID: %d", projectId)
-		},
-	)
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
 		"GetTreatmentServiceConfigFromManagementService",
