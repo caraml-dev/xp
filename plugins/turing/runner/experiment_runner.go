@@ -16,6 +16,7 @@ import (
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
 	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 
 	xpclient "github.com/caraml-dev/xp/clients/treatment"
 	"github.com/caraml-dev/xp/plugins/turing/config"
@@ -115,6 +116,21 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	}, nil
 }
 
+func (er *experimentRunner) startBackgroundServices(
+	errChannel chan error,
+) {
+	backgroundSvcCtx := context.Background()
+	if er.appContext.ExperimentSubscriber != nil {
+		go func() {
+			err := er.appContext.ExperimentSubscriber.SubscribeToManagementService(backgroundSvcCtx)
+			if err != nil {
+				errChannel <- err
+			}
+		}()
+	}
+	return
+}
+
 func (er *experimentRunner) getRequestParams(
 	logger log.Logger,
 	reqHeader http.Header,
@@ -127,7 +143,7 @@ func (er *experimentRunner) getRequestParams(
 			// Parameter not configured
 			continue
 		}
-		val, err := request.GetValueFromRequest(reqHeader, body, request.FieldSource(param.FieldSource), param.Field)
+		val, err := request.GetValueFromHTTPRequest(reqHeader, body, request.FieldSource(param.FieldSource), param.Field)
 		if err != nil {
 			logger.Errorf(err.Error())
 		} else {
@@ -180,5 +196,8 @@ func NewExperimentRunner(jsonCfg json.RawMessage) (runner.ExperimentRunner, erro
 		parameters: config.RequestParameters,
 		appContext: appCtx,
 	}
+
+	errChannel := make(chan error, 1)
+	r.startBackgroundServices(errChannel)
 	return r, nil
 }
