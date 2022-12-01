@@ -13,8 +13,8 @@ import ProjectContext from "providers/project/context";
 import { useNavigate, useParams } from "react-router-dom";
 
 const LandingView = ({ Component, name }) => {
+  const navigate = useNavigate();
   const { projectId } = useParams();
-  const { navigate } = useNavigate();
   const { isProjectOnboarded, isLoaded } = useContext(ProjectContext);
 
   return (
