@@ -11,7 +11,7 @@ ENV GOOS=linux \
 
 RUN go build -mod=vendor -o ./bin/plugin -tags musl
 
-FROM alpine:3.15
+FROM alpine:3.17
 
 ARG TURING_USER="turing"
 ARG TURING_USER_GROUP="app"
