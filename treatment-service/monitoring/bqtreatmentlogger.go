@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
 	"cloud.google.com/go/bigquery"
-	"go.einride.tech/protobuf-bigquery/encoding/protobq"
-	"google.golang.org/api/googleapi"
-
 	_utils "github.com/caraml-dev/xp/common/utils"
 	"github.com/caraml-dev/xp/treatment-service/models"
 	"github.com/caraml-dev/xp/treatment-service/util"
+	"go.einride.tech/protobuf-bigquery/encoding/protobq"
+	"google.golang.org/api/googleapi"
+	"google.golang.org/api/option"
 )
 
 type BQLogPublisher struct {
@@ -160,9 +161,22 @@ func setupBQTable(
 	return table, nil
 }
 
-func NewBQLogPublisher(project string, dataset string, tableName string) (*BQLogPublisher, error) {
+func NewBQLogPublisher(
+	project string,
+	dataset string,
+	tableName string,
+	googleApplicationCredentialsEnvVar string,
+) (*BQLogPublisher, error) {
 	ctx := context.Background()
-	client, err := bigquery.NewClient(ctx, project)
+
+	var client *bigquery.Client
+	var err error
+	if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
+		client, err = bigquery.NewClient(ctx, project, option.WithCredentialsFile(filepath))
+	} else {
+		client, err = bigquery.NewClient(ctx, project)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("bigquery.NewClient: %v", err)
 	}

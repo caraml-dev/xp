@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/google/uuid"
+	"google.golang.org/api/option"
 	"google.golang.org/protobuf/proto"
 
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
@@ -40,8 +42,20 @@ func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic str
 	)
 }
 
-func NewPubsubSubscriber(ctx context.Context, storage *models.LocalStorage, config PubsubSubscriberConfig) (*PubsubSubscriber, error) {
-	client, err := pubsub.NewClient(ctx, config.Project)
+func NewPubsubSubscriber(
+	ctx context.Context,
+	storage *models.LocalStorage,
+	config PubsubSubscriberConfig,
+	googleApplicationCredentialsEnvVar string,
+) (*PubsubSubscriber, error) {
+	var client *pubsub.Client
+	var err error
+	if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
+		client, err = pubsub.NewClient(ctx, config.Project, option.WithCredentialsFile(filepath))
+	} else {
+		client, err = pubsub.NewClient(ctx, config.Project)
+	}
+
 	if err != nil {
 		return nil, err
 	}

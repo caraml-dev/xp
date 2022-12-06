@@ -75,6 +75,7 @@ func TestContext(t *testing.T) {
 		testConfig.GetProjectIds(),
 		testConfig.ManagementService.URL,
 		testConfig.ManagementService.AuthorizationEnabled,
+		"",
 	)
 	if err != nil {
 		assert.FailNow(t, "error while creating local storage", err.Error())

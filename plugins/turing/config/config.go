@@ -46,16 +46,14 @@ type ExperimentManagerConfig struct {
 type ExperimentRunnerConfig struct {
 	Endpoint               string         `json:"endpoint" validate:"required"`
 	ProjectID              int            `json:"project_id" validate:"required"`
-	Passkey                string         `json:"passkey" validate:"required"`
 	Timeout                string         `json:"timeout" validate:"required"`
 	RequestParameters      []Variable     `json:"request_parameters" validate:"required,dive"`
 	TreatmentServiceConfig *config.Config `json:"treatment_service_config" validate:"required,dive"`
 }
 
 type TreatmentServicePluginConfig struct {
-	Port                 int      `json:"port" default:"8080"`
-	ProjectIds           []string `json:"project_ids" default:""`
-	PubSubTimeoutSeconds int      `json:"pub_sub_timeout_seconds" validate:"required"`
+	Port                 int `json:"port" default:"8080"`
+	PubSubTimeoutSeconds int `json:"pub_sub_timeout_seconds" validate:"required"`
 
 	AssignedTreatmentLogger config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
 	DebugConfig             config.DebugConfig                   `json:"debug_config"`

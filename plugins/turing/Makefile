@@ -30,7 +30,8 @@ lint:
 .PHONY: build
 build:
 	@echo "Building binary..."
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/plugin
+	# CGO is enabled to enable confluent-kafka-go to be compiled with C dependencies
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -o ./bin/plugin
 
 .PHONY: build-image
 build-image: vendor version

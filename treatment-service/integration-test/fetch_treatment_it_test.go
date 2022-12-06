@@ -806,7 +806,7 @@ func (suite *TreatmentServiceTestSuite) TestAllFiltersSwitchback() {
 }
 
 func (suite *TreatmentServiceTestSuite) TestLocalStorage() {
-	storage, err := models.NewLocalStorage([]models.ProjectId{1}, suite.managementServiceServer.URL, false)
+	storage, err := models.NewLocalStorage([]models.ProjectId{1}, suite.managementServiceServer.URL, false, "")
 	suite.Require().NoError(err)
 	suite.Require().NotEmpty(storage)
 

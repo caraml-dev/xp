@@ -29,6 +29,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		cfg.GetProjectIds(),
 		cfg.ManagementService.URL,
 		cfg.ManagementService.AuthorizationEnabled,
+		cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 	)
 	if err != nil {
 		return nil, err
@@ -76,7 +77,10 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	case config.BQLogger:
 		logger, err = monitoring.NewBQAssignedTreatmentLogger(
 			*loggerConfig.BQConfig,
-			loggerConfig.QueueLength, time.Duration(loggerConfig.FlushIntervalSeconds)*time.Second)
+			loggerConfig.QueueLength,
+			time.Duration(loggerConfig.FlushIntervalSeconds)*time.Second,
+			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
+		)
 	case config.NoopLogger:
 		logger, err = monitoring.NewNoopAssignedTreatmentLogger()
 	default:
@@ -94,7 +98,12 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	}
 	pubsubInitContext, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.PubSub.PubSubTimeoutSeconds)*time.Second)
 	defer cancel()
-	experimentSubscriber, err := services.NewPubsubSubscriber(pubsubInitContext, localStorage, pubsubConfig)
+	experimentSubscriber, err := services.NewPubsubSubscriber(
+		pubsubInitContext,
+		localStorage,
+		pubsubConfig,
+		cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
+	)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/caraml-dev/turing/engines/experiment/log"
@@ -88,12 +89,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
 
-	// Retrieve passkey using the API
-	project, err := em.GetProject(config.ProjectID)
-	if err != nil {
-		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
-	}
-
 	// Retrieve treatment service configuration (driven by the management service) using the API
 	treatmentServicePluginConfig, err := em.GetTreatmentServiceConfigFromManagementService()
 	if err != nil {
@@ -101,7 +96,7 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 	}
 
 	// Store configs in the new treatment service config
-	treatmentServiceConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServicePluginConfig)
+	treatmentServiceConfig, err := em.MakeTreatmentServicePluginConfig(treatmentServicePluginConfig, config.ProjectID)
 	if err != nil {
 		return json.RawMessage{}, fmt.Errorf(errorMsg, err.Error())
 	}
@@ -111,7 +106,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 		Endpoint:               em.RunnerDefaults.Endpoint,
 		Timeout:                em.RunnerDefaults.Timeout,
 		ProjectID:              config.ProjectID,
-		Passkey:                project.Passkey,
 		RequestParameters:      config.Variables,
 		TreatmentServiceConfig: treatmentServiceConfig,
 	})
@@ -127,28 +121,6 @@ func (em *experimentManager) ValidateExperimentConfig(rawConfig json.RawMessage)
 		return err
 	}
 	return em.validate.Struct(config)
-}
-
-func (em *experimentManager) GetProject(projectID int) (*schema.ProjectSettings, error) {
-	projectsErrorTpl := "Error retrieving project: %s"
-
-	projectResponse, err := em.httpClient.GetProjectSettingsWithResponse(context.Background(), int64(projectID))
-	if err != nil {
-		return nil, err
-	}
-
-	// Handle possible errors
-	if projectResponse.JSON404 != nil {
-		return nil, fmt.Errorf(projectsErrorTpl, projectResponse.JSON404.Message)
-	}
-	if projectResponse.JSON500 != nil {
-		return nil, fmt.Errorf(projectsErrorTpl, projectResponse.JSON500.Message)
-	}
-	if projectResponse.JSON200 == nil {
-		return nil, fmt.Errorf(projectsErrorTpl, "empty response body")
-	}
-
-	return &projectResponse.JSON200.Data, nil
 }
 
 func (em *experimentManager) GetTreatmentServiceConfigFromManagementService() (*schema.TreatmentServiceConfig, error) {
@@ -172,14 +144,11 @@ func (em *experimentManager) GetTreatmentServiceConfigFromManagementService() (*
 
 func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	treatmentServiceConfig *schema.TreatmentServiceConfig,
+	projectID int,
 ) (*config.Config, error) {
-	// Extract maxS2CellLevel and mixS2CellLevel from the segmenter configuration stored as a map[string]interface{}
-	segmenterConfig := make(map[string]interface{})
-	segmenterConfig["s2_ids"] = *treatmentServiceConfig.SegmenterConfig
-
 	return &config.Config{
 		Port:                    em.TreatmentServicePluginConfig.Port,
-		ProjectIds:              em.TreatmentServicePluginConfig.ProjectIds,
+		ProjectIds:              []string{strconv.Itoa(projectID)},
 		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
 		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
 		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
@@ -193,7 +162,7 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 			TopicName:            *treatmentServiceConfig.PubSub.TopicName,
 			PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
 		},
-		SegmenterConfig: segmenterConfig,
+		SegmenterConfig: *treatmentServiceConfig.SegmenterConfig,
 	}, nil
 }
 

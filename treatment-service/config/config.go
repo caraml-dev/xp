@@ -70,8 +70,9 @@ type SwaggerConfig struct {
 
 // DeploymentConfig captures the config related to the deployment of Treatment Service
 type DeploymentConfig struct {
-	EnvironmentType string `json:"environment_type" default:"local" validate:"required"`
-	MaxGoRoutines   int    `json:"max_go_routines" default:"100" validate:"required"`
+	EnvironmentType                    string `json:"environment_type" default:"local" validate:"required"`
+	MaxGoRoutines                      int    `json:"max_go_routines" default:"100" validate:"required"`
+	GoogleApplicationCredentialsEnvVar string `json:"google_application_credentials_env_var"`
 }
 
 type MetricSinkKind = string
