@@ -1,6 +1,7 @@
 DeploymentConfig:
   EnvironmentType: dev
   MaxGoRoutines: 200
+  GoogleApplicationCredentialsEnvVar: GOOGLE_APPLICATION_CREDENTIALS_EXPERIMENT_ENGINE
 
 SentryConfig:
   Enabled: true

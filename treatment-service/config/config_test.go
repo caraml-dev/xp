@@ -81,7 +81,11 @@ func TestLoadMultipleConfigs(t *testing.T) {
 			URL:                  "localhost:3000/v1",
 			AuthorizationEnabled: true,
 		},
-		DeploymentConfig: DeploymentConfig{EnvironmentType: "dev", MaxGoRoutines: 200},
+		DeploymentConfig: DeploymentConfig{
+			EnvironmentType:                    "dev",
+			MaxGoRoutines:                      200,
+			GoogleApplicationCredentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS_EXPERIMENT_ENGINE",
+		},
 		AssignedTreatmentLogger: AssignedTreatmentLoggerConfig{
 			Kind:                 "bq",
 			QueueLength:          100,

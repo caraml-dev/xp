@@ -161,12 +161,17 @@ func setupBQTable(
 	return table, nil
 }
 
-func NewBQLogPublisher(project string, dataset string, tableName string) (*BQLogPublisher, error) {
+func NewBQLogPublisher(
+	project string,
+	dataset string,
+	tableName string,
+	googleApplicationCredentialsEnvVar string,
+) (*BQLogPublisher, error) {
 	ctx := context.Background()
 
 	var client *bigquery.Client
 	var err error
-	if filepath := os.Getenv(models.ExpGoogleApplicationCredentials); filepath != "" {
+	if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
 		client, err = bigquery.NewClient(ctx, project, option.WithCredentialsFile(filepath))
 	} else {
 		client, err = bigquery.NewClient(ctx, project)

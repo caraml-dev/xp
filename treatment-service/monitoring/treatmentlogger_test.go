@@ -122,7 +122,7 @@ func (s *BQLoggerSuite) SetupTest() {
 		Dataset: s.target.DatasetID,
 		Table:   s.target.TableID,
 	}
-	s.logger, err = NewBQAssignedTreatmentLogger(config, 100, time.Millisecond)
+	s.logger, err = NewBQAssignedTreatmentLogger(config, 100, time.Millisecond, "")
 	if err != nil {
 		panic(err)
 	}

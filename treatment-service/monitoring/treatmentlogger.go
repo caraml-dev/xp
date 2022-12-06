@@ -79,10 +79,11 @@ func NewBQAssignedTreatmentLogger(
 	config config.BigqueryConfig,
 	queueLength int,
 	flushInterval time.Duration,
+	googleApplicationCredentialsEnvVar string,
 ) (*AssignedTreatmentLogger, error) {
 
 	c := make(chan *AssignedTreatmentLog, queueLength)
-	publisher, err := NewBQLogPublisher(config.Project, config.Dataset, config.Table)
+	publisher, err := NewBQLogPublisher(config.Project, config.Dataset, config.Table, googleApplicationCredentialsEnvVar)
 	if err != nil {
 		return nil, err
 	}

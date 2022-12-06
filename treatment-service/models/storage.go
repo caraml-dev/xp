@@ -21,8 +21,6 @@ import (
 	"golang.org/x/oauth2/google"
 )
 
-const ExpGoogleApplicationCredentials = "EXP_GOOGLE_APPLICATION_CREDENTIALS"
-
 var GoogleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
 
 type ProjectId = uint32
@@ -531,13 +529,18 @@ func (s *LocalStorage) getAllProjects() ([]*pubsub.ProjectSettings, error) {
 	return s.getProjectSettings(projectIds)
 }
 
-func NewLocalStorage(projectIds []ProjectId, xpServer string, authzEnabled bool) (*LocalStorage, error) {
+func NewLocalStorage(
+	projectIds []ProjectId,
+	xpServer string,
+	authzEnabled bool,
+	googleApplicationCredentialsEnvVar string,
+) (*LocalStorage, error) {
 	// Set up Request Modifiers
 	clientOptions := []managementClient.ClientOption{}
 	if authzEnabled {
 		var googleClient *http.Client
 		// Init Google client for Authz. XP Server must be behind MLP Auth proxy, for authorization to work.
-		if filepath := os.Getenv(ExpGoogleApplicationCredentials); filepath != "" {
+		if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
 			data, err := os.ReadFile(filepath)
 			if err != nil {
 				return nil, err

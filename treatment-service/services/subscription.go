@@ -42,10 +42,15 @@ func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic str
 	)
 }
 
-func NewPubsubSubscriber(ctx context.Context, storage *models.LocalStorage, config PubsubSubscriberConfig) (*PubsubSubscriber, error) {
+func NewPubsubSubscriber(
+	ctx context.Context,
+	storage *models.LocalStorage,
+	config PubsubSubscriberConfig,
+	googleApplicationCredentialsEnvVar string,
+) (*PubsubSubscriber, error) {
 	var client *pubsub.Client
 	var err error
-	if filepath := os.Getenv(models.ExpGoogleApplicationCredentials); filepath != "" {
+	if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
 		client, err = pubsub.NewClient(ctx, config.Project, option.WithCredentialsFile(filepath))
 	} else {
 		client, err = pubsub.NewClient(ctx, config.Project)
