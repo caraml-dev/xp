@@ -123,28 +123,6 @@ func (em *experimentManager) ValidateExperimentConfig(rawConfig json.RawMessage)
 	return em.validate.Struct(config)
 }
 
-func (em *experimentManager) GetProject(projectID int) (*schema.ProjectSettings, error) {
-	projectsErrorTpl := "Error retrieving project: %s"
-
-	projectResponse, err := em.httpClient.GetProjectSettingsWithResponse(context.Background(), int64(projectID))
-	if err != nil {
-		return nil, err
-	}
-
-	// Handle possible errors
-	if projectResponse.JSON404 != nil {
-		return nil, fmt.Errorf(projectsErrorTpl, projectResponse.JSON404.Message)
-	}
-	if projectResponse.JSON500 != nil {
-		return nil, fmt.Errorf(projectsErrorTpl, projectResponse.JSON500.Message)
-	}
-	if projectResponse.JSON200 == nil {
-		return nil, fmt.Errorf(projectsErrorTpl, "empty response body")
-	}
-
-	return &projectResponse.JSON200.Data, nil
-}
-
 func (em *experimentManager) GetTreatmentServiceConfigFromManagementService() (*schema.TreatmentServiceConfig, error) {
 	treatmentServiceConfigErrorTpl := "Error retrieving config: %s"
 
