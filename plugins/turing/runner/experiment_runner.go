@@ -197,6 +197,7 @@ func NewExperimentRunner(jsonCfg json.RawMessage) (runner.ExperimentRunner, erro
 		appContext: appCtx,
 	}
 
+	// TODO: To find a way to handle errors from the errChannel in the future
 	errChannel := make(chan error, 1)
 	r.startBackgroundServices(errChannel)
 	return r, nil
