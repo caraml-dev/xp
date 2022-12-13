@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/caraml-dev/xp/common/api/schema"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
@@ -25,12 +26,15 @@ type MetricService interface {
 	// GetLabels retrieves labels with flag to filter for segmenters
 	GetLabels(projectId models.ProjectId, treatment schema.SelectedTreatment, statusCode int,
 		metricLabels []string, requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
+	ReplacePrometheusCollector(collector metrics.Collector)
 }
 
 type metricService struct {
 	Kind         config.MetricSinkKind
 	LocalStorage *models.LocalStorage
 }
+
+var counterMap map[metrics.MetricName]metrics.PrometheusCounterVec = nil
 
 func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) (MetricService, error) {
 	switch cfg.Kind {
@@ -43,6 +47,8 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 		if err != nil {
 			return nil, errors.New("failed to initialize Prometheus-based MetricService")
 		}
+	case config.RPCMetricSink:
+		counterMap = instrumentation.GetCounterMap(cfg.MetricLabels)
 	}
 
 	svc := &metricService{
@@ -53,11 +59,25 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 	return svc, nil
 }
 
+func (ms *metricService) ReplacePrometheusCollector(collector metrics.Collector) {
+	metrics.SetGlobMetricsCollector(collector)
+	for _, obs := range instrumentation.GaugeMap {
+		prometheus.MustRegister(obs)
+	}
+	for _, obs := range instrumentation.GetHistogramMap() {
+		prometheus.MustRegister(obs)
+	}
+	for _, obs := range counterMap {
+		prometheus.MustRegister(obs)
+	}
+	return
+}
+
 func (ms *metricService) LogLatencyHistogram(begin time.Time, labels map[string]string, loggingMetric metrics.MetricName) {
 	var err error
 	switch ms.Kind {
 	case config.NoopMetricSink:
-	case config.PrometheusMetricSink:
+	case config.PrometheusMetricSink, config.RPCMetricSink:
 		switch loggingMetric {
 		case instrumentation.FetchTreatmentRequestDurationMs:
 			err = metrics.Glob().MeasureDurationMsSince(
@@ -78,7 +98,7 @@ func (ms *metricService) LogRequestCount(labels map[string]string, loggingMetric
 	var err error
 	switch ms.Kind {
 	case config.NoopMetricSink:
-	case config.PrometheusMetricSink:
+	case config.PrometheusMetricSink, config.RPCMetricSink:
 		switch loggingMetric {
 		case instrumentation.FetchTreatmentRequestCount:
 			err = metrics.Glob().Inc(

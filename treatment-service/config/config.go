@@ -78,13 +78,14 @@ type DeploymentConfig struct {
 type MetricSinkKind = string
 
 const (
+	RPCMetricSink        MetricSinkKind = "rpc"
 	PrometheusMetricSink MetricSinkKind = "prometheus"
 	NoopMetricSink       MetricSinkKind = ""
 )
 
 type Monitoring struct {
-	Kind         MetricSinkKind `default:""`
-	MetricLabels []string       `default:""`
+	Kind         MetricSinkKind `json:"kind" default:"" validate:"required"`
+	MetricLabels []string       `json:"metric_labels" default:""`
 }
 
 type PubSub struct {
