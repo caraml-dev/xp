@@ -96,10 +96,9 @@ func (s *MetricServiceTestSuite) TestGetLabels() {
 		},
 	}
 	statusCode := 200
-	metricLabels := []string{}
 	requestFilter := map[string][]*_segmenters.SegmenterValue{}
 
-	labels := s.MetricService.GetLabels(projectId, treatment, statusCode, metricLabels, requestFilter, false)
+	labels := s.MetricService.GetLabels(projectId, treatment, statusCode, requestFilter, false)
 	expectedLabels := map[string]string{
 		"project_name":    "user1",
 		"experiment_name": "test_exp",
@@ -120,12 +119,11 @@ func (s *MetricServiceTestSuite) TestGetLabelsWithSegmenters() {
 		},
 	}
 	statusCode := 200
-	metricLabels := s.cfg.MonitoringConfig.MetricLabels
 	requestFilter := map[string][]*_segmenters.SegmenterValue{
 		"test_extra_label": {{Value: &_segmenters.SegmenterValue_String_{String_: "test"}}},
 	}
 
-	labels := s.MetricService.GetLabels(projectId, treatment, statusCode, metricLabels, requestFilter, true)
+	labels := s.MetricService.GetLabels(projectId, treatment, statusCode, requestFilter, true)
 	expectedLabels := map[string]string{
 		"project_name":    "user1",
 		"experiment_name": "test_exp",

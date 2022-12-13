@@ -18,6 +18,13 @@ import (
 )
 
 type MetricService interface {
+	LogFetchTreatmentMetrics(
+		begin time.Time,
+		projectId models.ProjectId,
+		treatment schema.SelectedTreatment,
+		requestFilter map[string][]*_segmenters.SegmenterValue,
+		statusCode int,
+	)
 	LogLatencyHistogram(begin time.Time, labels map[string]string, loggingMetric metrics.MetricName)
 	LogRequestCount(labels map[string]string, loggingMetric metrics.MetricName)
 
@@ -25,20 +32,19 @@ type MetricService interface {
 	GetProjectNameLabel(projectId models.ProjectId) map[string]string
 	// GetLabels retrieves labels with flag to filter for segmenters
 	GetLabels(projectId models.ProjectId, treatment schema.SelectedTreatment, statusCode int,
-		metricLabels []string, requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
+		requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
 	ReplacePrometheusCollector(collector metrics.Collector)
 }
 
 type metricService struct {
 	Kind         config.MetricSinkKind
 	LocalStorage *models.LocalStorage
+	MetricLabels []string
 }
-
-var counterMap map[metrics.MetricName]metrics.PrometheusCounterVec = nil
 
 func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) (MetricService, error) {
 	switch cfg.Kind {
-	case config.NoopMetricSink:
+	case config.NoopMetricSink, config.RPCMetricSink:
 	case config.PrometheusMetricSink:
 		// Init metrics collector
 		histogramMap := instrumentation.GetHistogramMap()
@@ -47,13 +53,12 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 		if err != nil {
 			return nil, errors.New("failed to initialize Prometheus-based MetricService")
 		}
-	case config.RPCMetricSink:
-		counterMap = instrumentation.GetCounterMap(cfg.MetricLabels)
 	}
 
 	svc := &metricService{
 		Kind:         cfg.Kind,
 		LocalStorage: localStorage,
+		MetricLabels: cfg.MetricLabels,
 	}
 
 	return svc, nil
@@ -67,7 +72,7 @@ func (ms *metricService) ReplacePrometheusCollector(collector metrics.Collector)
 	for _, obs := range instrumentation.GetHistogramMap() {
 		prometheus.MustRegister(obs)
 	}
-	for _, obs := range counterMap {
+	for _, obs := range instrumentation.GetCounterMap(ms.MetricLabels) {
 		prometheus.MustRegister(obs)
 	}
 	return
@@ -126,7 +131,6 @@ func (ms *metricService) GetLabels(
 	projectId models.ProjectId,
 	treatment schema.SelectedTreatment,
 	statusCode int,
-	metricLabels []string,
 	requestFilter map[string][]*_segmenters.SegmenterValue,
 	withSegmenters bool,
 ) map[string]string {
@@ -140,7 +144,7 @@ func (ms *metricService) GetLabels(
 
 	if withSegmenters {
 		// Set default value for required labels
-		for _, label := range metricLabels {
+		for _, label := range ms.MetricLabels {
 			labels[label] = ""
 			if filterValues, ok := requestFilter[label]; ok {
 				// Do the convert and set labels[label]
@@ -158,4 +162,36 @@ func (ms *metricService) GetLabels(
 		}
 	}
 	return labels
+}
+
+func (ms *metricService) LogFetchTreatmentMetrics(
+	begin time.Time,
+	projectId models.ProjectId,
+	treatment schema.SelectedTreatment,
+	requestFilter map[string][]*_segmenters.SegmenterValue,
+	statusCode int,
+) {
+	labels := ms.GetLabels(
+		projectId,
+		treatment,
+		statusCode,
+		requestFilter,
+		false,
+	)
+	ms.LogLatencyHistogram(begin, labels, instrumentation.FetchTreatmentRequestDurationMs)
+
+	labels = ms.GetLabels(
+		projectId,
+		treatment,
+		statusCode,
+		requestFilter,
+		true,
+	)
+	if treatment.ExperimentName != "" || treatment.Treatment.Name != "" {
+		ms.LogRequestCount(labels, instrumentation.FetchTreatmentRequestCount)
+	} else {
+		delete(labels, "experiment_name")
+		delete(labels, "treatment_name")
+		ms.LogRequestCount(labels, instrumentation.NoMatchingExperimentRequestCount)
+	}
 }
