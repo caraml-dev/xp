@@ -10,6 +10,7 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/runner"
 	"github.com/caraml-dev/turing/engines/experiment/runner"
+	routerMetrics "github.com/caraml-dev/turing/engines/router/missionctl/instrumentation/metrics"
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
@@ -142,8 +143,48 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	}, nil
 }
 
-func (er *experimentRunner) RegisterCollector(collector metrics.Collector) error {
+func (er *experimentRunner) RegisterMetrics(
+	collector metrics.Collector,
+	metricsRegistrationHelper runner.MetricsRegistrationHelper,
+) error {
 	er.appContext.MetricService.ReplacePrometheusCollector(collector)
+	err := metricsRegistrationHelper.Register([]routerMetrics.Metric{
+		{
+			Name:        string(instrumentation.FetchTreatmentRequestDurationMs),
+			Type:        routerMetrics.HistogramMetricType,
+			Description: instrumentation.FetchTreatmentRequestDurationMsHelpString,
+			Buckets:     instrumentation.RequestLatencyBuckets,
+			Labels:      instrumentation.FetchTreatmentRequestDurationMsLabels,
+		},
+		{
+			Name:        string(instrumentation.ExperimentLookupDurationMs),
+			Type:        routerMetrics.HistogramMetricType,
+			Description: instrumentation.ExperimentLookupDurationMsHelpString,
+			Buckets:     instrumentation.RequestLatencyBuckets,
+			Labels:      instrumentation.ExperimentLookupDurationMsLabels,
+		},
+		{
+			Name:        string(instrumentation.FetchTreatmentRequestCount),
+			Type:        routerMetrics.CounterMetricType,
+			Description: "Counter for no. of Fetch Treatment requests with matching experiments",
+			Labels: append(
+				er.appContext.MetricService.GetMetricLabels(),
+				instrumentation.AdditionalFetchTreatmentRequestCountLabels...,
+			),
+		},
+		{
+			Name:        string(instrumentation.NoMatchingExperimentRequestCount),
+			Type:        routerMetrics.CounterMetricType,
+			Description: "Counter for no. of Fetch Treatment requests with no matching experiments",
+			Labels: append(
+				er.appContext.MetricService.GetMetricLabels(),
+				instrumentation.AdditionalNoMatchingExperimentRequestCountLabels...,
+			),
+		},
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
