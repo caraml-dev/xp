@@ -7,14 +7,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
-	"github.com/prometheus/client_golang/prometheus"
-
 	"github.com/caraml-dev/xp/common/api/schema"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 )
 
 type MetricService interface {
@@ -30,6 +28,7 @@ type MetricService interface {
 
 	// GetProjectNameLabel retrieves only project name as labels
 	GetProjectNameLabel(projectId models.ProjectId) map[string]string
+	GetMetricLabels() []string
 	// GetLabels retrieves labels with flag to filter for segmenters
 	GetLabels(projectId models.ProjectId, treatment schema.SelectedTreatment, statusCode int,
 		requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
@@ -66,15 +65,6 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 
 func (ms *metricService) ReplacePrometheusCollector(collector metrics.Collector) {
 	metrics.SetGlobMetricsCollector(collector)
-	for _, obs := range instrumentation.GaugeMap {
-		prometheus.MustRegister(obs)
-	}
-	for _, obs := range instrumentation.GetHistogramMap() {
-		prometheus.MustRegister(obs)
-	}
-	for _, obs := range instrumentation.GetCounterMap(ms.MetricLabels) {
-		prometheus.MustRegister(obs)
-	}
 	return
 }
 
@@ -125,6 +115,10 @@ func (ms *metricService) GetProjectNameLabel(projectId models.ProjectId) map[str
 	return map[string]string{
 		"project_name": settings.Username,
 	}
+}
+
+func (ms *metricService) GetMetricLabels() []string {
+	return ms.MetricLabels
 }
 
 func (ms *metricService) GetLabels(

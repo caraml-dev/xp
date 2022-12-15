@@ -49,7 +49,7 @@ require (
 	github.com/docker/docker v20.10.11+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
-	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/getsentry/raven-go v0.2.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
@@ -65,16 +65,16 @@ require (
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
-	github.com/mitchellh/mapstructure v1.1.2 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/moby/sys/mount v0.2.0 // indirect
 	github.com/moby/sys/mountinfo v0.5.0 // indirect
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
-	github.com/newrelic/go-agent v3.9.0+incompatible // indirect
+	github.com/newrelic/go-agent v3.19.2+incompatible // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/opencontainers/runc v1.0.2 // indirect
-	github.com/pelletier/go-toml v1.8.1 // indirect
+	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
@@ -88,10 +88,10 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	go.einride.tech/aip v0.52.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
-	golang.org/x/net v0.0.0-20221012135044-0b7e1fb9d458 // indirect
+	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
-	golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20221010155953-15ba04fc1c0e // indirect
@@ -105,4 +105,5 @@ require (
 replace (
 	github.com/caraml-dev/xp/clients => ../clients
 	github.com/caraml-dev/xp/common => ../common
+	github.com/gojek/mlp => github.com/deadlycoconuts/mlp v0.0.0-20221215071835-9a452b9dadd1
 )
