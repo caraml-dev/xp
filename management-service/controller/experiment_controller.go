@@ -86,7 +86,7 @@ func (e ExperimentController) ListExperiments(w http.ResponseWriter, r *http.Req
 		WriteErrorResponse(w, err)
 		return
 	}
-	var expsResp []schema.Experiment
+	expsResp := []schema.Experiment{}
 	var fields []models.ExperimentField
 	if listExperimentParams.Fields != nil {
 		fields = *listExperimentParams.Fields
