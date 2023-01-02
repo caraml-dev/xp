@@ -19,7 +19,7 @@ func TestDefaultConfigs(t *testing.T) {
 			AllowedOrigins:   []string{"*"},
 			OpenAPISpecsPath: ".",
 		},
-		ProjectIds: nil,
+		ProjectIds: []string{},
 		ManagementService: ManagementServiceConfig{
 			URL:                  "http://localhost:3000/v1",
 			AuthorizationEnabled: false,
@@ -49,12 +49,12 @@ func TestDefaultConfigs(t *testing.T) {
 			TopicName:            "xp-update",
 			PubSubTimeoutSeconds: 30,
 		},
-		MonitoringConfig: Monitoring{MetricLabels: nil},
+		MonitoringConfig: Monitoring{MetricLabels: []string{}},
 		NewRelicConfig: newrelic.Config{
 			Enabled:           false,
 			AppName:           "",
 			License:           "",
-			IgnoreStatusCodes: nil,
+			IgnoreStatusCodes: []int{},
 			Labels:            emptyInterfaceMap,
 		},
 		SentryConfig:    sentry.Config{Enabled: false, Labels: emptyStringMap},
@@ -109,7 +109,7 @@ func TestLoadMultipleConfigs(t *testing.T) {
 			TopicName:            "xp-update",
 			PubSubTimeoutSeconds: 30,
 		},
-		MonitoringConfig: Monitoring{MetricLabels: nil},
+		MonitoringConfig: Monitoring{MetricLabels: []string{}},
 		NewRelicConfig: newrelic.Config{
 			Enabled:           true,
 			AppName:           "xp-treatment-service-test",
