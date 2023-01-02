@@ -10,7 +10,7 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/runner"
 	"github.com/caraml-dev/turing/engines/experiment/runner"
-	routerMetrics "github.com/caraml-dev/turing/engines/router/missionctl/instrumentation/metrics"
+	routerMetrics "github.com/caraml-dev/turing/engines/router/missionctl/instrumentation"
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
@@ -166,7 +166,7 @@ func (er *experimentRunner) RegisterMetrics(
 		{
 			Name:        string(instrumentation.FetchTreatmentRequestCount),
 			Type:        routerMetrics.CounterMetricType,
-			Description: "Counter for no. of Fetch Treatment requests with matching experiments",
+			Description: instrumentation.FetchTreatmentRequestCountHelpString,
 			Labels: append(
 				er.appContext.MetricService.GetMetricLabels(),
 				instrumentation.AdditionalFetchTreatmentRequestCountLabels...,
@@ -175,7 +175,7 @@ func (er *experimentRunner) RegisterMetrics(
 		{
 			Name:        string(instrumentation.NoMatchingExperimentRequestCount),
 			Type:        routerMetrics.CounterMetricType,
-			Description: "Counter for no. of Fetch Treatment requests with no matching experiments",
+			Description: instrumentation.NoMatchingExperimentRequestCountHelpString,
 			Labels: append(
 				er.appContext.MetricService.GetMetricLabels(),
 				instrumentation.AdditionalNoMatchingExperimentRequestCountLabels...,
