@@ -56,7 +56,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/gojek/fiber v0.2.0 // indirect
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3 // indirect
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -72,7 +71,6 @@ require (
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/heptiolabs/healthcheck v0.0.0-20211123025425-613501dd5deb // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
@@ -127,8 +125,8 @@ require (
 )
 
 replace (
-	github.com/caraml-dev/turing/engines/experiment => ../../../turing/engines/experiment
-	github.com/caraml-dev/turing/engines/router => ../../../turing/engines/router
+	github.com/caraml-dev/turing/engines/experiment => github.com/deadlycoconuts/turing/engines/experiment v0.0.0-20230102103113-7f9541357ddc
+	github.com/caraml-dev/turing/engines/router => github.com/deadlycoconuts/turing/engines/router v0.0.0-20230102103113-7f9541357ddc
 	github.com/caraml-dev/xp/clients => ../../clients
 	github.com/caraml-dev/xp/common => ../../common
 	github.com/caraml-dev/xp/treatment-service => ../../treatment-service
