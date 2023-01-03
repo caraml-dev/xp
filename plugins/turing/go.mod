@@ -125,8 +125,8 @@ require (
 )
 
 replace (
-	github.com/caraml-dev/turing/engines/experiment => github.com/deadlycoconuts/turing/engines/experiment v0.0.0-20230102103113-7f9541357ddc
-	github.com/caraml-dev/turing/engines/router => github.com/deadlycoconuts/turing/engines/router v0.0.0-20230102103113-7f9541357ddc
+	github.com/caraml-dev/turing/engines/experiment => github.com/deadlycoconuts/turing/engines/experiment v0.0.0-20230103032346-cddf0ee77a55
+	github.com/caraml-dev/turing/engines/router => github.com/deadlycoconuts/turing/engines/router v0.0.0-20230103032346-cddf0ee77a55
 	github.com/caraml-dev/xp/clients => ../../clients
 	github.com/caraml-dev/xp/common => ../../common
 	github.com/caraml-dev/xp/treatment-service => ../../treatment-service

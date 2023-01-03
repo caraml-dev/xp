@@ -143,7 +143,7 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	}, nil
 }
 
-func (er *experimentRunner) RegisterMetrics(
+func (er *experimentRunner) RegisterMetricsCollector(
 	collector metrics.Collector,
 	metricsRegistrationHelper runner.MetricsRegistrationHelper,
 ) error {
