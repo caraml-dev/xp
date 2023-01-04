@@ -32,7 +32,7 @@ type MetricService interface {
 	// GetLabels retrieves labels with flag to filter for segmenters
 	GetLabels(projectId models.ProjectId, treatment schema.SelectedTreatment, statusCode int,
 		requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
-	ReplacePrometheusCollector(collector metrics.Collector)
+	SetMetricsCollector(collector metrics.Collector)
 }
 
 type metricService struct {
@@ -63,7 +63,7 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 	return svc, nil
 }
 
-func (ms *metricService) ReplacePrometheusCollector(collector metrics.Collector) {
+func (ms *metricService) SetMetricsCollector(collector metrics.Collector) {
 	metrics.SetGlobMetricsCollector(collector)
 	return
 }

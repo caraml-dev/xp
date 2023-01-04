@@ -147,7 +147,7 @@ func (er *experimentRunner) RegisterMetricsCollector(
 	collector metrics.Collector,
 	metricsRegistrationHelper runner.MetricsRegistrationHelper,
 ) error {
-	er.appContext.MetricService.ReplacePrometheusCollector(collector)
+	er.appContext.MetricService.SetMetricsCollector(collector)
 	err := metricsRegistrationHelper.Register([]routerMetrics.Metric{
 		{
 			Name:        string(instrumentation.FetchTreatmentRequestDurationMs),
