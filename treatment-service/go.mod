@@ -105,5 +105,6 @@ require (
 replace (
 	github.com/caraml-dev/xp/clients => ../clients
 	github.com/caraml-dev/xp/common => ../common
+	// To remove once the next version of gojek/mlp (v1.8.0) has been cut and released
 	github.com/gojek/mlp => github.com/gojek/mlp v1.7.5-0.20230104043800-549dbdb2d25b
 )

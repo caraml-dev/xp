@@ -125,10 +125,12 @@ require (
 )
 
 replace (
-	github.com/caraml-dev/turing/engines/experiment => github.com/deadlycoconuts/turing/engines/experiment v0.0.0-20230103032346-cddf0ee77a55
-	github.com/caraml-dev/turing/engines/router => github.com/deadlycoconuts/turing/engines/router v0.0.0-20230103032346-cddf0ee77a55
+	// To remove once the next version of Turing (v1.9.0) has been cut and released
+	github.com/caraml-dev/turing/engines/experiment => github.com/caraml-dev/turing/engines/experiment v0.0.0-20230104094236-477ac2392c59
+	github.com/caraml-dev/turing/engines/router => github.com/caraml-dev/turing/engines/router v0.0.0-20230104094236-477ac2392c59
 	github.com/caraml-dev/xp/clients => ../../clients
 	github.com/caraml-dev/xp/common => ../../common
 	github.com/caraml-dev/xp/treatment-service => ../../treatment-service
+	// To remove once the next version of gojek/mlp (v1.8.0) has been cut and released
 	github.com/gojek/mlp => github.com/gojek/mlp v1.7.5-0.20230104043800-549dbdb2d25b
 )
