@@ -105,5 +105,5 @@ require (
 replace (
 	github.com/caraml-dev/xp/clients => ../clients
 	github.com/caraml-dev/xp/common => ../common
-	github.com/gojek/mlp => github.com/deadlycoconuts/mlp v0.0.0-20230102084314-9b6d25808a0e
+	github.com/gojek/mlp => github.com/gojek/mlp v1.7.5-0.20230104043800-549dbdb2d25b
 )

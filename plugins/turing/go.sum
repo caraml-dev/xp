@@ -300,8 +300,6 @@ github.com/d2g/hardwareaddr v0.0.0-20190221164911-e7d9fbe030e4/go.mod h1:bMl4RjI
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/deadlycoconuts/mlp v0.0.0-20230102084314-9b6d25808a0e h1:GC2FaI1xDkbIe90s22+LFhtV1HTI2dXpKhBmaf8kr9k=
-github.com/deadlycoconuts/mlp v0.0.0-20230102084314-9b6d25808a0e/go.mod h1:a9ipeaVPepEJjpvCpA0EgDCnZ9jZ54VDQn/uSbN+JLw=
 github.com/deadlycoconuts/turing/engines/experiment v0.0.0-20230103032346-cddf0ee77a55 h1:xqAP8inSUW32oImVa/PSIP8j+bx6pJ8jqgoI+mJBEmI=
 github.com/deadlycoconuts/turing/engines/experiment v0.0.0-20230103032346-cddf0ee77a55/go.mod h1:ix6UIjvar+AA2hghi9kj0qPU3klXegLKSG8xZmfSd7g=
 github.com/deadlycoconuts/turing/engines/router v0.0.0-20230103032346-cddf0ee77a55 h1:2iofAgPMPbpQULQWMWshCet2xoqFjwsSVnMAR4/W1Lo=
@@ -437,6 +435,8 @@ github.com/gogo/protobuf v1.3.0/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXP
 github.com/gogo/protobuf v1.3.1/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXPKa29o=
 github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
 github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
+github.com/gojek/mlp v1.7.5-0.20230104043800-549dbdb2d25b h1:bvE++I0HIwqD4BWDurM0BvYHXm03o60jsvob4qtwKYo=
+github.com/gojek/mlp v1.7.5-0.20230104043800-549dbdb2d25b/go.mod h1:a9ipeaVPepEJjpvCpA0EgDCnZ9jZ54VDQn/uSbN+JLw=
 github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3 h1:zN2lZNZRflqFyxVaTIU61KNKQ9C0055u9CAfpmqUvo4=
 github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3/go.mod h1:nPpo7qLxd6XL3hWJG/O60sR8ZKfMCiIoNap5GvD12KU=
 github.com/golang-jwt/jwt v3.2.2+incompatible/go.mod h1:8pz2t5EyA70fFQQSrl6XZXzqecmYZeUEB8OUGHkxJ+I=
