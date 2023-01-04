@@ -10,11 +10,15 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/runner"
 	"github.com/caraml-dev/turing/engines/experiment/runner"
+	routerMetrics "github.com/caraml-dev/turing/engines/router/missionctl/instrumentation"
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/caraml-dev/xp/treatment-service/api"
+	"github.com/caraml-dev/xp/treatment-service/controller"
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 
@@ -58,10 +62,31 @@ func (er *experimentRunner) GetTreatmentForRequest(
 
 	var filteredExperiment *pubsub.Experiment
 	var selectedTreatment *pubsub.ExperimentTreatment
+	var treatment schema.SelectedTreatment
 	var switchbackWindowId *int64
+	var err error
+	statusCode := http.StatusBadRequest
+
+	defer func() {
+		if requestFilter == nil {
+			requestFilter = map[string][]*_segmenters.SegmenterValue{}
+		}
+		er.appContext.MetricService.LogFetchTreatmentMetrics(begin, projectId, treatment, requestFilter, statusCode)
+		if statusCode == http.StatusInternalServerError && err != nil {
+			// This is typically a problem with the experiment configuration that should not have been allowed
+			// by the Management Service, or other unexpected errors. Log the response to console, for tracking.
+			controller.LogFetchTreatmentError(
+				projectId,
+				statusCode,
+				err,
+				api.FetchTreatmentRequestBody{AdditionalProperties: requestParams},
+				requestFilter,
+			)
+		}
+	}()
 
 	// Use the S2ID at the max configured level (most granular level) to generate the filter
-	requestFilter, err := er.appContext.SchemaService.GetRequestFilter(projectId, requestParams)
+	requestFilter, err = er.appContext.SchemaService.GetRequestFilter(projectId, requestParams)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +117,7 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	treatmentRepr := models.ExperimentTreatmentToOpenAPITreatment(selectedTreatment)
 
 	// Marshal and return response
-	treatment := schema.SelectedTreatment{
+	treatment = schema.SelectedTreatment{
 		ExperimentId:   filteredExperiment.Id,
 		ExperimentName: filteredExperiment.Name,
 		Treatment:      treatmentRepr,
@@ -109,11 +134,58 @@ func (er *experimentRunner) GetTreatmentForRequest(
 		return nil, fmt.Errorf("Error marshalling the treatment config: %s", err.Error())
 	}
 
+	statusCode = http.StatusOK
+
 	return &runner.Treatment{
 		ExperimentName: filteredExperiment.Name,
 		Name:           selectedTreatment.Name,
 		Config:         rawConfig,
 	}, nil
+}
+
+func (er *experimentRunner) RegisterMetricsCollector(
+	collector metrics.Collector,
+	metricsRegistrationHelper runner.MetricsRegistrationHelper,
+) error {
+	er.appContext.MetricService.SetMetricsCollector(collector)
+	err := metricsRegistrationHelper.Register([]routerMetrics.Metric{
+		{
+			Name:        string(instrumentation.FetchTreatmentRequestDurationMs),
+			Type:        routerMetrics.HistogramMetricType,
+			Description: instrumentation.FetchTreatmentRequestDurationMsHelpString,
+			Buckets:     instrumentation.RequestLatencyBuckets,
+			Labels:      instrumentation.FetchTreatmentRequestDurationMsLabels,
+		},
+		{
+			Name:        string(instrumentation.ExperimentLookupDurationMs),
+			Type:        routerMetrics.HistogramMetricType,
+			Description: instrumentation.ExperimentLookupDurationMsHelpString,
+			Buckets:     instrumentation.RequestLatencyBuckets,
+			Labels:      instrumentation.ExperimentLookupDurationMsLabels,
+		},
+		{
+			Name:        string(instrumentation.FetchTreatmentRequestCount),
+			Type:        routerMetrics.CounterMetricType,
+			Description: instrumentation.FetchTreatmentRequestCountHelpString,
+			Labels: append(
+				er.appContext.MetricService.GetMetricLabels(),
+				instrumentation.AdditionalFetchTreatmentRequestCountLabels...,
+			),
+		},
+		{
+			Name:        string(instrumentation.NoMatchingExperimentRequestCount),
+			Type:        routerMetrics.CounterMetricType,
+			Description: instrumentation.NoMatchingExperimentRequestCountHelpString,
+			Labels: append(
+				er.appContext.MetricService.GetMetricLabels(),
+				instrumentation.AdditionalNoMatchingExperimentRequestCountLabels...,
+			),
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (er *experimentRunner) startBackgroundServices(

@@ -50,11 +50,11 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 		if requestFilter == nil {
 			requestFilter = map[string][]*_segmenters.SegmenterValue{}
 		}
-		t.logFetchTreatmentMetrics(begin, projectId, treatment, requestFilter, statusCode)
+		t.AppContext.MetricService.LogFetchTreatmentMetrics(begin, projectId, treatment, requestFilter, statusCode)
 		if statusCode == http.StatusInternalServerError && err != nil {
 			// This is typically a problem with the experiment configuration that should not have been allowed
 			// by the Management Service, or other unexpected errors. Log the response to console, for tracking.
-			logFetchTreatmentError(projectId, statusCode, err, filterParams, requestFilter)
+			LogFetchTreatmentError(projectId, statusCode, err, filterParams, requestFilter)
 		}
 
 	}()
@@ -201,41 +201,7 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 	Ok(w, response, &requestId)
 }
 
-func (t TreatmentController) logFetchTreatmentMetrics(
-	begin time.Time,
-	projectId models.ProjectId,
-	treatment schema.SelectedTreatment,
-	requestFilter map[string][]*_segmenters.SegmenterValue,
-	statusCode int,
-) {
-	labels := t.MetricService.GetLabels(
-		projectId,
-		treatment,
-		statusCode,
-		t.Config.MonitoringConfig.MetricLabels,
-		requestFilter,
-		false,
-	)
-	t.MetricService.LogLatencyHistogram(begin, labels, instrumentation.FetchTreatmentRequestDurationMs)
-
-	labels = t.MetricService.GetLabels(
-		projectId,
-		treatment,
-		statusCode,
-		t.Config.MonitoringConfig.MetricLabels,
-		requestFilter,
-		true,
-	)
-	if treatment.ExperimentName != "" || treatment.Treatment.Name != "" {
-		t.MetricService.LogRequestCount(labels, instrumentation.FetchTreatmentRequestCount)
-	} else {
-		delete(labels, "experiment_name")
-		delete(labels, "treatment_name")
-		t.MetricService.LogRequestCount(labels, instrumentation.NoMatchingExperimentRequestCount)
-	}
-}
-
-func logFetchTreatmentError(
+func LogFetchTreatmentError(
 	projectId uint32,
 	statusCode int,
 	err error,

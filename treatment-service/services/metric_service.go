@@ -7,34 +7,43 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
-
 	"github.com/caraml-dev/xp/common/api/schema"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 )
 
 type MetricService interface {
+	LogFetchTreatmentMetrics(
+		begin time.Time,
+		projectId models.ProjectId,
+		treatment schema.SelectedTreatment,
+		requestFilter map[string][]*_segmenters.SegmenterValue,
+		statusCode int,
+	)
 	LogLatencyHistogram(begin time.Time, labels map[string]string, loggingMetric metrics.MetricName)
 	LogRequestCount(labels map[string]string, loggingMetric metrics.MetricName)
 
 	// GetProjectNameLabel retrieves only project name as labels
 	GetProjectNameLabel(projectId models.ProjectId) map[string]string
+	GetMetricLabels() []string
 	// GetLabels retrieves labels with flag to filter for segmenters
 	GetLabels(projectId models.ProjectId, treatment schema.SelectedTreatment, statusCode int,
-		metricLabels []string, requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
+		requestFilter map[string][]*_segmenters.SegmenterValue, withSegmenters bool) map[string]string
+	SetMetricsCollector(collector metrics.Collector)
 }
 
 type metricService struct {
 	Kind         config.MetricSinkKind
 	LocalStorage *models.LocalStorage
+	MetricLabels []string
 }
 
 func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) (MetricService, error) {
 	switch cfg.Kind {
-	case config.NoopMetricSink:
+	case config.NoopMetricSink, config.RPCMetricSink:
 	case config.PrometheusMetricSink:
 		// Init metrics collector
 		histogramMap := instrumentation.GetHistogramMap()
@@ -48,16 +57,22 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 	svc := &metricService{
 		Kind:         cfg.Kind,
 		LocalStorage: localStorage,
+		MetricLabels: cfg.MetricLabels,
 	}
 
 	return svc, nil
+}
+
+func (ms *metricService) SetMetricsCollector(collector metrics.Collector) {
+	metrics.SetGlobMetricsCollector(collector)
+	return
 }
 
 func (ms *metricService) LogLatencyHistogram(begin time.Time, labels map[string]string, loggingMetric metrics.MetricName) {
 	var err error
 	switch ms.Kind {
 	case config.NoopMetricSink:
-	case config.PrometheusMetricSink:
+	case config.PrometheusMetricSink, config.RPCMetricSink:
 		switch loggingMetric {
 		case instrumentation.FetchTreatmentRequestDurationMs:
 			err = metrics.Glob().MeasureDurationMsSince(
@@ -78,7 +93,7 @@ func (ms *metricService) LogRequestCount(labels map[string]string, loggingMetric
 	var err error
 	switch ms.Kind {
 	case config.NoopMetricSink:
-	case config.PrometheusMetricSink:
+	case config.PrometheusMetricSink, config.RPCMetricSink:
 		switch loggingMetric {
 		case instrumentation.FetchTreatmentRequestCount:
 			err = metrics.Glob().Inc(
@@ -102,11 +117,14 @@ func (ms *metricService) GetProjectNameLabel(projectId models.ProjectId) map[str
 	}
 }
 
+func (ms *metricService) GetMetricLabels() []string {
+	return ms.MetricLabels
+}
+
 func (ms *metricService) GetLabels(
 	projectId models.ProjectId,
 	treatment schema.SelectedTreatment,
 	statusCode int,
-	metricLabels []string,
 	requestFilter map[string][]*_segmenters.SegmenterValue,
 	withSegmenters bool,
 ) map[string]string {
@@ -120,7 +138,7 @@ func (ms *metricService) GetLabels(
 
 	if withSegmenters {
 		// Set default value for required labels
-		for _, label := range metricLabels {
+		for _, label := range ms.MetricLabels {
 			labels[label] = ""
 			if filterValues, ok := requestFilter[label]; ok {
 				// Do the convert and set labels[label]
@@ -138,4 +156,36 @@ func (ms *metricService) GetLabels(
 		}
 	}
 	return labels
+}
+
+func (ms *metricService) LogFetchTreatmentMetrics(
+	begin time.Time,
+	projectId models.ProjectId,
+	treatment schema.SelectedTreatment,
+	requestFilter map[string][]*_segmenters.SegmenterValue,
+	statusCode int,
+) {
+	labels := ms.GetLabels(
+		projectId,
+		treatment,
+		statusCode,
+		requestFilter,
+		false,
+	)
+	ms.LogLatencyHistogram(begin, labels, instrumentation.FetchTreatmentRequestDurationMs)
+
+	labels = ms.GetLabels(
+		projectId,
+		treatment,
+		statusCode,
+		requestFilter,
+		true,
+	)
+	if treatment.ExperimentName != "" || treatment.Treatment.Name != "" {
+		ms.LogRequestCount(labels, instrumentation.FetchTreatmentRequestCount)
+	} else {
+		delete(labels, "experiment_name")
+		delete(labels, "treatment_name")
+		ms.LogRequestCount(labels, instrumentation.NoMatchingExperimentRequestCount)
+	}
 }
