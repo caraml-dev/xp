@@ -1,0 +1,39 @@
+# Port number XP Treatment API server listens to
+Port: 8080
+
+ProjectIds:
+  - 1
+  
+ManagementService:
+  URL: http://localhost:3000/v1
+  AuthorizationEnabled: false
+
+DeploymentConfig:
+  EnvironmentType: local
+
+NewRelicConfig:
+  Enabled: false
+  AppName: xp-treatment-service
+  License: newrelic-license-secret
+  IgnoreStatusCodes:
+    - 400
+    - 401
+    - 403
+    - 404
+    - 405
+    - 412
+
+SentryConfig:
+  Enabled: false
+  DSN: xxx.xxx.xxx
+  Labels:
+    App: xp-treatment-service
+
+SegmenterConfig:
+  S2_IDs:
+    MinS2CellLevel: 10
+    MaxS2CellLevel: 14
+
+# PubSub:
+#   Project: gods-staging
+#   TopicName: xp-internal-messaging

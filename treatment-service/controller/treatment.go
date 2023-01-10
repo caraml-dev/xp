@@ -175,7 +175,12 @@ func (t TreatmentController) FetchTreatment(w http.ResponseWriter, r *http.Reque
 
 	selectedTreatment, switchbackWindowId, err = t.TreatmentService.GetTreatment(filteredExperiment, randomizationKeyValue)
 	if err != nil {
-		statusCode = http.StatusInternalServerError
+		switch err.(type) {
+		case *services.RandomizationKeyNotFoundError:
+			statusCode = http.StatusBadRequest
+		default:
+			statusCode = http.StatusInternalServerError
+		}
 		ErrorResponse(w, statusCode, err, &requestId)
 		return
 	}
