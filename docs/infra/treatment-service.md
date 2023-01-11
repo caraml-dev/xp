@@ -26,28 +26,6 @@ As can be seen from the various examples, there are a number of values that need
 are necessarily required. Some of these values, when left undefined/empty, will be automatically initialised with 
 certain default values (see https://github.com/caraml-dev/xp/blob/main/treatment-service/config/config.go#L22).
 
-#### Port 
-Indicates the port at which the Treatment Service endpoint will be exposed:
-```yaml
-Port: 8080
-```    
-
-#### Management Service
-Indicates the URL of the Management Service that the Treatment Service should connect to, as well as if any requests 
-made by the Treatment Service to the Management Service should be authenticated:
-```yaml
-ManagementService:
-  URL: https://caraml-dev.io/api/xp/v1
-  AuthorizationEnabled: true
-```
-
-#### Deployment Config
-```yaml
-DeploymentConfig:
-  EnvironmentType: dev
-  MaxGoRoutines: 200
-```
-
 ### Google Cloud Provider (GCP) Service Account
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs/overview) is used to allow the Treatment Service to 
 communicate with the Management Service to retrieve information about the experiments that are being run at any point 
