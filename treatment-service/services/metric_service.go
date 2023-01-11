@@ -65,7 +65,6 @@ func NewMetricService(cfg config.Monitoring, localStorage *models.LocalStorage) 
 
 func (ms *metricService) SetMetricsCollector(collector metrics.Collector) {
 	metrics.SetGlobMetricsCollector(collector)
-	return
 }
 
 func (ms *metricService) LogLatencyHistogram(begin time.Time, labels map[string]string, loggingMetric metrics.MetricName) {

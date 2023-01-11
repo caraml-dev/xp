@@ -13,6 +13,19 @@ import (
 	"github.com/caraml-dev/xp/treatment-service/util"
 )
 
+type RandomizationKeyNotFoundError struct {
+	message string
+}
+
+func RandomizationKeyNotFound(message string) *RandomizationKeyNotFoundError {
+	return &RandomizationKeyNotFoundError{
+		message: message,
+	}
+}
+func (e *RandomizationKeyNotFoundError) Error() string {
+	return e.message
+}
+
 type TreatmentService interface {
 	// GetTreatment returns treatment based on provided experiment. If the experiment's type is Switchback,
 	// the window Id is also returned.
@@ -42,7 +55,7 @@ func (ts *treatmentService) GetTreatment(experiment *_pubsub.Experiment, randomi
 	var err error
 	if experiment.Type == _pubsub.Experiment_A_B {
 		if randomizationValue == nil {
-			return &_pubsub.ExperimentTreatment{}, nil, errors.New("randomization key's value is nil")
+			return &_pubsub.ExperimentTreatment{}, nil, RandomizationKeyNotFound("randomization key's value is nil")
 		}
 		treatment, err = getAbExperimentTreatment(experiment.Id, experiment.GetTreatments(), *randomizationValue)
 	} else if experiment.Type == _pubsub.Experiment_Switchback {
