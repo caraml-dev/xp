@@ -18,13 +18,14 @@ XP's Treatment Service is currently offered in two different versions:
 The central Treatment Service deployment uses configurations that can be stored in one or multiple 
 configuration files (`.yaml`) files. Some examples can be found here:
 
-- https://github.com/caraml-dev/xp/treatment-service/config/example.yaml
-- https://github.com/caraml-dev/xp/treatment-service/testdata/config1.yaml
-- https://github.com/caraml-dev/xp/treatment-service/testdata/config2.yaml
+- [/treatment-service/config/example.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/example.yaml)
+- [/treatment-service/testdata/config1.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/testdata/config1.yaml)
+- [/treatment-service/testdata/config2.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/testdata/config2.yaml)
 
-As can be seen from the various examples, there are a number of values that need to be set, though not all of them 
+As shown from the various examples, there are a number of values that need to be set, though not all of them 
 are necessarily required. Some of these values, when left undefined/empty, will be automatically initialised with 
-certain default values (see https://github.com/caraml-dev/xp/blob/main/treatment-service/config/config.go#L22).
+certain default values (see 
+[/treatment-service/config/config.go](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/config.go#L22)).
 
 ### Google Cloud Provider (GCP) Service Account
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs/overview) is used to allow the Treatment Service to 
