@@ -3,10 +3,10 @@
 ## Overview
 XP's Treatment Service is currently offered in two different versions:
 
-- a central Treatment Service, *deployed as a single deployment, to serve treatments to multiple 
-  clients/users with multiple projects*
-- a Treatment Service plugin, *deployed as a Turing Router experiment engine plugin, to serve treatments to a single 
-  client/user with a single project*
+- a standalone Treatment Service, *it can be configured to serve treatments to multiple clients/users with multiple 
+  CaraML projects*
+- a Treatment Service plugin, *deployed as a [Turing Router](https://github.com/caraml-dev/turing) experiment engine 
+  plugin, to serve treatments to a single client/user with a single CaraML project*
 
 ## Central Treatment Service
 
