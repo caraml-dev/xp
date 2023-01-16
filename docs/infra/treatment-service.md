@@ -15,8 +15,8 @@ XP's Treatment Service is currently offered in two different versions:
 - [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account)
 
 ### Configuration
-The central Treatment Service deployment uses a variety of configuration that can be stored in one or multiple 
-configuration files (`.yaml`) files. Some of such examples can be found here:
+The central Treatment Service deployment uses configurations that can be stored in one or multiple 
+configuration files (`.yaml`) files. Some examples can be found here:
 
 - https://github.com/caraml-dev/xp/treatment-service/config/example.yaml
 - https://github.com/caraml-dev/xp/treatment-service/testdata/config1.yaml
