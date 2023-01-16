@@ -18,14 +18,14 @@ XP's Treatment Service is currently offered in two different versions:
 The central Treatment Service deployment uses configurations that can be stored in one or multiple 
 configuration files (`.yaml`) files. Some examples can be found here:
 
-- [/treatment-service/config/example.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/example.yaml)
-- [/treatment-service/testdata/config1.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/testdata/config1.yaml)
-- [/treatment-service/testdata/config2.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/testdata/config2.yaml)
+- [example.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/example.yaml)
+- [config1.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/testdata/config1.yaml)
+- [config2.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/testdata/config2.yaml)
 
 As shown from the various examples, there are a number of values that need to be set, though not all of them 
 are necessarily required. Some of these values, when left undefined/empty, will be automatically initialised with 
 certain default values (see 
-[/treatment-service/config/config.go](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/config.go#L22)).
+[config.go](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/config.go#L22)).
 
 ### Google Cloud Provider (GCP) Service Account
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs/overview) is required for the Treatment Service to 
@@ -108,11 +108,11 @@ Treatment Service to access it.
 
 When deploying the Treatment Service with Helm, however, it is convenient to specify `extraVolumes`, 
 `extraVolumeMounts` and `extraEnvs` in the Helm chart values (see
-[values.yaml](https://github.com/caraml-dev/xp/tree/main/infra/charts/treatment-service/values.yaml#L59)), as they 
+[values.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/infra/charts/treatment-service/values.yaml#L59)), as they 
 automatically get added to the Treatment 
 Service deployment's volumes, volume mounts and environment variables respectively, via templates in the Helm chart 
 (see 
-[deployment.yaml](https://github.com/caraml-dev/xp/tree/main/infra/charts/treatment-service/templates/deployment.yaml#L37)).
+[deployment.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/infra/charts/treatment-service/templates/deployment.yaml#L37)).
 
 *Note that this is NOT the only one way to set the GCP service account key file to allow the Treatment Service to
 access it. There are a wide variety of other methods, such as containerising the Treatment Service binary together with 
