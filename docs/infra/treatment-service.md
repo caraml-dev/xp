@@ -120,7 +120,7 @@ the GCP service account key file, but we will not be listing all of them here.*
 
 ##### 3. Update the Helm Release
 
-To subsequently update a deployed release of `xp-treatment`, you may run something like the following, which updates 
+To subsequently update a deployed release of `xp-treatment`, you may run the following, which updates 
 not only the `xp-treatment`'s image but also its config values:
 
 ```shell
