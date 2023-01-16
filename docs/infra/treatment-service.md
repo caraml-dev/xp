@@ -8,14 +8,14 @@ XP's Treatment Service is currently offered in two different versions:
 - a Treatment Service plugin, *deployed as a [Turing Router](https://github.com/caraml-dev/turing) experiment engine 
   plugin, to serve treatments to a single client/user with a single CaraML project*
 
-## Central Treatment Service
+## Standalone Treatment Service
 
 ### Requirements
 - [Configuration](#configuration)
 - [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account)
 
 ### Configuration
-The central Treatment Service deployment uses configurations that can be stored in one or multiple 
+The standalone Treatment Service deployment uses configurations that can be stored in one or multiple 
 configuration files (`.yaml`) files. Some examples can be found here:
 
 - [example.yaml](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/example.yaml)
