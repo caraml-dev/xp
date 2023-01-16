@@ -49,6 +49,12 @@ Note that the Treatment Service does not currently support the usage of multiple
 authentication, i.e the Pub/Sub topic and the BigQuery table each requires a **different** service account for 
 authentication.
 
+In short, the service account configured would minimally need these roles/permissions:
+- [roles/pubsub.subscriber](https://cloud.google.com/pubsub/docs/access-control#roles), minimally, for the topic 
+  that the Management Service will publish updates to
+- [roles/bigquery.dataEditor](https://cloud.google.com/bigquery/docs/access-control#bigquery.dataEditor), minimally, 
+  for the table that will contain the logs (if logging to BigQuery is configured)
+
 ### Deploying the Treatment Service
 
 #### As a Helm Release
