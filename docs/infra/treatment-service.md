@@ -28,7 +28,7 @@ certain default values (see
 [/treatment-service/config/config.go](https://github.com/caraml-dev/xp/blob/f5eb2bd3c3ce301f392a1120232748a9255ab998/treatment-service/config/config.go#L22)).
 
 ### Google Cloud Provider (GCP) Service Account
-[Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs/overview) is used to allow the Treatment Service to 
+[Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs/overview) is required for the Treatment Service to 
 communicate with the Management Service to retrieve information about the experiments that are being run at any point 
 of time. More specifically, the Treatment Service subscribes to a Pub/Sub topic that the Management Service 
 publishes to whenever there are updates to actively running experiments.
@@ -37,8 +37,8 @@ Furthermore, the Treatment Service may also interact with [Google BigQuery](http
 it has been set up, to perform logging of all the treatments it assigns in a specified table.
 
 Hence, if access control has been set up for the Pub/Sub topic or for the BigQuery table, the Treatment Service needs 
-to be authenticated using a service account key that has the necessary rights to subscribe to the aforementioned Pub/Sub 
-topic or to push data to the said BigQuery table. It does so by accessing a `.json` 
+to be authenticated using a service account key that has the necessary permissions to subscribe to the aforementioned 
+Pub/Sub topic or to push data to the said BigQuery table. It does so by accessing a `.json` 
 [file containing the service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys), 
 whose location is stored as a filepath in the `GOOGLE_APPLICATION_CREDENTIALS` environment variable. 
 
@@ -46,7 +46,7 @@ Depending on how the Treatment Service is deployed, there are a variety of ways 
 the service account key file and the environment variable. See the section below for more information.
 
 Note that the Treatment Service does not currently support the usage of multiple GCP service accounts for 
-authentication, i.e the Pub/Sub topic and the BigQuery table each requiring a **different** service account for 
+authentication, i.e the Pub/Sub topic and the BigQuery table each requires a **different** service account for 
 authentication.
 
 ### Deploying the Treatment Service
@@ -57,7 +57,7 @@ authentication.
 
 ##### 1. Add the Helm Repository
 
-```sh
+```shell
 $ helm repo add xp https://turing-ml.github.io/charts
 ```
 
