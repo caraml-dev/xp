@@ -11,8 +11,8 @@ XP's Treatment Service is currently offered in two different versions:
 ## Central Treatment Service
 
 ### Requirements
-- Configuration
-- Google Cloud Provider (GCP) service account
+- [Configuration](#configuration)
+- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account)
 
 ### Configuration
 The central Treatment Service deployment uses a variety of configuration that can be stored in one or multiple 
