@@ -34,7 +34,184 @@ func TestNewExperimentRunner(t *testing.T) {
 		"success": {
 			props: json.RawMessage(`{
 				"endpoint": "http://test-endpoint",
-				"project_id": 10,
+				"timeout": "500ms",
+				"request_parameters": [
+					{
+						"name": "country",
+						"field": "countryValue",
+						"field_source": "payload"
+					}
+				],
+				"treatment_service_config": {
+					"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"pub_sub": {
+						"project": "dev",
+						"topic_name": "xp-update",
+						"pub_sub_timeout_seconds": 30
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"port": 8080,
+					"project_ids": ["1"],
+					"swagger_config": {
+						"enabled": false
+					}
+				}
+			}`),
+		},
+		"failure | bad config": {
+			props: json.RawMessage(`test`),
+			err: fmt.Sprint(
+				"Could not parse the XP runner configuration: ",
+				"invalid character 'e' in literal true (expecting 'r')",
+			),
+		},
+		"failure | missing config": {
+			props: json.RawMessage(`{}`),
+			err: fmt.Sprint(
+				"Key: 'ExperimentRunnerConfig.Endpoint' Error:",
+				"Field validation for 'Endpoint' failed on the 'required' tag\n",
+				"Key: 'ExperimentRunnerConfig.Timeout' Error:",
+				"Field validation for 'Timeout' failed on the 'required' tag\n",
+				"Key: 'ExperimentRunnerConfig.RequestParameters' Error:",
+				"Field validation for 'RequestParameters' failed on the 'required' tag\n",
+				"Key: 'ExperimentRunnerConfig.TreatmentServiceConfig' Error:",
+				"Field validation for 'TreatmentServiceConfig' failed on the 'required' tag",
+			),
+		},
+		"failure | bad timeout": {
+			props: json.RawMessage(`{
+				"endpoint": "http://test-endpoint",
+				"timeout": "500ss",
+				"request_parameters": [
+					{
+						"name": "country",
+						"field": "countryValue",
+						"field_source": "payload"
+					}
+				],
+				"treatment_service_config": {
+										"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"pub_sub": {
+						"project": "dev",
+						"topic_name": "xp-update",
+						"pub_sub_timeout_seconds": 30
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"port": 8080,
+					"project_ids": ["1"],
+					"swagger_config": {
+						"enabled": false
+					}
+				}
+			}`),
+			err: "XP runner timeout 500ss is invalid",
+		},
+		"failure | bad treatment service config": {
+			props: json.RawMessage(`{
+				"endpoint": "http://test-endpoint",
+				"timeout": "500ss",
+				"request_parameters": [
+					{
+						"name": "country",
+						"field": "countryValue",
+						"field_source": "payload"
+					}
+				],
+				"treatment_service_config": {
+										"assigned_treatment_logger": {
+						"bq_config": {
+							"dataset": "xp_dataset",
+							"project": "xp_project",
+							"table": "xp_table"
+						},
+						"kind": "bq",
+						"queue_length": 100000
+					},
+					"debug_config": {
+						"output_path": "/tmp"
+					},
+					"pub_sub": {
+						"project": "dev",
+						"topic_name": "xp-update",
+						"pub_sub_timeout_seconds": 30
+					},
+					"deployment_config": {
+						"environment_type": "dev",
+						"max_go_routines": 200
+					},
+					"management_service": {
+						"authorization_enabled": true,
+						"url": "http://xp-management.global.io/api/xp/v1"
+					},
+					"monitoring_config": {
+						"kind": "prometheus",
+						"metric_labels": [
+							"country",
+							"service"
+						]
+					},
+					"project_ids": ["1"],
+					"swagger_config": {
+						"enabled": false
+					}
+				}
+			}`),
+			err: "Key: 'ExperimentRunnerConfig.TreatmentServiceConfig.Port' Error:" +
+				"Field validation for 'Port' failed on the 'required' tag",
+		},
+		"failure | 0 project ids specified": {
+			props: json.RawMessage(`{
+				"endpoint": "http://test-endpoint",
 				"timeout": "500ms",
 				"request_parameters": [
 					{
@@ -82,34 +259,12 @@ func TestNewExperimentRunner(t *testing.T) {
 					}
 				}
 			}`),
+			err: "One and only one project id must be specified",
 		},
-		"failure | bad config": {
-			props: json.RawMessage(`test`),
-			err: fmt.Sprint(
-				"Could not parse the XP runner configuration: ",
-				"invalid character 'e' in literal true (expecting 'r')",
-			),
-		},
-		"failure | missing config": {
-			props: json.RawMessage(`{}`),
-			err: fmt.Sprint(
-				"Key: 'ExperimentRunnerConfig.Endpoint' Error:",
-				"Field validation for 'Endpoint' failed on the 'required' tag\n",
-				"Key: 'ExperimentRunnerConfig.ProjectID' Error:",
-				"Field validation for 'ProjectID' failed on the 'required' tag\n",
-				"Key: 'ExperimentRunnerConfig.Timeout' Error:",
-				"Field validation for 'Timeout' failed on the 'required' tag\n",
-				"Key: 'ExperimentRunnerConfig.RequestParameters' Error:",
-				"Field validation for 'RequestParameters' failed on the 'required' tag\n",
-				"Key: 'ExperimentRunnerConfig.TreatmentServiceConfig' Error:",
-				"Field validation for 'TreatmentServiceConfig' failed on the 'required' tag",
-			),
-		},
-		"failure | bad timeout": {
+		"failure | project id specified cannot be parsed into an int64 data type": {
 			props: json.RawMessage(`{
 				"endpoint": "http://test-endpoint",
-				"project_id": 10,
-				"timeout": "500ss",
+				"timeout": "500ms",
 				"request_parameters": [
 					{
 						"name": "country",
@@ -118,7 +273,7 @@ func TestNewExperimentRunner(t *testing.T) {
 					}
 				],
 				"treatment_service_config": {
-										"assigned_treatment_logger": {
+					"assigned_treatment_logger": {
 						"bq_config": {
 							"dataset": "xp_dataset",
 							"project": "xp_project",
@@ -151,65 +306,13 @@ func TestNewExperimentRunner(t *testing.T) {
 						]
 					},
 					"port": 8080,
+					"project_ids": ["abc"],
 					"swagger_config": {
 						"enabled": false
 					}
 				}
 			}`),
-			err: "XP runner timeout 500ss is invalid",
-		},
-		"failure | bad treatment service config": {
-			props: json.RawMessage(`{
-				"endpoint": "http://test-endpoint",
-				"project_id": 10,
-				"timeout": "500ss",
-				"request_parameters": [
-					{
-						"name": "country",
-						"field": "countryValue",
-						"field_source": "payload"
-					}
-				],
-				"treatment_service_config": {
-										"assigned_treatment_logger": {
-						"bq_config": {
-							"dataset": "xp_dataset",
-							"project": "xp_project",
-							"table": "xp_table"
-						},
-						"kind": "bq",
-						"queue_length": 100000
-					},
-					"debug_config": {
-						"output_path": "/tmp"
-					},
-					"pub_sub": {
-						"project": "dev",
-						"topic_name": "xp-update",
-						"pub_sub_timeout_seconds": 30
-					},
-					"deployment_config": {
-						"environment_type": "dev",
-						"max_go_routines": 200
-					},
-					"management_service": {
-						"authorization_enabled": true,
-						"url": "http://xp-management.global.io/api/xp/v1"
-					},
-					"monitoring_config": {
-						"kind": "prometheus",
-						"metric_labels": [
-							"country",
-							"service"
-						]
-					},
-					"swagger_config": {
-						"enabled": false
-					}
-				}
-			}`),
-			err: "Key: 'ExperimentRunnerConfig.TreatmentServiceConfig.Port' Error:" +
-				"Field validation for 'Port' failed on the 'required' tag",
+			err: "Error parsing project id string into int64: strconv.ParseInt: parsing \"abc\": invalid syntax",
 		},
 	}
 

@@ -158,7 +158,6 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 			}`),
 			expected: `{
 				"endpoint": "test-endpoint",
-				"project_id": 10,
 				"timeout": "12s",
 				"request_parameters": [
 					{

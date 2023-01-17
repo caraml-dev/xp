@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/caraml-dev/turing/engines/experiment/log"
@@ -38,7 +39,7 @@ func init() {
 // experimentRunner implements runner.ExperimentRunner
 type experimentRunner struct {
 	httpClient *xpclient.ClientWithResponses
-	projectID  int
+	projectID  int64
 	parameters []config.Variable
 	appContext *appcontext.AppContext
 }
@@ -53,7 +54,7 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	// Get the request parameters for the current request
 	requestParams := er.getRequestParams(logger, reqHeader, body)
 
-	projectId := models.NewProjectId(int64(er.projectID))
+	projectId := models.NewProjectId(er.projectID)
 
 	// Initialize metric / log variables
 	begin := time.Now()
@@ -258,13 +259,22 @@ func NewExperimentRunner(jsonCfg json.RawMessage) (runner.ExperimentRunner, erro
 		xpclient.WithHTTPClient(&http.Client{Timeout: timeout}),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to create XP runner client: %s", err.Error())
+		return nil, errors.Wrapf(err, "Unable to create XP runner client")
+	}
+
+	// Retrieve project ID
+	if len(config.TreatmentServiceConfig.ProjectIds) != 1 {
+		return nil, fmt.Errorf("One and only one project id must be specified")
+	}
+	projectId, err := strconv.ParseInt(config.TreatmentServiceConfig.ProjectIds[0], 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error parsing project id string into int64")
 	}
 
 	// Return new XP Runner
 	r := &experimentRunner{
 		httpClient: client,
-		projectID:  config.ProjectID,
+		projectID:  projectId,
 		parameters: config.RequestParameters,
 		appContext: appCtx,
 	}

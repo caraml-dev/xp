@@ -105,7 +105,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 	bytes, err := json.Marshal(_config.ExperimentRunnerConfig{
 		Endpoint:               em.RunnerDefaults.Endpoint,
 		Timeout:                em.RunnerDefaults.Timeout,
-		ProjectID:              config.ProjectID,
 		RequestParameters:      config.Variables,
 		TreatmentServiceConfig: treatmentServiceConfig,
 	})
