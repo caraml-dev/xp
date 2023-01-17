@@ -152,7 +152,7 @@ These are regular Kubernetes metrics generated via the
 server and generates metrics about the state of the pod in which the Treatment Service is deployed. These metrics are 
 out-of-the-box Prometheus metrics that track 
 [common statistics](https://github.com/kubernetes/kube-state-metrics/blob/main/docs/pod-metrics.md) such as CPU and 
-memory usage, CPU throttling, etc.
+memory usage, CPU throttling, etc. and usually begin with the `kube_` prefix.
 
 #### Custom Metrics produced by the Treatment Service
 
@@ -165,6 +165,8 @@ treatments, such as the duration for fetching a treatment, number of fetch treat
 | mlp_xp_treatment_service_experiment_lookup_duration_ms        | The duration for an experiment lookup to be performed                  | Histogram | `project_name`                                                                                            | Milliseconds |
 | mlp_xp_treatment_service_fetch_treatment_request_count        | The number of fetch treatment requests received                        | Counter   | `project_name`, `experiment_name`, `treatment_name`, `response_code`, and additional custom metric labels | -            |
 | mlp_xp_treatment_service_no_matching_experiment_request_count | The number of fetch treatment requests with no matching experiments    | Counter   | `project_name`, `response_code`, and additional custom metric labels                                      | -            |
+
+Notice that these custom metrics have the prefix `mlp_xp_treatment_service_`.
 
 ## Treatment Service Plugin
 
@@ -339,6 +341,26 @@ turing:
 #### 2. Deploy the Turing API Server
 
 Deploy the Turing API server as usual and deploy Turing Routers with it to observe any changes made.
+
+### Monitoring the Treatment Service
+
+Unlike the standalone Treatment Service, the Treatment Service Plugin does not generate its own Kubernetes metrics, 
+since it is running as a child process of a Turing Router. It does however, generate the 
+[same custom Prometheus metrics](#custom-metrics-produced-by-the-treatment-service) as that 
+of the standalone Treatment Service:
+
+| Metric Name                                     | Description                                                            | Type      | Tags                                                                                                      | Unit         |
+|-------------------------------------------------|------------------------------------------------------------------------|-----------|-----------------------------------------------------------------------------------------------------------|--------------|
+| mlp_turing_fetch_treatment_request_duration_ms  | The duration for responding to a http request for fetching a treatment | Histogram | `project_name`, `experiment_name`, `treatment_name`, `response_code`                                      | Milliseconds |
+| mlp_turing_experiment_lookup_duration_ms        | The duration for an experiment lookup to be performed                  | Histogram | `project_name`                                                                                            | Milliseconds |
+| mlp_turing_fetch_treatment_request_count        | The number of fetch treatment requests received                        | Counter   | `project_name`, `experiment_name`, `treatment_name`, `response_code`, and additional custom metric labels | -            |
+| mlp_turing_no_matching_experiment_request_count | The number of fetch treatment requests with no matching experiments    | Counter   | `project_name`, `response_code`, and additional custom metric labels                                      | -            |
+
+Notice though, that the metric names are slightly different - they have the `mlp_turing_` prefix instead of the 
+`mlp_xp_treatment_service_` prefix of the metrics that the standalone Treatment Service generates. This is expected 
+since the Treatment Service Plugin uses the Prometheus Collector of the Turing Router to export its metrics. 
+Naturally, this means that these metrics are accessible via the `\metrics` endpoint of the Turing router container 
+in which the plugin is being run.
 
 ### Extra Resource Consumption Considerations
 
