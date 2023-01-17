@@ -15,8 +15,8 @@ clients or users, with no constraint on who those clients or users are, as long 
 treatments to the Treatment Service via HTTP.
 
 ### Requirements
-- [Configuration](#configuration-1)
-- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account-1)
+- [Configuration](#configuration)
+- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account)
 
 #### Configuration
 The standalone Treatment Service deployment uses configurations that can be stored in one or multiple 
@@ -177,8 +177,8 @@ is configured as a plugin for.
 
 ### Requirements
 
-- [Configuration](#configuration)
-- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account)
+- [Configuration](#configuration-1)
+- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account-1)
 
 #### Configuration
 
