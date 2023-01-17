@@ -60,7 +60,6 @@ type experimentManager struct {
 	validate                     *validator.Validate
 	httpClient                   *xpclient.ClientWithResponses
 	RemoteUI                     _config.RemoteUI                     `validate:"required,dive"`
-	RunnerDefaults               _config.RunnerDefaults               `validate:"required,dive"`
 	TreatmentServicePluginConfig _config.TreatmentServicePluginConfig `validate:"required,dive"`
 }
 
@@ -103,8 +102,6 @@ func (em *experimentManager) GetExperimentRunnerConfig(rawConfig json.RawMessage
 
 	// Convert data to json
 	bytes, err := json.Marshal(_config.ExperimentRunnerConfig{
-		Endpoint:               em.RunnerDefaults.Endpoint,
-		Timeout:                em.RunnerDefaults.Timeout,
 		RequestParameters:      config.Variables,
 		TreatmentServiceConfig: treatmentServiceConfig,
 	})
@@ -192,7 +189,6 @@ func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentM
 		validate:                     _config.NewValidator(),
 		httpClient:                   client,
 		RemoteUI:                     config.RemoteUI,
-		RunnerDefaults:               config.RunnerDefaults,
 		TreatmentServicePluginConfig: config.TreatmentServicePluginConfig,
 	}
 
