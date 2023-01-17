@@ -3,10 +3,11 @@
 ## Overview
 XP's Treatment Service is currently offered in two different versions:
 
-- a standalone Treatment Service, *it can be configured to serve treatments to multiple clients/users with multiple 
-  CaraML projects*
-- a Treatment Service plugin, *deployed as a [Turing Router](https://github.com/caraml-dev/turing) experiment engine 
-  plugin, to serve treatments to a single client/user with a single CaraML project*
+- a [standalone Treatment Service](#standalone-treatment-service), *it can be configured to serve treatments to multiple 
+  clients/users with multiple CaraML projects*
+- a [Treatment Service plugin](#treatment-service-plugin), *deployed as a 
+  [Turing Router](https://github.com/caraml-dev/turing) experiment engine plugin, to serve treatments to a single 
+  client/user with a single CaraML project*
 
 ## Standalone Treatment Service
 The standalone Treatment Service is one that is deployed as a service and is configured to serve treatments to multiple
@@ -14,8 +15,8 @@ clients or users, with no constraint on who those clients or users are, as long 
 treatments to the Treatment Service via HTTP.
 
 ### Requirements
-- [Configuration](#configuration)
-- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account)
+- [Configuration](#configuration-1)
+- [Google Cloud Provider (GCP) service account](#google-cloud-provider-gcp-service-account-1)
 
 #### Configuration
 The standalone Treatment Service deployment uses configurations that can be stored in one or multiple 
@@ -225,7 +226,7 @@ These details should fall under the `turing.experimentEngines` field, where othe
 
 ```yaml
 turing:
-# ...
+  # ...
   experimentEngines:
     - name: xp
       type: rpc-plugin
