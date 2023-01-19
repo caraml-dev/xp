@@ -22,11 +22,6 @@ const (
 	NoneFieldSource FieldSource = "none"
 )
 
-type RunnerDefaults struct {
-	Endpoint string `json:"endpoint"` // API host for the experiment runner
-	Timeout  string `json:"timeout"`  // API timeout for the experiment runner
-}
-
 type RemoteUI struct {
 	Name   string `json:"name" validate:"required"`
 	URL    string `json:"url" validate:"required"`
@@ -38,15 +33,11 @@ type ExperimentManagerConfig struct {
 	BaseURL                      string                       `json:"base_url"`      // Base URL for XP experiment REST API
 	HomePageURL                  string                       `json:"home_page_url"` // Website URL for end-users to manage experiments
 	RemoteUI                     RemoteUI                     `json:"remote_ui"`
-	RunnerDefaults               RunnerDefaults               `json:"runner_defaults"`
 	TreatmentServicePluginConfig TreatmentServicePluginConfig `json:"treatment_service_plugin_config"`
 }
 
 // ExperimentRunnerConfig is used to parse the XP runner config during initialization
 type ExperimentRunnerConfig struct {
-	Endpoint               string         `json:"endpoint" validate:"required"`
-	ProjectID              int            `json:"project_id" validate:"required"`
-	Timeout                string         `json:"timeout" validate:"required"`
 	RequestParameters      []Variable     `json:"request_parameters" validate:"required,dive"`
 	TreatmentServiceConfig *config.Config `json:"treatment_service_config" validate:"required,dive"`
 }

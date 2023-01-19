@@ -45,10 +45,6 @@ func TestNewExperimentManager(t *testing.T) {
 					"name": "xp",
 					"url": "/xp/remoteEntry.js"
 				},
-				"runner_defaults": {
-					"endpoint": "http://xp-treatment.global.io/v1",
-					"timeout": "5s"
-				},
 				"treatment_service_plugin_config": {
 					"assigned_treatment_logger": {
 						"bq_config": {
@@ -157,9 +153,6 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 				]
 			}`),
 			expected: `{
-				"endpoint": "test-endpoint",
-				"project_id": 10,
-				"timeout": "12s",
 				"request_parameters": [
 					{
 						"name": "country",
@@ -179,7 +172,7 @@ func TestGetExperimentRunnerConfig(t *testing.T) {
 
 	// Patch method to get treatment service config
 	// TODO: Generate mock client and use it here instead of patching
-	em := &experimentManager{RunnerDefaults: _config.RunnerDefaults{Endpoint: "test-endpoint", Timeout: "12s"}}
+	em := &experimentManager{}
 	monkey.PatchInstanceMethod(
 		reflect.TypeOf(em),
 		"GetTreatmentServiceConfigFromManagementService",

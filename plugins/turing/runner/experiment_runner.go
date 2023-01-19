@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/caraml-dev/turing/engines/experiment/log"
@@ -22,7 +23,6 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 
-	xpclient "github.com/caraml-dev/xp/clients/treatment"
 	"github.com/caraml-dev/xp/plugins/turing/config"
 	"github.com/caraml-dev/xp/treatment-service/appcontext"
 )
@@ -37,8 +37,7 @@ func init() {
 
 // experimentRunner implements runner.ExperimentRunner
 type experimentRunner struct {
-	httpClient *xpclient.ClientWithResponses
-	projectID  int
+	projectID  int64
 	parameters []config.Variable
 	appContext *appcontext.AppContext
 }
@@ -53,7 +52,7 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	// Get the request parameters for the current request
 	requestParams := er.getRequestParams(logger, reqHeader, body)
 
-	projectId := models.NewProjectId(int64(er.projectID))
+	projectId := models.NewProjectId(er.projectID)
 
 	// Initialize metric / log variables
 	begin := time.Now()
@@ -240,31 +239,24 @@ func NewExperimentRunner(jsonCfg json.RawMessage) (runner.ExperimentRunner, erro
 		return nil, err
 	}
 
-	// Ensure timeout set in config has a valid duration format.
-	timeout, err := time.ParseDuration(config.Timeout)
-	if err != nil {
-		return nil, fmt.Errorf("XP runner timeout %s is invalid", config.Timeout)
-	}
-
 	// Init AppContext
 	appCtx, err := appcontext.NewAppContext(config.TreatmentServiceConfig)
 	if err != nil {
 		log.Panicf("Failed initializing application appcontext: %v", err)
 	}
 
-	// Create XP client
-	client, err := xpclient.NewClientWithResponses(
-		config.Endpoint,
-		xpclient.WithHTTPClient(&http.Client{Timeout: timeout}),
-	)
+	// Retrieve project ID
+	if len(config.TreatmentServiceConfig.ProjectIds) != 1 {
+		return nil, fmt.Errorf("One and only one project id must be specified")
+	}
+	projectId, err := strconv.ParseInt(config.TreatmentServiceConfig.ProjectIds[0], 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to create XP runner client: %s", err.Error())
+		return nil, errors.Wrapf(err, "Error parsing project id string into int64")
 	}
 
 	// Return new XP Runner
 	r := &experimentRunner{
-		httpClient: client,
-		projectID:  config.ProjectID,
+		projectID:  projectId,
 		parameters: config.RequestParameters,
 		appContext: appCtx,
 	}
