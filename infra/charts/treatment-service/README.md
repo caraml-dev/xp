@@ -2,7 +2,7 @@
 
 ---
 ![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square)
-![AppVersion: v0.7.0](https://img.shields.io/badge/AppVersion-v0.7.0-informational?style=flat-square)
+![AppVersion: v0.9.0](https://img.shields.io/badge/AppVersion-v0.9.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes Deployment of the XP Treatment Service
 
@@ -29,23 +29,23 @@ $ helm repo add xp https://turing-ml.github.io/charts
 
 ### Installing the chart
 
-This command will install XP Treatment Service release named `treatment-service` in the `default` namespace.
+This command will install XP Treatment Service release named `xp-treatment` in the `default` namespace.
 Default chart values will be used for the installation:
 ```shell
-$ helm install xp xp/treatment-service
+$ helm install xp-treatment xp/xp-treatment
 ```
 
 You can (and most likely, should) override the default configuration with values suitable for your installation.
 Refer to [Configuration](#configuration) section for the detailed description of available configuration keys.
 
-You can also refer to [values.minimal.yaml](./values.minimal.yaml) to check a minimal configuration that needs
+You can also refer to [values.yaml](./values.yaml) to check a minimal configuration that needs
 to be provided for XP Treatment Service installation.
 
 ### Uninstalling the chart
 
-To uninstall `treatment-service` release:
+To uninstall the `xp-treatment` release:
 ```shell
-$ helm uninstall treatment-service
+$ helm uninstall xp-treatment
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release,
@@ -74,7 +74,7 @@ The following table lists the configurable parameters of the XP Treatment Servic
 | xpTreatment.image.pullPolicy | string | `"IfNotPresent"` | Docker image pull policy |
 | xpTreatment.image.registry | string | `"ghcr.io"` | Docker registry for XP Treatment Service image |
 | xpTreatment.image.repository | string | `"caraml-dev/xp/xp-treatment"` | Docker image repository for XP Treatment Service |
-| xpTreatment.image.tag | string | `"v0.7.0"` | Docker image tag for XP Treatment Service |
+| xpTreatment.image.tag | string | `"v0.9.0"` | Docker image tag for XP Treatment Service |
 | xpTreatment.ingress.class | string | `""` | Ingress class annotation to add to this Ingress rule,  useful when there are multiple ingress controllers installed |
 | xpTreatment.ingress.enabled | bool | `false` | Enable ingress to provision Ingress resource for external access to XP Treatment Service |
 | xpTreatment.ingress.host | string | `""` | Set host value to enable name based virtual hosting. This allows routing HTTP traffic to multiple host names at the same IP address. If no host is specified, the ingress rule applies to all inbound HTTP traffic through  the IP address specified. https://kubernetes.io/docs/concepts/services-networking/ingress/#name-based-virtual-hosting |
