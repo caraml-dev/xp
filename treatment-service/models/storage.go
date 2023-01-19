@@ -78,7 +78,7 @@ type ExperimentIndex struct {
 	stringSets map[string]*set.Set
 	intSets    map[string]*set.Set
 	realSets   map[string]*set.Set
-	boolFlags  map[string]bool
+	boolSets   map[string]*set.Set
 
 	StartTime time.Time
 	EndTime   time.Time
@@ -148,14 +148,15 @@ func (i *ExperimentIndex) MarshalJSON() ([]byte, error) {
 }
 
 func (i *ExperimentIndex) matchFlagSetSegment(segmentName string, value bool) MatchStrength {
-	if _, exists := i.boolFlags[segmentName]; !exists {
+	set, exists := i.boolSets[segmentName]
+	if !exists || set.Len() == 0 {
+		// Optional segmenter
 		return MatchStrengthWeak
 	}
 
-	if i.boolFlags[segmentName] == value {
+	if set.Has(value) {
 		return MatchStrengthExact
 	}
-
 	return MatchStrengthNone
 }
 
@@ -244,7 +245,7 @@ func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
 	if set, exists := i.realSets[segmentName]; !exists || set.Len() == 0 {
 		return true
 	}
-	if _, exists := i.boolFlags[segmentName]; !exists {
+	if _, exists := i.boolSets[segmentName]; !exists {
 		return true
 	}
 	return false
@@ -374,7 +375,7 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 	stringSets := make(map[string]*set.Set)
 	intSets := make(map[string]*set.Set)
 	realSets := make(map[string]*set.Set)
-	boolFlags := make(map[string]bool)
+	boolSets := make(map[string]*set.Set)
 
 	for key, segment := range experiment.Segments {
 		for _, val := range segment.Values {
@@ -398,7 +399,11 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 				}
 				realSets[key].Insert(val.GetReal())
 			case *_segmenters.SegmenterValue_Bool:
-				boolFlags[key] = val.GetBool()
+				_, ok := boolSets[key]
+				if !ok {
+					boolSets[key] = set.New()
+				}
+				boolSets[key].Insert(val.GetBool())
 			}
 		}
 	}
@@ -412,7 +417,7 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 		stringSets: stringSets,
 		intSets:    intSets,
 		realSets:   realSets,
-		boolFlags:  boolFlags,
+		boolSets:   boolSets,
 		StartTime:  time.Unix(experiment.StartTime.Seconds, 0).UTC(),
 		EndTime:    time.Unix(experiment.EndTime.Seconds, 0).UTC(),
 	}

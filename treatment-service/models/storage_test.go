@@ -560,6 +560,7 @@ func TestExperimentIndexMatchSegment(t *testing.T) {
 	stringSetsVal := []interface{}{"test1"}
 	intSetsVal := []interface{}{int64(1)}
 	realSetsVal := []interface{}{1.0}
+	boolSetsVal := []interface{}{true}
 	experimentIndex := ExperimentIndex{
 		stringSets: map[string]*set.Set{
 			"stringType": set.New(stringSetsVal...),
@@ -570,8 +571,8 @@ func TestExperimentIndexMatchSegment(t *testing.T) {
 		realSets: map[string]*set.Set{
 			"realType": set.New(realSetsVal...),
 		},
-		boolFlags: map[string]bool{
-			"flagType": true,
+		boolSets: map[string]*set.Set{
+			"flagType": set.New(boolSetsVal...),
 		},
 		Experiment: &_pubsub.Experiment{
 			Segments: map[string]*_segmenters.ListSegmenterValue{
