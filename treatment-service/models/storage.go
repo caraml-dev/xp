@@ -159,22 +159,6 @@ func (i *ExperimentIndex) matchFlagSetSegment(segmentName string, value bool) Ma
 	return MatchStrengthNone
 }
 
-func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
-	if set, exists := i.stringSets[segmentName]; !exists || set.Len() == 0 {
-		return true
-	}
-	if set, exists := i.intSets[segmentName]; !exists || set.Len() == 0 {
-		return true
-	}
-	if set, exists := i.realSets[segmentName]; !exists || set.Len() == 0 {
-		return true
-	}
-	if _, exists := i.boolFlags[segmentName]; !exists {
-		return true
-	}
-	return false
-}
-
 func (i *ExperimentIndex) matchStringSetSegment(segmentName string, value string) MatchStrength {
 	set, exists := i.stringSets[segmentName]
 	if !exists || set.Len() == 0 {
@@ -248,6 +232,22 @@ func (i *ExperimentIndex) isActive() bool {
 	}
 
 	return (i.StartTime.Before(time.Now()) || i.StartTime.Equal(time.Now())) && i.EndTime.After(time.Now())
+}
+
+func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
+	if set, exists := i.stringSets[segmentName]; !exists || set.Len() == 0 {
+		return true
+	}
+	if set, exists := i.intSets[segmentName]; !exists || set.Len() == 0 {
+		return true
+	}
+	if set, exists := i.realSets[segmentName]; !exists || set.Len() == 0 {
+		return true
+	}
+	if _, exists := i.boolFlags[segmentName]; !exists {
+		return true
+	}
+	return false
 }
 
 func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSettings) error {
@@ -403,7 +403,8 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 		}
 	}
 
-	// Delete all segments since they are unnecessary
+	// Delete all segments since they have already been converted to the various sets stored in ExperimentIndex,
+	// and are no longer used by the Treatment Service
 	experiment.Segments = nil
 
 	return &ExperimentIndex{
