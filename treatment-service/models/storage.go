@@ -78,6 +78,7 @@ type ExperimentIndex struct {
 	stringSets map[string]*set.Set
 	intSets    map[string]*set.Set
 	realSets   map[string]*set.Set
+	boolFlags  map[string]bool
 
 	StartTime time.Time
 	EndTime   time.Time
@@ -147,19 +148,31 @@ func (i *ExperimentIndex) MarshalJSON() ([]byte, error) {
 }
 
 func (i *ExperimentIndex) matchFlagSetSegment(segmentName string, value bool) MatchStrength {
-	if _, exists := i.Experiment.Segments[segmentName]; !exists ||
-		len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
-		// Optional segmenter
+	if _, exists := i.boolFlags[segmentName]; !exists {
 		return MatchStrengthWeak
 	}
 
-	for _, val := range i.Experiment.Segments[segmentName].GetValues() {
-		if val.GetBool() == value {
-			return MatchStrengthExact
-		}
+	if i.boolFlags[segmentName] == value {
+		return MatchStrengthExact
 	}
 
 	return MatchStrengthNone
+}
+
+func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
+	if set, exists := i.stringSets[segmentName]; !exists || set.Len() == 0 {
+		return true
+	}
+	if set, exists := i.intSets[segmentName]; !exists || set.Len() == 0 {
+		return true
+	}
+	if set, exists := i.realSets[segmentName]; !exists || set.Len() == 0 {
+		return true
+	}
+	if _, exists := i.boolFlags[segmentName]; !exists {
+		return true
+	}
+	return false
 }
 
 func (i *ExperimentIndex) matchStringSetSegment(segmentName string, value string) MatchStrength {
@@ -204,8 +217,7 @@ func (i *ExperimentIndex) matchRealSetSegment(segmentName string, value float64)
 func (i *ExperimentIndex) matchSegment(segmentName string, values []*_segmenters.SegmenterValue) Match {
 	if len(values) == 0 {
 		// We can either have an optional match on the experiment or none.
-		if _, exists := i.Experiment.Segments[segmentName]; !exists ||
-			len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
+		if i.checkSegmentHasWeakMatch(segmentName) {
 			return Match{Strength: MatchStrengthWeak, Value: nil}
 		}
 	}
@@ -362,6 +374,7 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 	stringSets := make(map[string]*set.Set)
 	intSets := make(map[string]*set.Set)
 	realSets := make(map[string]*set.Set)
+	boolFlags := make(map[string]bool)
 
 	for key, segment := range experiment.Segments {
 		for _, val := range segment.Values {
@@ -384,15 +397,21 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 					realSets[key] = set.New()
 				}
 				realSets[key].Insert(val.GetReal())
+			case *_segmenters.SegmenterValue_Bool:
+				boolFlags[key] = val.GetBool()
 			}
 		}
 	}
+
+	// Delete all segments since they are unnecessary
+	experiment.Segments = nil
 
 	return &ExperimentIndex{
 		Experiment: experiment,
 		stringSets: stringSets,
 		intSets:    intSets,
 		realSets:   realSets,
+		boolFlags:  boolFlags,
 		StartTime:  time.Unix(experiment.StartTime.Seconds, 0).UTC(),
 		EndTime:    time.Unix(experiment.EndTime.Seconds, 0).UTC(),
 	}
