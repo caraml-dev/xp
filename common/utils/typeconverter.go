@@ -13,11 +13,11 @@ func StringSliceToListSegmenterValue(values *[]string) *_segmenters.ListSegmente
 	if values == nil {
 		return nil
 	}
-	segmenterValues := []*_segmenters.SegmenterValue{}
-	for _, val := range *values {
-		segmenterValues = append(segmenterValues, &_segmenters.SegmenterValue{
-			Value: &_segmenters.SegmenterValue_String_{String_: val},
-		})
+	segmenterValues := make([]*_segmenters.SegmenterValue, len(*values))
+	for i := 0; i < len(*values); i++ {
+		segmenterValues[i] = &_segmenters.SegmenterValue{
+			Value: &_segmenters.SegmenterValue_String_{String_: (*values)[i]},
+		}
 	}
 	return &_segmenters.ListSegmenterValue{Values: segmenterValues}
 }
@@ -26,9 +26,11 @@ func BoolSliceToListSegmenterValue(values *[]bool) *_segmenters.ListSegmenterVal
 	if values == nil {
 		return nil
 	}
-	segmenterValues := []*_segmenters.SegmenterValue{}
-	for _, val := range *values {
-		segmenterValues = append(segmenterValues, &_segmenters.SegmenterValue{Value: &_segmenters.SegmenterValue_Bool{Bool: val}})
+	segmenterValues := make([]*_segmenters.SegmenterValue, len(*values))
+	for i := 0; i < len(*values); i++ {
+		segmenterValues[i] = &_segmenters.SegmenterValue{
+			Value: &_segmenters.SegmenterValue_Bool{Bool: (*values)[i]},
+		}
 	}
 	return &_segmenters.ListSegmenterValue{Values: segmenterValues}
 }
@@ -37,11 +39,11 @@ func Int64ListToListSegmenterValue(values *[]int64) *_segmenters.ListSegmenterVa
 	if values == nil {
 		return nil
 	}
-	segmenterValues := []*_segmenters.SegmenterValue{}
-	for _, val := range *values {
-		segmenterValues = append(segmenterValues, &_segmenters.SegmenterValue{
-			Value: &_segmenters.SegmenterValue_Integer{Integer: val},
-		})
+	segmenterValues := make([]*_segmenters.SegmenterValue, len(*values))
+	for i := 0; i < len(*values); i++ {
+		segmenterValues[i] = &_segmenters.SegmenterValue{
+			Value: &_segmenters.SegmenterValue_Integer{Integer: (*values)[i]},
+		}
 	}
 	return &_segmenters.ListSegmenterValue{Values: segmenterValues}
 }
@@ -50,11 +52,11 @@ func FloatListToListSegmenterValue(values *[]float64) *_segmenters.ListSegmenter
 	if values == nil {
 		return nil
 	}
-	segmenterValues := []*_segmenters.SegmenterValue{}
-	for _, val := range *values {
-		segmenterValues = append(segmenterValues, &_segmenters.SegmenterValue{
-			Value: &_segmenters.SegmenterValue_Real{Real: val},
-		})
+	segmenterValues := make([]*_segmenters.SegmenterValue, len(*values))
+	for i := 0; i < len(*values); i++ {
+		segmenterValues[i] = &_segmenters.SegmenterValue{
+			Value: &_segmenters.SegmenterValue_Real{Real: (*values)[i]},
+		}
 	}
 	return &_segmenters.ListSegmenterValue{Values: segmenterValues}
 }

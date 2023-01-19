@@ -78,6 +78,7 @@ type ExperimentIndex struct {
 	stringSets map[string]*set.Set
 	intSets    map[string]*set.Set
 	realSets   map[string]*set.Set
+	boolSets   map[string]*set.Set
 
 	StartTime time.Time
 	EndTime   time.Time
@@ -147,18 +148,15 @@ func (i *ExperimentIndex) MarshalJSON() ([]byte, error) {
 }
 
 func (i *ExperimentIndex) matchFlagSetSegment(segmentName string, value bool) MatchStrength {
-	if _, exists := i.Experiment.Segments[segmentName]; !exists ||
-		len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
+	set, exists := i.boolSets[segmentName]
+	if !exists || set.Len() == 0 {
 		// Optional segmenter
 		return MatchStrengthWeak
 	}
 
-	for _, val := range i.Experiment.Segments[segmentName].GetValues() {
-		if val.GetBool() == value {
-			return MatchStrengthExact
-		}
+	if set.Has(value) {
+		return MatchStrengthExact
 	}
-
 	return MatchStrengthNone
 }
 
@@ -204,8 +202,7 @@ func (i *ExperimentIndex) matchRealSetSegment(segmentName string, value float64)
 func (i *ExperimentIndex) matchSegment(segmentName string, values []*_segmenters.SegmenterValue) Match {
 	if len(values) == 0 {
 		// We can either have an optional match on the experiment or none.
-		if _, exists := i.Experiment.Segments[segmentName]; !exists ||
-			len(i.Experiment.Segments[segmentName].GetValues()) == 0 {
+		if i.checkSegmentHasWeakMatch(segmentName) {
 			return Match{Strength: MatchStrengthWeak, Value: nil}
 		}
 	}
@@ -236,6 +233,27 @@ func (i *ExperimentIndex) isActive() bool {
 	}
 
 	return (i.StartTime.Before(time.Now()) || i.StartTime.Equal(time.Now())) && i.EndTime.After(time.Now())
+}
+
+func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
+	if set, exists := i.stringSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
+	} else if set, exists := i.intSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
+	} else if set, exists := i.realSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
+	} else if set, exists := i.boolSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSettings) error {
@@ -362,6 +380,7 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 	stringSets := make(map[string]*set.Set)
 	intSets := make(map[string]*set.Set)
 	realSets := make(map[string]*set.Set)
+	boolSets := make(map[string]*set.Set)
 
 	for key, segment := range experiment.Segments {
 		for _, val := range segment.Values {
@@ -384,15 +403,28 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 					realSets[key] = set.New()
 				}
 				realSets[key].Insert(val.GetReal())
+			case *_segmenters.SegmenterValue_Bool:
+				_, ok := boolSets[key]
+				if !ok {
+					boolSets[key] = set.New()
+				}
+				boolSets[key].Insert(val.GetBool())
 			}
 		}
 	}
+
+	// Delete all segments since they have already been converted to the various sets stored in ExperimentIndex,
+	// and are no longer used by the Treatment Service
+	// TODO: To make the ExperimentIndex store only the relevant data using appropriate structs rather than
+	// attempting to reuse this pubsub message type and deleting the redundant data from it
+	experiment.Segments = nil
 
 	return &ExperimentIndex{
 		Experiment: experiment,
 		stringSets: stringSets,
 		intSets:    intSets,
 		realSets:   realSets,
+		boolSets:   boolSets,
 		StartTime:  time.Unix(experiment.StartTime.Seconds, 0).UTC(),
 		EndTime:    time.Unix(experiment.EndTime.Seconds, 0).UTC(),
 	}
