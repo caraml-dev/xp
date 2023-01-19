@@ -240,18 +240,15 @@ func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
 		if set.Len() > 0 {
 			return false
 		}
-	}
-	if set, exists := i.intSets[segmentName]; exists {
+	} else if set, exists := i.intSets[segmentName]; exists {
 		if set.Len() > 0 {
 			return false
 		}
-	}
-	if set, exists := i.realSets[segmentName]; exists {
+	} else if set, exists := i.realSets[segmentName]; exists {
 		if set.Len() > 0 {
 			return false
 		}
-	}
-	if set, exists := i.boolSets[segmentName]; exists {
+	} else if set, exists := i.boolSets[segmentName]; exists {
 		if set.Len() > 0 {
 			return false
 		}
