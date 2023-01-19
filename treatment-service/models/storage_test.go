@@ -570,6 +570,9 @@ func TestExperimentIndexMatchSegment(t *testing.T) {
 		realSets: map[string]*set.Set{
 			"realType": set.New(realSetsVal...),
 		},
+		boolFlags: map[string]bool{
+			"flagType": true,
+		},
 		Experiment: &_pubsub.Experiment{
 			Segments: map[string]*_segmenters.ListSegmenterValue{
 				"stringType": {
@@ -672,7 +675,7 @@ func TestExperimentIndexMatchSegment(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := experimentIndex.matchSegment(tt.args.segmentName, tt.args.value)
-			assert.Equal(t, got, tt.want)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
