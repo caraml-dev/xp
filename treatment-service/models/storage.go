@@ -418,6 +418,8 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 
 	// Delete all segments since they have already been converted to the various sets stored in ExperimentIndex,
 	// and are no longer used by the Treatment Service
+	// TODO: To make the ExperimentIndex store only the relevant data using appropriate structs rather than
+	// attempting to reuse this pubsub message type and deleting the redundant data from it
 	experiment.Segments = nil
 
 	return &ExperimentIndex{
