@@ -236,19 +236,27 @@ func (i *ExperimentIndex) isActive() bool {
 }
 
 func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
-	if set, exists := i.stringSets[segmentName]; !exists || set.Len() == 0 {
-		return true
+	if set, exists := i.stringSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
 	}
-	if set, exists := i.intSets[segmentName]; !exists || set.Len() == 0 {
-		return true
+	if set, exists := i.intSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
 	}
-	if set, exists := i.realSets[segmentName]; !exists || set.Len() == 0 {
-		return true
+	if set, exists := i.realSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
 	}
-	if _, exists := i.boolSets[segmentName]; !exists {
-		return true
+	if set, exists := i.boolSets[segmentName]; exists {
+		if set.Len() > 0 {
+			return false
+		}
 	}
-	return false
+	return true
 }
 
 func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSettings) error {
