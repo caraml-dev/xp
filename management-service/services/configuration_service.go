@@ -14,8 +14,7 @@ type configurationService struct {
 }
 
 func NewConfigurationService(cfg *config.Config) ConfigurationService {
-	var segmenterConfig schema.SegmenterConfig
-	segmenterConfig = cfg.SegmenterConfig
+	var segmenterConfig schema.SegmenterConfig = cfg.SegmenterConfig
 
 	return &configurationService{
 		treatmentServiceConfig: schema.TreatmentServiceConfig{
