@@ -61,11 +61,13 @@ func (es *experimentService) GetExperiment(
 		func(matches []*models.ExperimentMatch) []*models.ExperimentMatch {
 			return es.filterByMatchStrength(matches, projectSettings.Segmenters.Names)
 		},
-		// Resolve granularity of Segmenters
+		// Resolve lookup order. At this point, comparing by each segmenter, we should be left with one or more
+		// experiments which are either all exact or all weak. Where there are multiple transformed values returned
+		// by the segmenter, we pick the first transformed value that has a match, to filter the pool of experiments.
 		func(matches []*models.ExperimentMatch) []*models.ExperimentMatch {
 			return es.filterByLookupOrder(matches, requestFilter, projectSettings.Segmenters.Names, segmentersTypeMapping)
 		},
-		// Resolve tiers - at this point, we should ideally only be left with 1 experiment or 2
+		// Resolve tiers. At this point, we should ideally only be left with 1 experiment or 2
 		// (in different tiers), based on the orthogonality rules enforced by the management service.
 		es.filterByTierPriority,
 	}

@@ -12,6 +12,10 @@ DbConfig:
   User: user
   Password: password
   MigrationsPath: file://test-db-migrations
+  ConnMaxIdleTime: 1s
+  ConnMaxLifetime: 2s
+  MaxIdleConns: 3
+  MaxOpenConns: 4
 
 MLPConfig:
   URL: test-mlp-url

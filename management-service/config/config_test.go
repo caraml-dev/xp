@@ -3,6 +3,7 @@ package config
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
@@ -11,6 +12,7 @@ import (
 )
 
 func TestDefaultConfigs(t *testing.T) {
+	zeroSecond, _ := time.ParseDuration("0s")
 	emptyInterfaceMap := make(map[string]interface{})
 	emptyStringMap := make(map[string]string)
 	defaultCfg := Config{
@@ -21,12 +23,16 @@ func TestDefaultConfigs(t *testing.T) {
 			URL:     "",
 		},
 		DbConfig: &DatabaseConfig{
-			Host:           "localhost",
-			Port:           5432,
-			User:           "xp",
-			Password:       "xp",
-			Database:       "xp",
-			MigrationsPath: "file://database/db-migrations",
+			Host:            "localhost",
+			Port:            5432,
+			User:            "xp",
+			Password:        "xp",
+			Database:        "xp",
+			MigrationsPath:  "file://database/db-migrations",
+			ConnMaxIdleTime: zeroSecond,
+			ConnMaxLifetime: zeroSecond,
+			MaxIdleConns:    0,
+			MaxOpenConns:    0,
 		},
 		SegmenterConfig: make(map[string]interface{}),
 		MLPConfig: &MLPConfig{
@@ -64,6 +70,8 @@ func TestDefaultConfigs(t *testing.T) {
 // TestLoadConfigFiles verifies that when multiple configs are passed in
 // they are consumed in the correct order
 func TestLoadConfigFiles(t *testing.T) {
+	oneSecond, _ := time.ParseDuration("1s")
+	twoSecond, _ := time.ParseDuration("2s")
 	tests := []struct {
 		name        string
 		configFiles []string
@@ -81,12 +89,16 @@ func TestLoadConfigFiles(t *testing.T) {
 					URL:     "test-authz-server",
 				},
 				DbConfig: &DatabaseConfig{
-					Host:           "localhost",
-					Port:           5432,
-					User:           "admin",
-					Password:       "password",
-					Database:       "xp",
-					MigrationsPath: "file://test-db-migrations",
+					Host:            "localhost",
+					Port:            5432,
+					User:            "admin",
+					Password:        "password",
+					Database:        "xp",
+					MigrationsPath:  "file://test-db-migrations",
+					ConnMaxIdleTime: oneSecond,
+					ConnMaxLifetime: twoSecond,
+					MaxIdleConns:    3,
+					MaxOpenConns:    4,
 				},
 				SegmenterConfig: map[string]interface{}{
 					"s2_ids": map[string]interface{}{

@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
@@ -40,6 +41,11 @@ type DatabaseConfig struct {
 	Password       string `default:"xp"`
 	Database       string `default:"xp"`
 	MigrationsPath string `default:"file://database/db-migrations"`
+
+	ConnMaxIdleTime time.Duration `default:"0s"`
+	ConnMaxLifetime time.Duration `default:"0s"`
+	MaxIdleConns    int           `default:"0"`
+	MaxOpenConns    int           `default:"0"`
 }
 
 // MLPConfig captures the configuration used to connect to the MLP API server

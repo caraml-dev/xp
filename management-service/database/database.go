@@ -27,10 +27,25 @@ func ConnectionString(cfg *config.DatabaseConfig) string {
 }
 
 func Open(cfg *config.DatabaseConfig) (*gorm.DB, error) {
-	return gorm.Open(pg.Open(ConnectionString(cfg)),
+	db, err := gorm.Open(pg.Open(ConnectionString(cfg)),
 		&gorm.Config{
 			Logger: logger.Default.LogMode(logger.Silent),
 		})
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the underlying SQL DB and apply connection properties
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+	sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
+	sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
+	sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+	sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+
+	return db, nil
 }
 
 func Migrate(cfg *config.DatabaseConfig) error {
