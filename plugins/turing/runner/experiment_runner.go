@@ -19,7 +19,9 @@ import (
 	"github.com/caraml-dev/xp/treatment-service/controller"
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
+	"github.com/caraml-dev/xp/treatment-service/monitoring"
 	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 
@@ -64,7 +66,9 @@ func (er *experimentRunner) GetTreatmentForRequest(
 	var treatment schema.SelectedTreatment
 	var switchbackWindowId *int64
 	var err error
+
 	statusCode := http.StatusBadRequest
+	filterParams := api.FetchTreatmentRequestBody{AdditionalProperties: requestParams}
 
 	defer func() {
 		if requestFilter == nil {
@@ -78,11 +82,64 @@ func (er *experimentRunner) GetTreatmentForRequest(
 				projectId,
 				statusCode,
 				err,
-				api.FetchTreatmentRequestBody{AdditionalProperties: requestParams},
+				filterParams,
 				requestFilter,
 			)
 		}
 	}()
+
+	var lookupRequestFilters []models.SegmentFilter
+	var errorLog *monitoring.ErrorResponseLog
+
+	if er.appContext.AssignedTreatmentLogger != nil {
+		defer func() {
+			// Capture potential errors from other calls to service layer and prevent it from
+			// slipping pass subsequent JSON marshaling errors
+			if err != nil {
+				errorLog = &monitoring.ErrorResponseLog{Code: statusCode, Error: err.Error()}
+			}
+
+			headerJson, err := json.Marshal(reqHeader)
+			if err != nil {
+				errorLog = &monitoring.ErrorResponseLog{Code: statusCode, Error: err.Error()}
+			}
+			bodyJson, err := json.Marshal(filterParams)
+			if err != nil {
+				errorLog = &monitoring.ErrorResponseLog{Code: statusCode, Error: err.Error()}
+			}
+			requestJson := &monitoring.Request{
+				Header: string(headerJson),
+				Body:   string(bodyJson),
+			}
+
+			var requestFilters []models.SegmentFilter
+			if errorLog == nil {
+				requestFilters = lookupRequestFilters
+			}
+
+			assignedTreatmentLog := &monitoring.AssignedTreatmentLog{
+				ProjectID:  projectId,
+				RequestID:  uuid.New().String(),
+				Experiment: filteredExperiment,
+				Treatment:  selectedTreatment,
+				Request:    requestJson,
+				Segmenters: requestFilters,
+			}
+			if filteredExperiment != nil {
+				assignedTreatmentLog.TreatmentMetadata = &monitoring.TreatmentMetadata{
+					ExperimentVersion:  filteredExperiment.Version,
+					ExperimentType:     string(models.ProtobufExperimentTypeToOpenAPI(filteredExperiment.Type)),
+					SwitchbackWindowId: switchbackWindowId,
+				}
+			}
+
+			if errorLog != nil {
+				assignedTreatmentLog.Error = errorLog
+			}
+
+			_ = er.appContext.AssignedTreatmentLogger.Append(assignedTreatmentLog)
+		}()
+	}
 
 	// Use the S2ID at the max configured level (most granular level) to generate the filter
 	requestFilter, err = er.appContext.SchemaService.GetRequestFilter(projectId, requestParams)
