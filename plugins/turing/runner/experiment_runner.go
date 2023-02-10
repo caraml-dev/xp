@@ -155,6 +155,7 @@ func (er *experimentRunner) GetTreatmentForRequest(
 
 	// Fetch treatment
 	if filteredExperiment == nil {
+		statusCode = http.StatusOK
 		return &runner.Treatment{
 			Config: nil,
 		}, nil
