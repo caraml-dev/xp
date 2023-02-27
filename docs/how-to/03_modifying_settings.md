@@ -76,7 +76,32 @@ From the Validation Detail page, click 'More Actions' -> 'Configure Validation'.
 
    * A response with status code of 200 will be deemed as successful. A timeout of 5 seconds is also configured to treat any hanging call to the validation URL as a failure.
 
-3. Treatment Validation Rules: Rules used to validate treatment configuration of experiments. All rules will be evaluated on the treatment configuration and must return `true` for the operation to be permitted.
+3. Treatment Validation Rules: Rules, specified in the form of [Go Templates](https://pkg.go.dev/text/template), used to validate treatment configuration of experiments. In addition to the default Go Template operations, those from the [Sprig library](http://masterminds.github.io/sprig/) are also supported. All rules will be evaluated on the treatment configuration and must return `true` for the operation to be permitted. Some examples below.
+
+To test that the data satisfies one of the following conditions:
+* `.field1`=`"abc"` and `.field2`=`"def"` and `.field3.field4` is of type `float`
+* (OR) `.field1`=`"xyz"` and `.field2`=`"def"` and `.field3.field4` is of type `int`
+
+```
+{{- or (and
+         (eq .field1 "abc")
+         (eq .field2 "def")
+         (contains "float" (typeOf .field3.field4)))
+     (and
+         (eq .field1 "xyz")
+         (eq .field2 "def")
+         (contains "int" (typeOf .field3.field4))) -}}
+```
+
+To test that a certain property `weight` in an array field `.config_details.models` sums to 1 across all elements:
+
+```
+{{- $sum := 0 -}}
+ {{- range $index, $item := .config_details.models -}}
+   {{- $sum = (addf $sum $item.weight) -}}
+ {{- end -}}
+{{- eq $sum 1.0 -}}
+```
 
 ### Creating or Updating an Experiment
 
