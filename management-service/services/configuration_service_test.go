@@ -19,6 +19,7 @@ func (s *ConfigurationServiceTestSuite) SetupSuite() {
 
 	cfg := config.Config{
 		MessageQueueConfig: &config.MessageQueueConfig{
+			Kind: "pubsub",
 			PubSubConfig: &config.PubSubConfig{
 				Project:   "dev",
 				TopicName: "xp-update",
@@ -41,13 +42,17 @@ func TestConfigurationService(t *testing.T) {
 }
 
 func (s *ConfigurationServiceTestSuite) TestGetTreatmentServicePluginConfig() {
+	messageQueueKind := schema.MessageQueueKindPubsub
 	pubSubConfigProject := "dev"
 	pubSubConfigTopicName := "xp-update"
 
 	expectedConfiguration := schema.TreatmentServiceConfig{
-		PubSub: &schema.PubSub{
-			Project:   &pubSubConfigProject,
-			TopicName: &pubSubConfigTopicName,
+		MessageQueueConfig: &schema.MessageQueueConfig{
+			Kind: &messageQueueKind,
+			PubSub: &schema.PubSub{
+				Project:   &pubSubConfigProject,
+				TopicName: &pubSubConfigTopicName,
+			},
 		},
 		SegmenterConfig: &schema.SegmenterConfig{
 			"s2_ids": map[string]interface{}{

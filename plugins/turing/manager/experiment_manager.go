@@ -142,7 +142,7 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	treatmentServiceConfig *schema.TreatmentServiceConfig,
 	projectID int,
 ) (*config.Config, error) {
-	return &config.Config{
+	pluginConfig := &config.Config{
 		Port:                    em.TreatmentServicePluginConfig.Port,
 		ProjectIds:              []string{strconv.Itoa(projectID)},
 		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
@@ -153,13 +153,28 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
 		NewRelicConfig:          em.TreatmentServicePluginConfig.NewRelicConfig,
 		SentryConfig:            em.TreatmentServicePluginConfig.SentryConfig,
-		PubSub: config.PubSub{
-			Project:              *treatmentServiceConfig.PubSub.Project,
-			TopicName:            *treatmentServiceConfig.PubSub.TopicName,
-			PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
-		},
-		SegmenterConfig: *treatmentServiceConfig.SegmenterConfig,
-	}, nil
+		SegmenterConfig:         *treatmentServiceConfig.SegmenterConfig,
+	}
+	messageQueueKind := *treatmentServiceConfig.MessageQueueConfig.Kind
+	switch messageQueueKind {
+	case schema.MessageQueueKindPubsub:
+		pluginConfig.MessageQueueConfig = config.MessageQueueConfig{
+			Kind: "pubsub",
+			PubSubConfig: config.PubSub{
+				Project:              *treatmentServiceConfig.MessageQueueConfig.PubSub.Project,
+				TopicName:            *treatmentServiceConfig.MessageQueueConfig.PubSub.TopicName,
+				PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
+			},
+		}
+	case schema.MessageQueueKindNoop:
+		pluginConfig.MessageQueueConfig = config.MessageQueueConfig{
+			Kind: "",
+		}
+	default:
+		return nil, fmt.Errorf("invalid message queue kind (%s) was provided", messageQueueKind)
+	}
+
+	return pluginConfig, nil
 }
 
 func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentManager, error) {

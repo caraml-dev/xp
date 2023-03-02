@@ -9,13 +9,26 @@ components:
         topic_name:
           type: string
           description: Topic name of the PubSub subscription
+    MessageQueueKind:
+      description: Kind of message queue
+      type: string
+      enum:
+        - noop
+        - pubsub
+    MessageQueueConfig:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/MessageQueueKind'
+        pub_sub:
+          $ref: '#/components/schemas/PubSub'
     SegmenterConfig:
       type: object
     TreatmentServiceConfig:
       type: object
       properties:
-        pub_sub:
-          $ref: '#/components/schemas/PubSub'
+        message_queue_config:
+          $ref: '#/components/schemas/MessageQueueConfig'
         segmenter_config:
           $ref: '#/components/schemas/SegmenterConfig'
     SelectedTreatmentData:

@@ -107,9 +107,9 @@ type MessageQueueConfig struct {
 }
 
 type PubSub struct {
-	Project              string `json:"project" default:"dev" validate:"required"`
-	TopicName            string `json:"topic_name" default:"xp-update" validate:"required"`
-	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30" validate:"required"`
+	Project              string `json:"project" default:"dev"`
+	TopicName            string `json:"topic_name" default:"xp-update"`
+	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30"`
 }
 
 type ManagementServiceConfig struct {

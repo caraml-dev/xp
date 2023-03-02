@@ -23,7 +23,7 @@ func NewMessageQueueService(mqConfig *config.MessageQueueConfig) (MessageQueueSe
 	case config.PubSubMQ:
 		mq, err = NewPubSubPublisherService(mqConfig.PubSubConfig)
 	default:
-		return nil, fmt.Errorf("invalid message queue config (%s) was provided", mqConfig.Kind)
+		return nil, fmt.Errorf("invalid message queue kind (%s) was provided", mqConfig.Kind)
 	}
 	if err != nil {
 		return nil, err

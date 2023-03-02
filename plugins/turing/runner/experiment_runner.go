@@ -249,9 +249,9 @@ func (er *experimentRunner) startBackgroundServices(
 	errChannel chan error,
 ) {
 	backgroundSvcCtx := context.Background()
-	if er.appContext.ExperimentSubscriber != nil {
+	if er.appContext.MessageQueueService != nil {
 		go func() {
-			err := er.appContext.ExperimentSubscriber.SubscribeToManagementService(backgroundSvcCtx)
+			err := er.appContext.MessageQueueService.SubscribeToManagementService(backgroundSvcCtx)
 			if err != nil {
 				errChannel <- err
 			}

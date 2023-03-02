@@ -16,15 +16,30 @@ type configurationService struct {
 func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	var segmenterConfig schema.SegmenterConfig = cfg.SegmenterConfig
 
-	return &configurationService{
+	var messageQueueKind schema.MessageQueueKind
+	switch cfg.MessageQueueConfig.Kind {
+	case "pubsub":
+		messageQueueKind = schema.MessageQueueKindPubsub
+	case "":
+		messageQueueKind = schema.MessageQueueKindNoop
+	}
+
+	configurationSvc := &configurationService{
 		treatmentServiceConfig: schema.TreatmentServiceConfig{
-			PubSub: &schema.PubSub{
-				Project:   &cfg.MessageQueueConfig.PubSubConfig.Project,
-				TopicName: &cfg.MessageQueueConfig.PubSubConfig.TopicName,
+			MessageQueueConfig: &schema.MessageQueueConfig{
+				Kind: &messageQueueKind,
 			},
 			SegmenterConfig: &segmenterConfig,
 		},
 	}
+	if cfg.MessageQueueConfig.Kind == "pubsub" {
+		configurationSvc.treatmentServiceConfig.MessageQueueConfig.PubSub = &schema.PubSub{
+			Project:   &cfg.MessageQueueConfig.PubSubConfig.Project,
+			TopicName: &cfg.MessageQueueConfig.PubSubConfig.TopicName,
+		}
+	}
+
+	return configurationSvc
 }
 
 func (svc configurationService) GetTreatmentServiceConfig() schema.TreatmentServiceConfig {
