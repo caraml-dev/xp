@@ -15,8 +15,10 @@ SegmenterConfig:
     MinS2CellLevel: 10
     MaxS2CellLevel: 14
 
-PubSubConfig:
-  Project: dev
-  TopicName: xp-update
+MessageQueueConfig:
+  Kind: pubsub
+  PubSubConfig:
+    Project: dev
+    TopicName: xp-update
 
 OpenApiSpecsPath: "../api"

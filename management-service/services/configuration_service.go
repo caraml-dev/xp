@@ -19,8 +19,8 @@ func NewConfigurationService(cfg *config.Config) ConfigurationService {
 	return &configurationService{
 		treatmentServiceConfig: schema.TreatmentServiceConfig{
 			PubSub: &schema.PubSub{
-				Project:   &cfg.PubSubConfig.Project,
-				TopicName: &cfg.PubSubConfig.TopicName,
+				Project:   &cfg.MessageQueueConfig.PubSubConfig.Project,
+				TopicName: &cfg.MessageQueueConfig.PubSubConfig.TopicName,
 			},
 			SegmenterConfig: &segmenterConfig,
 		},

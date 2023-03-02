@@ -18,9 +18,11 @@ func (s *ConfigurationServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ConfigurationServiceTestSuite")
 
 	cfg := config.Config{
-		PubSubConfig: &config.PubSubConfig{
-			Project:   "dev",
-			TopicName: "xp-update",
+		MessageQueueConfig: &config.MessageQueueConfig{
+			PubSubConfig: &config.PubSubConfig{
+				Project:   "dev",
+				TopicName: "xp-update",
+			},
 		},
 		SegmenterConfig: map[string]interface{}{
 			"s2_ids": map[string]interface{}{

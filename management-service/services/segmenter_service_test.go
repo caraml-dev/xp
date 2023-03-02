@@ -76,12 +76,12 @@ func (s *SegmenterServiceTestSuite) SetupSuite() {
 		nil,
 	)
 
-	pubSubSvc := &mocks.PubSubPublisherService{}
-	pubSubSvc.On("PublishProjectSegmenterMessage", mock.Anything, mock.Anything, mock.Anything).Return(
+	messageQueueSvc := &mocks.MessageQueueService{}
+	messageQueueSvc.On("PublishProjectSegmenterMessage", mock.Anything, mock.Anything, mock.Anything).Return(
 		nil)
 	allServices := &services.Services{
 		ProjectSettingsService: &settingsSvc,
-		PubSubPublisherService: pubSubSvc,
+		MessageQueueService:    messageQueueSvc,
 	}
 
 	s.SegmenterService, err = services.NewSegmenterService(allServices, segmenterConfig, db)

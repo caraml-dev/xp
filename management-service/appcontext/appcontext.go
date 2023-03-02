@@ -29,11 +29,7 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 	}
 
 	// Init Services
-	pubSubConfig := config.PubSubConfig{
-		Project:   cfg.PubSubConfig.Project,
-		TopicName: cfg.PubSubConfig.TopicName,
-	}
-	pubSubPublisherService, err := services.NewPubSubPublisherService(&pubSubConfig)
+	messageQueueService, err := services.NewMessageQueueService(cfg.MessageQueueConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +72,7 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 		treatmentSvc,
 		treatmentHistorySvc,
 		validationService,
-		pubSubPublisherService,
+		messageQueueService,
 		configurationSvc,
 	)
 

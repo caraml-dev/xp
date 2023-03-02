@@ -11,7 +11,7 @@ type Services struct {
 	TreatmentService         TreatmentService
 	TreatmentHistoryService  TreatmentHistoryService
 	ValidationService        ValidationService
-	PubSubPublisherService   PubSubPublisherService
+	MessageQueueService      MessageQueueService
 	ConfigurationService     ConfigurationService
 }
 
@@ -26,7 +26,7 @@ func NewServices(
 	treatmentSvc TreatmentService,
 	treatmentHistorySvc TreatmentHistoryService,
 	validationSvc ValidationService,
-	pubsubPublisherSvc PubSubPublisherService,
+	messageQueueSvc MessageQueueService,
 	configurationService ConfigurationService,
 ) Services {
 	return Services{
@@ -34,7 +34,7 @@ func NewServices(
 		ExperimentHistoryService: expHistorySvc,
 		MLPService:               mlpSvc,
 		ProjectSettingsService:   projectSettingsSvc,
-		PubSubPublisherService:   pubsubPublisherSvc,
+		MessageQueueService:      messageQueueSvc,
 		SegmenterService:         segmenterSvc,
 		SegmentService:           segmentSvc,
 		SegmentHistoryService:    segmentHistorySvc,

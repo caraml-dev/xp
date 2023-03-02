@@ -18,7 +18,7 @@ type Config struct {
 	AuthorizationConfig *AuthorizationConfig
 	DbConfig            *DatabaseConfig
 	MLPConfig           *MLPConfig
-	PubSubConfig        *PubSubConfig
+	MessageQueueConfig  *MessageQueueConfig
 	SegmenterConfig     map[string]interface{}
 	ValidationConfig    ValidationConfig
 	DeploymentConfig    DeploymentConfig
@@ -51,6 +51,24 @@ type DatabaseConfig struct {
 // MLPConfig captures the configuration used to connect to the MLP API server
 type MLPConfig struct {
 	URL string
+}
+
+// MessageQueueKind describes the message queue for transmitting event updates to and fro Treatment Service
+type MessageQueueKind = string
+
+const (
+	// NoopMQ is a No-Op Message Queue
+	NoopMQ MessageQueueKind = ""
+	// PubSubMQ is a PubSub Message Queue
+	PubSubMQ MessageQueueKind = "pubsub"
+)
+
+type MessageQueueConfig struct {
+	// The type of Message Queue for event updates
+	Kind MessageQueueKind `default:""`
+
+	// PubSubConfig captures the config related to initializing a PubSub Message Queue
+	PubSubConfig *PubSubConfig
 }
 
 // PubSubConfig captures the config for the Google PubSub client, to publish messages

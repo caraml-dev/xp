@@ -38,9 +38,12 @@ func TestDefaultConfigs(t *testing.T) {
 		MLPConfig: &MLPConfig{
 			URL: "",
 		},
-		PubSubConfig: &PubSubConfig{
-			Project:   "dev",
-			TopicName: "xp-update",
+		MessageQueueConfig: &MessageQueueConfig{
+			Kind: "",
+			PubSubConfig: &PubSubConfig{
+				Project:   "dev",
+				TopicName: "xp-update",
+			},
 		},
 		ValidationConfig: ValidationConfig{
 			ValidationUrlTimeoutSeconds: 5,
@@ -109,9 +112,12 @@ func TestLoadConfigFiles(t *testing.T) {
 				MLPConfig: &MLPConfig{
 					URL: "test-mlp-url",
 				},
-				PubSubConfig: &PubSubConfig{
-					Project:   "test-pubsub-project",
-					TopicName: "test-pubsub-topic",
+				MessageQueueConfig: &MessageQueueConfig{
+					Kind: "pubsub",
+					PubSubConfig: &PubSubConfig{
+						Project:   "test-pubsub-project",
+						TopicName: "test-pubsub-topic",
+					},
 				},
 				ValidationConfig: ValidationConfig{
 					ValidationUrlTimeoutSeconds: 5,

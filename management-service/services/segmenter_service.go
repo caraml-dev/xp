@@ -400,7 +400,7 @@ func (svc *segmenterService) CreateCustomSegmenter(
 	if err != nil {
 		return nil, err
 	}
-	if err = svc.services.PubSubPublisherService.PublishProjectSegmenterMessage("create", protoSegmenterConfig, projectId); err != nil {
+	if err = svc.services.MessageQueueService.PublishProjectSegmenterMessage("create", protoSegmenterConfig, projectId); err != nil {
 		return nil, err
 	}
 
@@ -464,7 +464,7 @@ func (svc *segmenterService) UpdateCustomSegmenter(
 	if err != nil {
 		return nil, err
 	}
-	if err = svc.services.PubSubPublisherService.PublishProjectSegmenterMessage("update", protoSegmenterConfig, projectId); err != nil {
+	if err = svc.services.MessageQueueService.PublishProjectSegmenterMessage("update", protoSegmenterConfig, projectId); err != nil {
 		return nil, err
 	}
 	return customSegmenterDBRecord, nil
@@ -504,7 +504,7 @@ func (svc *segmenterService) DeleteCustomSegmenter(projectId int64, name string)
 	if err != nil {
 		return err
 	}
-	if err = svc.services.PubSubPublisherService.PublishProjectSegmenterMessage("delete", protoSegmenterConfig, projectId); err != nil {
+	if err = svc.services.MessageQueueService.PublishProjectSegmenterMessage("delete", protoSegmenterConfig, projectId); err != nil {
 		return err
 	}
 	return nil

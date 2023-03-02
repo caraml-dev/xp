@@ -30,9 +30,11 @@ func TestNewAppContext(t *testing.T) {
 		MLPConfig: &config.MLPConfig{
 			URL: "http://mlp.example.com/api/merlin/v1",
 		},
-		PubSubConfig: &config.PubSubConfig{
-			Project:   "test",
-			TopicName: "update",
+		MessageQueueConfig: &config.MessageQueueConfig{
+			PubSubConfig: &config.PubSubConfig{
+				Project:   "test",
+				TopicName: "update",
+			},
 		},
 		ValidationConfig: config.ValidationConfig{
 			ValidationUrlTimeoutSeconds: 5,
@@ -53,7 +55,7 @@ func TestNewAppContext(t *testing.T) {
 	validationService, err := services.NewValidationService(cfg.ValidationConfig)
 	require.NoError(t, err)
 
-	pubSubPublisherService, _ := services.NewPubSubPublisherService(cfg.PubSubConfig)
+	messageQueueService, _ := services.NewMessageQueueService(cfg.MessageQueueConfig)
 
 	expHistSvc := services.NewExperimentHistoryService(db)
 	expSvc := services.NewExperimentService(&allServices, db)
@@ -87,10 +89,10 @@ func TestNewAppContext(t *testing.T) {
 			return segmenterSvc, nil
 		},
 	)
-	// Patch PubSub publisher service
-	monkey.Patch(services.NewPubSubPublisherService,
-		func(pubsubConfig *config.PubSubConfig) (services.PubSubPublisherService, error) {
-			return pubSubPublisherService, nil
+	// Patch MessageQueue service
+	monkey.Patch(services.NewMessageQueueService,
+		func(messageQueueConfig *config.MessageQueueConfig) (services.MessageQueueService, error) {
+			return messageQueueService, nil
 		},
 	)
 	// Patch New MLP Service to validate the input and return the mock service object
@@ -116,7 +118,7 @@ func TestNewAppContext(t *testing.T) {
 		TreatmentService:         treatmentSvc,
 		TreatmentHistoryService:  treatmentHistSvc,
 		ValidationService:        validationService,
-		PubSubPublisherService:   pubSubPublisherService,
+		MessageQueueService:      messageQueueService,
 		ConfigurationService:     configurationSvc,
 	}
 	monkey.Patch(services.NewServices,
@@ -131,7 +133,7 @@ func TestNewAppContext(t *testing.T) {
 			treatmentService services.TreatmentService,
 			treatmentHistoryService services.TreatmentHistoryService,
 			validationService services.ValidationService,
-			publisherService services.PubSubPublisherService,
+			messageQueueService services.MessageQueueService,
 			configurationService services.ConfigurationService,
 		) services.Services {
 			return allServices

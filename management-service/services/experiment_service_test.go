@@ -42,7 +42,7 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 	// Init mock services
 	segmenterSvc := setupMockSegmenterService()
 	validationSvc := setupMockValidationService()
-	pubSubSvc := setupMockPubSubService()
+	messageQueueSvc := setupMockMessageQueueService()
 	configuredTreatmentSvc := setupMockTreatmentService()
 
 	// Init experiment history svc, mock calls will be set up during the test
@@ -53,7 +53,7 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 		ValidationService:        validationSvc,
 		ExperimentHistoryService: s.ExperimentHistoryService,
 		SegmenterService:         segmenterSvc,
-		PubSubPublisherService:   pubSubSvc,
+		MessageQueueService:      messageQueueSvc,
 	}
 
 	// Init experiment service
@@ -881,19 +881,19 @@ func setupMockValidationService() services.ValidationService {
 	return validationSvc
 }
 
-func setupMockPubSubService() services.PubSubPublisherService {
-	pubSubSvc := &mocks.PubSubPublisherService{}
-	pubSubSvc.On(
+func setupMockMessageQueueService() services.MessageQueueService {
+	messageQueueSvc := &mocks.MessageQueueService{}
+	messageQueueSvc.On(
 		"PublishExperimentMessage",
 		"create",
 		mock.Anything,
 	).Return(nil)
-	pubSubSvc.On(
+	messageQueueSvc.On(
 		"PublishExperimentMessage",
 		"update",
 		mock.Anything,
 	).Return(nil)
-	return pubSubSvc
+	return messageQueueSvc
 }
 
 func setupMockTreatmentService() services.TreatmentService {
