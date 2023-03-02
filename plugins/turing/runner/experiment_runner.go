@@ -257,7 +257,6 @@ func (er *experimentRunner) startBackgroundServices(
 			}
 		}()
 	}
-	return
 }
 
 func (er *experimentRunner) getRequestParams(
