@@ -44,10 +44,13 @@ func TestDefaultConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp",
 		},
-		PubSub: PubSub{
-			Project:              "dev",
-			TopicName:            "xp-update",
-			PubSubTimeoutSeconds: 30,
+		MessageQueueConfig: MessageQueueConfig{
+			Kind: "",
+			PubSubConfig: PubSub{
+				Project:              "dev",
+				TopicName:            "xp-update",
+				PubSubTimeoutSeconds: 30,
+			},
 		},
 		MonitoringConfig: Monitoring{MetricLabels: []string{}},
 		NewRelicConfig: newrelic.Config{
@@ -104,10 +107,13 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp1",
 		},
-		PubSub: PubSub{
-			Project:              "dev",
-			TopicName:            "xp-update",
-			PubSubTimeoutSeconds: 30,
+		MessageQueueConfig: MessageQueueConfig{
+			Kind: "",
+			PubSubConfig: PubSub{
+				Project:              "dev",
+				TopicName:            "xp-update",
+				PubSubTimeoutSeconds: 30,
+			},
 		},
 		MonitoringConfig: Monitoring{MetricLabels: []string{}},
 		NewRelicConfig: newrelic.Config{

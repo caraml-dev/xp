@@ -56,7 +56,10 @@ func TestContext(t *testing.T) {
 		NewRelicConfig:          newrelic.Config{},
 		SentryConfig:            sentry.Config{},
 		DeploymentConfig:        config.DeploymentConfig{},
-		PubSub:                  pubSubConfig,
+		MessageQueueConfig: config.MessageQueueConfig{
+			Kind:         "pubsub",
+			PubSubConfig: pubSubConfig,
+		},
 		ManagementService: config.ManagementServiceConfig{
 			URL:                  testServer.URL,
 			AuthorizationEnabled: false,

@@ -28,6 +28,8 @@ import (
 type Server struct {
 	*http.Server
 	appContext *appcontext.AppContext
+	// subscribe captures config of whether to subscribe to a message queue topic
+	subscribe bool
 	// cleanup captures all the actions to be executed on server shut down
 	cleanup []func()
 }
@@ -98,6 +100,11 @@ func NewServer(configFiles []string) (*Server, error) {
 		mux.Handle("/schema.yaml", web.FileHandler(path.Join(cfg.SwaggerConfig.OpenAPISpecsPath, "schema.yaml"), false))
 	}
 
+	subscribe := false
+	if cfg.MessageQueueConfig.Kind != config.NoopMQ {
+		subscribe = true
+	}
+
 	srv := http.Server{
 		Addr:    cfg.ListenAddress(),
 		Handler: mux,
@@ -106,6 +113,7 @@ func NewServer(configFiles []string) (*Server, error) {
 	return &Server{
 		Server:     &srv,
 		appContext: appCtx,
+		subscribe:  subscribe,
 		cleanup:    cleanup,
 	}, nil
 }
@@ -140,9 +148,11 @@ func (srv *Server) Start() {
 	for _, cleanupFunc := range srv.cleanup {
 		cleanupFunc()
 	}
-	err := srv.deleteSubscriptions()
-	if err != nil {
-		log.Printf("Failed to delete subscriptions when shutting down: %s", err)
+	if srv.subscribe {
+		err := srv.deleteSubscriptions()
+		if err != nil {
+			log.Printf("Failed to delete subscriptions when shutting down: %s", err)
+		}
 	}
 	if err := srv.Shutdown(context.Background()); err != nil {
 		panic(err)
@@ -151,7 +161,7 @@ func (srv *Server) Start() {
 }
 
 func (srv *Server) deleteSubscriptions() error {
-	err := srv.appContext.ExperimentSubscriber.DeleteSubscriptions(context.Background())
+	err := srv.appContext.MessageQueueService.DeleteSubscriptions(context.Background())
 	if err != nil {
 		return err
 	}
@@ -161,9 +171,11 @@ func (srv *Server) deleteSubscriptions() error {
 func (srv *Server) startBackgroundService(errChannel chan error) context.CancelFunc {
 	backgroundSvcCtx, cancel := context.WithCancel(context.Background())
 	go func() {
-		err := srv.appContext.ExperimentSubscriber.SubscribeToManagementService(backgroundSvcCtx)
-		if err != nil {
-			errChannel <- err
+		if srv.subscribe {
+			err := srv.appContext.MessageQueueService.SubscribeToManagementService(backgroundSvcCtx)
+			if err != nil {
+				errChannel <- err
+			}
 		}
 	}()
 
