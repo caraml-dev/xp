@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/caraml-dev/xp/common/api/schema"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/management-service/config"
 	"github.com/caraml-dev/xp/management-service/services"
 	"github.com/stretchr/testify/suite"
@@ -18,9 +19,12 @@ func (s *ConfigurationServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ConfigurationServiceTestSuite")
 
 	cfg := config.Config{
-		PubSubConfig: &config.PubSubConfig{
-			Project:   "dev",
-			TopicName: "xp-update",
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
+			Kind: "pubsub",
+			PubSubConfig: &common_mq_config.PubSubConfig{
+				Project:   "dev",
+				TopicName: "xp-update",
+			},
 		},
 		SegmenterConfig: map[string]interface{}{
 			"s2_ids": map[string]interface{}{
@@ -39,13 +43,17 @@ func TestConfigurationService(t *testing.T) {
 }
 
 func (s *ConfigurationServiceTestSuite) TestGetTreatmentServicePluginConfig() {
+	messageQueueKind := schema.MessageQueueKindPubsub
 	pubSubConfigProject := "dev"
 	pubSubConfigTopicName := "xp-update"
 
 	expectedConfiguration := schema.TreatmentServiceConfig{
-		PubSub: &schema.PubSub{
-			Project:   &pubSubConfigProject,
-			TopicName: &pubSubConfigTopicName,
+		MessageQueueConfig: &schema.MessageQueueConfig{
+			Kind: &messageQueueKind,
+			PubSub: &schema.PubSub{
+				Project:   &pubSubConfigProject,
+				TopicName: &pubSubConfigTopicName,
+			},
 		},
 		SegmenterConfig: &schema.SegmenterConfig{
 			"s2_ids": map[string]interface{}{

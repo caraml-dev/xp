@@ -44,7 +44,7 @@ func (s *SegmenterServiceTestSuite) SetupSuite() {
 	}
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB(tu.MigrationsPath)
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}
@@ -76,12 +76,12 @@ func (s *SegmenterServiceTestSuite) SetupSuite() {
 		nil,
 	)
 
-	pubSubSvc := &mocks.PubSubPublisherService{}
-	pubSubSvc.On("PublishProjectSegmenterMessage", mock.Anything, mock.Anything, mock.Anything).Return(
+	messageQueueSvc := &mocks.MessageQueueService{}
+	messageQueueSvc.On("PublishProjectSegmenterMessage", mock.Anything, mock.Anything, mock.Anything).Return(
 		nil)
 	allServices := &services.Services{
 		ProjectSettingsService: &settingsSvc,
-		PubSubPublisherService: pubSubSvc,
+		MessageQueueService:    messageQueueSvc,
 	}
 
 	s.SegmenterService, err = services.NewSegmenterService(allServices, segmenterConfig, db)

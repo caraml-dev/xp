@@ -7,6 +7,7 @@ import (
 	"github.com/caraml-dev/xp/management-service/config"
 	mw "github.com/caraml-dev/xp/management-service/middleware"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 )
 
 type AppContext struct {
@@ -29,11 +30,7 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 	}
 
 	// Init Services
-	pubSubConfig := config.PubSubConfig{
-		Project:   cfg.PubSubConfig.Project,
-		TopicName: cfg.PubSubConfig.TopicName,
-	}
-	pubSubPublisherService, err := services.NewPubSubPublisherService(&pubSubConfig)
+	messageQueueService, err := messagequeue.NewMessageQueueService(*cfg.MessageQueueConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +73,7 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 		treatmentSvc,
 		treatmentHistorySvc,
 		validationService,
-		pubSubPublisherService,
+		messageQueueService,
 		configurationSvc,
 	)
 

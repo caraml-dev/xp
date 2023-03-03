@@ -16,6 +16,7 @@ import (
 	"github.com/caraml-dev/xp/management-service/models"
 	"github.com/caraml-dev/xp/management-service/pagination"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
@@ -33,7 +34,7 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ExperimentServiceTestSuite")
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB(tu.MigrationsPath)
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}
@@ -42,7 +43,7 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 	// Init mock services
 	segmenterSvc := setupMockSegmenterService()
 	validationSvc := setupMockValidationService()
-	pubSubSvc := setupMockPubSubService()
+	messageQueueSvc := setupMockMessageQueueService()
 	configuredTreatmentSvc := setupMockTreatmentService()
 
 	// Init experiment history svc, mock calls will be set up during the test
@@ -53,7 +54,7 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 		ValidationService:        validationSvc,
 		ExperimentHistoryService: s.ExperimentHistoryService,
 		SegmenterService:         segmenterSvc,
-		PubSubPublisherService:   pubSubSvc,
+		MessageQueueService:      messageQueueSvc,
 	}
 
 	// Init experiment service
@@ -881,19 +882,19 @@ func setupMockValidationService() services.ValidationService {
 	return validationSvc
 }
 
-func setupMockPubSubService() services.PubSubPublisherService {
-	pubSubSvc := &mocks.PubSubPublisherService{}
-	pubSubSvc.On(
+func setupMockMessageQueueService() messagequeue.MessageQueueService {
+	messageQueueSvc := &mocks.MessageQueueService{}
+	messageQueueSvc.On(
 		"PublishExperimentMessage",
 		"create",
 		mock.Anything,
 	).Return(nil)
-	pubSubSvc.On(
+	messageQueueSvc.On(
 		"PublishExperimentMessage",
 		"update",
 		mock.Anything,
 	).Return(nil)
-	return pubSubSvc
+	return messageQueueSvc
 }
 
 func setupMockTreatmentService() services.TreatmentService {

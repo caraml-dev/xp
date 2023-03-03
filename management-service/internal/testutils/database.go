@@ -13,19 +13,24 @@ import (
 	db "github.com/caraml-dev/xp/management-service/database"
 )
 
+const MigrationsPath = "file://../database/db-migrations"
+
 var dbConfig config.DatabaseConfig = config.DatabaseConfig{
 	Host:           GetEnvOrDefault("DATABASE_HOST", "localhost"),
 	Port:           5432,
 	User:           GetEnvOrDefault("DATABASE_USER", "xp"),
 	Password:       GetEnvOrDefault("DATABASE_PASSWORD", "xp"),
 	Database:       GetEnvOrDefault("DATABASE_NAME", "xp"),
-	MigrationsPath: "file://../database/db-migrations",
+	MigrationsPath: MigrationsPath,
 }
 
 // CreateTestDB connects to test postgreSQL instance (either local or the one
 // at CI environment) and creates a new database with an up-to-date schema.
 // It returns a reference to the DB and a clean up function if successful.
-func CreateTestDB() (*gorm.DB, func(), error) {
+func CreateTestDB(migrationsPath string) (*gorm.DB, func(), error) {
+	if migrationsPath != "" {
+		dbConfig.MigrationsPath = migrationsPath
+	}
 	testDBCfg := dbConfig
 	testDBCfg.Database = fmt.Sprintf("mlp_id_%d", time.Now().UnixNano())
 
