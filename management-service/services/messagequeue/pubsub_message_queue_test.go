@@ -1,6 +1,6 @@
 //go:build integration
 
-package services_test
+package messagequeue_test
 
 import (
 	"context"
@@ -14,13 +14,14 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/caraml-dev/xp/common/api/schema"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
 	"github.com/caraml-dev/xp/common/segmenters"
 	common_testutils "github.com/caraml-dev/xp/common/testutils"
-	"github.com/caraml-dev/xp/management-service/config"
 	tu "github.com/caraml-dev/xp/management-service/internal/testutils"
 	"github.com/caraml-dev/xp/management-service/models"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
@@ -34,7 +35,7 @@ type PubSubServiceTestSuite struct {
 	services.ExperimentService
 	services.ProjectSettingsService
 	services.TreatmentService
-	services.MessageQueueService
+	messagequeue.MessageQueueService
 	CleanUpFunc     func()
 	Settings        models.Settings
 	ProjectSettings []models.ProjectSettings
@@ -48,7 +49,7 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 	s.ctx = context.Background()
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB("file://../../database/db-migrations")
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}
@@ -61,14 +62,14 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 	}
 	s.emulator = emulator
 	topics := []string{PUBSUB_TOPIC}
-	messageQueueConfig := &config.MessageQueueConfig{
+	messageQueueConfig := common_mq_config.MessageQueueConfig{
 		Kind: "pubsub",
-		PubSubConfig: &config.PubSubConfig{
+		PubSubConfig: &common_mq_config.PubSubConfig{
 			Project:   PUBSUB_PROJECT,
 			TopicName: PUBSUB_TOPIC,
 		},
 	}
-	messageQueueService, err := services.NewMessageQueueService(messageQueueConfig)
+	messageQueueService, err := messagequeue.NewMessageQueueService(messageQueueConfig)
 	if err != nil {
 		s.FailNow("failed to initialize message queue service", err.Error())
 	}

@@ -10,8 +10,10 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
+
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	_config "github.com/caraml-dev/xp/plugins/turing/config"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
@@ -158,16 +160,16 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	messageQueueKind := *treatmentServiceConfig.MessageQueueConfig.Kind
 	switch messageQueueKind {
 	case schema.MessageQueueKindPubsub:
-		pluginConfig.MessageQueueConfig = config.MessageQueueConfig{
+		pluginConfig.MessageQueueConfig = common_mq_config.MessageQueueConfig{
 			Kind: "pubsub",
-			PubSubConfig: config.PubSub{
+			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:              *treatmentServiceConfig.MessageQueueConfig.PubSub.Project,
 				TopicName:            *treatmentServiceConfig.MessageQueueConfig.PubSub.TopicName,
 				PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
 			},
 		}
 	case schema.MessageQueueKindNoop:
-		pluginConfig.MessageQueueConfig = config.MessageQueueConfig{
+		pluginConfig.MessageQueueConfig = common_mq_config.MessageQueueConfig{
 			Kind: "",
 		}
 	default:

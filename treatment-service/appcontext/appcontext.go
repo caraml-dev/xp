@@ -6,15 +6,17 @@ import (
 	"log"
 	"time"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/caraml-dev/xp/treatment-service/models"
 	"github.com/caraml-dev/xp/treatment-service/monitoring"
 	"github.com/caraml-dev/xp/treatment-service/services"
+	"github.com/caraml-dev/xp/treatment-service/services/messagequeue"
 )
 
 type AppContext struct {
 	ExperimentService   services.ExperimentService
-	MessageQueueService services.MessageQueueService
+	MessageQueueService messagequeue.MessageQueueService
 	MetricService       services.MetricService
 	SchemaService       services.SchemaService
 	TreatmentService    services.TreatmentService
@@ -91,21 +93,21 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	}
 
 	log.Println("Initializing message queue subscriber...")
-	var messageQueueService services.MessageQueueService
+	var messageQueueService messagequeue.MessageQueueService
 	switch cfg.MessageQueueConfig.Kind {
-	case config.NoopMQ:
-		messageQueueService, err = services.NewMessageQueueService(
+	case common_mq_config.NoopMQ:
+		messageQueueService, err = messagequeue.NewMessageQueueService(
 			context.Background(),
 			localStorage,
 			cfg.MessageQueueConfig,
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)
-	case config.PubSubMQ:
+	case common_mq_config.PubSubMQ:
 		pubsubInitContext, cancel := context.WithTimeout(
 			context.Background(), time.Duration(cfg.MessageQueueConfig.PubSubConfig.PubSubTimeoutSeconds)*time.Second)
 		defer cancel()
-		messageQueueService, err = services.NewMessageQueueService(
+		messageQueueService, err = messagequeue.NewMessageQueueService(
 			pubsubInitContext,
 			localStorage,
 			cfg.MessageQueueConfig,

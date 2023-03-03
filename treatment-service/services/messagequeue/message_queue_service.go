@@ -1,10 +1,10 @@
-package services
+package messagequeue
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/caraml-dev/xp/treatment-service/config"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
@@ -16,22 +16,22 @@ type MessageQueueService interface {
 func NewMessageQueueService(
 	ctx context.Context,
 	storage *models.LocalStorage,
-	mqConfig config.MessageQueueConfig,
+	mqConfig common_mq_config.MessageQueueConfig,
 	projectIds []uint32,
 	googleApplicationCredentialsEnvVar string,
 ) (MessageQueueService, error) {
 	var mq MessageQueueService
 	var err error
 	switch mqConfig.Kind {
-	case config.NoopMQ:
-		mq, err = NewNoopMQ()
-	case config.PubSubMQ:
+	case common_mq_config.NoopMQ:
+		mq, err = NewNoopMQService()
+	case common_mq_config.PubSubMQ:
 		pubsubConfig := PubsubSubscriberConfig{
 			Project:         mqConfig.PubSubConfig.Project,
 			UpdateTopicName: mqConfig.PubSubConfig.TopicName,
 			ProjectIds:      projectIds,
 		}
-		mq, err = NewPubsubSubscriber(ctx, storage, pubsubConfig, googleApplicationCredentialsEnvVar)
+		mq, err = NewPubsubMQService(ctx, storage, pubsubConfig, googleApplicationCredentialsEnvVar)
 	default:
 		return nil, fmt.Errorf("invalid message queue config (%s) was provided", mqConfig.Kind)
 	}
@@ -40,20 +40,4 @@ func NewMessageQueueService(
 	}
 
 	return mq, nil
-}
-
-// NoopMQ is the struct for no operation to event updates
-type NoopMQ struct{}
-
-// NewNoopMQ initializes a NoopMQ struct
-func NewNoopMQ() (*NoopMQ, error) {
-	return &NoopMQ{}, nil
-}
-
-func (k *NoopMQ) SubscribeToManagementService(ctx context.Context) error {
-	return nil
-}
-
-func (k *NoopMQ) DeleteSubscriptions(ctx context.Context) error {
-	return nil
 }

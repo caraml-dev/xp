@@ -8,6 +8,7 @@ import (
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 
 	common_config "github.com/caraml-dev/xp/common/config"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 )
 
 type Config struct {
@@ -18,7 +19,7 @@ type Config struct {
 	AuthorizationConfig *AuthorizationConfig
 	DbConfig            *DatabaseConfig
 	MLPConfig           *MLPConfig
-	MessageQueueConfig  *MessageQueueConfig
+	MessageQueueConfig  *common_mq_config.MessageQueueConfig
 	SegmenterConfig     map[string]interface{}
 	ValidationConfig    ValidationConfig
 	DeploymentConfig    DeploymentConfig
@@ -51,31 +52,6 @@ type DatabaseConfig struct {
 // MLPConfig captures the configuration used to connect to the MLP API server
 type MLPConfig struct {
 	URL string
-}
-
-// MessageQueueKind describes the message queue for transmitting event updates to and fro Treatment Service
-type MessageQueueKind = string
-
-const (
-	// NoopMQ is a No-Op Message Queue
-	NoopMQ MessageQueueKind = ""
-	// PubSubMQ is a PubSub Message Queue
-	PubSubMQ MessageQueueKind = "pubsub"
-)
-
-type MessageQueueConfig struct {
-	// The type of Message Queue for event updates
-	Kind MessageQueueKind `default:""`
-
-	// PubSubConfig captures the config related to initializing a PubSub Message Queue
-	PubSubConfig *PubSubConfig
-}
-
-// PubSubConfig captures the config for the Google PubSub client, to publish messages
-// about changes in the experimentation data
-type PubSubConfig struct {
-	Project   string `default:"dev"`
-	TopicName string `default:"xp-update"`
 }
 
 // ValidationConfig captures the config related to the validation of schemas

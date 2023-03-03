@@ -17,6 +17,7 @@ import (
 	"github.com/rs/cors"
 	_ "go.uber.org/automaxprocs"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/common/web"
 	"github.com/caraml-dev/xp/treatment-service/api"
 	"github.com/caraml-dev/xp/treatment-service/appcontext"
@@ -101,7 +102,7 @@ func NewServer(configFiles []string) (*Server, error) {
 	}
 
 	subscribe := false
-	if cfg.MessageQueueConfig.Kind != config.NoopMQ {
+	if cfg.MessageQueueConfig.Kind != common_mq_config.NoopMQ {
 		subscribe = true
 	}
 

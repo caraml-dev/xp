@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/caraml-dev/xp/common/api/schema"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/management-service/config"
 	"github.com/caraml-dev/xp/management-service/services"
 	"github.com/stretchr/testify/suite"
@@ -18,9 +19,9 @@ func (s *ConfigurationServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ConfigurationServiceTestSuite")
 
 	cfg := config.Config{
-		MessageQueueConfig: &config.MessageQueueConfig{
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
 			Kind: "pubsub",
-			PubSubConfig: &config.PubSubConfig{
+			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:   "dev",
 				TopicName: "xp-update",
 			},

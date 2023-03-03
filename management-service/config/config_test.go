@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"github.com/stretchr/testify/assert"
@@ -38,11 +39,12 @@ func TestDefaultConfigs(t *testing.T) {
 		MLPConfig: &MLPConfig{
 			URL: "",
 		},
-		MessageQueueConfig: &MessageQueueConfig{
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
 			Kind: "",
-			PubSubConfig: &PubSubConfig{
-				Project:   "dev",
-				TopicName: "xp-update",
+			PubSubConfig: &common_mq_config.PubSubConfig{
+				Project:              "dev",
+				TopicName:            "xp-update",
+				PubSubTimeoutSeconds: 30,
 			},
 		},
 		ValidationConfig: ValidationConfig{
@@ -112,11 +114,12 @@ func TestLoadConfigFiles(t *testing.T) {
 				MLPConfig: &MLPConfig{
 					URL: "test-mlp-url",
 				},
-				MessageQueueConfig: &MessageQueueConfig{
+				MessageQueueConfig: &common_mq_config.MessageQueueConfig{
 					Kind: "pubsub",
-					PubSubConfig: &PubSubConfig{
-						Project:   "test-pubsub-project",
-						TopicName: "test-pubsub-topic",
+					PubSubConfig: &common_mq_config.PubSubConfig{
+						Project:              "test-pubsub-project",
+						TopicName:            "test-pubsub-topic",
+						PubSubTimeoutSeconds: 30,
 					},
 				},
 				ValidationConfig: ValidationConfig{

@@ -8,9 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/management-service/config"
 	mw "github.com/caraml-dev/xp/management-service/middleware"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
@@ -30,8 +32,8 @@ func TestNewAppContext(t *testing.T) {
 		MLPConfig: &config.MLPConfig{
 			URL: "http://mlp.example.com/api/merlin/v1",
 		},
-		MessageQueueConfig: &config.MessageQueueConfig{
-			PubSubConfig: &config.PubSubConfig{
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
+			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:   "test",
 				TopicName: "update",
 			},
@@ -55,7 +57,7 @@ func TestNewAppContext(t *testing.T) {
 	validationService, err := services.NewValidationService(cfg.ValidationConfig)
 	require.NoError(t, err)
 
-	messageQueueService, _ := services.NewMessageQueueService(cfg.MessageQueueConfig)
+	messageQueueService, _ := messagequeue.NewMessageQueueService(*cfg.MessageQueueConfig)
 
 	expHistSvc := services.NewExperimentHistoryService(db)
 	expSvc := services.NewExperimentService(&allServices, db)
@@ -90,8 +92,8 @@ func TestNewAppContext(t *testing.T) {
 		},
 	)
 	// Patch MessageQueue service
-	monkey.Patch(services.NewMessageQueueService,
-		func(messageQueueConfig *config.MessageQueueConfig) (services.MessageQueueService, error) {
+	monkey.Patch(messagequeue.NewMessageQueueService,
+		func(messageQueueConfig common_mq_config.MessageQueueConfig) (messagequeue.MessageQueueService, error) {
 			return messageQueueService, nil
 		},
 	)
@@ -133,7 +135,7 @@ func TestNewAppContext(t *testing.T) {
 			treatmentService services.TreatmentService,
 			treatmentHistoryService services.TreatmentHistoryService,
 			validationService services.ValidationService,
-			messageQueueService services.MessageQueueService,
+			messageQueueService messagequeue.MessageQueueService,
 			configurationService services.ConfigurationService,
 		) services.Services {
 			return allServices

@@ -16,6 +16,7 @@ import (
 	"github.com/caraml-dev/xp/management-service/models"
 	"github.com/caraml-dev/xp/management-service/pagination"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
@@ -33,7 +34,7 @@ func (s *ExperimentServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ExperimentServiceTestSuite")
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB(tu.MigrationsPath)
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}
@@ -881,7 +882,7 @@ func setupMockValidationService() services.ValidationService {
 	return validationSvc
 }
 
-func setupMockMessageQueueService() services.MessageQueueService {
+func setupMockMessageQueueService() messagequeue.MessageQueueService {
 	messageQueueSvc := &mocks.MessageQueueService{}
 	messageQueueSvc.On(
 		"PublishExperimentMessage",

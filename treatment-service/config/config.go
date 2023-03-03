@@ -8,6 +8,7 @@ import (
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 
 	common_config "github.com/caraml-dev/xp/common/config"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
@@ -23,16 +24,16 @@ type Config struct {
 	Port       int      `json:"port" default:"8080" validate:"required"`
 	ProjectIds []string `json:"project_ids" default:""`
 
-	AssignedTreatmentLogger AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
-	DebugConfig             DebugConfig                   `json:"debug_config" validate:"required,dive"`
-	NewRelicConfig          newrelic.Config               `json:"new_relic_config"`
-	SentryConfig            sentry.Config                 `json:"sentry_config"`
-	DeploymentConfig        DeploymentConfig              `json:"deployment_config" validate:"required,dive"`
-	MessageQueueConfig      MessageQueueConfig            `json:"message_queue_config" validate:"required,dive"`
-	ManagementService       ManagementServiceConfig       `json:"management_service" validate:"required,dive"`
-	MonitoringConfig        Monitoring                    `json:"monitoring_config"`
-	SwaggerConfig           SwaggerConfig                 `json:"swagger_config" validate:"required,dive"`
-	SegmenterConfig         map[string]interface{}        `json:"segmenter_config"`
+	AssignedTreatmentLogger AssignedTreatmentLoggerConfig       `json:"assigned_treatment_logger"`
+	DebugConfig             DebugConfig                         `json:"debug_config" validate:"required,dive"`
+	NewRelicConfig          newrelic.Config                     `json:"new_relic_config"`
+	SentryConfig            sentry.Config                       `json:"sentry_config"`
+	DeploymentConfig        DeploymentConfig                    `json:"deployment_config" validate:"required,dive"`
+	MessageQueueConfig      common_mq_config.MessageQueueConfig `json:"message_queue_config" validate:"required,dive"`
+	ManagementService       ManagementServiceConfig             `json:"management_service" validate:"required,dive"`
+	MonitoringConfig        Monitoring                          `json:"monitoring_config"`
+	SwaggerConfig           SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
+	SegmenterConfig         map[string]interface{}              `json:"segmenter_config"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
@@ -86,30 +87,6 @@ const (
 type Monitoring struct {
 	Kind         MetricSinkKind `json:"kind" default:"" validate:"required"`
 	MetricLabels []string       `json:"metric_labels" default:""`
-}
-
-// MessageQueueKind describes the message queue for transmitting event updates to and fro Treatment Service
-type MessageQueueKind = string
-
-const (
-	// NoopMQ is a No-Op Message Queue
-	NoopMQ MessageQueueKind = ""
-	// PubSubMQ is a PubSub Message Queue
-	PubSubMQ MessageQueueKind = "pubsub"
-)
-
-type MessageQueueConfig struct {
-	// The type of Message Queue for event updates
-	Kind MessageQueueKind `default:""`
-
-	// PubSubConfig captures the config related to subscribing to a PubSub Message Queue
-	PubSubConfig PubSub
-}
-
-type PubSub struct {
-	Project              string `json:"project" default:"dev"`
-	TopicName            string `json:"topic_name" default:"xp-update"`
-	PubSubTimeoutSeconds int    `json:"pub_sub_timeout_seconds" default:"30"`
 }
 
 type ManagementServiceConfig struct {

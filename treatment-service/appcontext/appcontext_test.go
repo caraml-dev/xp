@@ -13,6 +13,7 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 
 	"github.com/caraml-dev/xp/common/api/schema"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/common/testutils"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/caraml-dev/xp/treatment-service/models"
@@ -25,7 +26,7 @@ import (
 func TestContext(t *testing.T) {
 
 	// Config for emulator and test server
-	pubSubConfig := config.PubSub{
+	pubSubConfig := &common_mq_config.PubSubConfig{
 		Project:              "test",
 		TopicName:            "updates",
 		PubSubTimeoutSeconds: 30,
@@ -56,7 +57,7 @@ func TestContext(t *testing.T) {
 		NewRelicConfig:          newrelic.Config{},
 		SentryConfig:            sentry.Config{},
 		DeploymentConfig:        config.DeploymentConfig{},
-		MessageQueueConfig: config.MessageQueueConfig{
+		MessageQueueConfig: common_mq_config.MessageQueueConfig{
 			Kind:         "pubsub",
 			PubSubConfig: pubSubConfig,
 		},
@@ -129,7 +130,7 @@ func TeardownTest(testServer *httptest.Server, emulator testcontainers.Container
 }
 
 func SetupTest(
-	pubSubConfig config.PubSub,
+	pubSubConfig *common_mq_config.PubSubConfig,
 	projectSettings []schema.ProjectSettings,
 	segmentersType map[string]schema.SegmenterType,
 ) (testcontainers.Container, *httptest.Server, error) {
