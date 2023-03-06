@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"time"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/docker/go-connections/nat"
@@ -79,7 +80,9 @@ func CreateSubscriptions(client *pubsub.Client, ctx context.Context, topicNames 
 	for _, topicName := range topicNames {
 		subscriptionId := fmt.Sprintf("%s_subscription", topicName)
 		topic := client.Topic(topicName)
-		subscription, err := client.CreateSubscription(ctx, subscriptionId, pubsub.SubscriptionConfig{Topic: topic})
+		subscription, err := client.CreateSubscription(ctx,
+			subscriptionId,
+			pubsub.SubscriptionConfig{Topic: topic, ExpirationPolicy: time.Hour * 24})
 		if err != nil {
 			return nil, err
 		}

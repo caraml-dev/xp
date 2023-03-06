@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"cloud.google.com/go/pubsub"
 	"github.com/google/uuid"
@@ -33,7 +34,10 @@ func newSubscriptionId(topic string) string {
 
 func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic string) (*pubsub.Subscription, error) {
 	return client.CreateSubscription(
-		ctx, newSubscriptionId(topic), pubsub.SubscriptionConfig{Topic: client.Topic(topic)},
+		ctx, newSubscriptionId(topic), pubsub.SubscriptionConfig{
+			Topic:            client.Topic(topic),
+			ExpirationPolicy: time.Hour * 24,
+		},
 	)
 }
 
