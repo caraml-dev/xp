@@ -1,5 +1,7 @@
 package services
 
+import "github.com/caraml-dev/xp/management-service/services/messagequeue"
+
 type Services struct {
 	ExperimentService        ExperimentService
 	ExperimentHistoryService ExperimentHistoryService
@@ -11,7 +13,7 @@ type Services struct {
 	TreatmentService         TreatmentService
 	TreatmentHistoryService  TreatmentHistoryService
 	ValidationService        ValidationService
-	PubSubPublisherService   PubSubPublisherService
+	MessageQueueService      messagequeue.MessageQueueService
 	ConfigurationService     ConfigurationService
 }
 
@@ -26,7 +28,7 @@ func NewServices(
 	treatmentSvc TreatmentService,
 	treatmentHistorySvc TreatmentHistoryService,
 	validationSvc ValidationService,
-	pubsubPublisherSvc PubSubPublisherService,
+	messageQueueSvc messagequeue.MessageQueueService,
 	configurationService ConfigurationService,
 ) Services {
 	return Services{
@@ -34,7 +36,7 @@ func NewServices(
 		ExperimentHistoryService: expHistorySvc,
 		MLPService:               mlpSvc,
 		ProjectSettingsService:   projectSettingsSvc,
-		PubSubPublisherService:   pubsubPublisherSvc,
+		MessageQueueService:      messageQueueSvc,
 		SegmenterService:         segmenterSvc,
 		SegmentService:           segmentSvc,
 		SegmentHistoryService:    segmentHistorySvc,

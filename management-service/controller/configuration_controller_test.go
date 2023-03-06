@@ -22,11 +22,15 @@ func (s *ConfigurationControllerTestSuite) SetupSuite() {
 
 	pubSubConfigProject := "dev"
 	pubSubConfigTopicName := "xp-update"
+	messageQueueKind := schema.MessageQueueKindPubsub
 
 	treatmentServicePluginConfiguration := schema.TreatmentServiceConfig{
-		PubSub: &schema.PubSub{
-			Project:   &pubSubConfigProject,
-			TopicName: &pubSubConfigTopicName,
+		MessageQueueConfig: &schema.MessageQueueConfig{
+			Kind: &messageQueueKind,
+			PubSub: &schema.PubSub{
+				Project:   &pubSubConfigProject,
+				TopicName: &pubSubConfigTopicName,
+			},
 		},
 		SegmenterConfig: &schema.SegmenterConfig{
 			"s2_ids": map[string]interface{}{
@@ -65,9 +69,12 @@ func (s *ConfigurationControllerTestSuite) TestGetTreatmentServicePluginConfig()
 	body, err := io.ReadAll(resp.Body)
 	s.Suite.Require().NoError(err)
 	s.Suite.Assert().JSONEq(`{"data":{
-		"pub_sub":{
-			"project":"dev",
-			"topic_name":"xp-update"
+		"message_queue_config": {
+			"kind":"pubsub",
+			"pub_sub":{
+				"project":"dev",
+				"topic_name":"xp-update"
+			}
 		},
 		"segmenter_config":{
 			"s2_ids":{

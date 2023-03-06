@@ -1,4 +1,4 @@
-package services
+package messagequeue
 
 import (
 	"context"
@@ -7,24 +7,18 @@ import (
 	"google.golang.org/api/iterator"
 	"google.golang.org/protobuf/proto"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
 	"github.com/caraml-dev/xp/common/segmenters"
-	"github.com/caraml-dev/xp/management-service/config"
 )
 
-type PubSubPublisherService interface {
-	PublishProjectSettingsMessage(updateType string, settings *_pubsub.ProjectSettings) error
-	PublishExperimentMessage(updateType string, experiment *_pubsub.Experiment) error
-	PublishProjectSegmenterMessage(updateType string, segmenter *segmenters.SegmenterConfiguration, projectId int64) error
-}
-
-type pubSubPublisherService struct {
+type pubSubMessageQueueService struct {
 	context context.Context
-	config  config.PubSubConfig
+	config  common_mq_config.PubSubConfig
 	topic   *pubsub.Topic
 }
 
-func NewPubSubPublisherService(config *config.PubSubConfig) (PubSubPublisherService, error) {
+func NewPubSubMQService(config common_mq_config.PubSubConfig) (MessageQueueService, error) {
 	ctx := context.Background()
 	client, err := pubsub.NewClient(ctx, config.Project)
 	if err != nil {
@@ -53,9 +47,9 @@ func NewPubSubPublisherService(config *config.PubSubConfig) (PubSubPublisherServ
 	}
 
 	topic := client.Topic(config.TopicName)
-	pubSubPublisher := pubSubPublisherService{
+	pubSubPublisher := pubSubMessageQueueService{
 		context: ctx,
-		config:  *config,
+		config:  config,
 		topic:   topic,
 	}
 
@@ -106,7 +100,7 @@ func serializeUpdateSettings(settings *_pubsub.ProjectSettings) ([]byte, error) 
 	return proto.Marshal(&updateClientState)
 }
 
-func (p *pubSubPublisherService) PublishProjectSettingsMessage(updateType string, settings *_pubsub.ProjectSettings) error {
+func (p *pubSubMessageQueueService) PublishProjectSettingsMessage(updateType string, settings *_pubsub.ProjectSettings) error {
 	var payload []byte
 	var err error
 
@@ -132,7 +126,7 @@ func (p *pubSubPublisherService) PublishProjectSettingsMessage(updateType string
 	return nil
 }
 
-func (p *pubSubPublisherService) PublishExperimentMessage(updateType string, experiment *_pubsub.Experiment) error {
+func (p *pubSubMessageQueueService) PublishExperimentMessage(updateType string, experiment *_pubsub.Experiment) error {
 	var payload []byte
 	var err error
 
@@ -158,7 +152,7 @@ func (p *pubSubPublisherService) PublishExperimentMessage(updateType string, exp
 	return nil
 }
 
-func (p *pubSubPublisherService) PublishProjectSegmenterMessage(
+func (p *pubSubMessageQueueService) PublishProjectSegmenterMessage(
 	updateType string,
 	segmenter *segmenters.SegmenterConfiguration,
 	projectId int64,

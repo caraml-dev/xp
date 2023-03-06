@@ -7,6 +7,8 @@ import (
 	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 )
 
 func TestDefaultConfigs(t *testing.T) {
@@ -44,10 +46,13 @@ func TestDefaultConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp",
 		},
-		PubSub: PubSub{
-			Project:              "dev",
-			TopicName:            "xp-update",
-			PubSubTimeoutSeconds: 30,
+		MessageQueueConfig: common_mq_config.MessageQueueConfig{
+			Kind: "",
+			PubSubConfig: &common_mq_config.PubSubConfig{
+				Project:              "dev",
+				TopicName:            "xp-update",
+				PubSubTimeoutSeconds: 30,
+			},
 		},
 		MonitoringConfig: Monitoring{MetricLabels: []string{}},
 		NewRelicConfig: newrelic.Config{
@@ -104,10 +109,13 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp1",
 		},
-		PubSub: PubSub{
-			Project:              "dev",
-			TopicName:            "xp-update",
-			PubSubTimeoutSeconds: 30,
+		MessageQueueConfig: common_mq_config.MessageQueueConfig{
+			Kind: "",
+			PubSubConfig: &common_mq_config.PubSubConfig{
+				Project:              "dev",
+				TopicName:            "xp-update",
+				PubSubTimeoutSeconds: 30,
+			},
 		},
 		MonitoringConfig: Monitoring{MetricLabels: []string{}},
 		NewRelicConfig: newrelic.Config{

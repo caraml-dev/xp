@@ -31,7 +31,7 @@ func (s *ProjectSettingsServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up ProjectSettingsServiceTestSuite")
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB(tu.MigrationsPath)
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}
@@ -176,23 +176,23 @@ func (s *ProjectSettingsServiceTestSuite) SetupSuite() {
 	).Return(nil)
 
 	// Init mock pubsub service
-	pubSubSvc := &mocks.PubSubPublisherService{}
-	pubSubSvc.On(
+	messageQueueSvc := &mocks.MessageQueueService{}
+	messageQueueSvc.On(
 		"PublishProjectSettingsMessage",
 		"create",
 		mock.Anything,
 	).Return(nil)
-	pubSubSvc.On(
+	messageQueueSvc.On(
 		"PublishProjectSettingsMessage",
 		"update",
 		mock.Anything,
 	).Return(nil)
 
 	allServices := &services.Services{
-		ExperimentService:      expSvc,
-		ValidationService:      validationSvc,
-		PubSubPublisherService: pubSubSvc,
-		SegmenterService:       segmenterSvc,
+		ExperimentService:   expSvc,
+		ValidationService:   validationSvc,
+		MessageQueueService: messageQueueSvc,
+		SegmenterService:    segmenterSvc,
 	}
 
 	// Init user service

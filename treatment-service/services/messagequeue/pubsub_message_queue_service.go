@@ -1,4 +1,4 @@
-package services
+package messagequeue
 
 import (
 	"context"
@@ -15,11 +15,6 @@ import (
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
 	"github.com/caraml-dev/xp/treatment-service/models"
 )
-
-type ExperimentSubscriber interface {
-	SubscribeToManagementService(ctx context.Context) error
-	DeleteSubscriptions(ctx context.Context) error
-}
 
 type PubsubSubscriber struct {
 	localStorage *models.LocalStorage
@@ -46,7 +41,7 @@ func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic str
 	)
 }
 
-func NewPubsubSubscriber(
+func NewPubsubMQService(
 	ctx context.Context,
 	storage *models.LocalStorage,
 	config PubsubSubscriberConfig,

@@ -8,9 +8,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/management-service/config"
 	mw "github.com/caraml-dev/xp/management-service/middleware"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
@@ -30,9 +32,11 @@ func TestNewAppContext(t *testing.T) {
 		MLPConfig: &config.MLPConfig{
 			URL: "http://mlp.example.com/api/merlin/v1",
 		},
-		PubSubConfig: &config.PubSubConfig{
-			Project:   "test",
-			TopicName: "update",
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
+			PubSubConfig: &common_mq_config.PubSubConfig{
+				Project:   "test",
+				TopicName: "update",
+			},
 		},
 		ValidationConfig: config.ValidationConfig{
 			ValidationUrlTimeoutSeconds: 5,
@@ -53,7 +57,7 @@ func TestNewAppContext(t *testing.T) {
 	validationService, err := services.NewValidationService(cfg.ValidationConfig)
 	require.NoError(t, err)
 
-	pubSubPublisherService, _ := services.NewPubSubPublisherService(cfg.PubSubConfig)
+	messageQueueService, _ := messagequeue.NewMessageQueueService(*cfg.MessageQueueConfig)
 
 	expHistSvc := services.NewExperimentHistoryService(db)
 	expSvc := services.NewExperimentService(&allServices, db)
@@ -87,10 +91,10 @@ func TestNewAppContext(t *testing.T) {
 			return segmenterSvc, nil
 		},
 	)
-	// Patch PubSub publisher service
-	monkey.Patch(services.NewPubSubPublisherService,
-		func(pubsubConfig *config.PubSubConfig) (services.PubSubPublisherService, error) {
-			return pubSubPublisherService, nil
+	// Patch MessageQueue service
+	monkey.Patch(messagequeue.NewMessageQueueService,
+		func(messageQueueConfig common_mq_config.MessageQueueConfig) (messagequeue.MessageQueueService, error) {
+			return messageQueueService, nil
 		},
 	)
 	// Patch New MLP Service to validate the input and return the mock service object
@@ -116,7 +120,7 @@ func TestNewAppContext(t *testing.T) {
 		TreatmentService:         treatmentSvc,
 		TreatmentHistoryService:  treatmentHistSvc,
 		ValidationService:        validationService,
-		PubSubPublisherService:   pubSubPublisherService,
+		MessageQueueService:      messageQueueService,
 		ConfigurationService:     configurationSvc,
 	}
 	monkey.Patch(services.NewServices,
@@ -131,7 +135,7 @@ func TestNewAppContext(t *testing.T) {
 			treatmentService services.TreatmentService,
 			treatmentHistoryService services.TreatmentHistoryService,
 			validationService services.ValidationService,
-			publisherService services.PubSubPublisherService,
+			messageQueueService messagequeue.MessageQueueService,
 			configurationService services.ConfigurationService,
 		) services.Services {
 			return allServices

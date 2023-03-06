@@ -20,9 +20,11 @@ DbConfig:
 MLPConfig:
   URL: test-mlp-url
 
-PubSubConfig:
-  Project: test-pubsub-project
-  TopicName: test-pubsub-topic
+MessageQueueConfig:
+  Kind: pubsub
+  PubSubConfig:
+    Project: test-pubsub-project
+    TopicName: test-pubsub-topic
 
 SegmenterConfig:
   S2_IDs:

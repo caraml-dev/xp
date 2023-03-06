@@ -1,6 +1,6 @@
 //go:build integration
 
-package services_test
+package messagequeue_test
 
 import (
 	"context"
@@ -14,13 +14,14 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	"github.com/caraml-dev/xp/common/api/schema"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	_pubsub "github.com/caraml-dev/xp/common/pubsub"
 	"github.com/caraml-dev/xp/common/segmenters"
 	common_testutils "github.com/caraml-dev/xp/common/testutils"
-	"github.com/caraml-dev/xp/management-service/config"
 	tu "github.com/caraml-dev/xp/management-service/internal/testutils"
 	"github.com/caraml-dev/xp/management-service/models"
 	"github.com/caraml-dev/xp/management-service/services"
+	"github.com/caraml-dev/xp/management-service/services/messagequeue"
 	"github.com/caraml-dev/xp/management-service/services/mocks"
 )
 
@@ -34,7 +35,7 @@ type PubSubServiceTestSuite struct {
 	services.ExperimentService
 	services.ProjectSettingsService
 	services.TreatmentService
-	services.PubSubPublisherService
+	messagequeue.MessageQueueService
 	CleanUpFunc     func()
 	Settings        models.Settings
 	ProjectSettings []models.ProjectSettings
@@ -48,7 +49,7 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 	s.ctx = context.Background()
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB("file://../../database/db-migrations")
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}
@@ -61,13 +62,16 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 	}
 	s.emulator = emulator
 	topics := []string{PUBSUB_TOPIC}
-	pubSubConfig := config.PubSubConfig{
-		Project:   PUBSUB_PROJECT,
-		TopicName: PUBSUB_TOPIC,
+	messageQueueConfig := common_mq_config.MessageQueueConfig{
+		Kind: "pubsub",
+		PubSubConfig: &common_mq_config.PubSubConfig{
+			Project:   PUBSUB_PROJECT,
+			TopicName: PUBSUB_TOPIC,
+		},
 	}
-	pubSubPublisher, err := services.NewPubSubPublisherService(&pubSubConfig)
+	messageQueueService, err := messagequeue.NewMessageQueueService(messageQueueConfig)
 	if err != nil {
-		s.FailNow("failed to initialize pubsub publisher", err.Error())
+		s.FailNow("failed to initialize message queue service", err.Error())
 	}
 	subscriptions, err := common_testutils.CreateSubscriptions(pubSubClient, s.ctx, topics)
 	if err != nil {
@@ -226,7 +230,7 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 		ExperimentHistoryService: expHistSvc,
 		SegmenterService:         segmenterSvc,
 		ValidationService:        validationSvc,
-		PubSubPublisherService:   pubSubPublisher,
+		MessageQueueService:      messageQueueService,
 		TreatmentHistoryService:  treatmentHistSvc,
 	}
 
@@ -240,7 +244,7 @@ func (s *PubSubServiceTestSuite) SetupSuite() {
 
 	// Init project settings service
 	s.ProjectSettingsService = services.NewProjectSettingsService(allServices, db)
-	s.PubSubPublisherService = allServices.PubSubPublisherService
+	s.MessageQueueService = allServices.MessageQueueService
 
 	// Create experiment test data
 	err = db.Create(&models.Settings{
@@ -500,7 +504,7 @@ func (s *PubSubServiceTestSuite) TestProjectSettingPublish() {
 	}
 	segmenterConfig, err := customSegmenter.GetConfiguration()
 	s.Suite.Require().NoError(err)
-	err = s.PubSubPublisherService.PublishProjectSegmenterMessage("create", segmenterConfig, 1)
+	err = s.MessageQueueService.PublishProjectSegmenterMessage("create", segmenterConfig, 1)
 	s.Suite.Require().NoError(err)
 	publishedUpdate, err := getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)
@@ -516,7 +520,7 @@ func (s *PubSubServiceTestSuite) TestProjectSettingPublish() {
 	customSegmenter.Required = !customSegmenter.Required
 	segmenterConfig, err = customSegmenter.GetConfiguration()
 	s.Suite.Require().NoError(err)
-	err = s.PubSubPublisherService.PublishProjectSegmenterMessage("update", segmenterConfig, 1)
+	err = s.MessageQueueService.PublishProjectSegmenterMessage("update", segmenterConfig, 1)
 	s.Suite.Require().NoError(err)
 	publishedUpdate, err = getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)
@@ -524,7 +528,7 @@ func (s *PubSubServiceTestSuite) TestProjectSettingPublish() {
 	fetchSegmenter = publishedUpdate.GetProjectSegmenterUpdated().GetProjectSegmenter()
 	s.Suite.Require().False(fetchSegmenter.Required)
 
-	err = s.PubSubPublisherService.PublishProjectSegmenterMessage("delete", segmenterConfig, 1)
+	err = s.MessageQueueService.PublishProjectSegmenterMessage("delete", segmenterConfig, 1)
 	s.Suite.Require().NoError(err)
 	publishedUpdate, err = getLastPublishedUpdate(s.ctx, 1*time.Second, s.subscriptions[PUBSUB_TOPIC])
 	s.Suite.Require().NoError(err)

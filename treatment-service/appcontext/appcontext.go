@@ -6,21 +6,23 @@ import (
 	"log"
 	"time"
 
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/caraml-dev/xp/treatment-service/models"
 	"github.com/caraml-dev/xp/treatment-service/monitoring"
 	"github.com/caraml-dev/xp/treatment-service/services"
+	"github.com/caraml-dev/xp/treatment-service/services/messagequeue"
 )
 
 type AppContext struct {
-	ExperimentService services.ExperimentService
-	MetricService     services.MetricService
-	SchemaService     services.SchemaService
-	TreatmentService  services.TreatmentService
-	SegmenterService  services.SegmenterService
+	ExperimentService   services.ExperimentService
+	MessageQueueService messagequeue.MessageQueueService
+	MetricService       services.MetricService
+	SchemaService       services.SchemaService
+	TreatmentService    services.TreatmentService
+	SegmenterService    services.SegmenterService
 
 	AssignedTreatmentLogger *monitoring.AssignedTreatmentLogger
-	ExperimentSubscriber    services.ExperimentSubscriber
 }
 
 func NewAppContext(cfg *config.Config) (*AppContext, error) {
@@ -90,20 +92,31 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		return nil, err
 	}
 
-	log.Println("Initializing pubsub subscriber...")
-	pubsubConfig := services.PubsubSubscriberConfig{
-		Project:         cfg.PubSub.Project,
-		UpdateTopicName: cfg.PubSub.TopicName,
-		ProjectIds:      cfg.GetProjectIds(),
+	log.Println("Initializing message queue subscriber...")
+	var messageQueueService messagequeue.MessageQueueService
+	switch cfg.MessageQueueConfig.Kind {
+	case common_mq_config.NoopMQ:
+		messageQueueService, err = messagequeue.NewMessageQueueService(
+			context.Background(),
+			localStorage,
+			cfg.MessageQueueConfig,
+			cfg.GetProjectIds(),
+			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
+		)
+	case common_mq_config.PubSubMQ:
+		pubsubInitContext, cancel := context.WithTimeout(
+			context.Background(), time.Duration(cfg.MessageQueueConfig.PubSubConfig.PubSubTimeoutSeconds)*time.Second)
+		defer cancel()
+		messageQueueService, err = messagequeue.NewMessageQueueService(
+			pubsubInitContext,
+			localStorage,
+			cfg.MessageQueueConfig,
+			cfg.GetProjectIds(),
+			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
+		)
+	default:
+		err = fmt.Errorf("unrecognized Message Queue Kind: %s", loggerConfig.Kind)
 	}
-	pubsubInitContext, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.PubSub.PubSubTimeoutSeconds)*time.Second)
-	defer cancel()
-	experimentSubscriber, err := services.NewPubsubSubscriber(
-		pubsubInitContext,
-		localStorage,
-		pubsubConfig,
-		cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
-	)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +128,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		SchemaService:           schemaSvc,
 		TreatmentService:        treatmentSvc,
 		AssignedTreatmentLogger: logger,
-		ExperimentSubscriber:    experimentSubscriber,
+		MessageQueueService:     messageQueueService,
 	}
 
 	return appContext, nil

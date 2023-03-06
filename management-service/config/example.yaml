@@ -29,9 +29,11 @@ DbConfig:
 MLPConfig:
   URL: http://localhost:8080/api/v1
 
-PubSubConfig:
-  Project: dev
-  TopicName: xp-update
+MessageQueueConfig:
+  # Kind: pubsub
+  PubSubConfig:
+    Project: dev
+    TopicName: xp-update
 
 NewRelicConfig:
   Enabled: false

@@ -9,3 +9,9 @@ AssignedTreatmentLogger:
     Brokers: localhost:9093
     Topic: local-testing
     ConnectTimeoutMS: 20000
+
+MessageQueueConfig:
+  Kind: pubsub
+  PubSubConfig:
+    Project: test
+    TopicName: update

@@ -29,7 +29,7 @@ func (s *TreatmentHistoryServiceTestSuite) SetupSuite() {
 	s.Suite.T().Log("Setting up TreatentHistoryServiceTestSuite")
 
 	// Create test DB, save the DB clean up function to be executed on tear down
-	db, cleanup, err := tu.CreateTestDB()
+	db, cleanup, err := tu.CreateTestDB(tu.MigrationsPath)
 	if err != nil {
 		s.Suite.T().Fatalf("Could not create test DB: %v", err)
 	}

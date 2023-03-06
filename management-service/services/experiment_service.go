@@ -290,7 +290,7 @@ func (svc *experimentService) CreateExperiment(
 	if err != nil {
 		return nil, err
 	}
-	err = svc.services.PubSubPublisherService.PublishExperimentMessage("create", protoExpResponse)
+	err = svc.services.MessageQueueService.PublishExperimentMessage("create", protoExpResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -404,7 +404,7 @@ func (svc *experimentService) UpdateExperiment(
 	if err != nil {
 		return nil, err
 	}
-	err = svc.services.PubSubPublisherService.PublishExperimentMessage("update", protoExpResponse)
+	err = svc.services.MessageQueueService.PublishExperimentMessage("update", protoExpResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -476,7 +476,7 @@ func (svc *experimentService) EnableExperiment(settings models.Settings, experim
 	if err != nil {
 		return err
 	}
-	err = svc.services.PubSubPublisherService.PublishExperimentMessage("update", protoExpResponse)
+	err = svc.services.MessageQueueService.PublishExperimentMessage("update", protoExpResponse)
 	if err != nil {
 		return err
 	}
@@ -518,7 +518,7 @@ func (svc *experimentService) DisableExperiment(projectId int64, experimentId in
 	if err != nil {
 		return err
 	}
-	err = svc.services.PubSubPublisherService.PublishExperimentMessage("update", protoExpResponse)
+	err = svc.services.MessageQueueService.PublishExperimentMessage("update", protoExpResponse)
 	if err != nil {
 		return err
 	}

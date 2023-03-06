@@ -175,7 +175,7 @@ func (svc *projectSettingsService) CreateProjectSettings(
 
 	// Convert to the format expected by the Message Queue
 	protoExpResponse := dbRecord.ToProtoSchema()
-	err = svc.services.PubSubPublisherService.PublishProjectSettingsMessage("create", &protoExpResponse)
+	err = svc.services.MessageQueueService.PublishProjectSettingsMessage("create", &protoExpResponse)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func (svc *projectSettingsService) UpdateProjectSettings(
 
 	// Convert to the format expected by the Message Queue
 	protoExpResponse := dbRecord.ToProtoSchema()
-	err = svc.services.PubSubPublisherService.PublishProjectSettingsMessage("update", &protoExpResponse)
+	err = svc.services.MessageQueueService.PublishProjectSettingsMessage("update", &protoExpResponse)
 	if err != nil {
 		return nil, err
 	}
