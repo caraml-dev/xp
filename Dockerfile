@@ -2,7 +2,7 @@ FROM alpine:latest
 
 # Install bash
 USER root
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash libc6-compat
 
 ARG API_BIN_NAME=xp-management
 ARG XP_UI_DIST_PATH=ui/build
@@ -21,6 +21,8 @@ RUN addgroup -S ${XP_USER_GROUP} \
 
 COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/* /app/
 COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/database /app/database/
+# read+write access for owner/group but no write access for others
+RUN chmod -R 775 /app/xp-management
 
 USER ${XP_USER}
 WORKDIR /app
