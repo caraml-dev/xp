@@ -19,8 +19,9 @@ RUN addgroup -S ${XP_USER_GROUP} \
     && mkdir /app \
     && chown -R ${XP_USER}:${XP_USER_GROUP} /app
 
-COPY --chown=${XP_USER}:${XP_USER_GROUP} --chmod=700 management-service/bin/* /app/
+COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/* /app/
 COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/database /app/database/
+RUN chmod +x /app/xp-management
 
 USER ${XP_USER}
 WORKDIR /app
