@@ -21,8 +21,7 @@ RUN addgroup -S ${XP_USER_GROUP} \
 
 COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/* /app/
 COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/database /app/database/
-# read+write access for owner/group but no write access for others
-RUN chmod -R 775 /app/xp-management
+RUN chmod +x /app/xp-management
 
 USER ${XP_USER}
 WORKDIR /app
