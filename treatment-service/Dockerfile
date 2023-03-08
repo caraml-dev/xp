@@ -1,6 +1,5 @@
-FROM debian:bullseye-slim
+FROM ubuntu:latest
 
-RUN apt-get update && apt-get install libc6
 RUN mkdir -p /opt/xp_treatment
 
 COPY . /opt/xp_treatment/
