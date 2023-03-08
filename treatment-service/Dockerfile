@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-RUN apk update && apk add git make bash unzip libtool gcc musl-dev ca-certificates dumb-init tzdata libc6-compat gcompat
+RUN apk update && apk add git make bash unzip libtool gcc musl-dev ca-certificates dumb-init tzdata
 
 RUN mkdir -p /opt/xp_treatment
 
