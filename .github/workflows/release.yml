@@ -72,7 +72,7 @@ jobs:
       api-version: ${{ steps.build-image.outputs.api-version }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -116,7 +116,7 @@ jobs:
       api-version: ${{ steps.build-image.outputs.api-version }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 

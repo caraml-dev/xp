@@ -34,7 +34,7 @@ jobs:
     env:
       PYTHON: 3.7
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Python
         id: setup-python
         uses: actions/setup-python@v2
@@ -56,13 +56,13 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
       - name: Lint Common module
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: ${{ env.GO_LINT_VERSION }}
           working-directory: common
           args: --timeout 3m --verbose --skip-files=testutils/mocks/ManagementClientInterface.go
       - name: Lint Management Service module
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: ${{ env.GO_LINT_VERSION }}
           working-directory: management-service
@@ -70,7 +70,7 @@ jobs:
           skip-build-cache: true
           args: --timeout 3m --verbose
       - name: Lint Treatment Service module
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           version: ${{ env.GO_LINT_VERSION }}
           working-directory: treatment-service
@@ -221,7 +221,7 @@ jobs:
     outputs:
       release-type: ${{ steps.release-rules.outputs.release-type }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: release-rules
         uses: ./.github/actions/release-rules
 
