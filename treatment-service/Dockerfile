@@ -28,4 +28,8 @@ COPY --from=api-builder /app/bin/* /opt/xp_treatment/
 RUN chmod +x /opt/xp_treatment/xp-treatment
 
 WORKDIR /opt/xp_treatment
-ENTRYPOINT [ "./xp-treatment" ]
+
+ARG API_BIN_NAME=xp-treatment
+ENV XP_API_BIN "./${API_BIN_NAME}"
+
+ENTRYPOINT ["sh", "-c", "${XP_API_BIN} \"$@\"", "--"]
