@@ -22,7 +22,7 @@ version:
 
 build-treatment-service: version
 	@echo "Building binary..."
-	@cd ${TREATMENT_SVC_PATH} && go build -o ./bin/${TREATMENT_SVC_BIN_NAME}
+	@go build -o ./bin/${TREATMENT_SVC_BIN_NAME}
 	@cp api/treatment.yaml ${TREATMENT_SVC_PATH}/bin
 	@cp api/schema.yaml ${TREATMENT_SVC_PATH}/bin
 

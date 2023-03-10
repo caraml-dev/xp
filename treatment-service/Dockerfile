@@ -7,8 +7,6 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64
 
-ENV PROJECT_ROOT=github.com/caraml-dev/xp/treatment-service
-
 WORKDIR /app
 COPY . .
 
@@ -16,12 +14,11 @@ COPY . .
 RUN go build \
     -mod=vendor \
     -tags musl \
-    -o ./bin/${API_BIN_NAME} \
-    -v ${PROJECT_ROOT}/cmd
+    -o ./bin/${API_BIN_NAME}
 
 FROM alpine:latest
 
-RUN apk update && apk add git make bash unzip libtool gcc musl-dev ca-certificates dumb-init tzdata
+RUN apk update && apk add git make bash unzip libtool ca-certificates dumb-init tzdata
 RUN mkdir -p /opt/xp_treatment
 
 COPY --from=api-builder /app/bin/* /opt/xp_treatment/
