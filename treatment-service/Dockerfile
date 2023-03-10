@@ -21,8 +21,9 @@ FROM alpine:latest
 RUN apk update && apk add git make bash unzip libtool ca-certificates dumb-init tzdata
 RUN mkdir -p /opt/xp_treatment
 
+COPY --from=api-builder --chown=${XP_USER}:${XP_USER_GROUP} /app/api/treatment.yaml /opt/xp_treatment/
+COPY --from=api-builder --chown=${XP_USER}:${XP_USER_GROUP} /app/api/schema.yaml /opt/xp_treatment/
 COPY --from=api-builder /app/bin/* /opt/xp_treatment/
-RUN chmod +x /opt/xp_treatment/xp-treatment
 
 WORKDIR /opt/xp_treatment
 
