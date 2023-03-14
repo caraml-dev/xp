@@ -34,7 +34,9 @@ lint: lint-python lint-go
 .PHONY: vendor
 vendor:
 	@echo "Fetching dependencies..."
-	go mod vendor
+	cd common && go mod vendor
+	cd clients && go mod vendor
+	cd management-service && go mod vendor
 
 .PHONY: version
 version:
@@ -171,7 +173,7 @@ build-treatment-service: version
 build: build-management-service build-treatment-service
 
 .PHONY: build-image
-build-image: version
+build-image: version vendor
 	@$(eval IMAGE_TAG = $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/,)${BIN_NAME}:${VERSION})
 	@echo "Building docker image: ${IMAGE_TAG}"
 	docker build --tag ${IMAGE_TAG} .

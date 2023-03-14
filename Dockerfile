@@ -1,3 +1,19 @@
+FROM golang:1.18-alpine as api-builder
+ARG API_BIN_NAME=xp-management
+
+ENV GO111MODULE=on \
+    GOOS=linux \
+    GOARCH=amd64
+
+WORKDIR /app
+COPY . .
+
+# Build Management Service binary
+WORKDIR /app/management-service
+RUN go build \
+    -mod=vendor \
+    -o ./bin/${API_BIN_NAME}
+
 FROM alpine:latest
 
 # Install bash
@@ -19,8 +35,9 @@ RUN addgroup -S ${XP_USER_GROUP} \
     && mkdir /app \
     && chown -R ${XP_USER}:${XP_USER_GROUP} /app
 
-COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/* /app/
-COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/database /app/database/
+COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/*.yaml /app/
+COPY --from=api-builder --chown=${XP_USER}:${XP_USER_GROUP} /app/management-service/bin/* /app/
+COPY --from=api-builder --chown=${XP_USER}:${XP_USER_GROUP} /app/management-service/database /app/database/
 
 USER ${XP_USER}
 WORKDIR /app
