@@ -35,8 +35,7 @@ RUN addgroup -S ${XP_USER_GROUP} \
     && mkdir /app \
     && chown -R ${XP_USER}:${XP_USER_GROUP} /app
 
-COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/experiments.yaml /app/
-COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/schema.yaml /app/
+COPY --chown=${XP_USER}:${XP_USER_GROUP} management-service/bin/*.yaml /app/
 COPY --from=api-builder --chown=${XP_USER}:${XP_USER_GROUP} /app/management-service/bin/* /app/
 COPY --from=api-builder --chown=${XP_USER}:${XP_USER_GROUP} /app/management-service/database /app/database/
 

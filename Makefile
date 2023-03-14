@@ -34,6 +34,8 @@ lint: lint-python lint-go
 .PHONY: vendor
 vendor:
 	@echo "Fetching dependencies..."
+	cd common && go mod vendor
+	cd clients && go mod vendor
 	cd management-service && go mod vendor
 
 .PHONY: version
