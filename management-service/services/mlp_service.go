@@ -7,11 +7,10 @@ import (
 	"net/http"
 	"time"
 
-	mlp "github.com/gojek/mlp/api/client"
-	"github.com/patrickmn/go-cache"
-	"golang.org/x/oauth2/google"
-
 	"github.com/caraml-dev/xp/management-service/errors"
+	mlp "github.com/gojek/mlp/api/client"
+	"github.com/gojek/mlp/api/pkg/auth"
+	"github.com/patrickmn/go-cache"
 )
 
 const (
@@ -48,7 +47,7 @@ func newMLPClient(googleClient *http.Client, basePath string) *mlpClient {
 // NewMLPService returns a service that retrieves information that is shared across MLP projects.
 func NewMLPService(mlpBasePath string) (MLPService, error) {
 	httpClient := http.DefaultClient
-	googleClient, err := google.DefaultClient(context.Background(), GoogleOAuthScope)
+	googleClient, err := auth.InitGoogleClient(context.Background())
 	if err == nil {
 		httpClient = googleClient
 	} else {
@@ -108,7 +107,7 @@ func (service mlpService) refreshProjects() error {
 		defer resp.Body.Close()
 	}
 	for _, project := range projects {
-		key := buildProjectKey(int64(project.Id))
+		key := buildProjectKey(int64(project.ID))
 		service.cache.Set(key, project, cache.DefaultExpiration)
 	}
 	return nil

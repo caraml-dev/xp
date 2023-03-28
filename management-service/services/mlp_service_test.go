@@ -9,6 +9,7 @@ import (
 
 	"bou.ke/monkey"
 	"github.com/caraml-dev/xp/common/testutils"
+	"github.com/gojek/mlp/api/pkg/auth"
 	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,10 +23,10 @@ func TestNewMLPService(t *testing.T) {
 	defer reset()
 
 	// Create test Google client
-	gc, err := google.DefaultClient(context.Background(), GoogleOAuthScope)
+	gc, err := auth.InitGoogleClient(context.Background())
 	require.NoError(t, err)
 	// Create test projects and environments
-	projects := []mlp.Project{{Id: 1}}
+	projects := []mlp.Project{{ID: 1}}
 
 	// Patch new MLP Client method
 	defer monkey.UnpatchAll()
@@ -81,10 +82,10 @@ func TestMLPServiceGetProject(t *testing.T) {
 	defer monkey.UnpatchAll()
 	projects := []mlp.Project{
 		{
-			Id: 1,
+			ID: 1,
 		},
 		{
-			Id: 2,
+			ID: 2,
 		},
 	}
 
