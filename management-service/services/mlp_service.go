@@ -17,8 +17,6 @@ const (
 	mlpCacheExpirySeconds  = 600
 	mlpCacheCleanUpSeconds = 900
 	mlpQueryTimeoutSeconds = 30
-
-	GoogleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
 )
 
 // MLPService provides a set of methods to interact with the MLP APIs
