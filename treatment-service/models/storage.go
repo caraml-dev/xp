@@ -16,9 +16,9 @@ import (
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
+	"github.com/gojek/mlp/api/pkg/auth"
 	"github.com/golang-collections/collections/set"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
+	"google.golang.org/api/idtoken"
 )
 
 var GoogleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
@@ -34,6 +34,8 @@ const (
 	MatchStrengthExact MatchStrength = "exact"
 	MatchStrengthWeak  MatchStrength = "weak"
 	MatchStrengthNone  MatchStrength = "none"
+
+	defaultCaraMLAudience = "api.caraml"
 )
 
 type ExperimentMatch struct {
@@ -571,23 +573,21 @@ func NewLocalStorage(
 	clientOptions := []managementClient.ClientOption{}
 	if authzEnabled {
 		var googleClient *http.Client
-		// Init Google client for Authz. XP Server must be behind MLP Auth proxy, for authorization to work.
+		var err error
+		// Init Google client for Authz. When using a non-empty googleApplicationCredentialsEnvVar that contains a file
+		// path to a credentials file, the credentials file MUST contain a Google SERVICE ACCOUNT for authentication to
+		// work correctly
 		if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
-			data, err := os.ReadFile(filepath)
-			if err != nil {
-				return nil, err
-			}
-			creds, err := google.CredentialsFromJSON(context.Background(), data, GoogleOAuthScope)
-			if err != nil {
-				return nil, err
-			}
-			googleClient = oauth2.NewClient(context.Background(), creds.TokenSource)
+			googleClient, err = idtoken.NewClient(
+				context.Background(),
+				defaultCaraMLAudience,
+				idtoken.WithCredentialsFile(filepath),
+			)
 		} else {
-			var err error
-			googleClient, err = google.DefaultClient(context.Background(), GoogleOAuthScope)
-			if err != nil {
-				return nil, err
-			}
+			googleClient, err = auth.InitGoogleClient(context.Background())
+		}
+		if err != nil {
+			return nil, err
 		}
 
 		clientOptions = append(
