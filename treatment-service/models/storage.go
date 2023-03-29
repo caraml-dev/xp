@@ -31,8 +31,6 @@ const (
 	MatchStrengthExact MatchStrength = "exact"
 	MatchStrengthWeak  MatchStrength = "weak"
 	MatchStrengthNone  MatchStrength = "none"
-
-	defaultCaraMLAudience = "api.caraml"
 )
 
 type ExperimentMatch struct {
