@@ -58,7 +58,7 @@ func TestDefaultConfigs(t *testing.T) {
 			Enabled:           false,
 			AppName:           "",
 			License:           "",
-			IgnoreStatusCodes: nil,
+			IgnoreStatusCodes: []int{},
 			Labels:            emptyInterfaceMap,
 		},
 		SentryConfig: sentry.Config{Enabled: false, Labels: emptyStringMap},
