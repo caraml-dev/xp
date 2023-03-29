@@ -11,7 +11,7 @@ require (
 	github.com/getkin/kin-openapi v0.94.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-playground/validator/v10 v10.11.1
-	github.com/gojek/mlp v1.7.6-0.20230328080720-45464eaa4bc7
+	github.com/gojek/mlp v1.7.6-0.20230329030735-c28dca2aeef9
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551

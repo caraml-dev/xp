@@ -26,7 +26,6 @@ require (
 	github.com/testcontainers/testcontainers-go v0.13.0
 	go.einride.tech/protobuf-bigquery v0.19.0
 	go.uber.org/automaxprocs v1.5.1
-	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
 	google.golang.org/api v0.99.0
 	google.golang.org/protobuf v1.28.1
 )
@@ -89,6 +88,7 @@ require (
 	go.einride.tech/aip v0.52.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10 // indirect
+	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
@@ -106,5 +106,5 @@ replace (
 	github.com/caraml-dev/xp/clients => ../clients
 	github.com/caraml-dev/xp/common => ../common
 	// To remove once the next version of gojek/mlp (v1.8.0) has been cut and released
-	github.com/gojek/mlp => github.com/gojek/mlp v1.7.6-0.20230328080720-45464eaa4bc7
+	github.com/gojek/mlp => github.com/gojek/mlp v1.7.6-0.20230329030735-c28dca2aeef9
 )

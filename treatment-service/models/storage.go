@@ -18,10 +18,7 @@ import (
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 	"github.com/gojek/mlp/api/pkg/auth"
 	"github.com/golang-collections/collections/set"
-	"google.golang.org/api/idtoken"
 )
-
-var GoogleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
 
 type ProjectId = uint32
 type StringSet = map[string]interface{}
@@ -578,11 +575,7 @@ func NewLocalStorage(
 		// path to a credentials file, the credentials file MUST contain a Google SERVICE ACCOUNT for authentication to
 		// work correctly
 		if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
-			googleClient, err = idtoken.NewClient(
-				context.Background(),
-				defaultCaraMLAudience,
-				idtoken.WithCredentialsFile(filepath),
-			)
+			googleClient, err = auth.InitGoogleClientFromCredentialsFile(context.Background(), filepath)
 		} else {
 			googleClient, err = auth.InitGoogleClient(context.Background())
 		}
