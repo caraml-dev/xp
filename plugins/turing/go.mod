@@ -16,7 +16,7 @@ require (
 	github.com/prometheus/client_golang v1.12.2 // indirect
 	github.com/stretchr/testify v1.8.0
 	go.uber.org/zap v1.21.0
-	golang.org/x/net v0.1.0
+	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
 )
 
@@ -110,8 +110,8 @@ require (
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
-	golang.org/x/sys v0.1.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.100.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
@@ -132,5 +132,5 @@ replace (
 	github.com/caraml-dev/xp/common => ../../common
 	github.com/caraml-dev/xp/treatment-service => ../../treatment-service
 	// To remove once the next version of gojek/mlp (v1.8.0) has been cut and released
-	github.com/gojek/mlp => github.com/gojek/mlp v1.7.5-0.20230104043800-549dbdb2d25b
+	github.com/gojek/mlp => github.com/gojek/mlp v1.7.6-0.20230329030735-c28dca2aeef9
 )
