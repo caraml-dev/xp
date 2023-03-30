@@ -10,6 +10,7 @@ import (
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
+	"github.com/gojek/mlp/api/pkg/auth"
 
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
@@ -17,7 +18,6 @@ import (
 	_config "github.com/caraml-dev/xp/plugins/turing/config"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
-	"golang.org/x/oauth2/google"
 )
 
 func init() {
@@ -188,7 +188,7 @@ func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentM
 	}
 
 	// Create Google Client
-	googleClient, err := google.DefaultClient(context.Background(), googleOAuthScope)
+	googleClient, err := auth.InitGoogleClient(context.Background())
 	if err != nil {
 		return nil, err
 	}
