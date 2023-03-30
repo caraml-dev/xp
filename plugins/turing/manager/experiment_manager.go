@@ -54,9 +54,6 @@ const xpExperimentConfigSchema = `[
   ]
 ]`
 
-// Default scope for the Google Auth token used for the XP APIs
-var googleOAuthScope = "https://www.googleapis.com/auth/userinfo.email"
-
 // experimentManager implements manager.CustomExperimentManager interface
 type experimentManager struct {
 	validate                     *validator.Validate
