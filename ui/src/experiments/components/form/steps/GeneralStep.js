@@ -5,7 +5,7 @@ import {
   FormContext,
   FormValidationContext,
   useOnChangeHandler,
-} from "@gojek/mlp-ui";
+} from "@caraml-dev/ui-lib";
 
 import { GeneralSettingsConfigPanel } from "experiments/components/form/components/general_config/GeneralSettingsConfigPanel";
 import { ScheduleConfigPanel } from "experiments/components/form/components/general_config/ScheduleConfigPanel";

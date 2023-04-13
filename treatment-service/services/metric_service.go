@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/metrics"
 	"github.com/caraml-dev/xp/common/api/schema"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
-	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 )
 
 type MetricService interface {

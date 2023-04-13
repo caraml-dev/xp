@@ -8,7 +8,7 @@ import {
   EuiForm,
   EuiFormRow,
 } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip } from "@caraml-dev/ui-lib";
 import moment from "moment";
 
 import SuperSelectWithDescription from "components/form/select/SuperSelectWithDescription";

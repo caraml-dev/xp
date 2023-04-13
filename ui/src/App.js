@@ -7,7 +7,7 @@ import {
   Login,
   MlpApiContextProvider,
   Toast,
-} from "@gojek/mlp-ui";
+} from "@caraml-dev/ui-lib";
 import { Route, Routes } from "react-router-dom";
 
 import { useConfig } from "config";

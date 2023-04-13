@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo } from "react";
 
 import { EuiLoadingChart, EuiTextAlign } from "@elastic/eui";
-import { FormContext, StepsWizardHorizontal, addToast } from "@gojek/mlp-ui";
+import { FormContext, StepsWizardHorizontal, addToast } from "@caraml-dev/ui-lib";
 
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenter/context";

@@ -1,5 +1,5 @@
 import { formatDate, htmlIdGenerator } from "@elastic/eui/lib/services";
-import { get, normalizePath, set } from "@gojek/mlp-ui";
+import { get, normalizePath, set } from "@caraml-dev/ui-lib";
 import moment from "moment";
 
 import { appConfig } from "config";

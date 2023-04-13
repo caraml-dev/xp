@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/caraml-dev/mlp/api/client"
 	"github.com/caraml-dev/xp/common/api/schema"
-	"github.com/gojek/mlp/api/client"
 	"github.com/stretchr/testify/suite"
 
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"

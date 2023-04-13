@@ -3,15 +3,15 @@ module github.com/caraml-dev/xp/treatment-service
 go 1.18
 
 require (
-	cloud.google.com/go/bigquery v1.42.0
-	cloud.google.com/go/pubsub v1.26.0
+	cloud.google.com/go/bigquery v1.44.0
+	cloud.google.com/go/pubsub v1.27.1
+	github.com/caraml-dev/mlp v1.7.6-0.20230412072102-59f13e1a7b79
 	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
 	github.com/caraml-dev/xp/common v0.0.0
 	github.com/confluentinc/confluent-kafka-go v1.8.2
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/getkin/kin-openapi v0.94.0
 	github.com/go-chi/chi/v5 v5.0.7
-	github.com/gojek/mlp v1.5.3
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
 	github.com/google/go-cmp v0.5.9
@@ -22,18 +22,19 @@ require (
 	github.com/rs/cors v1.8.2
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.4.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/testcontainers/testcontainers-go v0.13.0
 	go.einride.tech/protobuf-bigquery v0.19.0
 	go.uber.org/automaxprocs v1.5.1
-	google.golang.org/api v0.99.0
+	google.golang.org/api v0.106.0
 	google.golang.org/protobuf v1.28.1
 )
 
 require (
-	cloud.google.com/go v0.104.0 // indirect
-	cloud.google.com/go/compute v1.10.0 // indirect
-	cloud.google.com/go/iam v0.5.0 // indirect
+	cloud.google.com/go v0.107.0 // indirect
+	cloud.google.com/go/compute v1.14.0 // indirect
+	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/iam v0.8.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Microsoft/go-winio v0.4.17 // indirect
 	github.com/Microsoft/hcsshim v0.8.23 // indirect
@@ -56,8 +57,8 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect
-	github.com/googleapis/gax-go/v2 v2.6.0 // indirect
+	github.com/googleapis/enterprise-certificate-proxy v0.2.1 // indirect
+	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -83,19 +84,19 @@ require (
 	github.com/spf13/jwalterweatherman v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
-	github.com/stretchr/objx v0.4.0 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	go.einride.tech/aip v0.52.0 // indirect
-	go.opencensus.io v0.23.0 // indirect
+	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10 // indirect
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
-	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20221010155953-15ba04fc1c0e // indirect
-	google.golang.org/grpc v1.50.1 // indirect
+	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
+	google.golang.org/grpc v1.51.0 // indirect
 	gopkg.in/errgo.v2 v2.1.0 // indirect
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -105,6 +106,4 @@ require (
 replace (
 	github.com/caraml-dev/xp/clients => ../clients
 	github.com/caraml-dev/xp/common => ../common
-	// To remove once the next version of gojek/mlp (v1.8.0) has been cut and released
-	github.com/gojek/mlp => github.com/gojek/mlp v1.7.6-0.20230329030735-c28dca2aeef9
 )

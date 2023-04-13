@@ -6,7 +6,7 @@ import {
   EuiFlexItem,
   EuiText,
 } from "@elastic/eui";
-import { useDimension } from "@gojek/mlp-ui";
+import { useDimension } from "@caraml-dev/ui-lib";
 
 export const ExpandableTableColumn = ({
   buttonAction,

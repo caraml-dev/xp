@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
 import { EuiFlexGroup, EuiInMemoryTable } from "@elastic/eui";
-import { useDimension, useToggle } from "@gojek/mlp-ui";
+import { useDimension, useToggle } from "@caraml-dev/ui-lib";
 
 import { ConfigPanel } from "components/config_section/ConfigPanel";
 import { ConfigSectionFlyout } from "components/config_section/ConfigSectionFlyout";

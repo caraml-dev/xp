@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiTextArea,
 } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip } from "@caraml-dev/ui-lib";
 
 import { useXpApi } from "hooks/useXpApi";
 

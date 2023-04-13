@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from "react";
 
 import { EuiPageTemplate, EuiSpacer } from "@elastic/eui";
-import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { FormContextProvider, replaceBreadcrumbs } from "@caraml-dev/ui-lib";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { SegmenterContextProvider } from "providers/segmenter/context";

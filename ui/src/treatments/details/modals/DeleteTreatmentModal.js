@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { ConfirmationModal, addToast } from "@gojek/mlp-ui";
+import { ConfirmationModal, addToast } from "@caraml-dev/ui-lib";
 
 import { useModal } from "hooks/useModal";
 import { useXpApi } from "hooks/useXpApi";

@@ -8,7 +8,7 @@ import {
   EuiLoadingChart,
   EuiSpacer,
 } from "@elastic/eui";
-import { OverlayMask, get } from "@gojek/mlp-ui";
+import { OverlayMask, get } from "@caraml-dev/ui-lib";
 
 import { useXpApi } from "hooks/useXpApi";
 import SegmenterContext from "providers/segmenter/context";

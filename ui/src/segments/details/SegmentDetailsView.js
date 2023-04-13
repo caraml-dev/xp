@@ -7,7 +7,7 @@ import {
   EuiSpacer,
   EuiTextAlign,
 } from "@elastic/eui";
-import { PageNavigation } from "@gojek/mlp-ui";
+import { PageNavigation } from "@caraml-dev/ui-lib";
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";

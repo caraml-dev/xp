@@ -6,7 +6,7 @@ import {
   EuiHorizontalRule,
   EuiLoadingChart,
 } from "@elastic/eui";
-import { OverlayMask } from "@gojek/mlp-ui";
+import { OverlayMask } from "@caraml-dev/ui-lib";
 
 import { Panel } from "components/panel/Panel";
 import { ConfigProvider, useConfig } from "config";

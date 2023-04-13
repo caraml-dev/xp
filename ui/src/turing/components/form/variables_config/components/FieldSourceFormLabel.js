@@ -6,7 +6,7 @@ import {
   EuiFormLabel,
   EuiPopover,
 } from "@elastic/eui";
-import { flattenPanelTree, useToggle } from "@gojek/mlp-ui";
+import { flattenPanelTree, useToggle } from "@caraml-dev/ui-lib";
 import startCase from "lodash/startCase";
 
 import { mapProtocolLabel } from "turing/components/utils/helper";

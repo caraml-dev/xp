@@ -9,7 +9,7 @@ import {
   EuiTextAlign,
   EuiPageTemplate,
 } from "@elastic/eui";
-import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { replaceBreadcrumbs } from "@caraml-dev/ui-lib";
 import { useParams } from "react-router-dom";
 
 import { ActivityConfigSection } from "components/config_section/ActivityConfigSection";

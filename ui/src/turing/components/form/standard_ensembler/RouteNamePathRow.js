@@ -7,7 +7,7 @@ import {
   EuiFormRow,
   EuiText,
 } from "@elastic/eui";
-import { FormLabelWithToolTip, useToggle } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip, useToggle } from "@caraml-dev/ui-lib";
 
 import RouteNamePathFlyout from "./RouteNamePathFlyout";
 

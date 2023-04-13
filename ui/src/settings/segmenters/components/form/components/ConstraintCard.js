@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiTextArea,
 } from "@elastic/eui";
-import { FormLabelWithToolTip, get, useOnChangeHandler } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip, get, useOnChangeHandler } from "@caraml-dev/ui-lib";
 
 export const ConstraintCard = ({
   constraint,

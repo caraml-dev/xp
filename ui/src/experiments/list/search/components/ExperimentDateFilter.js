@@ -1,7 +1,7 @@
 import React from "react";
 
 import { EuiDatePicker, EuiDatePickerRange, EuiFormRow } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip } from "@caraml-dev/ui-lib";
 
 import { useConfig } from "config";
 

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/metrics"
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/pkg/request"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/runner"
@@ -20,7 +21,6 @@ import (
 	"github.com/caraml-dev/xp/treatment-service/instrumentation"
 	"github.com/caraml-dev/xp/treatment-service/models"
 	"github.com/caraml-dev/xp/treatment-service/monitoring"
-	"github.com/gojek/mlp/api/pkg/instrumentation/metrics"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"

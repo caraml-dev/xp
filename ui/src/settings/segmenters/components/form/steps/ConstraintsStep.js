@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { FormContext, FormValidationContext, get } from "@gojek/mlp-ui";
+import { FormContext, FormValidationContext, get } from "@caraml-dev/ui-lib";
 
 import { ConstraintsPanel } from "settings/segmenters/components/form/components/ConstraintsPanel";
 

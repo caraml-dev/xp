@@ -7,7 +7,7 @@ import {
   EuiFormRow,
   EuiTextArea,
 } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip } from "@caraml-dev/ui-lib";
 import isEqual from "lodash/isEqual";
 
 import { parseSegmenterValue } from "services/experiment/Segment";
