@@ -29,7 +29,9 @@ func ConnectionString(cfg *config.DatabaseConfig) string {
 func Open(cfg *config.DatabaseConfig) (*gorm.DB, error) {
 	db, err := gorm.Open(pg.Open(ConnectionString(cfg)),
 		&gorm.Config{
-			Logger: logger.Default.LogMode(logger.Silent),
+			// This is needed to ensure that any saves to nested fields also update their respective tables
+			FullSaveAssociations: true,
+			Logger:               logger.Default.LogMode(logger.Silent),
 		})
 	if err != nil {
 		return nil, err
