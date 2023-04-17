@@ -6,7 +6,7 @@ require (
 	bou.ke/monkey v1.0.2
 	cloud.google.com/go/pubsub v1.27.1
 	github.com/Masterminds/sprig/v3 v3.2.2
-	github.com/caraml-dev/mlp v1.7.6-0.20230412072102-59f13e1a7b79
+	github.com/caraml-dev/mlp v1.7.6
 	github.com/caraml-dev/xp/common v0.0.0
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/getkin/kin-openapi v0.94.0

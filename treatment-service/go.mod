@@ -5,7 +5,7 @@ go 1.18
 require (
 	cloud.google.com/go/bigquery v1.44.0
 	cloud.google.com/go/pubsub v1.27.1
-	github.com/caraml-dev/mlp v1.7.6-0.20230412072102-59f13e1a7b79
+	github.com/caraml-dev/mlp v1.7.6
 	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
 	github.com/caraml-dev/xp/common v0.0.0
 	github.com/confluentinc/confluent-kafka-go v1.8.2
