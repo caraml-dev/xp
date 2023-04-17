@@ -6,7 +6,7 @@ import {
   EuiTextAlign,
   EuiPageTemplate,
 } from "@elastic/eui";
-import { PageNavigation, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { PageNavigation, replaceBreadcrumbs } from "@caraml-dev/ui-lib";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";

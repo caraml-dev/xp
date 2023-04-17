@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
-	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
-	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 )
 
 type FieldSource string

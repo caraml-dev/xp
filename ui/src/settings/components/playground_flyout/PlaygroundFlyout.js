@@ -13,7 +13,7 @@ import {
   EuiTextArea,
   EuiTitle,
 } from "@elastic/eui";
-import { FormContext, FormLabelWithToolTip, addToast } from "@gojek/mlp-ui";
+import { FormContext, FormLabelWithToolTip, addToast } from "@caraml-dev/ui-lib";
 
 import { useXpApi } from "hooks/useXpApi";
 import { ValidateEntityRequest } from "services/validate/ValidateEntityRequest";

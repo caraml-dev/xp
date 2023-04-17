@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { AuthContext, useApi } from "@gojek/mlp-ui";
+import { AuthContext, useApi } from "@caraml-dev/ui-lib";
 
 import { useConfig } from "config";
 

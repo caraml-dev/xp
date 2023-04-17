@@ -7,7 +7,7 @@ import {
   EuiLink,
   EuiPopover,
 } from "@elastic/eui";
-import { useToggle } from "@gojek/mlp-ui";
+import { useToggle } from "@caraml-dev/ui-lib";
 
 export const LinkedExperimentsContextMenu = ({
   projectId,

@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiTextArea,
 } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip } from "@caraml-dev/ui-lib";
 
 import SuperSelectWithDescription from "components/form/select/SuperSelectWithDescription";
 import { Panel } from "components/panel/Panel";

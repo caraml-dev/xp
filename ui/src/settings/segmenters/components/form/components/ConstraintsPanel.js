@@ -1,7 +1,7 @@
 import React from "react";
 
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
-import { get, useOnChangeHandler } from "@gojek/mlp-ui";
+import { get, useOnChangeHandler } from "@caraml-dev/ui-lib";
 
 import { Panel } from "components/panel/Panel";
 import { newConstraint } from "services/segmenter/Segmenter";

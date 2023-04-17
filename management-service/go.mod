@@ -4,14 +4,14 @@ go 1.18
 
 require (
 	bou.ke/monkey v1.0.2
-	cloud.google.com/go/pubsub v1.26.0
+	cloud.google.com/go/pubsub v1.27.1
 	github.com/Masterminds/sprig/v3 v3.2.2
+	github.com/caraml-dev/mlp v1.7.6
 	github.com/caraml-dev/xp/common v0.0.0
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/getkin/kin-openapi v0.94.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-playground/validator/v10 v10.11.1
-	github.com/gojek/mlp v1.7.6-0.20230329030735-c28dca2aeef9
 	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3
 	github.com/golang-migrate/migrate/v4 v4.14.1
 	github.com/golang/geo v0.0.0-20210211234256-740aa86cb551
@@ -21,20 +21,21 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rs/cors v1.8.2
 	github.com/spf13/cobra v1.4.0
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	github.com/testcontainers/testcontainers-go v0.13.0
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
-	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0
-	google.golang.org/api v0.99.0
+	golang.org/x/sync v0.1.0
+	google.golang.org/api v0.106.0
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/gorm v1.24.0
 )
 
 require (
-	cloud.google.com/go v0.104.0 // indirect
-	cloud.google.com/go/compute v1.10.0 // indirect
-	cloud.google.com/go/iam v0.5.0 // indirect
+	cloud.google.com/go v0.107.0 // indirect
+	cloud.google.com/go/compute v1.14.0 // indirect
+	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/iam v0.8.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
@@ -73,8 +74,8 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/googleapis/enterprise-certificate-proxy v0.2.0 // indirect
-	github.com/googleapis/gax-go/v2 v2.6.0 // indirect
+	github.com/googleapis/enterprise-certificate-proxy v0.2.1 // indirect
+	github.com/googleapis/gax-go/v2 v2.7.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
@@ -123,17 +124,17 @@ require (
 	github.com/spf13/jwalterweatherman v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
-	github.com/stretchr/objx v0.4.0 // indirect
+	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	go.mongodb.org/mongo-driver v1.1.2 // indirect
-	go.opencensus.io v0.23.0 // indirect
+	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/net v0.3.1-0.20221206200815-1e63c2f08a10 // indirect
 	golang.org/x/sys v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20221010155953-15ba04fc1c0e // indirect
-	google.golang.org/grpc v1.50.1 // indirect
+	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
+	google.golang.org/grpc v1.51.0 // indirect
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

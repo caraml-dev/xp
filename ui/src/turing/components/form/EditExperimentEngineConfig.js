@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from "react";
 
 import { EuiCallOut, EuiFlexItem, EuiLoadingChart } from "@elastic/eui";
-import { OverlayMask, get, useOnChangeHandler } from "@gojek/mlp-ui";
+import { OverlayMask, get, useOnChangeHandler } from "@caraml-dev/ui-lib";
 
 import { Panel } from "components/panel/Panel";
 import { ConfigProvider } from "config";

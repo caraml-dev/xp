@@ -11,7 +11,7 @@ import {
   EuiTextColor,
   EuiTitle,
 } from "@elastic/eui";
-import { OverlayMask } from "@gojek/mlp-ui";
+import { OverlayMask } from "@caraml-dev/ui-lib";
 import moment from "moment";
 
 import { useConfig } from "config";

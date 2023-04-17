@@ -5,7 +5,7 @@ import {
   FormContext,
   FormValidationContext,
   useOnChangeHandler,
-} from "@gojek/mlp-ui";
+} from "@caraml-dev/ui-lib";
 
 import { OptionsPanel } from "settings/segmenters/components/form/components/OptionsPanel";
 

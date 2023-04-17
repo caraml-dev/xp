@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useEffect, useMemo } from "react";
 
 import { EuiLoadingChart, EuiTextAlign } from "@elastic/eui";
-import { AccordionForm, FormContext, addToast } from "@gojek/mlp-ui";
+import { AccordionForm, FormContext, addToast } from "@caraml-dev/ui-lib";
 
 import { ConfigSectionTitle } from "components/config_section/ConfigSectionTitle";
 import { useXpApi } from "hooks/useXpApi";

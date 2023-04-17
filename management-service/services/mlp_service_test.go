@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"bou.ke/monkey"
+	"github.com/caraml-dev/mlp/api/pkg/auth"
 	"github.com/caraml-dev/xp/common/testutils"
-	"github.com/gojek/mlp/api/pkg/auth"
 	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2/google"
 
-	mlp "github.com/gojek/mlp/api/client"
+	mlp "github.com/caraml-dev/mlp/api/client"
 )
 
 func TestNewMLPService(t *testing.T) {

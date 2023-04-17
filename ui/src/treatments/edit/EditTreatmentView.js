@@ -4,7 +4,7 @@ import {
   EuiPageTemplate,
   EuiSpacer,
 } from "@elastic/eui";
-import { FormContextProvider, replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { FormContextProvider, replaceBreadcrumbs } from "@caraml-dev/ui-lib";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { PageTitle } from "components/page/PageTitle";

@@ -5,7 +5,7 @@ import {
   FormContext,
   FormValidationContext,
   useOnChangeHandler,
-} from "@gojek/mlp-ui";
+} from "@caraml-dev/ui-lib";
 
 import { ConfigPanel } from "treatments/components/form/components/config_section/ConfigPanel";
 import { TreatmentSelectionPanel } from "treatments/components/form/components/config_section/TreatmentSelectionPanel";

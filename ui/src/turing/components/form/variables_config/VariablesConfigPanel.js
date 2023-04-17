@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
-import { FormLabelWithToolTip, get, useOnChangeHandler } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip, get, useOnChangeHandler } from "@caraml-dev/ui-lib";
 
 import { Panel } from "components/panel/Panel";
 import SettingsContext from "providers/settings/context";

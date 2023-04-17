@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/caraml-dev/mlp/api/pkg/auth"
 	"github.com/caraml-dev/turing/engines/experiment/log"
 	"github.com/caraml-dev/turing/engines/experiment/manager"
 	inproc "github.com/caraml-dev/turing/engines/experiment/plugin/inproc/manager"
-	"github.com/gojek/mlp/api/pkg/auth"
 
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"

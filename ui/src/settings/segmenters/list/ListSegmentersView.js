@@ -1,7 +1,7 @@
 import { Fragment, useContext, useEffect } from "react";
 
 import { EuiSearchBar, EuiSpacer, EuiPanel, EuiPageTemplate } from "@elastic/eui";
-import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { replaceBreadcrumbs } from "@caraml-dev/ui-lib";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ConfigSection } from "components/config_section/ConfigSection";

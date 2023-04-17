@@ -61,7 +61,7 @@ module.exports = ({ }) => ({
                             requiredVersion: deps["react-router-dom"]
                         },
                         /* 
-                        Without singleton declaration, 2 different versions of @gojek/mlp-ui dependency were loaded
+                        Without singleton declaration, 2 different versions of @caraml-dev/ui-lib dependency were loaded
                         which caused the parent app to crash due to different "global states" being used.
                         
                         In addition, due to the nature of dynamic import, Module Federation is not able to use the 
@@ -69,9 +69,9 @@ module.exports = ({ }) => ({
                         on host. Hence, the MLP dependency version that matters in the remote loading scenario is only
                         what is specified in the parent app (Turing).
                         */
-                        "@gojek/mlp-ui": {
+                        "@caraml-dev/ui-lib": {
                             singleton: true,
-                            requiredVersion: deps["@gojek/mlp-ui"],
+                            requiredVersion: deps["@caraml-dev/ui-lib"],
                         }
                     },
                 }),

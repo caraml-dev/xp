@@ -5,7 +5,7 @@ import {
   FormContext,
   FormValidationContext,
   useOnChangeHandler,
-} from "@gojek/mlp-ui";
+} from "@caraml-dev/ui-lib";
 
 import { SegmentSelectionPanel } from "experiments/components/form/components/segment_config/SegmentSelectionPanel";
 

@@ -10,9 +10,9 @@ import (
 	"path"
 	"time"
 
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
 	"github.com/go-chi/chi/v5"
-	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
-	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
 	_ "go.uber.org/automaxprocs"

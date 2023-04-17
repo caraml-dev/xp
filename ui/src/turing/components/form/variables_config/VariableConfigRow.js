@@ -7,7 +7,7 @@ import {
   EuiFormLabel,
   EuiFormRow,
 } from "@elastic/eui";
-import { useOnChangeHandler } from "@gojek/mlp-ui";
+import { useOnChangeHandler } from "@caraml-dev/ui-lib";
 
 import { FieldSourceFormLabel } from "./components/FieldSourceFormLabel";
 

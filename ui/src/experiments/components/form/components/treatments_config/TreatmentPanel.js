@@ -9,7 +9,7 @@ import {
   EuiSpacer,
   EuiTextArea,
 } from "@elastic/eui";
-import { FormLabelWithToolTip } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip } from "@caraml-dev/ui-lib";
 
 export const TreatmentPanel = ({ errors, treatment, onUpdateTreatment }) => {
   return (

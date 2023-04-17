@@ -12,11 +12,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/caraml-dev/mlp/api/pkg/auth"
 	managementClient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
 	"github.com/caraml-dev/xp/common/pubsub"
 	_segmenters "github.com/caraml-dev/xp/common/segmenters"
-	"github.com/gojek/mlp/api/pkg/auth"
 	"github.com/golang-collections/collections/set"
 )
 

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
 	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
-	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
-	"github.com/gojek/mlp/api/pkg/instrumentation/sentry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

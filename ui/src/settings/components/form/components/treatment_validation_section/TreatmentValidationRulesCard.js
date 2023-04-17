@@ -11,7 +11,7 @@ import {
   EuiSpacer,
   EuiTextArea,
 } from "@elastic/eui";
-import { FormLabelWithToolTip, useOnChangeHandler } from "@gojek/mlp-ui";
+import { FormLabelWithToolTip, useOnChangeHandler } from "@caraml-dev/ui-lib";
 
 export const TreatmentValidationRulesCard = ({
   rule,

@@ -30,7 +30,7 @@ The following diagram summarizes the interaction between the various components 
 
 #### a. Setup MLP API
 
-Instructions as described in README of https://github.com/gojek/mlp.
+Instructions as described in README of https://github.com/caraml-dev/mlp.
 
 #### b. Starting XP
 

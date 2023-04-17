@@ -10,7 +10,7 @@ import {
   EuiSpacer,
   EuiPageTemplate,
 } from "@elastic/eui";
-import { replaceBreadcrumbs } from "@gojek/mlp-ui";
+import { replaceBreadcrumbs } from "@caraml-dev/ui-lib";
 import { useNavigate } from "react-router-dom";
 
 import { NavigationMenu } from "components/page/NavigationMenu";

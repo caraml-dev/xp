@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
+	mlp "github.com/caraml-dev/mlp/api/client"
+	"github.com/caraml-dev/mlp/api/pkg/auth"
 	"github.com/caraml-dev/xp/management-service/errors"
-	mlp "github.com/gojek/mlp/api/client"
-	"github.com/gojek/mlp/api/pkg/auth"
 	"github.com/patrickmn/go-cache"
 )
 

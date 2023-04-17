@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/gojek/mlp/api/pkg/instrumentation/newrelic"
+	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 
 	"github.com/caraml-dev/xp/common/utils"
 )

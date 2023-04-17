@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import { EuiRadioGroup } from "@elastic/eui";
-import { FormContext } from "@gojek/mlp-ui";
+import { FormContext } from "@caraml-dev/ui-lib";
 
 import { getValidationOptions } from "settings/components/playground_flyout/typeOptions";
 
