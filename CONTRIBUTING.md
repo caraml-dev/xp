@@ -63,7 +63,7 @@ Setup [`pre-commit`](https://pre-commit.com/) to automatically lint and format t
     make setup
     ```
 
-3. On push, the pre-commit hook will run. This runs `make format`, `make lint`, `UI linting` and `generation of helm docs`.
+3. On push, the pre-commit hook will run. This runs `make format`, `make lint` and `UI linting`.
 
 ## XP Management/Treatment Service using Go
 

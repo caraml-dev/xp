@@ -1,6 +1,0 @@
-dependencies:
-  - name: postgresql
-    repository: https://charts.bitnami.com/bitnami
-    version: 10.16.2
-    tags:
-      - db
