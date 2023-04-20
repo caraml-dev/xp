@@ -528,6 +528,9 @@ func TestDumpExperiments(t *testing.T) {
 			1: {NewExperimentIndex(e)},
 		},
 	}
+	// Need to hardcode this to testdata/experiments_dump.json ExperimentId
+	// because we are randomly generating Id in newTestXPExperiment call
+	e.Id = 81
 
 	// Dump experiments
 	uuid, _ := uuid.NewUUID()

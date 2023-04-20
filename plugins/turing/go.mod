@@ -1,6 +1,6 @@
 module github.com/caraml-dev/xp/plugins/turing
 
-go 1.18
+go 1.20
 
 require (
 	bou.ke/monkey v1.0.2
