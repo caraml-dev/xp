@@ -40,6 +40,7 @@ type LocalStorageLookupSuite struct {
 
 func newTestXPExperiment(
 	projectId int64,
+	experimentId int64,
 	segment schema.ExperimentSegment,
 	startTime time.Time,
 	endTime time.Time,
@@ -51,7 +52,12 @@ func newTestXPExperiment(
 		{Configuration: make(map[string]interface{}), Name: "default", Traffic: &traffic},
 	}
 
-	id := int64(rand.Intn(100))
+	var id int64
+	if experimentId != -1 {
+		id = experimentId
+	} else {
+		id = int64(rand.Intn(100))
+	}
 	nameString := name.String()
 	status := schema.ExperimentStatusActive
 	experimentType := schema.ExperimentTypeAB
@@ -172,7 +178,7 @@ func (suite *LocalStorageLookupSuite) SetupTest() {
 	s2Ids, s2IdsEmpty := []interface{}{interface{}(int64(cell.Prev())), interface{}(int64(cell))}, []interface{}{}
 
 	// experiment finished
-	addExperiment(newTestXPExperiment(1,
+	addExperiment(newTestXPExperiment(1, -1,
 		schema.ExperimentSegment{
 			"string_segmenter":    rawStringSegmenter,
 			"integer_segmenter":   rawIntegerSegmenter,
@@ -181,7 +187,7 @@ func (suite *LocalStorageLookupSuite) SetupTest() {
 		}, dayStart, hourStart))
 
 	// experiment will start at next hour (has location segment)
-	addExperiment(newTestXPExperiment(1,
+	addExperiment(newTestXPExperiment(1, -1,
 		schema.ExperimentSegment{
 			"string_segmenter":    rawStringSegmenter,
 			"integer_segmenter":   rawIntegerSegmenter,
@@ -190,7 +196,7 @@ func (suite *LocalStorageLookupSuite) SetupTest() {
 		}, hourEnd, dayEnd))
 
 	// experiment is going and will finish at hour end (has location segment)
-	addExperiment(newTestXPExperiment(1,
+	addExperiment(newTestXPExperiment(1, -1,
 		schema.ExperimentSegment{
 			"string_segmenter":    rawStringSegmenter,
 			"integer_segmenter":   rawIntegerSegmenter,
@@ -200,7 +206,7 @@ func (suite *LocalStorageLookupSuite) SetupTest() {
 		}, hourStart, hourEnd))
 
 	// experiment is ongoing and will finish at hour end (no location segment)
-	addExperiment(newTestXPExperiment(1,
+	addExperiment(newTestXPExperiment(1, -1,
 		schema.ExperimentSegment{
 			"string_segmenter":    rawStringSegmenter,
 			"integer_segmenter":   rawIntegerSegmenter,
@@ -210,7 +216,7 @@ func (suite *LocalStorageLookupSuite) SetupTest() {
 
 	// experiment is ongoing and will finish at hour end
 	// (no string_segmenter, empty list location segment)
-	addExperiment(newTestXPExperiment(1,
+	addExperiment(newTestXPExperiment(1, -1,
 		schema.ExperimentSegment{
 			"integer_segmenter":   rawIntegerSegmenter,
 			"integer_segmenter_2": rawIntegerSegmenter2_1,
@@ -512,8 +518,11 @@ func TestDumpExperiments(t *testing.T) {
 		"integer_segmenter": "integer",
 		"s2_ids":            "integer",
 	}
+	// Need to hardcode this to testdata/experiments_dump.json ExperimentId
+	// because we are randomly generating Id in newTestXPExperiment call
 	e, err := OpenAPIExperimentSpecToProtobuf(newTestXPExperiment(
 		1,
+		81,
 		schema.ExperimentSegment{
 			"string_segmenter":  rawStringSegmenter,
 			"integer_segmenter": rawIntegerSegmenter,
@@ -528,9 +537,6 @@ func TestDumpExperiments(t *testing.T) {
 			1: {NewExperimentIndex(e)},
 		},
 	}
-	// Need to hardcode this to testdata/experiments_dump.json ExperimentId
-	// because we are randomly generating Id in newTestXPExperiment call
-	e.Id = 81
 
 	// Dump experiments
 	uuid, _ := uuid.NewUUID()
@@ -712,6 +718,7 @@ func TestCustomSegmenter(t *testing.T) {
 
 	experiment := newTestXPExperiment(
 		int64(projectId),
+		-1,
 		schema.ExperimentSegment{
 			segmenterName: []interface{}{"stringval"},
 		},
