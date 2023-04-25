@@ -63,49 +63,7 @@ In short, the service account configured would minimally need these roles/permis
 
 #### As a Helm Release
 
-*Some of these steps have been adapted from https://github.com/caraml-dev/xp/tree/main/infra/charts/treatment-service*
-
-##### 1. Add the Helm Repository
-
-```shell
-$ helm repo add xp https://turing-ml.github.io/charts
-```
-
-##### 2. Install the Helm Chart
-
-This command will install XP Treatment Service release named `xp-treatment` in the `default` namespace.
-Default chart values will be used for the installation:
-```shell
-$ helm install xp-treatment xp/xp-treatment
-```
-
-You can (and most likely, should) override the default configuration with Helm chart values suitable for your 
-installation. Refer to [Configuration](https://github.com/caraml-dev/xp/tree/main/infra/charts/treatment-service#configuration) section for the detailed description of available configuration keys.
-
-You can also refer to [values.yaml](https://github.com/caraml-dev/xp/tree/main/infra/charts/treatment-service/values.yaml)
-for a minimal configuration that needs to be provided for XP Treatment Service installation.
-
-```shell
-$ helm install xp-treatment xp/xp-treatment \
-    --values=path/to/helm/chart/values/file.yaml
-```
-
-Notice that you can specify the *Treatment Service configuration* [values](#configuration) under the `xpTreatment` 
-field in the Helm chart values file like below: 
-
-```yaml
-xpTreatment:
-  config:
-    Port: 8080
-    ManagementService:
-      URL: https://caraml-dev.io/api/xp/v1
-      AuthorizationEnabled: true
-    # ...
-```
-
-These configuration values would be saved in a `.yaml` file within a 
-[secret](https://kubernetes.io/docs/concepts/configuration/secret/) that gets mounted automatically onto the 
-Treatment Service pod, where it will be read by the Treatment Service.
+*Follow the installation steps from https://github.com/caraml-dev/helm-charts/tree/main/charts/xp-treatment*
 
 ##### 2.1 Configure the Standalone Treatment Service to use a Google Cloud Provider (GCP) Service Account (Optional) 
 
@@ -182,36 +140,26 @@ is configured as a plugin for.
 
 #### Configuration
 
-Unlike for the standalone Treatment Service whereby the configuration values are placed in a file solely dedicated 
-for Treatment Service configurations, the Treatment Service Plugin configuration values need to be placed under 
-the experiment engines section, within the 
-[Helm chart values](https://github.com/caraml-dev/turing/blob/477ac2392c590d3dd6453a5834657dc773fe0e56/infra/charts/turing/values.yaml#L104) 
+Unlike for the standalone Treatment Service whereby the configuration values are placed in a file solely dedicated for Treatment Service configurations, the Treatment Service Plugin configuration values need to be placed under the experiment engines section, within the 
+[Helm chart values](https://github.com/caraml-dev/helm-charts/blob/ce4026287443c9d5f2c3fb69d2dd33f3d90f89e3/charts/turing/values.yaml#L118) 
 of a Turing API server deployment.
 
-Note that not all the configuration values used in a standalone Treatment Service need to be specified for the 
-Treatment Service Plugin, since some of those values will be retrieved directly via the Management Service (e.g. Pub/Sub 
-configuration or segmenter configuration). See [below](#1-prepare-the-turing-api-server-helm-chart-values-file) for 
+Note that not all the configuration values used in a standalone Treatment Service need to be specified for the Treatment Service Plugin, since some of those values will be retrieved directly via the Management Service (e.g. Pub/Sub  configuration or segmenter configuration). See [below](#1-prepare-the-turing-api-server-helm-chart-values-file) for 
 an example of the configuration values that need to be specified.
 
-When the Turing API server deploys a router, the plugin manager will automatically retrieve the aforementioned 
-configurations from the Management Service, as well as the experiment engine configuration 
-(shown in the code block above) from the Turing API server. 
+When the Turing API server deploys a router, the plugin manager will automatically retrieve the aforementioned configurations from the Management Service, as well as the experiment engine configuration (shown in the code block above) from the Turing API server. 
 
-The plugin manager then creates a new plugin configuration object that will subsequently be passed to the API and then 
-to the Treatment Service plugin runner, which will be configured with those values passed to it.
+The plugin manager then creates a new plugin configuration object that will subsequently be passed to the API and then to the Treatment Service plugin runner, which will be configured with those values passed to it.
 
 ![treatment_service_plugin_configuration.png](treatment_service_plugin_configuration.png)
 
 #### Google Cloud Provider (GCP) Service Account
 
-Just as in the standalone Treatment Service, a GCP Service Account with the following roles is needed for the 
-Treatment Service Plugin to communicate with the Management Service via a
+Just as in the standalone Treatment Service, a GCP Service Account with the following roles is needed for the Treatment Service Plugin to communicate with the Management Service via a
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub/docs/overview) subscription and for logging 
 treatment responses to a table in [Google BigQuery](https://cloud.google.com/bigquery):
-- [roles/pubsub.subscriber](https://cloud.google.com/pubsub/docs/access-control#roles), minimally, for the topic
-  that the Management Service will publish updates to
-- [roles/bigquery.dataEditor](https://cloud.google.com/bigquery/docs/access-control#bigquery.dataEditor), minimally,
-  for the table that will contain the logs (if logging to BigQuery is configured)
+- [roles/pubsub.subscriber](https://cloud.google.com/pubsub/docs/access-control#roles), minimally, for the topic that the Management Service will publish updates to
+- [roles/bigquery.dataEditor](https://cloud.google.com/bigquery/docs/access-control#bigquery.dataEditor), minimally, for the table that will contain the logs (if logging to BigQuery is configured)
 
 ### Deploying the Treatment Service Plugin
 
@@ -261,14 +209,13 @@ turing:
 
 As mentioned [earlier](#configuration), the Treatment Service Plugin configuration values must also be provided. 
 Place those values within the `turing.experimentEngines.*.options.treatment_service_config` field of the Turing API's
-[Helm chart values file](https://github.com/caraml-dev/turing/blob/477ac2392c590d3dd6453a5834657dc773fe0e56/infra/charts/turing/values.yaml#L104).
+[Helm chart values file](https://github.com/caraml-dev/helm-charts/blob/ce4026287443c9d5f2c3fb69d2dd33f3d90f89e3/charts/turing/values.yaml#L118).
 
 #### 1.1 Configure the Treatment Service Plugin to use a Google Cloud Provider (GCP) Service Account (Optional)
 The service account token file has to be made accessible to the Turing API server such that it is 
 available for it to be mounted within a Turing Router. The Turing API server looks for this service account token 
 file via the filepath stored in the `turing.expermentEngines.*.serviceAccountKeyFilePath` field of the Turing API 
-server 
-[Helm chart values file](https://github.com/caraml-dev/turing/blob/477ac2392c590d3dd6453a5834657dc773fe0e56/infra/charts/turing/values.yaml#L104): 
+server [Helm chart values file](https://github.com/caraml-dev/helm-charts/blob/ce4026287443c9d5f2c3fb69d2dd33f3d90f89e3/charts/turing/values.yaml#L118): 
 
 ```yaml
 turing:
@@ -284,11 +231,7 @@ How this service account token file has to be made accessible to the Turing API 
 deploying the Turing API server and is out of scope of this guide. 
 
 However, one recommended way to do so is to use the 
-[Helm chart installation of Turing](https://github.com/caraml-dev/turing/tree/477ac2392c590d3dd6453a5834657dc773fe0e56/infra/charts/turing),
-which allows the service account token file (assumed to already exist within the same cluster as the Turing API 
-server deployment as a [secret](https://kubernetes.io/docs/concepts/configuration/secret/)) to be mounted as a volume into the 
-Turing API server container, through the use of `extraVolumes` and `extraVolumeMounts` in the Turing API's
-[Helm chart values file](https://github.com/caraml-dev/turing/blob/477ac2392c590d3dd6453a5834657dc773fe0e56/infra/charts/turing/values.yaml#L104):
+[Helm chart installation of Turing](https://github.com/caraml-dev/helm-charts/blob/ce4026287443c9d5f2c3fb69d2dd33f3d90f89e3/charts/turing), which allows the service account token file (assumed to already exist within the same cluster as the Turing API server deployment as a [secret](https://kubernetes.io/docs/concepts/configuration/secret/)) to be mounted as a volume into the Turing API server container, through the use of `extraVolumes` and `extraVolumeMounts` in the Turing API's [Helm chart values file](https://github.com/caraml-dev/helm-charts/blob/ce4026287443c9d5f2c3fb69d2dd33f3d90f89e3/charts/turing/values.yaml#L118):
 
 ```yaml
 turing:
@@ -316,9 +259,7 @@ to access the mounted service account token.
 
 Last but not least, specify the 
 `turing.experimentEngines.*.options.treatment_service_config.deployment_config.google_application_credentials_env_var` 
-field as follows to allow the Treatment Service Plugin to retrieve the filepath of the GCP service account secret 
-token from the Turing Router container correctly (the Turing API automatically injects the filepath of the mounted 
-service account token as the `GOOGLE_APPLICATION_CREDENTIALS_EXPERIMENT_ENGINE` env var within the Turing Router):
+field as follows to allow the Treatment Service Plugin to retrieve the filepath of the GCP service account secret token from the Turing Router container correctly (the Turing API automatically injects the filepath of the mounted service account token as the `GOOGLE_APPLICATION_CREDENTIALS_EXPERIMENT_ENGINE` env var within the Turing Router):
 
 ```yaml
 turing:
