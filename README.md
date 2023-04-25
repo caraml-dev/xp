@@ -64,6 +64,10 @@ To test authorization for Management Service locally, make the following changes
 
 To use the XP Go modules as API dependencies, simply import the XP Go modules directly i.e. `import "github.com/caraml-dev/xp/..."`
 
+#### d. XP Helm installation
+
+For running a helm installation of XP, you may refer to the [xp-management](https://github.com/caraml-dev/helm-charts/tree/main/charts/xp-management) and [xp-treatment](https://github.com/caraml-dev/helm-charts/tree/main/charts/xp-treatment) charts.
+
 ## Contributing
 
 XP is still under active development. Please have a look at our contributing and development guides if you want to contribute to the project:
