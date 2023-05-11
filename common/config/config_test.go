@@ -62,9 +62,9 @@ func TestEnvConfigs(t *testing.T) {
 
 	os.Setenv("HOST", host)
 	os.Setenv("PORT", port)
-	os.Setenv("PUBSUB::PROJECT", pubSubProject)
-	os.Setenv("PUBSUB::TOPICNAME", pubSubTopicName)
-	os.Setenv("SENTRY::URL", sentryUrl)
+	os.Setenv("PUBSUB_PROJECT", pubSubProject)
+	os.Setenv("PUBSUB_TOPICNAME", pubSubTopicName)
+	os.Setenv("SENTRY_URL", sentryUrl)
 
 	cfg := tu.Config{}
 	var filePaths []string
