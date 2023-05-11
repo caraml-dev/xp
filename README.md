@@ -34,7 +34,7 @@ Instructions as described in README of https://github.com/caraml-dev/mlp.
 
 #### b. Starting XP
 
-Prior to starting XP, we'll need to ensure correct MLP API is correctly set in the config file, i.e management-service/config/example.yaml, and setting the correct `MLPConfig::URL` value.
+Prior to starting XP, we'll need to ensure correct MLP API is correctly set in the config file, i.e management-service/config/example.yaml, and setting the correct `MLPConfig_URL` value.
 
 ```bash
 # Start Management Service

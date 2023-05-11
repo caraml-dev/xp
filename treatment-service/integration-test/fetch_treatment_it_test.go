@@ -307,7 +307,7 @@ func setupManagementServiceClient() (*management.ClientWithResponses, *httptest.
 }
 
 func setupTreatmentService(managementServiceServerURL string) (chan bool, *server.Server) {
-	os.Setenv("MANAGEMENTSERVICE::URL", managementServiceServerURL)
+	os.Setenv("MANAGEMENTSERVICE_URL", managementServiceServerURL)
 	treatmentServer, err := server.NewServer([]string{"test.yaml"})
 	if err != nil {
 		log.Fatalf("fail to instantiate treatment server: %s", err.Error())
@@ -344,8 +344,8 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 	ctx := context.Background()
 	os.Setenv("PORT", strconv.Itoa(TreatmentServerPort))
 	os.Setenv("PROJECTIDS", "1,2,3,4,5")
-	os.Setenv("PUBSUB::PROJECT", PubSubProject)
-	os.Setenv("PUBSUB::TOPICNAME", TopicName)
+	os.Setenv("PUBSUB_PROJECT", PubSubProject)
+	os.Setenv("PUBSUB_TOPICNAME", TopicName)
 
 	emulator, pubsubClient, err := testutils.StartPubSubEmulator(context.Background(), PubSubProject)
 	if err != nil {
@@ -379,7 +379,7 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 		panic(err)
 	}
 	suite.kafka = kafka
-	os.Setenv("ASSIGNEDTREATMENTLOGGER::KAFKACONFIG::BROKERS", "localhost:9092")
+	os.Setenv("ASSIGNEDTREATMENTLOGGER_KAFKACONFIG_BROKERS", "localhost:9092")
 
 	c, treatmentServer := setupTreatmentService(suite.managementServiceServer.URL)
 	waitForServerToListen := func() bool {
