@@ -115,7 +115,7 @@ def _start_management_service(
     pubsub_topic = pubsub_config.get("TopicName", "xp-update")
     create_pubsub_topic(pubsub_project, pubsub_topic)
 
-    os.environ["MLPCONFIG::URL"] = mlp_service_url
+    os.environ["MLPCONFIG_URL"] = mlp_service_url
 
     process = _start_binary(
         bin_path,
