@@ -26,9 +26,9 @@ func ParseConfig(spec interface{}, filepaths []string) error {
 	}
 
 	// Load config values from environment variables.
-	// Nested keys in the config is represented by variable name separated by '::'.
-	// For example, DbConfig.Host can be set from environment variable DBCONFIG::HOST.
-	v.SetEnvKeyReplacer(strings.NewReplacer(".", "::"))
+	// Nested keys in the config is represented by variable name separated by '_'.
+	// For example, DbConfig.Host can be set from environment variable DBCONFIG_HOST.
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
 	// Unmarshal config values into the config object.
