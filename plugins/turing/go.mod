@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	bou.ke/monkey v1.0.2
-	github.com/caraml-dev/mlp v1.7.6
+	github.com/caraml-dev/mlp v1.7.7-0.20230428104022-779530aec912
 	github.com/caraml-dev/turing/engines/experiment v0.0.0
 	github.com/caraml-dev/turing/engines/router v1.8.1
 	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
