@@ -149,8 +149,8 @@ github.com/buger/jsonparser v1.1.1/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx2
 github.com/bugsnag/bugsnag-go v0.0.0-20141110184014-b1d153021fcd/go.mod h1:2oa8nejYd4cQ/b0hMIopN0lCRxU0bueqREvZLWFrtK8=
 github.com/bugsnag/osext v0.0.0-20130617224835-0dd3f918b21b/go.mod h1:obH5gd0BsqsP2LwDJ9aOkm/6J86V6lyAXCoQWGw3K50=
 github.com/bugsnag/panicwrap v0.0.0-20151223152923-e2c28503fcd0/go.mod h1:D/8v3kj0zr8ZAKg1AQ6crr+5VwKN5eIywRkfhyM/+dE=
-github.com/caraml-dev/mlp v1.7.6 h1:u3OvbtPY7w/j9z7WO9YwhKJA0Y0Qy6OzanREfeA7os4=
-github.com/caraml-dev/mlp v1.7.6/go.mod h1:ahdKpb/SKFEyHE6817AOh0b2fyroTzJmXM8U+2BG75M=
+github.com/caraml-dev/mlp v1.7.7-0.20230428104022-779530aec912 h1:XQwsmz0CM5O+fchhQQe3W9llL5E5IqqJrhLkJhrlPuI=
+github.com/caraml-dev/mlp v1.7.7-0.20230428104022-779530aec912/go.mod h1:ahdKpb/SKFEyHE6817AOh0b2fyroTzJmXM8U+2BG75M=
 github.com/caraml-dev/turing/engines/experiment v0.0.0-20230414061300-682496141466 h1:Ft4JvPrjhLlMfgrDzMpmnYBjf91Ik6YeL1uZguDseWw=
 github.com/caraml-dev/turing/engines/experiment v0.0.0-20230414061300-682496141466/go.mod h1:blXvseqmkb4Nhurg6SAuIiIPIoofX2AF1mmR/4VJAX4=
 github.com/caraml-dev/turing/engines/router v0.0.0-20230414061300-682496141466 h1:Pd/62qm7HPjokwY0kvpdnyFYw2WGfROGtcV9UVdqq6w=
