@@ -42,7 +42,7 @@ func TestNewMLPService(t *testing.T) {
 			}
 			// Patch Get Projects
 			monkey.PatchInstanceMethod(reflect.TypeOf(mlpClient.api.ProjectApi), "ProjectsGet",
-				func(svc *mlp.ProjectApiService, ctx context.Context, localVarOptionals *mlp.ProjectApiProjectsGetOpts,
+				func(svc *mlp.ProjectApiService, ctx context.Context, localVarOptionals *mlp.ProjectApiV1ProjectsGetOpts,
 				) ([]mlp.Project, *http.Response, error) {
 					return projects, nil, nil
 				})
@@ -91,7 +91,7 @@ func TestMLPServiceGetProject(t *testing.T) {
 
 	svc := newTestMLPService()
 	monkey.PatchInstanceMethod(reflect.TypeOf(svc.mlpClient.api.ProjectApi), "ProjectsGet",
-		func(svc *mlp.ProjectApiService, ctx context.Context, localVarOptionals *mlp.ProjectApiProjectsGetOpts,
+		func(svc *mlp.ProjectApiService, ctx context.Context, localVarOptionals *mlp.ProjectApiV1ProjectsGetOpts,
 		) ([]mlp.Project, *http.Response, error) {
 			return projects, nil, nil
 		})

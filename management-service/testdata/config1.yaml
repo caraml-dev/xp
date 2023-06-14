@@ -7,6 +7,10 @@ AllowedOrigins:
 AuthorizationConfig:
   Enabled: true
   URL: test-authz-server
+  Caching:
+    Enabled: true
+    KeyExpirySeconds: 100
+    CacheCleanUpIntervalSeconds: 200
 
 DbConfig:
   User: user

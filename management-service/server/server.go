@@ -80,8 +80,14 @@ func NewServer(configFiles []string) (*Server, error) {
 	var authorizer *middleware.Authorizer
 	if cfg.AuthorizationConfig.Enabled {
 		// Use product mlp as the policies are shared across the mlp products.
-		authzEnforcer, err := enforcer.NewEnforcerBuilder().Product("mlp").
-			URL(cfg.AuthorizationConfig.URL).Build()
+		enforcerCfg := enforcer.NewEnforcerBuilder().URL(cfg.AuthorizationConfig.URL).Product("mlp")
+		if cfg.AuthorizationConfig.Caching.Enabled {
+			enforcerCfg = enforcerCfg.WithCaching(
+				cfg.AuthorizationConfig.Caching.KeyExpirySeconds,
+				cfg.AuthorizationConfig.Caching.CacheCleanUpIntervalSeconds,
+			)
+		}
+		authzEnforcer, err := enforcerCfg.Build()
 		if err != nil {
 			return nil, errors.Newf(errors.GetType(err), fmt.Sprintf("Failed initializing Authorizer: %v", err))
 		}

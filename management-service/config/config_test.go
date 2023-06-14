@@ -22,6 +22,10 @@ func TestDefaultConfigs(t *testing.T) {
 		AuthorizationConfig: &AuthorizationConfig{
 			Enabled: false,
 			URL:     "",
+			Caching: &InMemoryCacheConfig{
+				KeyExpirySeconds:            600,
+				CacheCleanUpIntervalSeconds: 900,
+			},
 		},
 		DbConfig: &DatabaseConfig{
 			Host:            "localhost",
@@ -92,6 +96,11 @@ func TestLoadConfigFiles(t *testing.T) {
 				AuthorizationConfig: &AuthorizationConfig{
 					Enabled: true,
 					URL:     "test-authz-server",
+					Caching: &InMemoryCacheConfig{
+						Enabled:                     true,
+						KeyExpirySeconds:            100,
+						CacheCleanUpIntervalSeconds: 200,
+					},
 				},
 				DbConfig: &DatabaseConfig{
 					Host:            "localhost",
