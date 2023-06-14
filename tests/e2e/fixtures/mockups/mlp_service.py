@@ -18,7 +18,7 @@ def find_free_port():
 class MLPService(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         print("Request", self.path)
-        if self.path == "/projects":
+        if self.path == "/v1/projects":
             self.get_projects()
             return
 
