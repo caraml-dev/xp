@@ -32,6 +32,13 @@ type Config struct {
 type AuthorizationConfig struct {
 	Enabled bool
 	URL     string
+	Caching *InMemoryCacheConfig
+}
+
+type InMemoryCacheConfig struct {
+	Enabled                     bool
+	KeyExpirySeconds            int `default:"600"`
+	CacheCleanUpIntervalSeconds int `default:"900"`
 }
 
 // DatabaseConfig captures the XP database config

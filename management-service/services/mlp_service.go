@@ -97,7 +97,7 @@ func (service mlpService) refreshProjects() error {
 	ctx, cancel := context.WithTimeout(context.Background(), mlpQueryTimeoutSeconds*time.Second)
 	defer cancel()
 
-	projects, resp, err := service.mlpClient.api.ProjectApi.ProjectsGet(ctx, nil)
+	projects, resp, err := service.mlpClient.api.ProjectApi.V1ProjectsGet(ctx, nil)
 	if err != nil {
 		return err
 	}
