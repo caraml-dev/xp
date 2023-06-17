@@ -3,7 +3,7 @@ package web
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 	"time"
@@ -44,7 +44,7 @@ func TestFileHandler(t *testing.T) {
 	require.Equal(t, "no-cache, no-store, must-revalidate", resp.Header.Get("Cache-Control"))
 	require.Equal(t, "0", resp.Header.Get("Expires"))
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	respBytes, err := io.ReadAll(resp.Body)
 	_ = resp.Body.Close()
 	require.NoError(t, err)
 

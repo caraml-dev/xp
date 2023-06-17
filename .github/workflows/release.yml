@@ -82,11 +82,8 @@ jobs:
           name: xp-ui-dist
           path: ui/build
 
-      - name: Download Management Service binary
-        uses: actions/download-artifact@v2
-        with:
-          name: management-service-binary
-          path: management-service/bin/
+      - name: Build management-service binary
+        run: make build-management-service
 
       - name: Build Docker image
         id: build-image
@@ -120,11 +117,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download Treatment Service binary
-        uses: actions/download-artifact@v2
-        with:
-          name: treatment-service-binary
-          path: treatment-service/bin/
+      - name: Build treatment-service binary
+        run: make build-treatment-service
 
       - name: Build Docker image
         id: build-image

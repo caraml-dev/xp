@@ -1,13 +1,10 @@
 name: CI
 
 on:
-  # Automatically run CI on Release and Pre-Release tags and main branch
-  # (except changes to non-relevant paths)
+  # Automatically run CI on non-main branches (except changes to non-relevant paths)
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
     branches:
-      - main
+      - '!main'
     paths-ignore:
       - "plugins/**"
       - ".github/workflows/plugins.yml"
@@ -19,13 +16,10 @@ on:
     paths-ignore:
       - "plugins/**"
       - ".github/workflows/plugins.yml"
-  
-  # To make it possible to trigger e2e CI workflow for any arbitrary git ref
-  workflow_dispatch:
 
 env:
   ARTIFACT_RETENTION_DAYS: 7
-  GO_VERSION: 1.18
+  GO_VERSION: '1.20'
   GO_LINT_VERSION: v1.51.2
 
 jobs:
@@ -194,20 +188,6 @@ jobs:
       - name: Build binaries
         run: make build
 
-      - name: Publish Management Service Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: management-service-binary
-          path: management-service/bin/
-          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
-
-      - name: Publish Treatment Service Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: treatment-service-binary
-          path: treatment-service/bin/
-          retention-days: ${{ env.ARTIFACT_RETENTION_DAYS }}
-
       - name: Run E2E tests
         env:
           DATABASE_HOST: localhost
@@ -215,37 +195,3 @@ jobs:
           DATABASE_USER: xp
           DATABASE_PASSWORD: xp
         run: make e2e-ci
-
-  release-rules:
-    runs-on: ubuntu-latest
-    outputs:
-      release-type: ${{ steps.release-rules.outputs.release-type }}
-    steps:
-      - uses: actions/checkout@v3
-      - id: release-rules
-        uses: ./.github/actions/release-rules
-
-  release:
-   # Automatically publish release and pre-release artifacts.
-   #
-   # As for dev releases, make it possible to publish artifacts
-   # manually by approving 'deployment' in the 'manual' environment.
-   #
-   # Dev build can be released either from the 'main' branch or
-   # by running this workflow manually with `workflow_dispatch` event.
-    if: >-
-      contains('release,pre-release', needs.release-rules.outputs.release-type)
-        || ( github.event_name != 'pull_request' )
-        || ( github.event.pull_request.head.repo.full_name == github.repository )
-    needs:
-      - lint-python
-      - lint-go
-      - unit-tests-management
-      - unit-tests-treatment
-      - e2e-tests
-      - release-rules
-    uses: ./.github/workflows/release.yml
-    with:
-      environment: ${{ needs.release-rules.outputs.release-type == 'dev' && 'manual' || '' }}
-    secrets:
-      ghcr_token: ${{ secrets.GITHUB_TOKEN }}

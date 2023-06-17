@@ -2,6 +2,9 @@ run:
   build-tags:
     - e2e
     - integration
+  skip-files:
+    - clients/management/managementclient.go
+    - clients/treatment/treatmentclient.go
 
 linters:
   enable:

@@ -1,6 +1,6 @@
 module github.com/caraml-dev/xp/clients
 
-go 1.18
+go 1.20
 
 require (
 	github.com/caraml-dev/xp/common v0.0.0
