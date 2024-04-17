@@ -19,7 +19,7 @@ PB_VERSION=3.19.4
 PROTOC_VERSION=1.5.2
 protoc_dir=${PWD}/.protoc
 
-OPENAPI_VERSION=1.8.1
+OPENAPI_VERSION=1.16.2
 
 # ==================================
 # General
