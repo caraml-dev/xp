@@ -25,8 +25,8 @@ on:
 
 env:
   ARTIFACT_RETENTION_DAYS: 7
-  GO_VERSION: 1.18
-  GO_LINT_VERSION: v1.51.2
+  GO_VERSION: 1.22
+  GO_LINT_VERSION: v1.56.2
 
 jobs:
   lint-python:
