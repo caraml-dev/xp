@@ -4,14 +4,6 @@ AllowedOrigins:
   - host-1
   - host-2
 
-AuthorizationConfig:
-  Enabled: true
-  URL: test-authz-server
-  Caching:
-    Enabled: true
-    KeyExpirySeconds: 100
-    CacheCleanUpIntervalSeconds: 200
-
 DbConfig:
   User: user
   Password: password

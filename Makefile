@@ -58,11 +58,6 @@ generate-api:
 # Setup Management & Treatment Services
 # ==================================
 
-local-authz-server:
-	@docker-compose up -d postgres-auth && docker-compose run keto-server migrate sql -e
-	@docker-compose up -d keto-server
-	@docker-compose run keto-server-bootstrap-policies engines acp ory policies import glob /policies/example_policy.json
-
 local-db:
 	@docker-compose up -d postgres
 
@@ -70,7 +65,7 @@ local-pubsub:
 	@docker-compose up -d pubsub
 
 .PHONY: mgmt-svc
-mgmt-svc: local-authz-server local-db local-pubsub
+mgmt-svc: local-db local-pubsub
 	cd management-service && PUBSUB_EMULATOR_HOST="localhost:8085" go run main.go serve --config="config/example.yaml"
 
 .PHONY: treatment-svc

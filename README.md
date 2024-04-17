@@ -51,14 +51,6 @@ make swagger-ui
 
 1. `make local-db`
     - Setup a local DB for storing experiment configurations
-2. `make local-authz-server`
-    - Setup AuthZ server that is accessible at http://localhost:4466/.
-
-To test authorization for Management Service locally, make the following changes before starting Management Service:
-
-- A sample policy exists at keto/policies/example_policy.json. It can be modified.
-- Set AuthorizationConfig.Enabled=true in the config file that's being used
-- Issue requests to the app with the header User-Email: test-user@gojek.com
 
 #### c. Using XP
 

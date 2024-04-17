@@ -15,30 +15,16 @@ type Config struct {
 	OpenAPISpecsPath string `default:"."`
 	Port             int    `default:"3000"`
 
-	AllowedOrigins      []string `default:"*"`
-	AuthorizationConfig *AuthorizationConfig
-	DbConfig            *DatabaseConfig
-	MLPConfig           *MLPConfig
-	MessageQueueConfig  *common_mq_config.MessageQueueConfig
-	SegmenterConfig     map[string]interface{}
-	ValidationConfig    ValidationConfig
-	DeploymentConfig    DeploymentConfig
-	NewRelicConfig      newrelic.Config
-	SentryConfig        sentry.Config
-	XpUIConfig          *XpUIConfig
-}
-
-// AuthorizationConfig captures the config for MLP authz
-type AuthorizationConfig struct {
-	Enabled bool
-	URL     string
-	Caching *InMemoryCacheConfig
-}
-
-type InMemoryCacheConfig struct {
-	Enabled                     bool
-	KeyExpirySeconds            int `default:"600"`
-	CacheCleanUpIntervalSeconds int `default:"900"`
+	AllowedOrigins     []string `default:"*"`
+	DbConfig           *DatabaseConfig
+	MLPConfig          *MLPConfig
+	MessageQueueConfig *common_mq_config.MessageQueueConfig
+	SegmenterConfig    map[string]interface{}
+	ValidationConfig   ValidationConfig
+	DeploymentConfig   DeploymentConfig
+	NewRelicConfig     newrelic.Config
+	SentryConfig       sentry.Config
+	XpUIConfig         *XpUIConfig
 }
 
 // DatabaseConfig captures the XP database config

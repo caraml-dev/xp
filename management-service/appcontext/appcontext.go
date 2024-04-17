@@ -11,12 +11,11 @@ import (
 )
 
 type AppContext struct {
-	Authorizer       *mw.Authorizer
 	OpenAPIValidator *mw.OpenAPIValidator
 	Services         services.Services
 }
 
-func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (*AppContext, error) {
+func NewAppContext(db *gorm.DB, cfg *config.Config) (*AppContext, error) {
 	// Init Services
 	var allServices services.Services
 
@@ -78,7 +77,6 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 	)
 
 	appContext := &AppContext{
-		Authorizer:       authorizer,
 		OpenAPIValidator: oapiValidator,
 		Services:         allServices,
 	}

@@ -10,7 +10,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/caraml-dev/mlp/api/pkg/authz/enforcer"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
 	"github.com/go-chi/chi/v5"
@@ -76,29 +75,8 @@ func NewServer(configFiles []string) (*Server, error) {
 		cleanup = append(cleanup, func() { sentry.Close() })
 	}
 
-	// Init Authorizer
-	var authorizer *middleware.Authorizer
-	if cfg.AuthorizationConfig.Enabled {
-		// Use product mlp as the policies are shared across the mlp products.
-		enforcerCfg := enforcer.NewEnforcerBuilder().URL(cfg.AuthorizationConfig.URL).Product("mlp")
-		if cfg.AuthorizationConfig.Caching.Enabled {
-			enforcerCfg = enforcerCfg.WithCaching(
-				cfg.AuthorizationConfig.Caching.KeyExpirySeconds,
-				cfg.AuthorizationConfig.Caching.CacheCleanUpIntervalSeconds,
-			)
-		}
-		authzEnforcer, err := enforcerCfg.Build()
-		if err != nil {
-			return nil, errors.Newf(errors.GetType(err), fmt.Sprintf("Failed initializing Authorizer: %v", err))
-		}
-		authorizer, err = middleware.NewAuthorizer(authzEnforcer)
-		if err != nil {
-			return nil, errors.Newf(errors.GetType(err), fmt.Sprintf("Failed initializing Authorizer: %v", err))
-		}
-	}
-
 	// Init AppContext
-	appCtx, err := appcontext.NewAppContext(db, authorizer, cfg)
+	appCtx, err := appcontext.NewAppContext(db, cfg)
 	if err != nil {
 		return nil, errors.Newf(errors.GetType(err), fmt.Sprintf("Failed initializing AppContext: %v", err))
 	}
@@ -113,10 +91,7 @@ func NewServer(configFiles []string) (*Server, error) {
 		// Ref: https://swagger.io/docs/open-source-tools/swagger-ui/usage/cors/
 		AllowedHeaders: []string{"Authorization", "Content-Type", "api_key"},
 	}).Handler)
-	// Add Authorization middleware
-	if appCtx.Authorizer != nil {
-		router.Use(appCtx.Authorizer.Middleware)
-	}
+
 	// Add NewRelic middleware
 	if cfg.NewRelicConfig.Enabled {
 		router.Use(middleware.NewRelicMiddleware())

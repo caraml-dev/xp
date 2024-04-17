@@ -20,10 +20,6 @@ func TestNewAppContext(t *testing.T) {
 	var db *gorm.DB
 
 	cfg := &config.Config{
-		AuthorizationConfig: &config.AuthorizationConfig{
-			Enabled: true,
-			URL:     "http://test-authz-url",
-		},
 		SegmenterConfig: map[string]interface{}{
 			"s2_ids": map[string]interface{}{
 				"levels": []int{14},
@@ -44,7 +40,6 @@ func TestNewAppContext(t *testing.T) {
 	}
 
 	// Create members of the App context
-	authorizer := &mw.Authorizer{}
 	allServices := services.Services{}
 
 	oapiValidator, err := mw.NewOpenAPIValidator(&mw.OpenAPIValidationOptions{
@@ -106,7 +101,7 @@ func TestNewAppContext(t *testing.T) {
 	)
 
 	// Run and validate
-	appCtx, err := NewAppContext(db, authorizer, cfg)
+	appCtx, err := NewAppContext(db, cfg)
 	require.NoError(t, err)
 
 	allServices = services.Services{
@@ -143,7 +138,6 @@ func TestNewAppContext(t *testing.T) {
 	)
 
 	assert.Equal(t, &AppContext{
-		Authorizer:       authorizer,
 		OpenAPIValidator: oapiValidator,
 		Services:         allServices,
 	}, appCtx)

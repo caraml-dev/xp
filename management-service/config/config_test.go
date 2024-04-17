@@ -19,14 +19,6 @@ func TestDefaultConfigs(t *testing.T) {
 	defaultCfg := Config{
 		Port:           3000,
 		AllowedOrigins: []string{"*"},
-		AuthorizationConfig: &AuthorizationConfig{
-			Enabled: false,
-			URL:     "",
-			Caching: &InMemoryCacheConfig{
-				KeyExpirySeconds:            600,
-				CacheCleanUpIntervalSeconds: 900,
-			},
-		},
 		DbConfig: &DatabaseConfig{
 			Host:            "localhost",
 			Port:            5432,
@@ -93,15 +85,6 @@ func TestLoadConfigFiles(t *testing.T) {
 			expected: Config{
 				Port:           3000,
 				AllowedOrigins: []string{"host-1", "host-2"},
-				AuthorizationConfig: &AuthorizationConfig{
-					Enabled: true,
-					URL:     "test-authz-server",
-					Caching: &InMemoryCacheConfig{
-						Enabled:                     true,
-						KeyExpirySeconds:            100,
-						CacheCleanUpIntervalSeconds: 200,
-					},
-				},
 				DbConfig: &DatabaseConfig{
 					Host:            "localhost",
 					Port:            5432,
