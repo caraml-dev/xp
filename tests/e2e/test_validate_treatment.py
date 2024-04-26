@@ -1,7 +1,7 @@
 from xp_client import XPClient
 
 def test_validate_valid_treatment_with_url(xp_client: XPClient, httpserver):
-    # Mock external validation endpoint
+    # Start test server for external validation endpoint
     httpserver.expect_request("/external", method="POST").respond_with_json({})
 
     data = {
@@ -11,8 +11,8 @@ def test_validate_valid_treatment_with_url(xp_client: XPClient, httpserver):
 
     result = xp_client.validate_treatment(data)
 
-    assert result.text == ""
     assert result.status_code == 200
+    assert result.text == ""
 
 
 def test_validate_valid_treatment_with_schema(xp_client: XPClient):
