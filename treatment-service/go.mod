@@ -8,7 +8,7 @@ require (
 	github.com/caraml-dev/mlp v1.7.7-0.20230428104022-779530aec912
 	github.com/caraml-dev/xp/clients v0.0.0-00010101000000-000000000000
 	github.com/caraml-dev/xp/common v0.0.0
-	github.com/confluentinc/confluent-kafka-go v1.8.2
+	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/deepmap/oapi-codegen v1.11.0
 	github.com/getkin/kin-openapi v0.94.0
 	github.com/go-chi/chi/v5 v5.0.7
