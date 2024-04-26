@@ -1,5 +1,6 @@
 from xp_client import XPClient
 
+
 def test_validate_valid_treatment_with_url(xp_client: XPClient, httpserver):
     # Start test server for external validation endpoint
     httpserver.expect_request("/external", method="POST").respond_with_json({})
