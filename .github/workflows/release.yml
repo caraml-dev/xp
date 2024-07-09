@@ -66,13 +66,13 @@ jobs:
           fetch-depth: 0
 
       - name: Download UI Dist
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: xp-ui-dist
           path: ui/build
 
       - name: Download Management Service binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: management-service-binary
           path: management-service/bin/
@@ -110,7 +110,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download Treatment Service binary
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: treatment-service-binary
           path: treatment-service/bin/
@@ -150,7 +150,7 @@ jobs:
           password: ${{ secrets.ghcr_token }}
 
       - name: Download Docker image tar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: xp-management.${{ needs.build-management-service.outputs.api-version }}.tar
 
@@ -178,7 +178,7 @@ jobs:
           password: ${{ secrets.ghcr_token }}
 
       - name: Download Docker image tar
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: xp-treatment.${{ needs.build-treatment-service.outputs.api-version }}.tar
 
