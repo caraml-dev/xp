@@ -10,18 +10,10 @@ runs:
   using: "composite"
   steps:
     - name: Set up Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v5
       with:
         go-version: ${{ inputs.go-version }}
-
-    - name: Cache Dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+        cache-dependency-path: "**/go.sum"
 
     # Since Github actions' services don't expose command like how docker-compose does, we'll need to
     # start Google Pubsub Emulator separately since it requires running the command

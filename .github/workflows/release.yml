@@ -25,7 +25,7 @@ jobs:
         working-directory: ui
     steps:
       - name: Checkout to the target branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
@@ -45,7 +45,7 @@ jobs:
         run: yarn build
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: xp-ui-dist
           path: ui/build/
@@ -61,7 +61,7 @@ jobs:
       api-version: ${{ steps.build-image.outputs.api-version }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -91,7 +91,7 @@ jobs:
             xp-management:${{ steps.build-image.outputs.api-version }}
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: xp-management.${{ steps.build-image.outputs.api-version }}.tar
           path: xp-management.${{ steps.build-image.outputs.api-version }}.tar
@@ -105,7 +105,7 @@ jobs:
       api-version: ${{ steps.build-image.outputs.api-version }}
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -130,7 +130,7 @@ jobs:
             xp-treatment:${{ steps.build-image.outputs.api-version }}
 
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: xp-treatment.${{ steps.build-image.outputs.api-version }}.tar
           path: xp-treatment.${{ steps.build-image.outputs.api-version }}.tar
