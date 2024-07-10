@@ -35,8 +35,7 @@
     "sass": "^1.77.2"
   },
   "resolutions": {
-    "react-scripts/**/postcss-normalize": "10.0.1",
-    "**/react-beautiful-dnd": "git+https://github.com/gojekfarm/react-beautiful-dnd.git#master"
+    "react-scripts/**/postcss-normalize": "10.0.1"
   },
   "engines": {
     "node": ">=20.13.1"
