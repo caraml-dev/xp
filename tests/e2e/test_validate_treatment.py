@@ -1,9 +1,12 @@
 from xp_client import XPClient
 
 
-def test_validate_valid_treatment_with_url(xp_client: XPClient):
+def test_validate_valid_treatment_with_url(xp_client: XPClient, httpserver):
+    # Start test server for external validation endpoint
+    httpserver.expect_request("/external", method="POST").respond_with_json({})
+
     data = {
-        "validation_url": "http://www.mocky.io/v2/5e4cacd4310000e1cad8c073",
+        "validation_url": httpserver.url_for("/external"),
         "data": {"field1": "abc", "field2": "def", "field3": {"field4": 0.1}},
     }
 

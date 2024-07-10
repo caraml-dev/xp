@@ -56,7 +56,7 @@ XP support various experiment types.
 
 - **A/B Experiments** - Treatment assignment is randomized on the unit supplied in the request and one of the treatments in the experiment will be chosen at random, accounting for the traffic allocation for each treatment.
 - **Switchback Experiments** - The main idea behind switchback experiments is that the experiment engine switches back and forth between the control and treatment configurations, per configured time interval. In XP, switchback experiments can have one or more treatments and the engine cycles through them, selecting one treatment for all requests in every time interval.
-- **Randomized Switchback Experiments** - This is a hybrid between the A/B experiments and Switchbacks. These experiments are Switchbacks by nature (they have a time interval). In addition, they can have a traffic allocation on each of the treatments. Thus, at every new interval, the selection of the treatment is not cyclical, but randomized. In the default mode, all requests in a given time interval will still receive the same treatment. However, it is also possible to vary this.
+- **Randomized Switchback Experiments** - This is a hybrid between the A/B experiments and Switchbacks. These experiments are Switchbacks by nature (they have a time interval). In addition, they can have a traffic allocation on each of the treatments. Thus, at every new interval, the selection of the treatment is not cyclical, but randomized. All requests in a given time interval will receive the same treatment.
 
 #### Experiment Hierarchy
 
