@@ -1,12 +1,6 @@
 .euiPanel--configSection.experimentSummaryPanel {
   .euiDescriptionList {
-    .euiDescriptionList__title {
-      width: 150px;
-    }
-
-    .euiDescriptionList__description {
-      width: calc(100% - 150px);
-      white-space: normal !important;
-    }
+    column-gap: 0px !important;
+    row-gap: 0px !important;
   }
 }

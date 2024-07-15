@@ -1,7 +1,6 @@
 import "assets/style.scss";
 
 import React from "react";
-import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 
 import * as Sentry from "@sentry/browser";
@@ -10,6 +9,7 @@ import App from "App";
 import * as serviceWorker from "serviceWorker";
 
 import { ConfigProvider, useConfig } from "./config";
+import { createRoot } from "react-dom/client";
 
 const SentryApp = ({ children }) => {
   const {
@@ -34,7 +34,13 @@ const XPUI = () => (
   </React.StrictMode>
 );
 
-ReactDOM.render(XPUI(), document.getElementById("root"));
+const container = document.getElementById("root")
+const root = createRoot(container);
+
+root.render(
+    XPUI()
+);
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -70,6 +70,7 @@ export const ExperimentsConfigGroup = ({ projectId }) => {
           <EuiDescriptionList
             textStyle="reverse"
             type="responsiveColumn"
+            columnWidths={["150px", "auto"]}
             compressed>
             <EuiDescriptionListTitle>
               Active Experiments

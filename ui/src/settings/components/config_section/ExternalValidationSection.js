@@ -17,8 +17,7 @@ export const ExternalValidationSection = ({ settings }) => {
         textStyle="reverse"
         type="responsiveColumn"
         listItems={items}
-        titleProps={{ style: { width: "20%" } }}
-        descriptionProps={{ style: { width: "80%" } }}
+        columnWidths={[1, 4]}
       />
     </ConfigPanel>
   );
