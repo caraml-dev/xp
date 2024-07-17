@@ -18,8 +18,7 @@ export const RouteNamePathConfigGroup = ({ routeNamePath }) => {
             description: routeNamePath,
           },
         ]}
-        titleProps={{ style: { width: "30%" } }}
-        descriptionProps={{ style: { width: "70%" } }}
+        columnWidths={[1, 7/3]}
       />
     </EuiTitle>
   );

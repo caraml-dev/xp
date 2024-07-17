@@ -51,8 +51,7 @@ const RandomizationSection = ({ settings }) => {
         textStyle="reverse"
         type="responsiveColumn"
         listItems={items}
-        titleProps={{ style: { width: "50%" } }}
-        descriptionProps={{ style: { width: "50%" } }}
+        columnWidths={[1, 1]}
       />
     </ConfigPanel>
   );

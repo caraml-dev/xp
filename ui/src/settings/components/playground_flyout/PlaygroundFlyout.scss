@@ -1,6 +1,0 @@
-// Required for setting a specific flyout width that is smaller than the default EUI flyout width (medium); overwrites
-// the min-width that corresponds to the default EUI flyout width
-.euiFlyout--playgroundFlyout{
-  width: 313px;
-  min-width: unset;
-}

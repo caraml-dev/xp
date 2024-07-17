@@ -23,6 +23,7 @@ export const SegmentersActivitySection = ({ segmenter }) => {
         textStyle="reverse"
         type="responsiveColumn"
         listItems={items}
+        columnWidths={["110px", "auto"]}
       />
     </ConfigPanel>
   );

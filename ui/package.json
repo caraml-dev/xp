@@ -3,39 +3,46 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "/xp",
+  "//": "[@elastic/eui] pinned to 88.2.0 because the EuiAccordion component started breaking after it; see",
+  "//": "https://github.com/caraml-dev/xp/pull/79#discussion_r1677579404 for more details",
+  "//": "[@sentry/browser] pinned to 7.118.0 because craco/module federation has issues resolving this dependency; see",
+  "//": "https://github.com/caraml-dev/turing/pull/384#discussion_r1666418144 for more details",
   "dependencies": {
-    "@caraml-dev/ui-lib": "^1.7.6",
-    "@elastic/datemath": "5.0.3",
-    "@elastic/eui": "66.0.0",
-    "@emotion/react": "^11.9.0",
-    "@sentry/browser": "5.15.5",
+    "@caraml-dev/ui-lib": "^1.13.0-build.3-a234b6b",
+    "@elastic/datemath": "^5.0.3",
+    "@elastic/eui": "88.2.0",
+    "@emotion/css": "^11.11.2",
+    "@emotion/react": "^11.11.4",
+    "@sentry/browser": "^7.118.0",
     "json-bigint": "1.0.0",
-    "lint-staged": "^11.1.2",
-    "moment": "^2.29.4",
+    "lint-staged": "^15.2.5",
+    "moment": "^2.30.1",
     "object-assign-deep": "^0.4.0",
     "proper-url-join": "2.1.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-router-dom": "^6.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1",
     "resize-observer-polyfill": "^1.5.1",
-    "yup": "^0.29.1"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@craco/craco": "6.3.0",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "husky": "^7.0.1",
+    "@craco/craco": "^7.1.0",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "husky": "^9.0.11",
     "import-sort-style-react": "^5.1.0",
-    "node-sass": "^6.0.1",
     "postcss-normalize": "10.0.1",
-    "prettier": "^2.3.2",
-    "prettier-plugin-import-sort": "^0.0.7"
+    "prettier": "^3.2.5",
+    "prettier-plugin-import-sort": "^0.0.7",
+    "sass": "^1.77.2"
   },
   "resolutions": {
-    "react-scripts/**/postcss-normalize": "10.0.1",
-    "**/react-beautiful-dnd": "git+https://github.com/gojekfarm/react-beautiful-dnd.git#master"
+    "react-scripts/**/postcss-normalize": "10.0.1"
+  },
+  "engines": {
+    "node": ">=20.13.1"
   },
   "scripts": {
     "start": "PORT=3002 craco start --verbose",

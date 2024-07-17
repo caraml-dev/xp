@@ -50,10 +50,7 @@ export const GeneralInfoConfigSection = ({ experiment }) => {
         textStyle="reverse"
         type="responsiveColumn"
         listItems={items}
-        titleProps={{ style: { width: "30%" } }}
-        descriptionProps={{
-          style: { width: "70%", textTransform: "capitalize" },
-        }}
+        columnWidths={[1, 7/3]}
       />
     </ConfigPanel>
   );

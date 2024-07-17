@@ -28,6 +28,7 @@ export const ActivityConfigSection = ({ spec }) => {
         textStyle="reverse"
         type="responsiveColumn"
         listItems={items}
+        columnWidths={["110px", "auto"]}
       />
     </ConfigPanel>
   );
