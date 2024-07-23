@@ -8,7 +8,7 @@ export const segmentConfigSchema = yup.lazy((obj) =>
       return {
         ...acc,
         [key]: yup.mixed()
-          .when("$segmenterTypes", (segmenterTypes) => {
+          .when("$segmenterTypes", ([segmenterTypes], _) => {
             switch ((segmenterTypes[key] || "").toUpperCase()) {
               case "BOOL":
                 return yup.array(
@@ -43,7 +43,7 @@ export const segmentConfigSchema = yup.lazy((obj) =>
           })
           .when(
             "$requiredSegmenterNames",
-            (requiredSegmenterNames, schema) => {
+            ([requiredSegmenterNames], schema) => {
               if (requiredSegmenterNames.includes(key)) {
                 return schema
                   .required(`Segmenter ${key} is required`)
