@@ -74,7 +74,7 @@ const schema = [
       .max(64, "Name should be between 4 and 64 characters")
       .matches(nameRegex, nameRegexDescription),
     type: yup
-      .mixed()
+      .string()
       .required("Segmenter Value Type should be selected")
       .oneOf(
         typeOptionsValues,

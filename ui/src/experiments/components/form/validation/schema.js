@@ -138,10 +138,10 @@ const schema = [
       .max(64, "Name should be between 4 and 64 characters")
       .matches(nameRegex, nameRegexDescription),
     type: yup
-      .mixed()
+      .string()
       .required("Experiment Type should be selected")
       .oneOf(experimentTypeValues, "Valid Experiment Type should be selected"),
-    interval: yup.mixed().when("type", (type, schema) => {
+    interval: yup.string().when("type", ([type], schema) => {
       return type === "Switchback"
         ? yup
           .number()
@@ -151,11 +151,11 @@ const schema = [
         : schema;
     }),
     tier: yup
-      .mixed()
+      .string()
       .required("Experiment Tier should be selected")
       .oneOf(experimentTierValues, "Valid Experiment Tier should be selected"),
     status: yup
-      .mixed()
+      .string()
       .required("Experiment Status should be selected")
       .oneOf(
         experimentStatusValues,
@@ -165,7 +165,7 @@ const schema = [
     end_time: yup
       .date()
       .required("End Time is required")
-      .when("start_time", (startTime, schema) => {
+      .when("start_time", ([startTime], schema) => {
         return startTime ? schema.min(startTime) : schema;
       }),
   }),
@@ -176,7 +176,7 @@ const schema = [
     treatments: yup
       .array()
       .of(treatmentSchema)
-      .when("type", (type, schema) => {
+      .when("type", ([type], schema) => {
         switch (type) {
           case "A/B":
             return schema

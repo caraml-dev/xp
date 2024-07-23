@@ -4,7 +4,7 @@ const schema = yup.lazy((obj) => {
   if (!!obj.start_time || !!obj.end_time) {
     return yup.object().shape({
       start_time: yup.date().required("End time is set, Start time required"),
-      end_time: yup.mixed().when("start_time", (startTime, schema) => {
+      end_time: yup.mixed().when("start_time", ([startTime], schema) => {
         return !!startTime
           ? yup
               .date()
