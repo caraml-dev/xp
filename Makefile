@@ -100,7 +100,7 @@ compile-protos: | $(protoc_dir)
 .PHONY: setup
 setup:
 	@echo "> Initializing dependencies ..."
-	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.2
+	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
 
 	@echo "Setting up dev tools..."
 	@test -x "$(which pre-commit)" || pip install pre-commit
