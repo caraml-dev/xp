@@ -19,6 +19,7 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/stretchr/testify/suite"
 	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/modules/compose"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/caraml-dev/xp/clients/management"
@@ -62,7 +63,7 @@ type TreatmentServiceTestSuite struct {
 	terminationChannel chan bool
 	ctx                context.Context
 	emulator           testcontainers.Container
-	kafka              testcontainers.DockerCompose
+	kafka              compose.ComposeStack
 }
 
 func int32Ptr(value int32) *int32 {
@@ -370,11 +371,11 @@ func (suite *TreatmentServiceTestSuite) SetupSuite() {
 	// Docker compose file copied from official confluentinc repository.
 	// See: https://github.com/confluentinc/cp-all-in-one/blob/7.0.1-post/cp-all-in-one-kraft/docker-compose.yml
 	composeFilePaths := []string{"docker-compose/kafka/docker-compose.yaml"}
-	kafka := testcontainers.NewLocalDockerCompose(composeFilePaths, "kafka")
-	execError := kafka.
-		WithCommand([]string{"up", "-d"}).
-		Invoke()
-	err = execError.Error
+	kafka, err := compose.NewDockerComposeWith(compose.WithStackFiles(composeFilePaths...), compose.StackIdentifier("kafka"))
+	if err != nil {
+		panic(err)
+	}
+	err = kafka.Up(ctx, compose.Wait(true))
 	if err != nil {
 		panic(err)
 	}
@@ -408,7 +409,7 @@ func (suite *TreatmentServiceTestSuite) TearDownSuite() {
 	suite.treatmentServiceServer.Close()
 	suite.terminationChannel <- true
 
-	_ = suite.kafka.Down()
+	_ = suite.kafka.Down(context.Background())
 	_ = suite.emulator.Terminate(context.Background())
 }
 
