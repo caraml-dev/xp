@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -349,7 +348,7 @@ func (c *ClientWithResponses) FetchTreatmentWithResponse(ctx context.Context, pr
 
 // ParseFetchTreatmentResponse parses an HTTP response from a FetchTreatmentWithResponse call
 func ParseFetchTreatmentResponse(rsp *http.Response) (*FetchTreatmentResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer rsp.Body.Close()
 	if err != nil {
 		return nil, err
