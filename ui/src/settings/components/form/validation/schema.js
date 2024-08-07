@@ -71,7 +71,7 @@ const schema = [
       names: yup
         .array()
         .test("segmenter-dependencies", validateSegmenterSelection),
-      variables: yup.object().when("names", (names, schema) => {
+      variables: yup.object().when("names", ([names], schema) => {
         const shape = names.reduce((acc, name) => {
           acc[name] = yup
             .array()
