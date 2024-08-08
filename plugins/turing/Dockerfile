@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine as plugin-builder
+FROM golang:1.21-alpine as plugin-builder
 
 RUN apk update && apk add git make bash unzip libtool gcc musl-dev ca-certificates dumb-init tzdata
 

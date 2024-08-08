@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine as api-builder
+FROM golang:1.21-alpine as api-builder
 ARG API_BIN_NAME=xp-treatment
 
 RUN apk update && apk add musl-dev gcc
