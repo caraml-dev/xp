@@ -1,4 +1,4 @@
-FROM golang:1.18-alpine as api-builder
+FROM golang:1.21-alpine as api-builder
 ARG API_BIN_NAME=xp-management
 
 ENV GO111MODULE=on \
