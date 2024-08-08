@@ -59,15 +59,15 @@ generate-api:
 # ==================================
 
 local-authz-server:
-	@docker-compose up -d postgres-auth && docker-compose run keto-server migrate sql -e
-	@docker-compose up -d keto-server
-	@docker-compose run keto-server-bootstrap-policies engines acp ory policies import glob /policies/example_policy.json
+	@docker compose up -d postgres-auth && docker compose run keto-server migrate sql -e
+	@docker compose up -d keto-server
+	@docker compose run keto-server-bootstrap-policies engines acp ory policies import glob /policies/example_policy.json
 
 local-db:
-	@docker-compose up -d postgres
+	@docker compose up -d postgres
 
 local-pubsub:
-	@docker-compose up -d pubsub
+	@docker compose up -d pubsub
 
 .PHONY: mgmt-svc
 mgmt-svc: local-authz-server local-db local-pubsub
@@ -79,7 +79,7 @@ treatment-svc: local-pubsub
 	cd treatment-service && go run main.go serve
 
 swagger-ui:
-	@docker-compose up -d swagger-ui
+	@docker compose up -d swagger-ui
 	@xdg-open 2>/dev/null http://localhost:8081 || open http://localhost:8081
 
 $(protoc_dir):
@@ -100,7 +100,7 @@ compile-protos: | $(protoc_dir)
 .PHONY: setup
 setup:
 	@echo "> Initializing dependencies ..."
-	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.2
+	@test -x ${GOPATH}/bin/golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
 
 	@echo "Setting up dev tools..."
 	@test -x "$(which pre-commit)" || pip install pre-commit
@@ -186,8 +186,8 @@ install-python-ci-dependencies:
 	pip install -r tests/requirements.txt
 
 e2e: build
-	docker-compose down
-	docker-compose up -d postgres pubsub
+	docker compose down
+	docker compose up -d postgres pubsub
 	cd tests/e2e; python -m pytest -s -v
 
 e2e-ci:

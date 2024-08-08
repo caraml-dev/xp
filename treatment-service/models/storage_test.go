@@ -523,6 +523,9 @@ func TestDumpExperiments(t *testing.T) {
 		time.Date(2022, 1, 2, 3, 5, 7, 0, time.UTC),
 	), segmentersType)
 	require.NoError(t, err)
+
+	// Manually set experiment id so it matches the id in the dump
+	e.Id = 81
 	storage := LocalStorage{
 		Experiments: map[ProjectId][]*ExperimentIndex{
 			1: {NewExperimentIndex(e)},
