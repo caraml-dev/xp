@@ -55,30 +55,28 @@ const optionsSchema = yup
     }
   );
 
-const validateArrayString = (arraySchema, arrayName) => {
-  return yup
-    .string()
-    .test(
-      `${arrayName} valid JSON array`,
-      `${arrayName} must be a valid JSON array`,
-      (array) => {
-        if (array !== "") {
-          try {
-            var parsedArray = JSON.parse(array);
-            if (typeof parsedArray != "array" && !Array.isArray(parsedArray)) {
-              return false;
-            }
-            return arraySchema
-              .validateSync(parsedArray);
-          } catch (e) {
+const validateArrayString = (arraySchema, arrayName) => yup
+  .string()
+  .test(
+    `${arrayName} valid JSON array`,
+    `${arrayName} must be a valid JSON array`,
+    (array) => {
+      if (array !== "") {
+        try {
+          var parsedArray = JSON.parse(array);
+          if (typeof parsedArray != "array" && !Array.isArray(parsedArray)) {
             return false;
           }
-          
+          return arraySchema
+            .validateSync(parsedArray);
+        } catch (e) {
+          return false;
         }
-        return true;
+
       }
-    )
-}
+      return true;
+    }
+  );
 
 const constraintSchema = yup.object().shape({
   pre_requisites: validateArrayString(yup.array(preRequisiteSchema), "Pre-requisites")
