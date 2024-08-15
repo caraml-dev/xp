@@ -72,7 +72,6 @@ const validateArrayString = (arraySchema, arrayName) => yup
         } catch (e) {
           return false;
         }
-
       }
       return true;
     }
