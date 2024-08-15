@@ -55,13 +55,34 @@ const optionsSchema = yup
     }
   );
 
+const validateArrayString = (arraySchema, arrayName) => yup
+  .string()
+  .test(
+    `${arrayName} valid JSON array`,
+    `${arrayName} must be a valid JSON array`,
+    (array) => {
+      if (array !== "") {
+        try {
+          var parsedArray = JSON.parse(array);
+          if (typeof parsedArray != "object" || !Array.isArray(parsedArray)) {
+            return false;
+          }
+          return arraySchema
+            .validateSync(parsedArray);
+        } catch (e) {
+          return false;
+        }
+      }
+      return true;
+    }
+  );
+
 const constraintSchema = yup.object().shape({
-  pre_requisites: yup
-    .array(preRequisiteSchema)
+  pre_requisites: validateArrayString(yup.array(preRequisiteSchema), "Pre-requisites")
     .typeError(
       "Constraint pre-requisites must be a valid array of pre-requisite objects"
     ),
-  allowed_values: segmenterValuesSchema,
+  allowed_values: validateArrayString(segmenterValuesSchema, "Allowed values"),
   options: optionsSchema,
 });
 
