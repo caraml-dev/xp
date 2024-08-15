@@ -64,7 +64,7 @@ const validateArrayString = (arraySchema, arrayName) => yup
       if (array !== "") {
         try {
           var parsedArray = JSON.parse(array);
-          if (typeof parsedArray != "array" && !Array.isArray(parsedArray)) {
+          if (typeof parsedArray != "object" || !Array.isArray(parsedArray)) {
             return false;
           }
           return arraySchema
