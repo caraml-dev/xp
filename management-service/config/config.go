@@ -26,6 +26,7 @@ type Config struct {
 	NewRelicConfig      newrelic.Config
 	SentryConfig        sentry.Config
 	XpUIConfig          *XpUIConfig
+	PollerConfig        *PollerConfig
 }
 
 // AuthorizationConfig captures the config for MLP authz
@@ -79,6 +80,11 @@ type XpUIConfig struct {
 	// Optional. Defines the relative path under which the app will be accessible.
 	// This should match `homepage` value from the `package.json` file of the CRA app
 	Homepage string `default:"/xp"`
+}
+
+type PollerConfig struct {
+	Enabled      bool          `default:"false"`
+	PollInterval time.Duration `default:"30s"`
 }
 
 // ListenAddress returns the Management API app's port
