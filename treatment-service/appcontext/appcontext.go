@@ -99,7 +99,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		messageQueueService, err = messagequeue.NewMessageQueueService(
 			context.Background(),
 			localStorage,
-			cfg.MessageQueueConfig,
+			*cfg.MessageQueueConfig,
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)
@@ -110,7 +110,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		messageQueueService, err = messagequeue.NewMessageQueueService(
 			pubsubInitContext,
 			localStorage,
-			cfg.MessageQueueConfig,
+			*cfg.MessageQueueConfig,
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)

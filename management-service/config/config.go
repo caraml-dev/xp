@@ -83,8 +83,7 @@ type XpUIConfig struct {
 }
 
 type PollerConfig struct {
-	Enabled      bool          `default:"false"`
-	PollInterval time.Duration `default:"30s"`
+	Enabled bool `default:"false"`
 }
 
 // ListenAddress returns the Management API app's port

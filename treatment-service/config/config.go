@@ -3,9 +3,11 @@ package config
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
+	"github.com/go-playground/validator/v10"
 
 	common_config "github.com/caraml-dev/xp/common/config"
 	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
@@ -24,16 +26,17 @@ type Config struct {
 	Port       int      `json:"port" default:"8080" validate:"required"`
 	ProjectIds []string `json:"project_ids" default:""`
 
-	AssignedTreatmentLogger AssignedTreatmentLoggerConfig       `json:"assigned_treatment_logger"`
-	DebugConfig             DebugConfig                         `json:"debug_config" validate:"required,dive"`
-	NewRelicConfig          newrelic.Config                     `json:"new_relic_config"`
-	SentryConfig            sentry.Config                       `json:"sentry_config"`
-	DeploymentConfig        DeploymentConfig                    `json:"deployment_config" validate:"required,dive"`
-	MessageQueueConfig      common_mq_config.MessageQueueConfig `json:"message_queue_config" validate:"required,dive"`
-	ManagementService       ManagementServiceConfig             `json:"management_service" validate:"required,dive"`
-	MonitoringConfig        Monitoring                          `json:"monitoring_config"`
-	SwaggerConfig           SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
-	SegmenterConfig         map[string]interface{}              `json:"segmenter_config"`
+	AssignedTreatmentLogger AssignedTreatmentLoggerConfig        `json:"assigned_treatment_logger"`
+	DebugConfig             DebugConfig                          `json:"debug_config" validate:"required,dive"`
+	NewRelicConfig          newrelic.Config                      `json:"new_relic_config"`
+	SentryConfig            sentry.Config                        `json:"sentry_config"`
+	DeploymentConfig        DeploymentConfig                     `json:"deployment_config" validate:"required,dive"`
+	MessageQueueConfig      *common_mq_config.MessageQueueConfig `json:"message_queue_config"`
+	ManagementService       ManagementServiceConfig              `json:"management_service" validate:"required,dive"`
+	MonitoringConfig        Monitoring                           `json:"monitoring_config"`
+	SwaggerConfig           SwaggerConfig                        `json:"swagger_config" validate:"required,dive"`
+	SegmenterConfig         map[string]interface{}               `json:"segmenter_config"`
+	PollerConfig            *PollerConfig                        `json:"poller_config"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
@@ -94,6 +97,11 @@ type ManagementServiceConfig struct {
 	AuthorizationEnabled bool   `json:"authorization_enabled"`
 }
 
+type PollerConfig struct {
+	Enabled      bool          `default:"false"`
+	PollInterval time.Duration `default:"30s"`
+}
+
 func (c *Config) GetProjectIds() []models.ProjectId {
 	projectIds := make([]models.ProjectId, 0)
 	for _, projectIdString := range c.ProjectIds {
@@ -109,11 +117,33 @@ func (c *Config) ListenAddress() string {
 	return fmt.Sprintf(":%d", c.Port)
 }
 
+func (c *Config) Validate() error {
+	validate := validator.New()
+
+	if c.MessageQueueConfig != nil {
+		if err := validate.Struct(c.MessageQueueConfig); err != nil {
+			return fmt.Errorf("invalid message queue configuration: %w", err)
+		}
+	}
+
+	if c.PollerConfig != nil {
+		if err := validate.Struct(c.PollerConfig); err != nil {
+			return fmt.Errorf("invalid poller configuration: %w", err)
+		}
+	}
+
+	return nil
+}
+
 func Load(filepaths ...string) (*Config, error) {
 	var cfg Config
 	err := common_config.ParseConfig(&cfg, filepaths)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update viper config: %s", err)
+	}
+
+	if err := cfg.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid configuration: %w", err)
 	}
 
 	return &cfg, nil
