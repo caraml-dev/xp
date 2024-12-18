@@ -5,16 +5,19 @@ import (
 	"time"
 
 	"github.com/caraml-dev/xp/treatment-service/config"
+	"github.com/caraml-dev/xp/treatment-service/models"
 )
 
 type Poller struct {
 	config   config.PollerConfig
+	storage  *models.LocalStorage
 	stopChan chan struct{}
 }
 
-func NewPoller(cfg *config.PollerConfig) *Poller {
+func NewPoller(cfg *config.PollerConfig, storage *models.LocalStorage) *Poller {
 	return &Poller{
 		config:   *cfg,
+		storage:  storage,
 		stopChan: make(chan struct{}),
 	}
 }
@@ -25,7 +28,7 @@ func (p *Poller) Start() {
 		for {
 			select {
 			case <-ticker.C:
-				// Polling logic here
+				p.storage.Init()
 				log.Println("Polling...")
 			case <-p.stopChan:
 				ticker.Stop()

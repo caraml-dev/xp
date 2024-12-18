@@ -46,7 +46,7 @@ func TestDefaultConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp",
 		},
-		MessageQueueConfig: common_mq_config.MessageQueueConfig{
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
 			Kind: "",
 			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:              "dev",
@@ -109,7 +109,7 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp1",
 		},
-		MessageQueueConfig: common_mq_config.MessageQueueConfig{
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
 			Kind: "",
 			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:              "dev",

@@ -57,7 +57,7 @@ func TestContext(t *testing.T) {
 		NewRelicConfig:          newrelic.Config{},
 		SentryConfig:            sentry.Config{},
 		DeploymentConfig:        config.DeploymentConfig{},
-		MessageQueueConfig: common_mq_config.MessageQueueConfig{
+		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
 			Kind:         "pubsub",
 			PubSubConfig: pubSubConfig,
 		},
