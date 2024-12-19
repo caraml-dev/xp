@@ -81,10 +81,6 @@ type XpUIConfig struct {
 	Homepage string `default:"/xp"`
 }
 
-type PollerConfig struct {
-	Enabled bool `default:"false"`
-}
-
 // ListenAddress returns the Management API app's port
 func (c *Config) ListenAddress() string {
 	return fmt.Sprintf(":%d", c.Port)
