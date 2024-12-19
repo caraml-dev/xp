@@ -26,7 +26,6 @@ type Config struct {
 	NewRelicConfig      newrelic.Config
 	SentryConfig        sentry.Config
 	XpUIConfig          *XpUIConfig
-	PollerConfig        *PollerConfig
 }
 
 // AuthorizationConfig captures the config for MLP authz

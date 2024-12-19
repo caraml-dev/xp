@@ -30,17 +30,9 @@ func NewAppContext(db *gorm.DB, authorizer *mw.Authorizer, cfg *config.Config) (
 	}
 
 	// Init Services
-	var messageQueueService messagequeue.MessageQueueService
-	if cfg.PollerConfig != nil && cfg.PollerConfig.Enabled {
-		messageQueueService, err = messagequeue.NewNoopMQService()
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		messageQueueService, err = messagequeue.NewMessageQueueService(*cfg.MessageQueueConfig)
-		if err != nil {
-			return nil, err
-		}
+	messageQueueService, err := messagequeue.NewMessageQueueService(*cfg.MessageQueueConfig)
+	if err != nil {
+		return nil, err
 	}
 
 	segmenterSvc, err := services.NewSegmenterService(&allServices, cfg.SegmenterConfig, db)
