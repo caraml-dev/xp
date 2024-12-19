@@ -11,43 +11,56 @@ import (
 
 type Poller struct {
 	pollerConfig config.PollerConfig
-	storage      *models.LocalStorage
-	stopChan     chan struct{}
+	localStorage *models.LocalStorage
+	stopChannel  chan struct{}
 	stopOnce     sync.Once
+	waitGroup    sync.WaitGroup
 }
 
-func NewPoller(pollerConfig *config.PollerConfig, storage *models.LocalStorage) *Poller {
+// NewPoller creates a new Poller instance with the given configuration and local storage.
+// pollerConfig: configuration for the poller
+// localStorage: local storage to be used by the poller
+func NewPoller(pollerConfig *config.PollerConfig, localStorage *models.LocalStorage) *Poller {
 	return &Poller{
 		pollerConfig: *pollerConfig,
-		storage:      storage,
-		stopChan:     make(chan struct{}),
+		localStorage: localStorage,
+		stopChannel:  make(chan struct{}),
 	}
 }
 
 func (p *Poller) Start() {
-	ticker := time.NewTicker(p.pollerConfig.PollInterval)
-	go p.poll(ticker)
-}
-
-func (p *Poller) poll(ticker *time.Ticker) {
-	for {
-		select {
-		case <-ticker.C:
-			err := p.storage.Init()
-			log.Printf("Polling at %v with interval %v", time.Now(), p.pollerConfig.PollInterval)
-			if err != nil {
-				log.Printf("Error updating local storage: %v", err)
-				return
+	var startOnce sync.Once
+	startOnce.Do(func() {
+		ticker := time.NewTicker(p.pollerConfig.PollInterval)
+		p.waitGroup.Add(1)
+		go func() {
+			defer p.waitGroup.Done()
+			for {
+				select {
+				case <-ticker.C:
+					err := p.localStorage.Init()
+					log.Printf("Polling at %v with interval %v", time.Now(), p.pollerConfig.PollInterval)
+					if err != nil {
+						log.Printf("Error updating local storage: %v", err)
+						continue
+					}
+				case <-p.stopChannel:
+					ticker.Stop()
+					return
+				}
 			}
-		case <-p.stopChan:
-			ticker.Stop()
-			return
-		}
-	}
+		}()
+	})
 }
 
 func (p *Poller) Stop() {
 	p.stopOnce.Do(func() {
-		close(p.stopChan)
+		select {
+		case <-p.stopChannel:
+			// Already closed
+		default:
+			close(p.stopChannel)
+			p.waitGroup.Wait()
+		}
 	})
 }
