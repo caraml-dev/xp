@@ -47,7 +47,7 @@ func TestDefaultConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp",
 		},
-		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
+		MessageQueueConfig: common_mq_config.MessageQueueConfig{
 			Kind: "",
 			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:              "dev",
@@ -65,7 +65,7 @@ func TestDefaultConfigs(t *testing.T) {
 		},
 		SentryConfig:    sentry.Config{Enabled: false, Labels: emptyStringMap},
 		SegmenterConfig: make(map[string]interface{}),
-		PollerConfig: &PollerConfig{
+		PollerConfig: PollerConfig{
 			Enabled:      false,
 			PollInterval: 30 * time.Second,
 		},
@@ -114,7 +114,7 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		DebugConfig: DebugConfig{
 			OutputPath: "/tmp1",
 		},
-		MessageQueueConfig: &common_mq_config.MessageQueueConfig{
+		MessageQueueConfig: common_mq_config.MessageQueueConfig{
 			Kind: "",
 			PubSubConfig: &common_mq_config.PubSubConfig{
 				Project:              "dev",
@@ -132,7 +132,7 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		},
 		SentryConfig:    sentry.Config{Enabled: true, DSN: "my.amazing.sentry.dsn", Labels: map[string]string{"app": "xp-treatment-service"}},
 		SegmenterConfig: map[string]interface{}{"s2_ids": map[string]interface{}{"mins2celllevel": 9, "maxs2celllevel": 15}},
-		PollerConfig: &PollerConfig{
+		PollerConfig: PollerConfig{
 			Enabled:      false,
 			PollInterval: 30 * time.Second,
 		},

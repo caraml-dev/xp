@@ -94,11 +94,11 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	}
 
 	var messageQueueService messagequeue.MessageQueueService
-	if (cfg.PollerConfig != nil && cfg.PollerConfig.Enabled) || cfg.MessageQueueConfig.Kind == common_mq_config.NoopMQ {
+	if cfg.PollerConfig.Enabled || cfg.MessageQueueConfig.Kind == common_mq_config.NoopMQ {
 		messageQueueService, err = messagequeue.NewMessageQueueService(
 			context.Background(),
 			localStorage,
-			*cfg.MessageQueueConfig,
+			cfg.MessageQueueConfig,
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)
@@ -111,7 +111,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 			messageQueueService, err = messagequeue.NewMessageQueueService(
 				pubsubInitContext,
 				localStorage,
-				*cfg.MessageQueueConfig,
+				cfg.MessageQueueConfig,
 				cfg.GetProjectIds(),
 				cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 			)

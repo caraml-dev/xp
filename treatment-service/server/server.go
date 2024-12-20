@@ -105,7 +105,7 @@ func NewServer(configFiles []string) (*Server, error) {
 
 	subscribe := false
 	var poller *Poller
-	if cfg.PollerConfig != nil && cfg.PollerConfig.Enabled {
+	if cfg.PollerConfig.Enabled {
 		poller = NewPoller(cfg.PollerConfig, appCtx.LocalStorage)
 	} else if cfg.MessageQueueConfig.Kind != common_mq_config.NoopMQ {
 		subscribe = true

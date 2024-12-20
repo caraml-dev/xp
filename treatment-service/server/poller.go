@@ -12,39 +12,45 @@ import (
 type Poller struct {
 	pollerConfig config.PollerConfig
 	localStorage *models.LocalStorage
-	stopChannel  chan struct{}
-	stopOnce     sync.Once
-	waitGroup    sync.WaitGroup
+	control      PollerControl
+}
+
+type PollerControl struct {
+	stopChannel chan struct{}
+	startOnce   sync.Once
+	stopOnce    sync.Once
+	waitGroup   sync.WaitGroup
 }
 
 // NewPoller creates a new Poller instance with the given configuration and local storage.
 // pollerConfig: configuration for the poller
 // localStorage: local storage to be used by the poller
-func NewPoller(pollerConfig *config.PollerConfig, localStorage *models.LocalStorage) *Poller {
+func NewPoller(pollerConfig config.PollerConfig, localStorage *models.LocalStorage) *Poller {
 	return &Poller{
-		pollerConfig: *pollerConfig,
+		pollerConfig: pollerConfig,
 		localStorage: localStorage,
-		stopChannel:  make(chan struct{}),
+		control: PollerControl{
+			stopChannel: make(chan struct{}),
+		},
 	}
 }
 
 func (p *Poller) Start() {
-	var startOnce sync.Once
-	startOnce.Do(func() {
+	p.control.startOnce.Do(func() {
 		ticker := time.NewTicker(p.pollerConfig.PollInterval)
-		p.waitGroup.Add(1)
+		p.control.waitGroup.Add(1)
 		go func() {
-			defer p.waitGroup.Done()
+			defer p.control.waitGroup.Done()
 			for {
 				select {
 				case <-ticker.C:
-					err := p.localStorage.Init()
+					err := p.Refresh()
 					log.Printf("Polling at %v with interval %v", time.Now(), p.pollerConfig.PollInterval)
 					if err != nil {
 						log.Printf("Error updating local storage: %v", err)
 						continue
 					}
-				case <-p.stopChannel:
+				case <-p.control.stopChannel:
 					ticker.Stop()
 					return
 				}
@@ -54,13 +60,13 @@ func (p *Poller) Start() {
 }
 
 func (p *Poller) Stop() {
-	p.stopOnce.Do(func() {
-		select {
-		case <-p.stopChannel:
-			// Already closed
-		default:
-			close(p.stopChannel)
-			p.waitGroup.Wait()
-		}
+	p.control.stopOnce.Do(func() {
+		close(p.control.stopChannel)
+		p.control.waitGroup.Wait()
 	})
+}
+
+func (p *Poller) Refresh() error {
+	err := p.localStorage.Init()
+	return err
 }
