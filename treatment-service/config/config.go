@@ -34,7 +34,7 @@ type Config struct {
 	MonitoringConfig        Monitoring                          `json:"monitoring_config"`
 	SwaggerConfig           SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
 	SegmenterConfig         map[string]interface{}              `json:"segmenter_config"`
-	PollerConfig            PollerConfig                        `json:"poller_config"`
+	PollerConfig            PollerConfig                        `json:"poller_config" validate:"required,dive"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
