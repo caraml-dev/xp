@@ -23,6 +23,7 @@ type AppContext struct {
 	SegmenterService    services.SegmenterService
 
 	AssignedTreatmentLogger *monitoring.AssignedTreatmentLogger
+	LocalStorage            *models.LocalStorage
 }
 
 func NewAppContext(cfg *config.Config) (*AppContext, error) {
@@ -92,10 +93,8 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		return nil, err
 	}
 
-	log.Println("Initializing message queue subscriber...")
 	var messageQueueService messagequeue.MessageQueueService
-	switch cfg.MessageQueueConfig.Kind {
-	case common_mq_config.NoopMQ:
+	if cfg.PollerConfig.Enabled || cfg.MessageQueueConfig.Kind == common_mq_config.NoopMQ {
 		messageQueueService, err = messagequeue.NewMessageQueueService(
 			context.Background(),
 			localStorage,
@@ -103,7 +102,8 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)
-	case common_mq_config.PubSubMQ:
+	} else if cfg.MessageQueueConfig.Kind == common_mq_config.PubSubMQ {
+		log.Println("Initializing message queue subscriber...")
 		pubsubInitContext, cancel := context.WithTimeout(
 			context.Background(), time.Duration(cfg.MessageQueueConfig.PubSubConfig.PubSubTimeoutSeconds)*time.Second)
 		defer cancel()
@@ -114,9 +114,10 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)
-	default:
+	} else {
 		err = fmt.Errorf("unrecognized Message Queue Kind: %s", loggerConfig.Kind)
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -129,6 +130,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		TreatmentService:        treatmentSvc,
 		AssignedTreatmentLogger: logger,
 		MessageQueueService:     messageQueueService,
+		LocalStorage:            localStorage,
 	}
 
 	return appContext, nil

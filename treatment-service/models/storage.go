@@ -486,7 +486,7 @@ func (s *LocalStorage) DumpExperiments(filepath string) error {
 	return os.WriteFile(filepath, file, 0644)
 }
 
-func (s *LocalStorage) init() error {
+func (s *LocalStorage) Init() error {
 	s.Lock()
 	defer s.Unlock()
 
@@ -592,7 +592,7 @@ func NewLocalStorage(
 	}
 	segmenterCache := make(map[ProjectId]map[string]schema.SegmenterType)
 	s := LocalStorage{managementClient: xpClient, subscribedProjectIds: projectIds, ProjectSegmenters: segmenterCache}
-	err = s.init()
+	err = s.Init()
 
 	return &s, err
 }

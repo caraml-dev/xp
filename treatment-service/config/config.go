@@ -3,10 +3,10 @@ package config
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
-
 	common_config "github.com/caraml-dev/xp/common/config"
 	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/models"
@@ -34,6 +34,7 @@ type Config struct {
 	MonitoringConfig        Monitoring                          `json:"monitoring_config"`
 	SwaggerConfig           SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
 	SegmenterConfig         map[string]interface{}              `json:"segmenter_config"`
+	PollerConfig            PollerConfig                        `json:"poller_config" validate:"required,dive"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
@@ -92,6 +93,11 @@ type Monitoring struct {
 type ManagementServiceConfig struct {
 	URL                  string `json:"url" default:"http://localhost:3000/v1" validate:"required"`
 	AuthorizationEnabled bool   `json:"authorization_enabled"`
+}
+
+type PollerConfig struct {
+	Enabled      bool          `default:"false"`
+	PollInterval time.Duration `default:"30s"`
 }
 
 func (c *Config) GetProjectIds() []models.ProjectId {
