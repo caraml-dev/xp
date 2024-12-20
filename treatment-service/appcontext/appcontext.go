@@ -102,22 +102,20 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 			cfg.GetProjectIds(),
 			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 		)
+	} else if cfg.MessageQueueConfig.Kind == common_mq_config.PubSubMQ {
+		log.Println("Initializing message queue subscriber...")
+		pubsubInitContext, cancel := context.WithTimeout(
+			context.Background(), time.Duration(cfg.MessageQueueConfig.PubSubConfig.PubSubTimeoutSeconds)*time.Second)
+		defer cancel()
+		messageQueueService, err = messagequeue.NewMessageQueueService(
+			pubsubInitContext,
+			localStorage,
+			cfg.MessageQueueConfig,
+			cfg.GetProjectIds(),
+			cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
+		)
 	} else {
-		if cfg.MessageQueueConfig.Kind == common_mq_config.PubSubMQ {
-			log.Println("Initializing message queue subscriber...")
-			pubsubInitContext, cancel := context.WithTimeout(
-				context.Background(), time.Duration(cfg.MessageQueueConfig.PubSubConfig.PubSubTimeoutSeconds)*time.Second)
-			defer cancel()
-			messageQueueService, err = messagequeue.NewMessageQueueService(
-				pubsubInitContext,
-				localStorage,
-				cfg.MessageQueueConfig,
-				cfg.GetProjectIds(),
-				cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
-			)
-		} else {
-			err = fmt.Errorf("unrecognized Message Queue Kind: %s", loggerConfig.Kind)
-		}
+		err = fmt.Errorf("unrecognized Message Queue Kind: %s", loggerConfig.Kind)
 	}
 
 	if err != nil {
