@@ -30,3 +30,7 @@ SegmenterConfig:
   S2_IDs:
     MinS2CellLevel: 10
     MaxS2CellLevel: 14
+
+PollerConfig:
+  Enabled: true
+  PollInterval: 10s
