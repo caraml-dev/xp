@@ -93,6 +93,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		return nil, err
 	}
 
+	log.Println("Initializing message queue subscriber...")
 	var messageQueueService messagequeue.MessageQueueService
 	switch cfg.MessageQueueConfig.Kind {
 	case common_mq_config.NoopMQ:
