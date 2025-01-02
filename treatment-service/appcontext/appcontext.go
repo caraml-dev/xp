@@ -94,7 +94,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	}
 
 	var messageQueueService messagequeue.MessageQueueService
-	if cfg.PollerConfig.Enabled || cfg.MessageQueueConfig.Kind == common_mq_config.NoopMQ {
+	if cfg.ManagementServicePollerConfig.Enabled || cfg.MessageQueueConfig.Kind == common_mq_config.NoopMQ {
 		messageQueueService, err = messagequeue.NewMessageQueueService(
 			context.Background(),
 			localStorage,

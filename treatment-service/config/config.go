@@ -24,17 +24,17 @@ type Config struct {
 	Port       int      `json:"port" default:"8080" validate:"required"`
 	ProjectIds []string `json:"project_ids" default:""`
 
-	AssignedTreatmentLogger AssignedTreatmentLoggerConfig       `json:"assigned_treatment_logger"`
-	DebugConfig             DebugConfig                         `json:"debug_config" validate:"required,dive"`
-	NewRelicConfig          newrelic.Config                     `json:"new_relic_config"`
-	SentryConfig            sentry.Config                       `json:"sentry_config"`
-	DeploymentConfig        DeploymentConfig                    `json:"deployment_config" validate:"required,dive"`
-	MessageQueueConfig      common_mq_config.MessageQueueConfig `json:"message_queue_config" validate:"required,dive"`
-	ManagementService       ManagementServiceConfig             `json:"management_service" validate:"required,dive"`
-	MonitoringConfig        Monitoring                          `json:"monitoring_config"`
-	SwaggerConfig           SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
-	SegmenterConfig         map[string]interface{}              `json:"segmenter_config"`
-	PollerConfig            PollerConfig                        `json:"poller_config" validate:"required,dive"`
+	AssignedTreatmentLogger       AssignedTreatmentLoggerConfig       `json:"assigned_treatment_logger"`
+	DebugConfig                   DebugConfig                         `json:"debug_config" validate:"required,dive"`
+	NewRelicConfig                newrelic.Config                     `json:"new_relic_config"`
+	SentryConfig                  sentry.Config                       `json:"sentry_config"`
+	DeploymentConfig              DeploymentConfig                    `json:"deployment_config" validate:"required,dive"`
+	MessageQueueConfig            common_mq_config.MessageQueueConfig `json:"message_queue_config" validate:"required,dive"`
+	ManagementService             ManagementServiceConfig             `json:"management_service" validate:"required,dive"`
+	MonitoringConfig              Monitoring                          `json:"monitoring_config"`
+	SwaggerConfig                 SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
+	SegmenterConfig               map[string]interface{}              `json:"segmenter_config"`
+	ManagementServicePollerConfig ManagementServicePollerConfig       `json:"management_service_poller_config" validate:"required,dive"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
@@ -95,7 +95,7 @@ type ManagementServiceConfig struct {
 	AuthorizationEnabled bool   `json:"authorization_enabled"`
 }
 
-type PollerConfig struct {
+type ManagementServicePollerConfig struct {
 	Enabled      bool          `default:"false"`
 	PollInterval time.Duration `default:"30s"`
 }

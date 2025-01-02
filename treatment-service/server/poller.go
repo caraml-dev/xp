@@ -10,7 +10,7 @@ import (
 )
 
 type Poller struct {
-	pollerConfig config.PollerConfig
+	pollerConfig config.ManagementServicePollerConfig
 	localStorage *models.LocalStorage
 	control      PollerControl
 }
@@ -25,7 +25,7 @@ type PollerControl struct {
 // NewPoller creates a new Poller instance with the given configuration and local storage.
 // pollerConfig: configuration for the poller
 // localStorage: local storage to be used by the poller
-func NewPoller(pollerConfig config.PollerConfig, localStorage *models.LocalStorage) *Poller {
+func NewPoller(pollerConfig config.ManagementServicePollerConfig, localStorage *models.LocalStorage) *Poller {
 	return &Poller{
 		pollerConfig: pollerConfig,
 		localStorage: localStorage,
