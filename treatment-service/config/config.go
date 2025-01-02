@@ -3,10 +3,10 @@ package config
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
-
 	common_config "github.com/caraml-dev/xp/common/config"
 	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/models"
@@ -24,16 +24,17 @@ type Config struct {
 	Port       int      `json:"port" default:"8080" validate:"required"`
 	ProjectIds []string `json:"project_ids" default:""`
 
-	AssignedTreatmentLogger AssignedTreatmentLoggerConfig       `json:"assigned_treatment_logger"`
-	DebugConfig             DebugConfig                         `json:"debug_config" validate:"required,dive"`
-	NewRelicConfig          newrelic.Config                     `json:"new_relic_config"`
-	SentryConfig            sentry.Config                       `json:"sentry_config"`
-	DeploymentConfig        DeploymentConfig                    `json:"deployment_config" validate:"required,dive"`
-	MessageQueueConfig      common_mq_config.MessageQueueConfig `json:"message_queue_config" validate:"required,dive"`
-	ManagementService       ManagementServiceConfig             `json:"management_service" validate:"required,dive"`
-	MonitoringConfig        Monitoring                          `json:"monitoring_config"`
-	SwaggerConfig           SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
-	SegmenterConfig         map[string]interface{}              `json:"segmenter_config"`
+	AssignedTreatmentLogger       AssignedTreatmentLoggerConfig       `json:"assigned_treatment_logger"`
+	DebugConfig                   DebugConfig                         `json:"debug_config" validate:"required,dive"`
+	NewRelicConfig                newrelic.Config                     `json:"new_relic_config"`
+	SentryConfig                  sentry.Config                       `json:"sentry_config"`
+	DeploymentConfig              DeploymentConfig                    `json:"deployment_config" validate:"required,dive"`
+	MessageQueueConfig            common_mq_config.MessageQueueConfig `json:"message_queue_config" validate:"required,dive"`
+	ManagementService             ManagementServiceConfig             `json:"management_service" validate:"required,dive"`
+	MonitoringConfig              Monitoring                          `json:"monitoring_config"`
+	SwaggerConfig                 SwaggerConfig                       `json:"swagger_config" validate:"required,dive"`
+	SegmenterConfig               map[string]interface{}              `json:"segmenter_config"`
+	ManagementServicePollerConfig ManagementServicePollerConfig       `json:"management_service_poller_config" validate:"required,dive"`
 }
 
 type AssignedTreatmentLoggerConfig struct {
@@ -92,6 +93,11 @@ type Monitoring struct {
 type ManagementServiceConfig struct {
 	URL                  string `json:"url" default:"http://localhost:3000/v1" validate:"required"`
 	AuthorizationEnabled bool   `json:"authorization_enabled"`
+}
+
+type ManagementServicePollerConfig struct {
+	Enabled      bool          `default:"false"`
+	PollInterval time.Duration `default:"30s"`
 }
 
 func (c *Config) GetProjectIds() []models.ProjectId {

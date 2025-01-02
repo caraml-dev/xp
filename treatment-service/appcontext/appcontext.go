@@ -23,6 +23,7 @@ type AppContext struct {
 	SegmenterService    services.SegmenterService
 
 	AssignedTreatmentLogger *monitoring.AssignedTreatmentLogger
+	LocalStorage            *models.LocalStorage
 }
 
 func NewAppContext(cfg *config.Config) (*AppContext, error) {
@@ -129,6 +130,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		TreatmentService:        treatmentSvc,
 		AssignedTreatmentLogger: logger,
 		MessageQueueService:     messageQueueService,
+		LocalStorage:            localStorage,
 	}
 
 	return appContext, nil
