@@ -142,17 +142,18 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	projectID int,
 ) (*config.Config, error) {
 	pluginConfig := &config.Config{
-		Port:                    em.TreatmentServicePluginConfig.Port,
-		ProjectIds:              []string{strconv.Itoa(projectID)},
-		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
-		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
-		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
-		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
-		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
-		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
-		NewRelicConfig:          em.TreatmentServicePluginConfig.NewRelicConfig,
-		SentryConfig:            em.TreatmentServicePluginConfig.SentryConfig,
-		SegmenterConfig:         *treatmentServiceConfig.SegmenterConfig,
+		Port:                          em.TreatmentServicePluginConfig.Port,
+		ProjectIds:                    []string{strconv.Itoa(projectID)},
+		AssignedTreatmentLogger:       em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
+		DebugConfig:                   em.TreatmentServicePluginConfig.DebugConfig,
+		DeploymentConfig:              em.TreatmentServicePluginConfig.DeploymentConfig,
+		ManagementService:             em.TreatmentServicePluginConfig.ManagementService,
+		MonitoringConfig:              em.TreatmentServicePluginConfig.MonitoringConfig,
+		SwaggerConfig:                 em.TreatmentServicePluginConfig.SwaggerConfig,
+		NewRelicConfig:                em.TreatmentServicePluginConfig.NewRelicConfig,
+		SentryConfig:                  em.TreatmentServicePluginConfig.SentryConfig,
+		SegmenterConfig:               *treatmentServiceConfig.SegmenterConfig,
+		ManagementServicePollerConfig: em.TreatmentServicePluginConfig.ManagementServicePollerConfig,
 	}
 	messageQueueKind := *treatmentServiceConfig.MessageQueueConfig.Kind
 	switch messageQueueKind {
