@@ -96,8 +96,8 @@ type ManagementServiceConfig struct {
 }
 
 type ManagementServicePollerConfig struct {
-	Enabled      bool          `default:"false"`
-	PollInterval time.Duration `default:"30s"`
+	Enabled      bool          `json:"enabled" default:"false"`
+	PollInterval time.Duration `json:"poll_interval" default:"30s"`
 }
 
 func (c *Config) GetProjectIds() []models.ProjectId {
