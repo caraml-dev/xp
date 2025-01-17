@@ -257,6 +257,9 @@ func (er *experimentRunner) startBackgroundServices(
 			}
 		}()
 	}
+	if er.appContext.PollerService != nil {
+		er.appContext.PollerService.Start()
+	}
 }
 
 func (er *experimentRunner) getRequestParams(

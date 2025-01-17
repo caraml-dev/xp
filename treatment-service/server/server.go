@@ -33,8 +33,6 @@ type Server struct {
 	subscribe bool
 	// cleanup captures all the actions to be executed on server shut down
 	cleanup []func()
-	// poller captures the poller instance
-	poller *Poller
 }
 
 // NewServer creates and configures an APIServer serving all application routes.
@@ -108,11 +106,6 @@ func NewServer(configFiles []string) (*Server, error) {
 		subscribe = true
 	}
 
-	var poller *Poller
-	if cfg.ManagementServicePollerConfig.Enabled {
-		poller = NewPoller(cfg.ManagementServicePollerConfig, appCtx.LocalStorage)
-	}
-
 	srv := http.Server{
 		Addr:    cfg.ListenAddress(),
 		Handler: mux,
@@ -123,7 +116,6 @@ func NewServer(configFiles []string) (*Server, error) {
 		appContext: appCtx,
 		subscribe:  subscribe,
 		cleanup:    cleanup,
-		poller:     poller,
 	}, nil
 }
 
@@ -140,11 +132,6 @@ func (srv *Server) Start() {
 		}
 	}()
 	log.Printf("Listening on %s\n", srv.Addr)
-
-	if srv.poller != nil {
-		log.Println("Starting poller...")
-		srv.poller.Start()
-	}
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
@@ -192,6 +179,10 @@ func (srv *Server) startBackgroundService(errChannel chan error) context.CancelF
 			}
 		}
 	}()
+
+	if srv.appContext.PollerService != nil {
+		srv.appContext.PollerService.Start()
+	}
 
 	return cancel
 }
