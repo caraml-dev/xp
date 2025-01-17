@@ -26,13 +26,14 @@ func NewPoller(pollerConfig config.ManagementServicePollerConfig, localStorage *
 }
 
 func (p *Poller) Start() {
-	ticker := time.NewTicker(p.pollerConfig.PollInterval)
+	pollInterval := time.Duration(p.pollerConfig.PollIntervalSeconds) * time.Second
+	ticker := time.NewTicker(pollInterval)
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
 				err := p.Refresh()
-				log.Printf("Polling at %v with interval %v", time.Now(), p.pollerConfig.PollInterval)
+				log.Printf("Polling at %v with interval %v", time.Now(), pollInterval)
 				if err != nil {
 					log.Printf("Error updating local storage: %v", err)
 					continue

@@ -2,14 +2,12 @@ package config
 
 import (
 	"fmt"
-	"strconv"
-	"time"
-
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
 	common_config "github.com/caraml-dev/xp/common/config"
 	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/models"
+	"strconv"
 )
 
 type AssignedTreatmentLoggerKind = string
@@ -96,8 +94,8 @@ type ManagementServiceConfig struct {
 }
 
 type ManagementServicePollerConfig struct {
-	Enabled      bool          `json:"enabled" default:"false"`
-	PollInterval time.Duration `json:"poll_interval" default:"30s"`
+	Enabled             bool `json:"enabled" default:"false"`
+	PollIntervalSeconds int  `json:"poll_interval" default:"30"`
 }
 
 func (c *Config) GetProjectIds() []models.ProjectId {
