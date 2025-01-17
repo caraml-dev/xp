@@ -2,11 +2,11 @@ package config
 
 import (
 	"fmt"
-	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"sync"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 )
