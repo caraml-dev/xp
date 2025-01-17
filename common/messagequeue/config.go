@@ -12,10 +12,10 @@ const (
 
 type MessageQueueConfig struct {
 	// The type of Message Queue for event updates
-	Kind MessageQueueKind `default:""`
+	Kind MessageQueueKind `json:"kind" default:""`
 
 	// PubSubConfig captures the config related to publishing and subscribing to a PubSub Message Queue
-	PubSubConfig *PubSubConfig
+	PubSubConfig *PubSubConfig `json:"pub_sub_config"`
 }
 
 type PubSubConfig struct {
