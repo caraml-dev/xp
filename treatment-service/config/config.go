@@ -2,12 +2,13 @@ package config
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
 	common_config "github.com/caraml-dev/xp/common/config"
 	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/models"
-	"strconv"
 )
 
 type AssignedTreatmentLoggerKind = string
