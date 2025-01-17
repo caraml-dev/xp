@@ -62,6 +62,14 @@ func TestNewExperimentManager(t *testing.T) {
 						"environment_type": "dev",
 						"max_go_routines": 200
 					},
+					"message_queue_config": {
+						"kind": "dev",
+						"pub_sub_config": {
+							"project":"dev",
+							"topic_name":"xp-update",
+							"pub_sub_timeout_seconds": 30
+						}
+					},
 					"management_service": {
 						"authorization_enabled": true,
 						"url": "http://xp-management.global.io/api/xp/v1"

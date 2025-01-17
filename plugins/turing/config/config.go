@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"sync"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
@@ -49,6 +50,7 @@ type TreatmentServicePluginConfig struct {
 	AssignedTreatmentLogger       config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
 	DebugConfig                   config.DebugConfig                   `json:"debug_config"`
 	DeploymentConfig              config.DeploymentConfig              `json:"deployment_config"`
+	MessageQueueConfig            common_mq_config.MessageQueueConfig  `json:"message_queue_config"`
 	ManagementService             config.ManagementServiceConfig       `json:"management_service"`
 	MonitoringConfig              config.Monitoring                    `json:"monitoring_config"`
 	SwaggerConfig                 config.SwaggerConfig                 `json:"swagger_config"`
