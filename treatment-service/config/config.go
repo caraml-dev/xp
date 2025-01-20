@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
@@ -96,8 +95,8 @@ type ManagementServiceConfig struct {
 }
 
 type ManagementServicePollerConfig struct {
-	Enabled      bool          `default:"false"`
-	PollInterval time.Duration `default:"30s"`
+	Enabled             bool `json:"enabled" default:"false"`
+	PollIntervalSeconds int  `json:"poll_interval" default:"30"`
 }
 
 func (c *Config) GetProjectIds() []models.ProjectId {

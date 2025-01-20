@@ -24,6 +24,7 @@ type AppContext struct {
 
 	AssignedTreatmentLogger *monitoring.AssignedTreatmentLogger
 	LocalStorage            *models.LocalStorage
+	PollerService           *services.PollerService
 }
 
 func NewAppContext(cfg *config.Config) (*AppContext, error) {
@@ -122,6 +123,11 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		return nil, err
 	}
 
+	var pollerService *services.PollerService
+	if cfg.ManagementServicePollerConfig.Enabled {
+		pollerService = services.NewPollerService(cfg.ManagementServicePollerConfig, localStorage)
+	}
+
 	appContext := &AppContext{
 		ExperimentService:       experimentSvc,
 		MetricService:           metricService,
@@ -131,6 +137,7 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 		AssignedTreatmentLogger: logger,
 		MessageQueueService:     messageQueueService,
 		LocalStorage:            localStorage,
+		PollerService:           pollerService,
 	}
 
 	return appContext, nil

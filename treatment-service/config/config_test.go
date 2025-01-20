@@ -2,7 +2,6 @@ package config
 
 import (
 	"testing"
-	"time"
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
@@ -66,8 +65,8 @@ func TestDefaultConfigs(t *testing.T) {
 		SentryConfig:    sentry.Config{Enabled: false, Labels: emptyStringMap},
 		SegmenterConfig: make(map[string]interface{}),
 		ManagementServicePollerConfig: ManagementServicePollerConfig{
-			Enabled:      false,
-			PollInterval: 30 * time.Second,
+			Enabled:             false,
+			PollIntervalSeconds: 30,
 		},
 	}
 	cfg, err := Load()
@@ -133,8 +132,8 @@ func TestLoadMultipleConfigs(t *testing.T) {
 		SentryConfig:    sentry.Config{Enabled: true, DSN: "my.amazing.sentry.dsn", Labels: map[string]string{"app": "xp-treatment-service"}},
 		SegmenterConfig: map[string]interface{}{"s2_ids": map[string]interface{}{"mins2celllevel": 9, "maxs2celllevel": 15}},
 		ManagementServicePollerConfig: ManagementServicePollerConfig{
-			Enabled:      false,
-			PollInterval: 30 * time.Second,
+			Enabled:             false,
+			PollIntervalSeconds: 30,
 		},
 	}
 

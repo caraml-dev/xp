@@ -6,6 +6,7 @@ import (
 
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/newrelic"
 	"github.com/caraml-dev/mlp/api/pkg/instrumentation/sentry"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
 )
@@ -46,14 +47,16 @@ type TreatmentServicePluginConfig struct {
 	Port                 int `json:"port" default:"8080"`
 	PubSubTimeoutSeconds int `json:"pub_sub_timeout_seconds" validate:"required"`
 
-	AssignedTreatmentLogger config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
-	DebugConfig             config.DebugConfig                   `json:"debug_config"`
-	DeploymentConfig        config.DeploymentConfig              `json:"deployment_config"`
-	ManagementService       config.ManagementServiceConfig       `json:"management_service"`
-	MonitoringConfig        config.Monitoring                    `json:"monitoring_config"`
-	SwaggerConfig           config.SwaggerConfig                 `json:"swagger_config"`
-	NewRelicConfig          newrelic.Config                      `json:"new_relic_config"`
-	SentryConfig            sentry.Config                        `json:"sentry_config"`
+	AssignedTreatmentLogger       config.AssignedTreatmentLoggerConfig `json:"assigned_treatment_logger"`
+	DebugConfig                   config.DebugConfig                   `json:"debug_config"`
+	DeploymentConfig              config.DeploymentConfig              `json:"deployment_config"`
+	MessageQueueConfig            common_mq_config.MessageQueueConfig  `json:"message_queue_config"`
+	ManagementService             config.ManagementServiceConfig       `json:"management_service"`
+	MonitoringConfig              config.Monitoring                    `json:"monitoring_config"`
+	SwaggerConfig                 config.SwaggerConfig                 `json:"swagger_config"`
+	NewRelicConfig                newrelic.Config                      `json:"new_relic_config"`
+	SentryConfig                  sentry.Config                        `json:"sentry_config"`
+	ManagementServicePollerConfig config.ManagementServicePollerConfig `json:"management_service_poller_config"`
 }
 
 type Variable struct {

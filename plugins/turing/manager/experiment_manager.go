@@ -14,7 +14,6 @@ import (
 
 	xpclient "github.com/caraml-dev/xp/clients/management"
 	"github.com/caraml-dev/xp/common/api/schema"
-	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	_config "github.com/caraml-dev/xp/plugins/turing/config"
 	"github.com/caraml-dev/xp/treatment-service/config"
 	"github.com/go-playground/validator/v10"
@@ -142,37 +141,20 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	projectID int,
 ) (*config.Config, error) {
 	pluginConfig := &config.Config{
-		Port:                    em.TreatmentServicePluginConfig.Port,
-		ProjectIds:              []string{strconv.Itoa(projectID)},
-		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
-		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
-		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
-		ManagementService:       em.TreatmentServicePluginConfig.ManagementService,
-		MonitoringConfig:        em.TreatmentServicePluginConfig.MonitoringConfig,
-		SwaggerConfig:           em.TreatmentServicePluginConfig.SwaggerConfig,
-		NewRelicConfig:          em.TreatmentServicePluginConfig.NewRelicConfig,
-		SentryConfig:            em.TreatmentServicePluginConfig.SentryConfig,
-		SegmenterConfig:         *treatmentServiceConfig.SegmenterConfig,
+		Port:                          em.TreatmentServicePluginConfig.Port,
+		ProjectIds:                    []string{strconv.Itoa(projectID)},
+		AssignedTreatmentLogger:       em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
+		DebugConfig:                   em.TreatmentServicePluginConfig.DebugConfig,
+		DeploymentConfig:              em.TreatmentServicePluginConfig.DeploymentConfig,
+		MessageQueueConfig:            em.TreatmentServicePluginConfig.MessageQueueConfig,
+		ManagementService:             em.TreatmentServicePluginConfig.ManagementService,
+		MonitoringConfig:              em.TreatmentServicePluginConfig.MonitoringConfig,
+		SwaggerConfig:                 em.TreatmentServicePluginConfig.SwaggerConfig,
+		NewRelicConfig:                em.TreatmentServicePluginConfig.NewRelicConfig,
+		SentryConfig:                  em.TreatmentServicePluginConfig.SentryConfig,
+		SegmenterConfig:               *treatmentServiceConfig.SegmenterConfig,
+		ManagementServicePollerConfig: em.TreatmentServicePluginConfig.ManagementServicePollerConfig,
 	}
-	messageQueueKind := *treatmentServiceConfig.MessageQueueConfig.Kind
-	switch messageQueueKind {
-	case schema.MessageQueueKindPubsub:
-		pluginConfig.MessageQueueConfig = common_mq_config.MessageQueueConfig{
-			Kind: "pubsub",
-			PubSubConfig: &common_mq_config.PubSubConfig{
-				Project:              *treatmentServiceConfig.MessageQueueConfig.PubSub.Project,
-				TopicName:            *treatmentServiceConfig.MessageQueueConfig.PubSub.TopicName,
-				PubSubTimeoutSeconds: em.TreatmentServicePluginConfig.PubSubTimeoutSeconds,
-			},
-		}
-	case schema.MessageQueueKindNoop:
-		pluginConfig.MessageQueueConfig = common_mq_config.MessageQueueConfig{
-			Kind: "",
-		}
-	default:
-		return nil, fmt.Errorf("invalid message queue kind (%s) was provided", messageQueueKind)
-	}
-
 	return pluginConfig, nil
 }
 
