@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -167,15 +168,19 @@ func NewExperimentManager(configData json.RawMessage) (manager.CustomExperimentM
 	}
 
 	// Create Google Client
+	httpClient := http.DefaultClient
 	googleClient, err := auth.InitGoogleClient(context.Background())
-	if err != nil {
-		return nil, err
+	if err == nil {
+		googleClient.Timeout = defaultRequestTimeout
+		httpClient = googleClient
+	} else {
+		log.Infof("Google default credential not found. Fallback to HTTP default client")
 	}
-	googleClient.Timeout = defaultRequestTimeout
+
 	// Create XP client
 	client, err := xpclient.NewClientWithResponses(
 		config.BaseURL,
-		xpclient.WithHTTPClient(googleClient),
+		xpclient.WithHTTPClient(httpClient),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to create XP management client: %s", err.Error())
