@@ -561,7 +561,6 @@ func (s *LocalStorage) getAllProjects() ([]*pubsub.ProjectSettings, error) {
 func NewLocalStorage(
 	projectIds []ProjectId,
 	xpServer string,
-	authzEnabled bool,
 	googleApplicationCredentialsEnvVar string,
 ) (*LocalStorage, error) {
 	// Set up Request Modifiers
