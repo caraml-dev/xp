@@ -254,9 +254,6 @@ func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
 }
 
 func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSettings) error {
-	s.Lock()
-	defer s.Unlock()
-
 	// check that settings with the same Id doesn't exist
 	for _, existingSettings := range s.ProjectSettings {
 		if existingSettings.GetProjectId() == projectSettings.GetProjectId() {
@@ -264,7 +261,8 @@ func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSett
 		}
 	}
 
-	s.ProjectSettings = append(s.ProjectSettings, projectSettings)
+	s.swapProjectSettings(append(s.ProjectSettings, projectSettings))
+
 	// Update project segmenters on creation
 	if err := s.initProjectSegmenters([]*pubsub.ProjectSettings{projectSettings}); err != nil {
 		return err
@@ -306,7 +304,7 @@ func (s *LocalStorage) FindProjectSettingsWithId(projectId ProjectId) *pubsub.Pr
 	}
 
 	project := OpenAPIProjectSettingsSpecToProtobuf(projectSettingsResponse.JSON200.Data)
-	s.ProjectSettings = append(s.ProjectSettings, project)
+	s.swapProjectSettings(append(s.ProjectSettings, project))
 	return project
 }
 
@@ -487,9 +485,6 @@ func (s *LocalStorage) DumpExperiments(filepath string) error {
 }
 
 func (s *LocalStorage) Init() error {
-	s.Lock()
-	defer s.Unlock()
-
 	var subscribedProjectSettings []*pubsub.ProjectSettings
 	var err error
 	if len(s.subscribedProjectIds) > 0 {
@@ -504,7 +499,8 @@ func (s *LocalStorage) Init() error {
 	if len(s.subscribedProjectIds) > 0 && len(subscribedProjectSettings) != len(s.subscribedProjectIds) {
 		return errors.New("not all subscribed project ids are found")
 	}
-	s.ProjectSettings = subscribedProjectSettings
+
+	s.swapProjectSettings(subscribedProjectSettings)
 
 	err = s.initProjectSegmenters(subscribedProjectSettings)
 	if err != nil {
@@ -649,12 +645,16 @@ func (s *LocalStorage) initExperiments(subscribedProjectSettings []*pubsub.Proje
 			}
 		}
 	}
+
+	s.Lock()
+	defer s.Unlock()
 	s.Experiments = index
 
 	return nil
 }
 
 func (s *LocalStorage) initProjectSegmenters(settings []*pubsub.ProjectSettings) error {
+	projectSegmenters := make(map[uint32]map[string]schema.SegmenterType)
 	for _, projectSettings := range settings {
 		log.Printf("retrieving project segmenters for %d", projectSettings.ProjectId)
 		segmentersResp, err := s.managementClient.ListSegmentersWithResponse(
@@ -669,9 +669,19 @@ func (s *LocalStorage) initProjectSegmenters(settings []*pubsub.ProjectSettings)
 		for _, v := range segmentersResp.JSON200.Data {
 			segmenters[v.Name] = schema.SegmenterType(strings.ToLower(string(v.Type)))
 		}
-		s.ProjectSegmenters[ProjectId(projectSettings.ProjectId)] = segmenters
+		projectSegmenters[ProjectId(projectSettings.ProjectId)] = segmenters
 	}
+
+	s.Lock()
+	defer s.Unlock()
+	s.ProjectSegmenters = projectSegmenters
 	return nil
+}
+
+func (s *LocalStorage) swapProjectSettings(projectSettings []*pubsub.ProjectSettings) {
+	s.Lock()
+	defer s.Unlock()
+	s.ProjectSettings = projectSettings
 }
 
 func (s *LocalStorage) UpdateProjectSegmenters(segmenter *_segmenters.SegmenterConfiguration, projectId int64) {
