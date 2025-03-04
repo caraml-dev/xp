@@ -625,7 +625,10 @@ func NewLocalStorage(
 	return &s, err
 }
 
-func (s *LocalStorage) fetchExperiments(subscribedProjectSettings []*pubsub.ProjectSettings, projectSegmenters map[ProjectId]map[string]schema.SegmenterType) (map[ProjectId][]*ExperimentIndex, error) {
+func (s *LocalStorage) fetchExperiments(
+	subscribedProjectSettings []*pubsub.ProjectSettings,
+	projectSegmenters map[ProjectId]map[string]schema.SegmenterType,
+) (map[ProjectId][]*ExperimentIndex, error) {
 	log.Println("retrieving project experiments...")
 	index := make(map[ProjectId][]*ExperimentIndex)
 	for _, projectSettings := range subscribedProjectSettings {
