@@ -78,7 +78,6 @@ func TestContext(t *testing.T) {
 	localStorage, err := models.NewLocalStorage(
 		testConfig.GetProjectIds(),
 		testConfig.ManagementService.URL,
-		testConfig.ManagementService.AuthorizationEnabled,
 		"",
 	)
 	if err != nil {

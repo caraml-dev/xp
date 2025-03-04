@@ -32,7 +32,6 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	localStorage, err := models.NewLocalStorage(
 		cfg.GetProjectIds(),
 		cfg.ManagementService.URL,
-		cfg.ManagementService.AuthorizationEnabled,
 		cfg.DeploymentConfig.GoogleApplicationCredentialsEnvVar,
 	)
 	if err != nil {

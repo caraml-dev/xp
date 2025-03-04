@@ -589,31 +589,33 @@ func (s *LocalStorage) getAllProjects() ([]*pubsub.ProjectSettings, error) {
 func NewLocalStorage(
 	projectIds []ProjectId,
 	xpServer string,
-	authzEnabled bool,
 	googleApplicationCredentialsEnvVar string,
 ) (*LocalStorage, error) {
 	// Set up Request Modifiers
 	clientOptions := []managementClient.ClientOption{}
-	if authzEnabled {
-		var googleClient *http.Client
-		var err error
-		// Init Google client for Authz. When using a non-empty googleApplicationCredentialsEnvVar that contains a file
-		// path to a credentials file, the credentials file MUST contain a Google SERVICE ACCOUNT for authentication to
-		// work correctly
-		if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
-			googleClient, err = auth.InitGoogleClientFromCredentialsFile(context.Background(), filepath)
-		} else {
-			googleClient, err = auth.InitGoogleClient(context.Background())
-		}
-		if err != nil {
-			return nil, err
-		}
 
-		clientOptions = append(
-			clientOptions,
-			managementClient.WithHTTPClient(googleClient),
-		)
+	httpClient := http.DefaultClient
+	var googleClient *http.Client
+	var err error
+	// Init Google client for Authz. When using a non-empty googleApplicationCredentialsEnvVar that contains a file
+	// path to a credentials file, the credentials file MUST contain a Google SERVICE ACCOUNT for authentication to
+	// work correctly
+	if filepath := os.Getenv(googleApplicationCredentialsEnvVar); filepath != "" {
+		googleClient, err = auth.InitGoogleClientFromCredentialsFile(context.Background(), filepath)
+	} else {
+		googleClient, err = auth.InitGoogleClient(context.Background())
 	}
+
+	if err == nil {
+		httpClient = googleClient
+	} else {
+		log.Println("Google default credential not found. Fallback to HTTP default client")
+	}
+
+	clientOptions = append(
+		clientOptions,
+		managementClient.WithHTTPClient(httpClient),
+	)
 	xpClient, err := managementClient.NewClientWithResponses(xpServer, clientOptions...)
 	if err != nil {
 		return nil, err
