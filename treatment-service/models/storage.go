@@ -255,10 +255,9 @@ func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
 
 func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSettings) error {
 	// check that settings with the same Id doesn't exist
-	for _, existingSettings := range s.ProjectSettings {
-		if existingSettings.GetProjectId() == projectSettings.GetProjectId() {
-			return nil
-		}
+	existingProjectSettings := s.findProjectSettingsById(ProjectId(projectSettings.GetProjectId()))
+	if existingProjectSettings != nil {
+		return nil
 	}
 
 	// Update project segmenters on creation
@@ -286,7 +285,7 @@ func (s *LocalStorage) UpdateProjectSettings(updatedProjectSettings *pubsub.Proj
 }
 
 func (s *LocalStorage) FindProjectSettingsWithId(projectId ProjectId) *pubsub.ProjectSettings {
-	projectSettings := s.findProjectSettingsWithId(projectId)
+	projectSettings := s.findSubscribedProjectSettingsById(projectId)
 	if projectSettings != nil {
 		return projectSettings
 	}
@@ -300,13 +299,20 @@ func (s *LocalStorage) FindProjectSettingsWithId(projectId ProjectId) *pubsub.Pr
 	return projectSettings
 }
 
-func (s *LocalStorage) findProjectSettingsWithId(projectId ProjectId) *pubsub.ProjectSettings {
+func (s *LocalStorage) findSubscribedProjectSettingsById(projectId ProjectId) *pubsub.ProjectSettings {
 	s.RLock()
 	defer s.RUnlock()
 
 	if !ContainsProjectId(s.subscribedProjectIds, projectId) {
 		return nil
 	}
+
+	return s.findProjectSettingsById(projectId)
+}
+
+func (s *LocalStorage) findProjectSettingsById(projectId ProjectId) *pubsub.ProjectSettings {
+	s.RLock()
+	defer s.RUnlock()
 
 	for _, settings := range s.ProjectSettings {
 		if ProjectId(settings.ProjectId) == projectId {
@@ -342,10 +348,10 @@ func (s *LocalStorage) GetSegmentersTypeMapping(projectId ProjectId) (map[string
 }
 
 func (s *LocalStorage) FindExperiments(projectId ProjectId, filters []SegmentFilter) []*ExperimentMatch {
-	experiments := s.Experiments[projectId]
 	s.RLock()
 	defer s.RUnlock()
 
+	experiments := s.Experiments[projectId]
 	var matched = make([]*ExperimentMatch, 0)
 
 	for _, item := range experiments {
@@ -376,10 +382,10 @@ func (s *LocalStorage) FindExperiments(projectId ProjectId, filters []SegmentFil
 }
 
 func (s *LocalStorage) FindExperimentWithId(projectId ProjectId, experimentId int64) *pubsub.Experiment {
-	currentExperiments, settingsExist := s.Experiments[projectId]
-
 	s.RLock()
 	defer s.RUnlock()
+
+	currentExperiments, settingsExist := s.Experiments[projectId]
 	if !settingsExist {
 		return nil
 	}
@@ -527,7 +533,7 @@ func (s *LocalStorage) Init() error {
 		return err
 	}
 
-	newExperiments, err := s.fetchExperiments(subscribedProjectSettings)
+	newExperiments, err := s.fetchExperiments(subscribedProjectSettings, newSegmenters)
 	if err != nil {
 		return err
 	}
@@ -619,7 +625,7 @@ func NewLocalStorage(
 	return &s, err
 }
 
-func (s *LocalStorage) fetchExperiments(subscribedProjectSettings []*pubsub.ProjectSettings) (map[ProjectId][]*ExperimentIndex, error) {
+func (s *LocalStorage) fetchExperiments(subscribedProjectSettings []*pubsub.ProjectSettings, projectSegmenters map[ProjectId]map[string]schema.SegmenterType) (map[ProjectId][]*ExperimentIndex, error) {
 	log.Println("retrieving project experiments...")
 	index := make(map[ProjectId][]*ExperimentIndex)
 	for _, projectSettings := range subscribedProjectSettings {
@@ -629,7 +635,7 @@ func (s *LocalStorage) fetchExperiments(subscribedProjectSettings []*pubsub.Proj
 		endTime := time.Now().Add(855360 * time.Hour)
 		activeStatus := schema.ExperimentStatusActive
 
-		segmentersType := s.ProjectSegmenters[projectId]
+		segmentersType := projectSegmenters[projectId]
 		resp, err := s.managementClient.ListExperimentsWithResponse(
 			context.TODO(),
 			projectSettings.ProjectId,
