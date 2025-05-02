@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	common_mq_config "github.com/caraml-dev/xp/common/messagequeue"
 	"net/http"
 	"strconv"
 	"time"
@@ -142,12 +143,18 @@ func (em *experimentManager) MakeTreatmentServicePluginConfig(
 	projectID int,
 ) (*config.Config, error) {
 	pluginConfig := &config.Config{
-		Port:                          em.TreatmentServicePluginConfig.Port,
-		ProjectIds:                    []string{strconv.Itoa(projectID)},
-		AssignedTreatmentLogger:       em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
-		DebugConfig:                   em.TreatmentServicePluginConfig.DebugConfig,
-		DeploymentConfig:              em.TreatmentServicePluginConfig.DeploymentConfig,
-		MessageQueueConfig:            em.TreatmentServicePluginConfig.MessageQueueConfig,
+		Port:                    em.TreatmentServicePluginConfig.Port,
+		ProjectIds:              []string{strconv.Itoa(projectID)},
+		AssignedTreatmentLogger: em.TreatmentServicePluginConfig.AssignedTreatmentLogger,
+		DebugConfig:             em.TreatmentServicePluginConfig.DebugConfig,
+		DeploymentConfig:        em.TreatmentServicePluginConfig.DeploymentConfig,
+		MessageQueueConfig: common_mq_config.MessageQueueConfig{
+			Kind: common_mq_config.MessageQueueKind(*treatmentServiceConfig.MessageQueueConfig.Kind),
+			PubSubConfig: &common_mq_config.PubSubConfig{
+				Project:   *treatmentServiceConfig.MessageQueueConfig.PubSub.Project,
+				TopicName: *treatmentServiceConfig.MessageQueueConfig.PubSub.TopicName,
+			},
+		},
 		ManagementService:             em.TreatmentServicePluginConfig.ManagementService,
 		MonitoringConfig:              em.TreatmentServicePluginConfig.MonitoringConfig,
 		SwaggerConfig:                 em.TreatmentServicePluginConfig.SwaggerConfig,
