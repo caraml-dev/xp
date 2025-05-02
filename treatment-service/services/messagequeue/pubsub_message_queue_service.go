@@ -35,8 +35,9 @@ func newSubscriptionId(topic string) string {
 func newPubsubSubscription(ctx context.Context, client *pubsub.Client, topic string) (*pubsub.Subscription, error) {
 	return client.CreateSubscription(
 		ctx, newSubscriptionId(topic), pubsub.SubscriptionConfig{
-			Topic:            client.Topic(topic),
-			ExpirationPolicy: time.Hour * 24,
+			Topic:                 client.Topic(topic),
+			ExpirationPolicy:      time.Hour * 24,
+			EnableMessageOrdering: true,
 		},
 	)
 }

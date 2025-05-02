@@ -82,7 +82,7 @@ func CreateSubscriptions(client *pubsub.Client, ctx context.Context, topicNames 
 		topic := client.Topic(topicName)
 		subscription, err := client.CreateSubscription(ctx,
 			subscriptionId,
-			pubsub.SubscriptionConfig{Topic: topic, ExpirationPolicy: time.Hour * 24})
+			pubsub.SubscriptionConfig{Topic: topic, ExpirationPolicy: time.Hour * 24, EnableMessageOrdering: true})
 		if err != nil {
 			return nil, err
 		}

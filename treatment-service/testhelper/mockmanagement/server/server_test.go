@@ -182,8 +182,9 @@ func (suite *ManagementServiceTestSuite) SetupTest() {
 	topic := suite.pubsubClient.Topic(TOPIC)
 	subscriptionId := "sub-" + uuid.NewString()
 	subscription, err := suite.pubsubClient.CreateSubscription(suite.ctx, subscriptionId, pubsub.SubscriptionConfig{
-		Topic:            topic,
-		ExpirationPolicy: time.Hour * 24,
+		Topic:                 topic,
+		ExpirationPolicy:      time.Hour * 24,
+		EnableMessageOrdering: true,
 	})
 	if err != nil {
 		suite.FailNow("fail to instantiate client", err.Error())
