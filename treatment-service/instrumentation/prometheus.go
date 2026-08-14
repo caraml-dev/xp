@@ -26,6 +26,14 @@ const (
 	FetchTreatmentRequestCountHelpString string = "Counter for no. of Fetch Treatment requests with matching experiments"
 	// NoMatchingExperimentRequestCountHelpString is the help string of the NoMatchingExperimentRequestCount metric
 	NoMatchingExperimentRequestCountHelpString string = "Counter for no. of Fetch Treatment requests with no matching experiments"
+	// LocalStorageCallCount is the key to measure calls to LocalStorage's public methods
+	LocalStorageCallCount metrics.MetricName = "local_storage_calls_total"
+	// LocalStorageCallDurationMs is the key to measure how long a call to a LocalStorage public method took
+	LocalStorageCallDurationMs metrics.MetricName = "local_storage_call_duration_ms"
+	// LocalStorageCallCountHelpString is the help string of the LocalStorageCallCount metric
+	LocalStorageCallCountHelpString string = "Counter for calls to LocalStorage's public methods, incremented on entry"
+	// LocalStorageCallDurationMsHelpString is the help string of the LocalStorageCallDurationMs metric
+	LocalStorageCallDurationMsHelpString string = "Histogram for how long (in milliseconds) a call to a LocalStorage public method took to return"
 )
 
 // RequestLatencyBuckets defines the buckets used in the custom Histogram metrics
@@ -48,6 +56,12 @@ var FetchTreatmentRequestDurationMsLabels = []string{"project_name", "experiment
 
 // ExperimentLookupDurationMsLabels defines additional labels needed for the ExperimentLookupDurationMs histogram map
 var ExperimentLookupDurationMsLabels = []string{"project_name"}
+
+// LocalStorageMethodLabels defines the labels needed for the LocalStorageCallCount counter map and the
+// LocalStorageCallDurationMs histogram map. Deliberately not combined with the caller-supplied custom
+// MetricLabels (cfg.MetricLabels) used elsewhere in this file -- LocalStorage calls aren't tied to a project
+// or experiment, just a method name.
+var LocalStorageMethodLabels = []string{"method"}
 
 var GaugeMap = map[metrics.MetricName]metrics.PrometheusGaugeVec{}
 
@@ -76,6 +90,14 @@ func GetCounterMap(labels []string) map[metrics.MetricName]metrics.PrometheusCou
 		},
 			noMatchingExperimentlabels,
 		),
+		LocalStorageCallCount: prometheus.NewCounterVec(prometheus.CounterOpts{
+			Namespace: Namespace,
+			Subsystem: Subsystem,
+			Help:      LocalStorageCallCountHelpString,
+			Name:      string(LocalStorageCallCount),
+		},
+			LocalStorageMethodLabels,
+		),
 	}
 
 	return counterMap
@@ -101,6 +123,15 @@ func GetHistogramMap() map[metrics.MetricName]metrics.PrometheusHistogramVec {
 			Buckets:   RequestLatencyBuckets,
 		},
 			ExperimentLookupDurationMsLabels,
+		),
+		LocalStorageCallDurationMs: prometheus.NewHistogramVec(prometheus.HistogramOpts{
+			Namespace: Namespace,
+			Subsystem: Subsystem,
+			Name:      string(LocalStorageCallDurationMs),
+			Help:      LocalStorageCallDurationMsHelpString,
+			Buckets:   RequestLatencyBuckets,
+		},
+			LocalStorageMethodLabels,
 		),
 	}
 

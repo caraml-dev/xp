@@ -59,6 +59,28 @@ type LocalStorage struct {
 	subscribedProjectIds []ProjectId
 	Segmenters           map[string]schema.SegmenterType
 	ProjectSegmenters    map[ProjectId]map[string]schema.SegmenterType
+	// metricsRecorder is nil until SetMetricsRecorder is called; instrumented methods treat a
+	// nil recorder as "metrics disabled" and skip reporting entirely. In production this is a
+	// services.MetricService (wired in appcontext.NewAppContext, after both are constructed --
+	// models can't import services directly, since services already imports models).
+	//
+	// Every instrumented public method here calls into metricsRecorder.LogRequestCount /
+	// LogLatencyHistogram via instrumentCall. services.MetricService itself already calls back
+	// into this struct: GetLabels and GetProjectNameLabel both call FindProjectSettingsWithId,
+	// which is one of the instrumented methods. That's fine today because LogRequestCount and
+	// LogLatencyHistogram are pure leaves -- they only reach the external metrics collector and
+	// never call back into GetLabels, GetProjectNameLabel, or any LocalStorage method. If you
+	// ever change what a recorder's LogRequestCount/LogLatencyHistogram does, make sure it still
+	// can't reach back into an instrumented LocalStorage method (directly or transitively) --
+	// that would turn this into unbounded recursion, not just a slow call.
+	metricsRecorder LocalStorageMetricsRecorder
+}
+
+// SetMetricsRecorder wires recorder into LocalStorage's public methods, which will start
+// reporting a call counter and call duration histogram to it. Call once, after construction;
+// leaving it unset (the default) means no metrics are reported.
+func (s *LocalStorage) SetMetricsRecorder(recorder LocalStorageMetricsRecorder) {
+	s.metricsRecorder = recorder
 }
 
 type Match struct {
@@ -254,6 +276,10 @@ func (i *ExperimentIndex) checkSegmentHasWeakMatch(segmentName string) bool {
 }
 
 func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSettings) error {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("InsertProjectSettings")()
+	}
+
 	// check that settings with the same Id doesn't exist
 	existingProjectSettings := s.findProjectSettingsById(ProjectId(projectSettings.GetProjectId()))
 	if existingProjectSettings != nil {
@@ -274,6 +300,10 @@ func (s *LocalStorage) InsertProjectSettings(projectSettings *pubsub.ProjectSett
 }
 
 func (s *LocalStorage) UpdateProjectSettings(updatedProjectSettings *pubsub.ProjectSettings) {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("UpdateProjectSettings")()
+	}
+
 	s.Lock()
 	defer s.Unlock()
 
@@ -285,6 +315,10 @@ func (s *LocalStorage) UpdateProjectSettings(updatedProjectSettings *pubsub.Proj
 }
 
 func (s *LocalStorage) FindProjectSettingsWithId(projectId ProjectId) *pubsub.ProjectSettings {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("FindProjectSettingsWithId")()
+	}
+
 	projectSettings := s.findSubscribedProjectSettingsById(projectId)
 	if projectSettings != nil {
 		return projectSettings
@@ -345,6 +379,10 @@ func (s *LocalStorage) fetchProjectSettingsWithId(projectId ProjectId) (*pubsub.
 }
 
 func (s *LocalStorage) GetSegmentersTypeMapping(projectId ProjectId) (map[string]schema.SegmenterType, error) {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("GetSegmentersTypeMapping")()
+	}
+
 	s.RLock()
 	defer s.RUnlock()
 
@@ -356,6 +394,10 @@ func (s *LocalStorage) GetSegmentersTypeMapping(projectId ProjectId) (map[string
 }
 
 func (s *LocalStorage) FindExperiments(projectId ProjectId, filters []SegmentFilter) []*ExperimentMatch {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("FindExperiments")()
+	}
+
 	s.RLock()
 	defer s.RUnlock()
 
@@ -390,6 +432,10 @@ func (s *LocalStorage) FindExperiments(projectId ProjectId, filters []SegmentFil
 }
 
 func (s *LocalStorage) FindExperimentWithId(projectId ProjectId, experimentId int64) *pubsub.Experiment {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("FindExperimentWithId")()
+	}
+
 	s.RLock()
 	defer s.RUnlock()
 
@@ -462,6 +508,10 @@ func NewExperimentIndex(experiment *pubsub.Experiment) *ExperimentIndex {
 }
 
 func (s *LocalStorage) InsertExperiment(experiment *pubsub.Experiment) {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("InsertExperiment")()
+	}
+
 	projectId := ProjectId(experiment.ProjectId)
 	s.Lock()
 	defer s.Unlock()
@@ -483,6 +533,10 @@ func (s *LocalStorage) InsertExperiment(experiment *pubsub.Experiment) {
 }
 
 func (s *LocalStorage) UpdateExperiment(experiment *pubsub.Experiment) {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("UpdateExperiment")()
+	}
+
 	projectId := ProjectId(experiment.ProjectId)
 	s.Lock()
 	defer s.Unlock()
@@ -510,6 +564,10 @@ func (s *LocalStorage) UpdateExperiment(experiment *pubsub.Experiment) {
 // DumpExperiments is used to dump the experiment from the local cache into the
 // given file, as JSON. Useful for debugging.
 func (s *LocalStorage) DumpExperiments(filepath string) error {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("DumpExperiments")()
+	}
+
 	s.RLock()
 	defer s.RUnlock()
 
@@ -521,6 +579,10 @@ func (s *LocalStorage) DumpExperiments(filepath string) error {
 }
 
 func (s *LocalStorage) Init() error {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("Init")()
+	}
+
 	var subscribedProjectSettings []*pubsub.ProjectSettings
 	var err error
 	if len(s.subscribedProjectIds) > 0 {
@@ -629,7 +691,11 @@ func NewLocalStorage(
 		return nil, err
 	}
 	segmenterCache := make(map[ProjectId]map[string]schema.SegmenterType)
-	s := LocalStorage{managementClient: xpClient, subscribedProjectIds: projectIds, ProjectSegmenters: segmenterCache}
+	s := LocalStorage{
+		managementClient:     xpClient,
+		subscribedProjectIds: projectIds,
+		ProjectSegmenters:    segmenterCache,
+	}
 	err = s.Init()
 
 	return &s, err
@@ -717,12 +783,20 @@ func (s *LocalStorage) fetchProjectSegmenters(settings []*pubsub.ProjectSettings
 }
 
 func (s *LocalStorage) UpdateProjectSegmenters(segmenter *_segmenters.SegmenterConfiguration, projectId int64) {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("UpdateProjectSegmenters")()
+	}
+
 	s.Lock()
 	defer s.Unlock()
 	s.ProjectSegmenters[ProjectId(projectId)][segmenter.Name] = schema.SegmenterType(strings.ToLower(segmenter.Type.String()))
 }
 
 func (s *LocalStorage) DeleteProjectSegmenters(segmenterName string, projectId int64) {
+	if s.metricsRecorder != nil {
+		defer s.instrumentCall("DeleteProjectSegmenters")()
+	}
+
 	s.Lock()
 	defer s.Unlock()
 	delete(s.ProjectSegmenters[ProjectId(projectId)], segmenterName)

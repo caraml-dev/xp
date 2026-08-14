@@ -238,6 +238,19 @@ func (er *experimentRunner) RegisterMetricsCollector(
 				instrumentation.AdditionalNoMatchingExperimentRequestCountLabels...,
 			),
 		},
+		{
+			Name:        string(instrumentation.LocalStorageCallCount),
+			Type:        routerMetrics.CounterMetricType,
+			Description: instrumentation.LocalStorageCallCountHelpString,
+			Labels:      instrumentation.LocalStorageMethodLabels,
+		},
+		{
+			Name:        string(instrumentation.LocalStorageCallDurationMs),
+			Type:        routerMetrics.HistogramMetricType,
+			Description: instrumentation.LocalStorageCallDurationMsHelpString,
+			Buckets:     instrumentation.RequestLatencyBuckets,
+			Labels:      instrumentation.LocalStorageMethodLabels,
+		},
 	})
 	if err != nil {
 		return err

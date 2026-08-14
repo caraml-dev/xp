@@ -176,3 +176,19 @@ func (s *MetricServiceTestSuite) TestLogRequestCount() {
 	expectedErrorStdOut := "error while logging metrics (request_count)"
 	s.Suite.Require().Contains(stdout, expectedErrorStdOut)
 }
+
+func (s *MetricServiceTestSuite) TestLogLocalStorageCallCount() {
+	stdout := testutils.CaptureStderrLogs(func() {
+		s.MetricService.LogRequestCount(map[string]string{"method": "FindExperiments"}, instrumentation.LocalStorageCallCount)
+	})
+	s.Suite.Require().Equal("", stdout)
+}
+
+func (s *MetricServiceTestSuite) TestLogLocalStorageCallDuration() {
+	stdout := testutils.CaptureStderrLogs(func() {
+		s.MetricService.LogLatencyHistogram(
+			time.Now(), map[string]string{"method": "FindExperiments"}, instrumentation.LocalStorageCallDurationMs,
+		)
+	})
+	s.Suite.Require().Equal("", stdout)
+}

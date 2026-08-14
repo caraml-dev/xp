@@ -81,6 +81,10 @@ func (ms *metricService) LogLatencyHistogram(begin time.Time, labels map[string]
 			err = metrics.Glob().MeasureDurationMsSince(
 				instrumentation.ExperimentLookupDurationMs, begin, labels,
 			)
+		case instrumentation.LocalStorageCallDurationMs:
+			err = metrics.Glob().MeasureDurationMsSince(
+				instrumentation.LocalStorageCallDurationMs, begin, labels,
+			)
 		}
 		if err != nil {
 			log.Printf("error while logging %s metrics (latency): %s", loggingMetric, err)
@@ -101,6 +105,10 @@ func (ms *metricService) LogRequestCount(labels map[string]string, loggingMetric
 		case instrumentation.NoMatchingExperimentRequestCount:
 			err = metrics.Glob().Inc(
 				instrumentation.NoMatchingExperimentRequestCount, labels,
+			)
+		case instrumentation.LocalStorageCallCount:
+			err = metrics.Glob().Inc(
+				instrumentation.LocalStorageCallCount, labels,
 			)
 		}
 		if err != nil {
