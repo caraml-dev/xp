@@ -39,8 +39,11 @@ func TestFindSubscribedProjectSettingsById_NestedRLockDeadlocksWithPendingWriter
 	// It queues on Lock() while the outer RLock above is held.
 	writerDone := make(chan struct{})
 	go func() {
-		s.Lock()
-		s.Unlock()
+		// SA2001: critical section is deliberately empty -- acquiring and releasing the lock is
+		// the observable event under test (proof the writer can make progress), not a means to
+		// protect shared state.
+		s.Lock()   //nolint:staticcheck
+		s.Unlock() //nolint:staticcheck
 		close(writerDone)
 	}()
 
