@@ -307,13 +307,21 @@ func (s *LocalStorage) findSubscribedProjectSettingsById(projectId ProjectId) *p
 		return nil
 	}
 
-	return s.findProjectSettingsById(projectId)
+	return s.findProjectSettingsByIdLocked(projectId)
 }
 
 func (s *LocalStorage) findProjectSettingsById(projectId ProjectId) *pubsub.ProjectSettings {
 	s.RLock()
 	defer s.RUnlock()
 
+	return s.findProjectSettingsByIdLocked(projectId)
+}
+
+// findProjectSettingsByIdLocked assumes the caller already holds s's read (or write) lock.
+// It must not itself call RLock/Lock, since sync.RWMutex blocks new readers once a writer is
+// queued -- a nested RLock on the same goroutine that already holds the lock would deadlock
+// against that queued writer.
+func (s *LocalStorage) findProjectSettingsByIdLocked(projectId ProjectId) *pubsub.ProjectSettings {
 	for _, settings := range s.ProjectSettings {
 		if ProjectId(settings.ProjectId) == projectId {
 			return settings
