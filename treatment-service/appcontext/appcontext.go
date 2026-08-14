@@ -67,6 +67,9 @@ func NewAppContext(cfg *config.Config) (*AppContext, error) {
 	if err != nil {
 		return nil, err
 	}
+	if cfg.MonitoringConfig.LocalStorageMetricsEnabled {
+		localStorage.SetMetricsRecorder(metricService)
+	}
 
 	log.Println("Initializing assigned treatment logger...")
 	loggerConfig := cfg.AssignedTreatmentLogger

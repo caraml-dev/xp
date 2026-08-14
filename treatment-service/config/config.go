@@ -87,6 +87,10 @@ const (
 type Monitoring struct {
 	Kind         MetricSinkKind `json:"kind" default:"" validate:"required"`
 	MetricLabels []string       `json:"metric_labels" default:""`
+	// LocalStorageMetricsEnabled toggles per-method call counter and call duration
+	// histogram instrumentation on models.LocalStorage's public methods. Independent of
+	// Kind, since it self-registers directly against the default Prometheus registry.
+	LocalStorageMetricsEnabled bool `json:"local_storage_metrics_enabled" default:"false"`
 }
 
 type ManagementServiceConfig struct {
