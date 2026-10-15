@@ -11,6 +11,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -734,4 +735,46 @@ func TestCustomSegmenter(t *testing.T) {
 		[]SegmentFilter{
 			{Key: segmenterName, Value: []*_segmenters.SegmenterValue{{Value: &_segmenters.SegmenterValue_String_{String_: "stringval"}}}}})
 	assert.Equal(t, 1, len(experimentmatch))
+}
+
+// Readers keep the nested-lock path hot while a writer takes Lock(); a nested RLock would hang the writer.
+func TestFindProjectSettingsWithId_ConcurrentWithWriter_NoDeadlock(t *testing.T) {
+	s := &LocalStorage{
+		subscribedProjectIds: []ProjectId{1},
+		ProjectSettings:      []*_pubsub.ProjectSettings{{ProjectId: 1}},
+	}
+
+	stop := make(chan struct{})
+	var readers sync.WaitGroup
+	for i := 0; i < 50; i++ {
+		readers.Add(1)
+		go func() {
+			defer readers.Done()
+			for {
+				select {
+				case <-stop:
+					return
+				default:
+					s.FindProjectSettingsWithId(1)
+				}
+			}
+		}()
+	}
+
+	writerDone := make(chan struct{})
+	go func() {
+		defer close(writerDone)
+		for i := 0; i < 2000; i++ {
+			s.UpdateProjectSettings(&_pubsub.ProjectSettings{ProjectId: 1})
+		}
+	}()
+
+	select {
+	case <-writerDone:
+	case <-time.After(5 * time.Second):
+		t.Fatal("deadlock: writer did not finish while readers called FindProjectSettingsWithId")
+	}
+
+	close(stop)
+	readers.Wait()
 }

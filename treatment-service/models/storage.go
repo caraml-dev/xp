@@ -307,13 +307,18 @@ func (s *LocalStorage) findSubscribedProjectSettingsById(projectId ProjectId) *p
 		return nil
 	}
 
-	return s.findProjectSettingsById(projectId)
+	return s.findProjectSettingsByIdLocked(projectId)
 }
 
 func (s *LocalStorage) findProjectSettingsById(projectId ProjectId) *pubsub.ProjectSettings {
 	s.RLock()
 	defer s.RUnlock()
 
+	return s.findProjectSettingsByIdLocked(projectId)
+}
+
+// findProjectSettingsByIdLocked looks up project settings; caller must hold s's read or write lock.
+func (s *LocalStorage) findProjectSettingsByIdLocked(projectId ProjectId) *pubsub.ProjectSettings {
 	for _, settings := range s.ProjectSettings {
 		if ProjectId(settings.ProjectId) == projectId {
 			return settings
